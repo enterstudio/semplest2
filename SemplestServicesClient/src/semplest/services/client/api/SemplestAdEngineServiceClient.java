@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolJSON;
@@ -1291,6 +1292,19 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		logger.info("JSON [" + json + "]");
 		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
 		final Boolean result = gson.fromJson(returnData, Boolean.class);
+		return result;
+	}
+
+	@Override
+	public List<String> validateAccountActivationToken(String ecryptedToken) throws Exception
+	{
+		final String methodName = "validateAccountActivationToken";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("ecryptedToken", "" + ecryptedToken);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		final List<String> result = gson.fromJson(returnData, SemplestUtils.TYPE_LIST_OF_STRINGS);
 		return result;
 	}
 }

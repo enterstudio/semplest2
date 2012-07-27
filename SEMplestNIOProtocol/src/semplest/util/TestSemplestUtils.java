@@ -127,7 +127,7 @@ public class TestSemplestUtils
 		final String username = "user123";
 		final String password = "hey777";
 		final String decryptedString = "USER_ID=" + userID + "|DATE_TIME=" + dateTimeString + "|USER_NAME=" + username + "|PASSWORD=" + password;
-		final RegistrationLinkDecryptedInfo actualResult = SemplestUtils.getDecryptedInfoFromDescryptedString(decryptedString);
+		final RegistrationLinkDecryptedInfo actualResult = SemplestUtils.getDecryptedInfoFromDecryptedString(decryptedString);
 		final RegistrationLinkDecryptedInfo expectedResult = new RegistrationLinkDecryptedInfo(userID, dateTime, username, password);
 		Assert.assertEquals(expectedResult, actualResult);
 	}

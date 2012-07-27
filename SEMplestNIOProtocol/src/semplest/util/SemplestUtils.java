@@ -121,6 +121,8 @@ public final class SemplestUtils
 	public static final Random RANDOM = new Random();
 	public static final Integer SECOND = 1000;
 	public static final Integer MINUTE = 60 * SECOND;
+	public static final Integer HOUR = 60 * MINUTE;
+	public static final Integer DAY = 24 * HOUR;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
 	public static final String STATUS_GOOD = "STATUS GOOD";
@@ -130,6 +132,15 @@ public final class SemplestUtils
 	public static final String DATE_TIME = "DATE_TIME";
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
+	
+	public static Integer getDiffInDays(final java.util.Date date1, java.util.Date date2)
+	{
+		final long date1Millis = date1.getTime();
+		final long date2Millis = date2.getTime();
+		final long differenceMillis = date2Millis - date1Millis;
+		final Long daysDifference = differenceMillis / DAY;
+		return daysDifference.intValue();
+	}
 	
 	public static CustomerType getCustomerType(final CustomerHierarchy hierarchy) throws Exception
 	{		
@@ -201,7 +212,7 @@ public final class SemplestUtils
 		}
 		try
 		{
-			final RegistrationLinkDecryptedInfo decryptedInfo = getDecryptedInfoFromDescryptedString(decryptedToken);
+			final RegistrationLinkDecryptedInfo decryptedInfo = getDecryptedInfoFromDecryptedString(decryptedToken);
 			return decryptedInfo;
 		}
 		catch (Exception e)
@@ -224,7 +235,7 @@ public final class SemplestUtils
 		return encryptedToken;
 	}
 	
-	public static RegistrationLinkDecryptedInfo getDecryptedInfoFromDescryptedString(final String s) throws Exception
+	public static RegistrationLinkDecryptedInfo getDecryptedInfoFromDecryptedString(final String s) throws Exception
 	{		
 		final String[] tokens = s.split("\\" + SemplestUtils.TOKEN_DELIMITER);
 		if (tokens.length != 4)
@@ -296,26 +307,12 @@ public final class SemplestUtils
 		return sb.toString();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public static AESBouncyCastle getDefaultAESBouncyCastle(final String semplestEncryptionKey) throws Exception
+	{		
+		final AESBouncyCastle aes = AESBouncyCastle.getInstance(semplestEncryptionKey);
+		return aes;
+	}
+		
 	public static Long getLongMicroAmount(final Double d)
 	{
 		final Double dMicroDouble = d * SemplestUtils.MICRO_AMOUNT_FACTOR;

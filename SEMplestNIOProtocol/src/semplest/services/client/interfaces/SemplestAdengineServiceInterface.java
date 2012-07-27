@@ -43,11 +43,12 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<AdEngine> adEngines) throws Exception;
 	Boolean PauseProductGroups(List<Integer> productGroupIds, List<AdEngine> adEngines) throws Exception;
 	
-	// Validation	
+	// Validation
 	List<GoogleViolation> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads) throws Exception;
 	List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception;	 
 	List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID) throws Exception;
 	List<GoogleViolation> validateGoogleNegativeKeywords(final List<String> negativeKeywords) throws Exception;
+	List<String> validateAccountActivationToken(final String ecryptedToken) throws Exception;
 	
 	Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngineList) throws Exception;	
 	Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngineList) throws Exception;
@@ -72,5 +73,5 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception;
 		
 	Boolean sendRegistrationReminderEmail(final Integer userID) throws Exception;
-	Boolean sendAccountActivationEmail(final Integer userID) throws Exception;
+	Boolean sendAccountActivationEmail(final Integer userID) throws Exception;	
 }

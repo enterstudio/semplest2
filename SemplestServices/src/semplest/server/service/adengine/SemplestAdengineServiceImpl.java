@@ -22,13 +22,16 @@ import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.MsnManagementIds;
+import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.job.AccountActivationEmailSender;
 import semplest.server.job.ExpiredCredentialsEmailSender;
+import semplest.server.protocol.Credential;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
+import semplest.server.protocol.RegistrationLinkDecryptedInfo;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.User;
@@ -132,13 +135,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			
 			BasicConfigurator.configure();
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
-
-			// Schedule for next day at the same time
-
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			
-			adEng.ExecuteBidProcess(136, Arrays.asList(AdEngine.MSN));
+			final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+			final AESBouncyCastle bouncyCastle = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
+			final Integer userID = 24;
+			final Credential credential = SemplestDB.getCredential(userID);
+			final java.util.Date dateTime = new java.util.Date();
+			final String username = credential.getUsername();
+			final String password = credential.getPassword();
+			final String encryptedToken = SemplestUtils.generateEncryptedToken(bouncyCastle, userID, dateTime, username, password);
+			final List<String> validationErrors = adEng.validateAccountActivationToken(encryptedToken);
+			logger.info("Validation errors:\n" + SemplestUtils.getEasilyReadableString(validationErrors));
+
+			// Schedule for next day at the same time
+			
+			//adEng.ExecuteBidProcess(136, Arrays.asList(AdEngine.MSN));
 			//adEng.AddPromotionToAdEngine(16, 55, 121212, Arrays.asList(AdEngine.MSN, AdEngine.Google));
 			
 			/*
@@ -3098,6 +3111,89 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return gson.toJson(true);
 	}
 	
+	public String validateAccountActivation(final String json) throws Exception
+	{
+		logger.info("JSON: [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String ecryptedToken = data.get("ecryptedToken");
+		final List<String> validationErrors = validateAccountActivationToken(ecryptedToken);
+		return gson.toJson(validationErrors);
+	}
+	
+	/**
+	 	Validation checks:
+	 	
+	 	1) Does the User exists?
+		2) Do the username and password exist for this user specifically?
+		3) Is the datetime not more than 4 days (configurable) before now?
+		
+		Validation passes if all 3 conditions above are true.
+	 */
+	@Override
+	public List<String> validateAccountActivationToken(final String ecryptedToken) throws Exception
+	{
+		logger.info("Will try to validate Account Activation Token [" + ecryptedToken + "]");
+		final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+		final AESBouncyCastle aes = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
+		final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, ecryptedToken);
+		logger.info("Decrypted info [" + decryptedInfo + "]");
+		final java.util.Date dateTime = decryptedInfo.getDateTime();
+		final String username = decryptedInfo.getUsername();
+		final String password = decryptedInfo.getPassword();
+		final Integer userID = decryptedInfo.getUserID();
+		final User user = SemplestDB.getUser(userID);
+		final Credential credential = SemplestDB.getCredential(userID);
+		final java.util.Date now = new java.util.Date();
+		final List<String> validationErrors = new ArrayList<String>();
+		if (dateTime == null)
+		{
+			validationErrors.add("DateTime is null");
+		}
+		final Integer diffInDays = SemplestUtils.getDiffInDays(dateTime, now);
+		final Integer numDaysBack = (Integer) SemplestConfiguration.configData.get("RegistrationReminderEmailDaysBack");
+		final Integer numDaysBackLinkAdditionalDays = (Integer) SemplestConfiguration.configData.get("RegistrationReminderLinkAdditionalDays");
+		final Integer numDaysValid = numDaysBack + numDaysBackLinkAdditionalDays;		
+		if (diffInDays > numDaysValid)
+		{
+			validationErrors.add("DateTime is " + diffInDays + " days in the past, which is higher than the allowed limit of " + numDaysValid);
+		}
+		if (user == null)
+		{
+			validationErrors.add("Could not find info for the given UserID [" + userID + "]");
+		}
+		if (credential == null)
+		{
+			validationErrors.add("User for UserID [" + userID + "] does not have credentials setup");
+		}
+		final String usernameFromDB = credential.getUsername();
+		final String passwordFromDB = credential.getPassword();
+		if (usernameFromDB == null)
+		{
+			validationErrors.add("Username for UserID [" + userID + "] does not exist in db, so can't compare to the username passed in");
+		}
+		if (passwordFromDB == null)
+		{
+			validationErrors.add("Password for UserID [" + userID + "] does not exist in db, so can't compare to the username passed in");
+		}
+		if (!usernameFromDB.equals(username))
+		{
+			validationErrors.add("Username for UserID [" + userID + "] in the system [" + usernameFromDB + "] does not match the username passed in [" + username + "]");
+		}
+		if (!passwordFromDB.equals(password))
+		{
+			validationErrors.add("Password for UserID [" + userID + "] in the system [" + passwordFromDB + "] does not match the password passed in [" + password + "]");
+		}
+		if (validationErrors.isEmpty())
+		{
+			logger.info("Validation passes");
+		}
+		else
+		{
+			logger.info("Validation FAILED:\n" + SemplestUtils.getEasilyReadableString(validationErrors));
+		}
+		return validationErrors;
+	}
+	
 	public String sendAccountActivationEmail(String json) throws Exception
 	{
 		logger.debug("JSON: [" + json + "]");
@@ -3539,5 +3635,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		return ServiceStatus.Up.getServiceStatusValue();
 	}
+
+	
 
 }

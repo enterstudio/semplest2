@@ -121,7 +121,7 @@ public class ExpiredCredentialsEmailSender
 			SemplestDB.updateUserLastEmailReminderDate(userID, now);
 		}
 	}
-	
+		
 	public static ExpiredCredentialsEmailSender getDefaultExpiredEmailSender() throws Exception
 	{
 		final String defaultEmailContactUsEmail = (String)SemplestConfiguration.configData.get("DefaultEmailContactUs");
@@ -134,12 +134,12 @@ public class ExpiredCredentialsEmailSender
 			throw new Exception("RunMode [" + runModeString + "] not a valid RunMode.  Valid RunModes are [" + RunMode.getValidRunModes() + "]");
 		}
 		final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
-		final AESBouncyCastle aes = AESBouncyCastle.getInstance(semplestEncryptionKey);
+		final AESBouncyCastle aes = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
 		final java.util.Date asOfDate = new java.util.Date();
 		final Integer numDaysBack = (Integer) SemplestConfiguration.configData.get("RegistrationReminderEmailDaysBack");
-		final Integer numDaysBackLinkAdditionalDays = (Integer) SemplestConfiguration.configData.get("RegistrationReminderLinkAdditionalDays");
-		final Integer numDaysInLink = numDaysBack + numDaysBackLinkAdditionalDays;
-		final ExpiredCredentialsEmailSender emailSender = new ExpiredCredentialsEmailSender(defaultEmailContactUsEmail, esbWebServerURL, reminderEmailUrlPrefix, runMode, aes, asOfDate, numDaysBack, numDaysInLink);
+		//final Integer numDaysBackLinkAdditionalDays = (Integer) SemplestConfiguration.configData.get("RegistrationReminderLinkAdditionalDays");
+		//final Integer numDaysInLink = numDaysBack + numDaysBackLinkAdditionalDays;
+		final ExpiredCredentialsEmailSender emailSender = new ExpiredCredentialsEmailSender(defaultEmailContactUsEmail, esbWebServerURL, reminderEmailUrlPrefix, runMode, aes, asOfDate, numDaysBack, numDaysBack);
 		return emailSender;
 	}
 	
