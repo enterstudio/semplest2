@@ -270,6 +270,32 @@ namespace Semplest.Core.Models.Repositories
                 _savedCampaign = true;
 
 
+                List<GoogleAddAdRequest> verifyAds =
+                           model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
+                           {
+                               promotionAdID = promo.PromotionPK,
+                               headline = pad.AdTitle,
+                               description1 =
+                                   pad.AdTextLine1,
+                               description2 =
+                                   pad.AdTextLine2
+                           }).ToList();
+
+
+                GoogleViolation[] gv = ValidateAds(model.AdModelProp.LandingUrl,
+                                                                       model.AdModelProp.DisplayUrl, verifyAds);
+                if (gv.Length > 0)
+                    throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                if (!string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Address) ||
+                    !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().City) ||
+                    !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Zip))
+                {
+                    gv = ValidateGeotargeting(promo.PromotionPK);
+                    if (gv.Length > 0)
+                        throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                }
+
+
                 if (promo.IsLaunched)
                 {
                     var sw = new ServiceClientWrapper();
@@ -706,9 +732,16 @@ namespace Semplest.Core.Models.Repositories
                                        c.CustomerFK == customerFk &&
                                        c.ProductGroupName == model.ProductGroup.ProductGroupName
                                    select c).Single();
-                AddSiteLinksToPromotion(GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName), model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel);
+                var promo = GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
+                AddSiteLinksToPromotion(promo, model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel);
                 dbcontext.SaveChanges();
                 _savedCampaign = true;
+                if (model.SiteLinks != null && model.SiteLinks.Any())
+                {
+                    GoogleViolation[] gv = ValidateSiteLinks(promo.PromotionPK);
+                    if (gv.Length > 0)
+                        throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                }
             }
         }
 
@@ -1141,19 +1174,19 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        public GoogleViolation[] ValidateSiteLinks(int promoId)
+        private GoogleViolation[] ValidateSiteLinks(int promoId)
         {
             var sw = new ServiceClientWrapper();
             return sw.ValidateGoogleRefreshSiteLinks(promoId);
         }
 
-        public GoogleViolation[] ValidateGeotargeting(int promoId)
+        private GoogleViolation[] ValidateGeotargeting(int promoId)
         {
             var sw = new ServiceClientWrapper();
             return sw.ValidateGoogleGeoTargets(promoId);
         }
 
-        public GoogleViolation[] ValidateAds(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
+        private GoogleViolation[] ValidateAds(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
         {
             var sw = new ServiceClientWrapper();
             return sw.ValidateGoogleAd(landingPageURL, displayURL, ads);

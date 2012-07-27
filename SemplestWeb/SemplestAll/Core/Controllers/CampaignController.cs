@@ -116,34 +116,7 @@ namespace Semplest.Core.Controllers
                         //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
                         int customerFK =
                             ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
-                        int userid =
-                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.UserPK;
-                        var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
-                                                                         model.ProductGroup.ProductPromotionName);
-                        List<GoogleAddAdRequest> verifyAds =
-                            model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
-                                                                                          {
-                                                                                              promotionAdID = promoId,
-                                                                                              headline = pad.AdTitle,
-                                                                                              description1 =
-                                                                                                  pad.AdTextLine1,
-                                                                                              description2 =
-                                                                                                  pad.AdTextLine2
-                                                                                          }).ToList();
-
-
-                        GoogleViolation[] gv = _campaignRepository.ValidateAds(model.AdModelProp.LandingUrl,
-                                                                               model.AdModelProp.DisplayUrl, verifyAds);
-                        if (gv.Length > 0)
-                            return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                        if (!string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Address) ||
-                            !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().City) ||
-                            !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Zip))
-                        {
-                            gv = _campaignRepository.ValidateGeotargeting(promoId);
-                            if (gv.Length > 0)
-                                return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                        }
+                        
                         _campaignRepository.SaveGeoTargetingAds(customerFK, model,
                                                                            (CampaignSetupModel)
                                                                            Session["CampaignSetupModel"]);
@@ -436,19 +409,8 @@ namespace Semplest.Core.Controllers
                 var cred =
                     (Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
                 var customerFK = cred.User.CustomerFK;
-                var userPK = cred.User.UserPK;
-                var promoId = _campaignRepository.GetPromotionId(userPK, model.ProductGroup.ProductGroupName,
-                                                                 model.ProductGroup.ProductPromotionName);
-
-                if (model.SiteLinks != null && model.SiteLinks.Any())
-                {
-                    GoogleViolation[] gv = _campaignRepository.ValidateSiteLinks(promoId);
-                    if (gv.Length > 0)
-                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                }
                 _campaignRepository.SaveSiteLinks(model, customerFK.Value,
                                                   (CampaignSetupModel) Session["CampaignSetupModel"]);
-
                 return Json("AdditionalLinks");
             }
             catch (Exception ex)
@@ -457,7 +419,6 @@ namespace Semplest.Core.Controllers
                 return Json(ExceptionHelper.GetErrorMessage(ex));
             }
         }
-
 
         [HttpPost]
         [ActionName("CampaignSetup")]

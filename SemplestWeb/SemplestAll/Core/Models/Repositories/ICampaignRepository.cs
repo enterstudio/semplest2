@@ -38,9 +38,6 @@ namespace Semplest.Core.Models.Repositories
         void SetKeywordsDeleted(List<int> keywordIds, int promoId);
         CampaignSetupModel GetCategories(CampaignSetupModel model);
         CampaignSetupModel GetKeyWords(CampaignSetupModel model, int promoId);
-        GoogleViolation[] ValidateSiteLinks(int promoId);
-        GoogleViolation[] ValidateGeotargeting(int promoId);
-        GoogleViolation[] ValidateAds(string landingPageURL, string displayURL, List<GoogleAddAdRequest> ads);
         GoogleViolation[] ValidateGoogleNegativeKeywords(List<string> negativeKeywords);
     }
 }
