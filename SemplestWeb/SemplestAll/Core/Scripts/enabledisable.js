@@ -31,12 +31,12 @@ function openAllTabs(displayCategories) {
     if (displayCategories) {
         tabStrip.append({
             text: "Categories",
-            contentUrl: '/Campaign/Categories'
+            contentUrl: $('#CategoriesUrl').val()
         }, tabStrip.tabGroup.children("li:last")).select();
     }
     tabStrip.append({
         text: "Billing & Launch",
-        contentUrl: '/Campaign/BillingLaunch'
+        contentUrl: $('#BillingLaunchUrl').val()
     }, tabStrip.tabGroup.children("li:last")).select();
     if (($('input[id="HasKeywords"]').val() == 'True')) {
         tabStrip.append({

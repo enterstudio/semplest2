@@ -530,7 +530,7 @@ function OnSuccess(id) {
             if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
                 tabStrip.append({
                     text: "Categories",
-                    contentUrl: '/Campaign/Categories'
+                    contentUrl: $('#CategoriesUrl').val()
                 }, tabStrip.tabGroup.children("li:last")).select();
                 tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
                 tabStrip.select(tab);
@@ -546,7 +546,7 @@ function OnSuccess(id) {
         if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
             tabStrip.append({
                 text: "Billing & Launch",
-                contentUrl: '/Campaign/BillingLaunch")'
+                contentUrl: $('#BillingLaunchUrl').val()
             }, tabStrip.tabGroup.children("li:last")).select();
             tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
             tabStrip.select(tab);
