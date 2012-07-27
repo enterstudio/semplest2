@@ -384,6 +384,7 @@ namespace Semplest.SharedResources.Services
                     stemp.Append(Environment.NewLine);
                     stemp.Append(ex.ToString());
                     Semplest.SharedResources.Helpers.ExceptionHelper.LogException(new Exception(stemp.ToString()));
+                    throw new Exception(returnData);
                 }
             }
             return retVal;

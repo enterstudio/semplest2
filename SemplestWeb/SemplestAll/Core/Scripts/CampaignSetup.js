@@ -315,12 +315,12 @@ $(document).ready(function () {
         $('#DirtyFormWindow').hide();
         dirtyWindow.close();
     });
-    if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
-        start.enable(false);
-        var datePicker = $("#ProductGroup_EndDate").data("kendoDatePicker");
-        if (datePicker != null)
-            datePicker.enable(false);
-    }
+//    if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
+//        start.enable(false);
+//        var datePicker = $("#ProductGroup_EndDate").data("kendoDatePicker");
+//        if (datePicker != null)
+//            datePicker.enable(false);
+//    }
 });
 
 function removeNestedForm(element, container, deleteElement) {

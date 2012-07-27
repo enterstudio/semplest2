@@ -19,7 +19,7 @@ namespace Semplest.Core.Models.Repositories
         Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal customerDefaultPerCampaignFlatFeeAmount);
 
         void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
-        void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context);
+        bool AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context);
         void SaveProductPromotion(int customerFk, CampaignSetupModel model, CampaignSetupModel oldModel);
         void SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
         void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories);
