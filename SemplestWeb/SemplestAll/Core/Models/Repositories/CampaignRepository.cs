@@ -1166,6 +1166,7 @@ namespace Semplest.Core.Models.Repositories
                         key => key.PromotionFK == promoId).IsDeleted = true;
                 var sw = new ServiceClientWrapper();
                 dbcontext.SaveChanges();
+                _savedCampaign = true;
                 var adEngines = new List<string>();
                 var promo = dbcontext.Promotions.Single(row => row.PromotionPK == promoId);
                 adEngines.AddRange(

@@ -569,7 +569,7 @@ function OnSuccess(id) {
     } else {
         if (id.name == "Keywords") {
             $('#KeywordCount').html(id.count);
-            removeCurrentTab();
+            tabStrip.reload(tabStrip.select());
         }
         if (id != "" && id.name != "Keywords") {
             var arr = id.split('<~>');
