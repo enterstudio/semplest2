@@ -213,7 +213,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("keywordIds", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "UpdateBudget", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(ADENGINESERVICE, "DeleteKeywords", JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool scheduleNegativeKeywords(int promotionID,

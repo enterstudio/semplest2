@@ -20,6 +20,8 @@ namespace SemplestModel
         public bool IsValid { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<int> CreditCardTransactionFK { get; set; }
+        public bool IsAppliedToPromotion { get; set; }
+        public decimal C_BudgetCarryOverAmount_ { get; set; }
     
         public virtual CreditCardTransaction CreditCardTransaction { get; set; }
         public virtual Promotion Promotion { get; set; }

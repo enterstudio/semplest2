@@ -34,6 +34,7 @@ namespace SemplestModel
         public bool IsActive { get; set; }
         public string MiddleInitial { get; set; }
         public bool IsRegistered { get; set; }
+        public Nullable<System.DateTime> LastEmailReminderDate { get; set; }
     
         public virtual ICollection<Credential> Credentials { get; set; }
         public virtual Customer Customer { get; set; }

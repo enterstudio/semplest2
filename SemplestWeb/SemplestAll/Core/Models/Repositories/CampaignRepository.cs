@@ -861,7 +861,7 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        public void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
+        private List<int> SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
                                  string productGroupName, string promotionName)
         {
             var stationIds = new DataTable();
@@ -950,17 +950,9 @@ namespace Semplest.Core.Models.Repositories
                             }
                         }
                     }
-                    var promo = dbcontext.Promotions.Single(row => row.PromotionPK == promotionId);
-                    if (promo.IsLaunched && deletedKeywords.Any())
-                    {
-                        var sw = new ServiceClientWrapper();
-                        var adEngines = new List<string>();
-                        adEngines.AddRange(
-                            promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                        sw.DeleteKeywords(promotionId, deletedKeywords, adEngines);
-                    }
                 }
             }
+            return deletedKeywords;
         }
 
         public bool IsDeletedKeyword(string keyword, List<string> negativeKeywords)
@@ -1045,16 +1037,8 @@ namespace Semplest.Core.Models.Repositories
                         addDeletedKiops.Add(kiopDelete);
                     }
                 }
-                var sw = new ServiceClientWrapper();
-                var adEngines = new List<string>();
-                adEngines.AddRange(
-                    promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                if (addDeletedKiops.Any())
-                    sw.scheduleNegativeKeywords(promo.PromotionPK, addDeletedKiops, adEngines, false);
-                if (addKiops.Any())
-                    sw.scheduleNegativeKeywords(promo.PromotionPK, addKiops, adEngines, true);
-
-                SaveKeywords(promo.PromotionPK, kpos, model.AdModelProp.NegativeKeywords,
+               
+                var deletedKeywords = SaveKeywords(promo.PromotionPK, kpos, model.AdModelProp.NegativeKeywords,
                              model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 //find more elegant way of doing this this is so we can update the view keywords tab and 
                 //get the id's of the newly added negative keywords to call the api
@@ -1074,8 +1058,21 @@ namespace Semplest.Core.Models.Repositories
                         kiopNew.RemoveOpposite = false;
                         addNewKiops.Add(kiopNew);
                     }
-                    if (addNewKiops.Any())
-                        sw.scheduleNegativeKeywords(promo.PromotionPK, addNewKiops, adEngines, true);
+                    var sw = new ServiceClientWrapper();
+                    var adEngines = new List<string>();
+                    if (promo.IsLaunched)
+                    {
+                        adEngines.AddRange(
+                            promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                        if (addDeletedKiops.Any())
+                            sw.scheduleNegativeKeywords(promo.PromotionPK, addDeletedKiops, adEngines, false);
+                        if (addKiops.Any())
+                            sw.scheduleNegativeKeywords(promo.PromotionPK, addKiops, adEngines, true);
+                        if (addNewKiops.Any())
+                            sw.scheduleNegativeKeywords(promo.PromotionPK, addNewKiops, adEngines, true);
+                        if (deletedKeywords.Any())
+                            sw.DeleteKeywords(promo.PromotionPK, deletedKeywords, adEngines);
+                    }
                 }
             }
             return model.AllKeywords;

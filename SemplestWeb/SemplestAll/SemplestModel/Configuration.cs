@@ -126,5 +126,14 @@ namespace SemplestModel
         public Nullable<long> MSNTrafficEstAccountID { get; set; }
         public Nullable<double> SemplestBiddingBudgetMultFactor { get; set; }
         public string RunMode { get; set; }
+        public string PGPPrivateKeyPassword { get; set; }
+        public string RSAPrivateKeyPassword { get; set; }
+        public string ReminderEmailUrlPrefix { get; set; }
+        public Nullable<int> BiddingServiceTargetPosition { get; set; }
+        public Nullable<int> RegistrationReminderEmailDaysBack { get; set; }
+        public Nullable<int> RegistrationReminderLinkAdditionalDays { get; set; }
+        public string AdengineExecuteBidProcessFrequency { get; set; }
+        public Nullable<double> BiddingServiceBidMultiplierForGoogleFromMSNHistory { get; set; }
+        public Nullable<int> BiddingServiceGoogleVolMultiplierFromMSNHistory { get; set; }
     }
 }

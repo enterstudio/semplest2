@@ -430,23 +430,32 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
-            Session["SiteLinks"] = model.SiteLinks.Where(t => t.Delete).ToList();
-            var cred =
-                (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
-            var customerFK = cred.User.CustomerFK;
-            var userPK = cred.User.UserPK;
-            var promoId = _campaignRepository.GetPromotionId(userPK, model.ProductGroup.ProductGroupName,
-                                                             model.ProductGroup.ProductPromotionName);
-
-            if (model.SiteLinks != null && model.SiteLinks.Any())
+            try
             {
-                GoogleViolation[] gv = _campaignRepository.ValidateSiteLinks(promoId);
-                if (gv.Length > 0)
-                    return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-            }
-            _campaignRepository.SaveSiteLinks(model, customerFK.Value, (CampaignSetupModel)Session["CampaignSetupModel"]);
+                Session["SiteLinks"] = model.SiteLinks.Where(t => t.Delete).ToList();
+                var cred =
+                    (Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
+                var customerFK = cred.User.CustomerFK;
+                var userPK = cred.User.UserPK;
+                var promoId = _campaignRepository.GetPromotionId(userPK, model.ProductGroup.ProductGroupName,
+                                                                 model.ProductGroup.ProductPromotionName);
 
-            return Json("AdditionalLinks");
+                if (model.SiteLinks != null && model.SiteLinks.Any())
+                {
+                    GoogleViolation[] gv = _campaignRepository.ValidateSiteLinks(promoId);
+                    if (gv.Length > 0)
+                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                }
+                _campaignRepository.SaveSiteLinks(model, customerFK.Value,
+                                                  (CampaignSetupModel) Session["CampaignSetupModel"]);
+
+                return Json("AdditionalLinks");
+            }
+            catch (Exception ex)
+            {
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);
+                return Json(ExceptionHelper.GetErrorMessage(ex));
+            }
         }
 
 
@@ -455,24 +464,32 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetNegativeKeywords")]
         public ActionResult SetNegativeKeywords(AdModel model)
         {
-            if (!string.IsNullOrEmpty(model.NegativeKeywordsText))
+            try
             {
-                var addl = model.NegativeKeywordsText.Split(',').ToList();
-                addl.ForEach(t => model.NegativeKeywords.Add(t.Trim()));
+                if (!string.IsNullOrEmpty(model.NegativeKeywordsText))
+                {
+                    var addl = model.NegativeKeywordsText.Split(',').ToList();
+                    addl.ForEach(t => model.NegativeKeywords.Add(t.Trim()));
+                }
+                Session["NegativeKeywords"] = model.NegativeKeywords;
+                Session["NegativeKeywordsText"] = model.NegativeKeywordsText;
+                var csm = (CampaignSetupModel) Session["CampaignSetupModel"];
+                var cred =
+                    (Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
+                var customerFK = cred.User.CustomerFK;
+                csm.AdModelProp.NegativeKeywords = model.NegativeKeywords;
+                csm.AdModelProp.NegativeKeywordsText = model.NegativeKeywordsText;
+                GoogleViolation[] gv = _campaignRepository.ValidateGoogleNegativeKeywords(model.NegativeKeywords);
+                if (gv.Length > 0)
+                    return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                csm.AllKeywords = _campaignRepository.SaveNegativeKeywords(csm, customerFK.Value);
+                return Json("NegativeKeywords");
             }
-            Session["NegativeKeywords"] = model.NegativeKeywords;
-            Session["NegativeKeywordsText"] = model.NegativeKeywordsText;
-            var csm = (CampaignSetupModel) Session["CampaignSetupModel"];
-            var cred =
-                (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
-            var customerFK = cred.User.CustomerFK;
-            csm.AdModelProp.NegativeKeywords = model.NegativeKeywords;
-            csm.AdModelProp.NegativeKeywordsText = model.NegativeKeywordsText;
-            GoogleViolation[] gv = _campaignRepository.ValidateGoogleNegativeKeywords(model.NegativeKeywords);
-            if (gv.Length > 0)
-                return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-            csm.AllKeywords = _campaignRepository.SaveNegativeKeywords(csm, customerFK.Value);
-            return Json("NegativeKeywords");
+            catch (Exception ex)
+            {
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);
+                return Json(ExceptionHelper.GetErrorMessage(ex));
+            }
         }
 
         public ActionResult NegativeKeyWords(AdModel model)
@@ -529,16 +546,24 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "KeyWords")]
         public ActionResult KeyWords(CampaignSetupModel model, FormCollection fc)
         {
-            int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-            var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
-                                model.ProductGroup.ProductPromotionName);
-            _campaignRepository.SetKeywordsDeleted(model.KeywordIds, promoId);
-            CampaignSetupModel sessionModel = (CampaignSetupModel)Session["CampaignSetupModel"];
-            sessionModel.AllKeywords.RemoveAll(key => model.KeywordIds.Contains(key.Id));
-            model.BillingLaunch.KeywordsCount = sessionModel.AllKeywords.Count();
-            Session["CampaignSetupModel"] = sessionModel;
-            //model = sessionModel;
-            return Json(new { count = model.BillingLaunch.KeywordsCount, name = "Keywords" });
+            try
+            {
+                int userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                                                                 model.ProductGroup.ProductPromotionName);
+                _campaignRepository.SetKeywordsDeleted(model.KeywordIds, promoId);
+                CampaignSetupModel sessionModel = (CampaignSetupModel) Session["CampaignSetupModel"];
+                sessionModel.AllKeywords.RemoveAll(key => model.KeywordIds.Contains(key.Id));
+                model.BillingLaunch.KeywordsCount = sessionModel.AllKeywords.Count();
+                Session["CampaignSetupModel"] = sessionModel;
+                //model = sessionModel;
+                return Json(new {count = model.BillingLaunch.KeywordsCount, name = "Keywords"});
+            }
+            catch (Exception ex)
+            {
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);
+                return Json(ExceptionHelper.GetErrorMessage(ex));
+            }
         }
 
         public ActionResult BillingLaunch(CampaignSetupModel model)

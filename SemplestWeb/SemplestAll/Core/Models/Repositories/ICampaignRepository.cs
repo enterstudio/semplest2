@@ -24,8 +24,7 @@ namespace Semplest.Core.Models.Repositories
         void SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
         void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories);
 
-        void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
-                          string productGroupName, string promotionName);
+
 
         bool IsDeletedKeyword(string keyword, List<string> negativeKeywords);
 
