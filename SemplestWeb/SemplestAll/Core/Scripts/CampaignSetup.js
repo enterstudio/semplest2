@@ -197,7 +197,7 @@ $(document).ready(function () {
     }
 
     // attach select event handler during initialization
-    var dropdownlist = $("#dropDownPeriodList").kendoDropDownList({
+    $("#dropDownPeriodList").kendoDropDownList({
         select: onSelect
     });
     if ($("#ProductGroup_EndDate").val() == '')
@@ -244,6 +244,7 @@ $(document).ready(function () {
     var start = $("#ProductGroup_StartDate").kendoDatePicker({
         change: startChange, value: toDay, format: "MM-dd-yyyy"
     }).data("kendoDatePicker");
+
 
     //    var end = $("#EndDate").kendoDatePicker({
     //        change: endChange
@@ -314,6 +315,11 @@ $(document).ready(function () {
         $('#DirtyFormWindow').hide();
         dirtyWindow.close();
     });
+    if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
+        start.enable(false);
+                    var datePicker = $("#ProductGroup_EndDate").data("kendoDatePicker");
+                    datePicker.enable(false);
+    }
 });
 
 function removeNestedForm(element, container, deleteElement) {

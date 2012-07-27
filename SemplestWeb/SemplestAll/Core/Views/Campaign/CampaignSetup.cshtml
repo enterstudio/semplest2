@@ -98,7 +98,7 @@
         $("#btnTwo").addClass('selected');
         $("#btnThree").addClass('selected');
     }
-    $(document).ready(function() {
+    $(document).ready(function () {
         if ($('#AdModelProp_IsNew').val() == 'False') {
             enableDisable();
             if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
@@ -117,8 +117,6 @@
             $('input[name*="ProductGroup.AdEnginesList"]').attr("readonly", true);
         }
     });
-        //        enableDisable();
-    //        $("#tabstrip").children('.k-content').height(650);
 
 
     $('#btnCongrats').live("click", function () {
