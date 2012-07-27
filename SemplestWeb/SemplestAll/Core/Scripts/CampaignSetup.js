@@ -317,8 +317,9 @@ $(document).ready(function () {
     });
     if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
         start.enable(false);
-                    var datePicker = $("#ProductGroup_EndDate").data("kendoDatePicker");
-                    datePicker.enable(false);
+        var datePicker = $("#ProductGroup_EndDate").data("kendoDatePicker");
+        if (datePicker != null)
+            datePicker.enable(false);
     }
 });
 
