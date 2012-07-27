@@ -3630,6 +3630,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return res;
 	}
+	
+	public String checkStatus(String json) throws Exception{
+		return checkStatus(null, null);
+	}
 
 	@Override
 	public String checkStatus(String input1, String input2) throws Exception
