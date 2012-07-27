@@ -1415,4 +1415,11 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<String> validateAccountActivationToken(String ecryptedToken)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
