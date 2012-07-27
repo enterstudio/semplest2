@@ -37,9 +37,9 @@ import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
+import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.service.SemplestConfiguration;
-import semplest.service.msn.adcenter.MsnCloudException;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.services.client.api.MSNAdcenterServiceClient;
 
@@ -310,9 +310,6 @@ public class MsnServiceTest {
 				if((cp == null) || (cp.getName() == null) || (cp.getId() == null))
 					errorHandler(new Exception(vMsg + "No campaign data returned."));
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}
@@ -331,7 +328,7 @@ public class MsnServiceTest {
 				if(cps.length == 0)
 					errorHandler(new Exception(vMsg + "No campaign returned."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -347,9 +344,6 @@ public class MsnServiceTest {
 				//verify result
 				if(!cp1.getStatus().getValue().equalsIgnoreCase(CampaignStatus.Active.getValue()))
 					errorHandler(new Exception(vMsg + "Campaign is not Actived."));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -367,9 +361,6 @@ public class MsnServiceTest {
 				//verify result
 				if(!cp1.getStatus().getValue().equalsIgnoreCase(CampaignStatus.Paused.getValue()))
 					errorHandler(new Exception(vMsg + "Campaign is not Paused."));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -393,9 +384,6 @@ public class MsnServiceTest {
 				Campaign cp = test.getCampaignById(accountId, tmpId);
 				if(cp != null)
 					errorHandler(new Exception(vMsg + "Campaign is not deleted."));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(MsnCloudException e){
 				errorHandler(e);
@@ -442,9 +430,6 @@ public class MsnServiceTest {
 							errorHandler(new Exception(vMsg + "MonthlyBudget isn't updated correctly. " + c.getMonthlyBudget() + " != " + monthlyBudget));
 				}
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}
@@ -478,7 +463,7 @@ public class MsnServiceTest {
 				if(c!=4)
 					errorHandler(new Exception(vMsg + "State Targets are not set correctly."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -504,7 +489,7 @@ public class MsnServiceTest {
 				if(c!=4)
 					errorHandler(new Exception(vMsg + "State Targets are not got correctly."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -523,9 +508,6 @@ public class MsnServiceTest {
 				//verify result
 				if(tgt3 != null)
 					errorHandler(new Exception(vMsg + "State Targets aren't deleted."));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -561,7 +543,7 @@ public class MsnServiceTest {
 				if(adgrps.length == 0)
 					errorHandler(new Exception(vMsg + "No AdGroup returned."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -576,9 +558,6 @@ public class MsnServiceTest {
 				//verify result
 				if(!adgrp.getId().equals(adGroupId))
 					errorHandler(new Exception(vMsg + "AdGroup data returned doesn't match. " + adgrp.getId() + " != " + adGroupId));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -597,9 +576,6 @@ public class MsnServiceTest {
 				AdGroup adgrp = test.getAdGroupById(accountId, campaignId, adgrpid);
 				if(adgrp != null)
 					errorHandler(new Exception(vMsg + "AdGroup is not deleted"));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -650,9 +626,6 @@ public class MsnServiceTest {
 				if(c!=4)
 					errorHandler(new Exception(vMsg + "State Targets aren't set correctly."));				
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}
@@ -679,9 +652,6 @@ public class MsnServiceTest {
 				if(c!=4)
 					errorHandler(new Exception(vMsg + "State Targets aren't got correctly."));				
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}
@@ -697,9 +667,6 @@ public class MsnServiceTest {
 				Target tgt4 = test.getAdGroupTargets(accountId, customerId, adGroupId);
 				if(tgt4 != null)
 					errorHandler(new Exception(vMsg + "Targets are not deleted."));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -735,7 +702,7 @@ public class MsnServiceTest {
 					errorHandler(new Exception(vMsg + "City Targets are not set correctly."));
 				
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -767,7 +734,7 @@ public class MsnServiceTest {
 				if(c!=2)
 					errorHandler(new Exception(vMsg + "Metro Area Targets are not set correctly."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -784,7 +751,7 @@ public class MsnServiceTest {
 				if(adId == 0L)
 					errorHandler(new Exception(vMsg + "No Ad ID returned."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -833,7 +800,7 @@ public class MsnServiceTest {
 				if(ad3.length == 0)
 					errorHandler(new Exception(vMsg + "No Ad returned."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -866,9 +833,6 @@ public class MsnServiceTest {
 				if(!ad.getStatus().getValue().equalsIgnoreCase(AdStatus.Paused.getValue()))
 					errorHandler(new Exception(vMsg + "Ad is not Paused."));
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}
@@ -885,9 +849,6 @@ public class MsnServiceTest {
 				if(!ad.getStatus().getValue().equalsIgnoreCase(AdStatus.Active.getValue()))
 					errorHandler(new Exception(vMsg + "Ad is not Actived."));
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}
@@ -903,9 +864,6 @@ public class MsnServiceTest {
 				Ad ad = test.getAdById(accountId, adGroupId, adId);				
 				if(ad != null)
 					errorHandler(new Exception(vMsg + "Ad is not deleted."));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -929,9 +887,6 @@ public class MsnServiceTest {
 				if(keywordId == 0L)
 					errorHandler(new Exception(vMsg + "No keyword Id returned."));
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch (Exception e)
 			{
 				errorHandler(e);
@@ -951,9 +906,6 @@ public class MsnServiceTest {
 				//verify result
 				if((kw1==null) || (kw1.getId() == null) || (kw1.getText() == null))
 					errorHandler(new Exception(vMsg + "No keyword data returned."));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -988,7 +940,7 @@ public class MsnServiceTest {
 				if(idMap.size() != 2)
 					errorHandler(new Exception(vMsg + "Num keyword IDs returned is not correct - num returned id = " + idMap.size()));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -1007,7 +959,7 @@ public class MsnServiceTest {
 				if(kws1.length == 0)
 					errorHandler(new Exception(vMsg + "No keywords returned."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -1029,9 +981,6 @@ public class MsnServiceTest {
 				test.updateKeywordBidById(accountId, adGroupId, keywordId, MatchType.Phrase, phraseMatchBid);
 				System.out.println("OK");
 				
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1064,9 +1013,6 @@ public class MsnServiceTest {
 					break;
 				}	
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}
@@ -1084,9 +1030,6 @@ public class MsnServiceTest {
 				if(!kw1.getStatus().getValue().equalsIgnoreCase(KeywordStatus.Paused.getValue()))
 					errorHandler(new Exception(vMsg + "Keyword is not Paused."));				
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}			
@@ -1102,9 +1045,6 @@ public class MsnServiceTest {
 				Keyword kw1 = test.getKeywordById(accountId, adGroupId, keywordId);
 				if(kw1 != null)
 					errorHandler(new Exception(vMsg + "Keyword is not deleted."));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1129,9 +1069,6 @@ public class MsnServiceTest {
 						errorHandler(new Exception(vMsg + "Keyword is not deleted."));
 					break;
 				}
-			}
-			catch(RemoteException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);

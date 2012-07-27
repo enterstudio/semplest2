@@ -18,8 +18,8 @@ import com.microsoft.adcenter.api.customermanagement.Entities.AccountInfo;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.Campaign;
 
+import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.service.SemplestConfiguration;
-import semplest.service.msn.adcenter.MsnCloudException;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class ReportActiveCampaigns {
@@ -56,7 +56,7 @@ public class ReportActiveCampaigns {
 		System.out.println(ac.getAccountLifeCycleStatus());
 	}
 	
-	public void getAccountsAndActiveCampaigns() throws AdApiFaultDetail, ApiFault, RemoteException{
+	public void getAccountsAndActiveCampaigns() throws AdApiFaultDetail, ApiFault, RemoteException, MsnCloudException{
 		ICustomerManagementService customerManagementService = msn.getCustomerManagementService();
 		HashMap<String, Double> accountIDs = new HashMap<String, Double>();
 		GetAccountsInfoRequest req = new GetAccountsInfoRequest();

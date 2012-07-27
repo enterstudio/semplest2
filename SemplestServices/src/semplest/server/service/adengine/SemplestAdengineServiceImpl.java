@@ -2929,7 +2929,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 					final List<UpdateAdRequest> updateRequests = getUpdateRequests(displayURL, url, nonDeletedAdsForPromotionAdIds);
 					final int numUpdateRequests = updateRequests.size();
-					logger.info("Will try to update " + numUpdateRequests + " Ads inMSN");
+					logger.info("Will try to update " + numUpdateRequests + " Ads in MSN");
 					final UpdateAdsRequestObj request = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests);
 					Map<UpdateAdRequest, Long> requestToNewAdIdMap = msn.updateAllAdById(request);
 					final int numAdsUpdated = requestToNewAdIdMap.size();
@@ -3630,7 +3630,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return res;
 	}
-	
+
 	public String checkStatus(String json) throws Exception{
 		return checkStatus(null, null);
 	}

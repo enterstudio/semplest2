@@ -136,7 +136,7 @@ public class TestSemplestUtils
 	public void testIsNullReturnBlank()
 	{
 		final String s = " ss EE   ";
-		final String actualString = SemplestUtils.IsNullReturnBlank(s);
+		final String actualString = SemplestUtils.isNullReturnEmptyString(s);
 		final String expectedString = " ss EE   ";
 		Assert.assertEquals(expectedString, actualString);
 	}
@@ -145,7 +145,7 @@ public class TestSemplestUtils
 	public void testIsNullReturnBlank_Null()
 	{
 		final String s = null;
-		final String actualString = SemplestUtils.IsNullReturnBlank(s);
+		final String actualString = SemplestUtils.isNullReturnEmptyString(s);
 		final String expectedString = "";
 		Assert.assertEquals(expectedString, actualString);
 	}
@@ -154,7 +154,7 @@ public class TestSemplestUtils
 	public void testIsNullReturnBlank_Empty()
 	{
 		final String s = "";
-		final String actualString = SemplestUtils.IsNullReturnBlank(s);
+		final String actualString = SemplestUtils.isNullReturnEmptyString(s);
 		final String expectedString = "";
 		Assert.assertEquals(expectedString, actualString);
 	}

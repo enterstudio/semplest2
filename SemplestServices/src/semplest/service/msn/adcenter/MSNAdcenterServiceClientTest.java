@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
@@ -215,11 +216,12 @@ public class MSNAdcenterServiceClientTest {
 		Boolean res = test.setGeoTarget(accountID, campaignID, latitude, longitude, radius, addr, city, state, country, zip);
 	}
 	
-	public void getAccountID() throws Exception{
+	public void getAccountID() throws Exception
+	{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
-		 HashMap<String,Long> accounts = test.getAccountIDs();
-		 accountID =  accounts.get(accountNumber).longValue();
-		 logger.info("AccountId - "+accountID);
+		Map<String,Long> accounts = test.getAccountIDs();
+		accountID =  accounts.get(accountNumber).longValue();
+		logger.info("AccountId - "+accountID);
 	}
 	public void getIds() throws Exception{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();

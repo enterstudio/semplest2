@@ -1,4 +1,4 @@
-package semplest.service.msn.adcenter;
+package semplest.server.protocol.msn;
 
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.GoalError;
 

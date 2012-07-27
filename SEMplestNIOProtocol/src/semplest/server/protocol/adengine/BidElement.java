@@ -130,6 +130,6 @@ public class BidElement implements Cloneable
 	public BidElement clone() throws CloneNotSupportedException
 	{
 		return (BidElement) super.clone();
-	}
+	}	
 
 }

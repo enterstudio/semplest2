@@ -1417,8 +1417,8 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 	}
 
 	@Override
-	public List<String> validateAccountActivationToken(String ecryptedToken)
-			throws Exception {
+	public List<String> validateAccountActivationToken(String ecryptedToken) throws Exception
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}

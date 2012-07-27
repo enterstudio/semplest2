@@ -855,6 +855,29 @@ public final class SemplestUtils
 		return "LocationTarget[hasPhysicalIntent=" + hasPhysicalIntent + ",targetAllLocations=" + targetAllLocations + ",businessTarget=" + businessTargetString + ",cityTarget=" + cityTargetString + ",countryTarget=" + countryTargetString + ",metroAreaTarget=" + metroAreaTargetString + ",metroAreaTarget=" + metroAreaTargetString + ",radiusTarget=" + radiusTargetString + ",stateTarget=" + stateTargetString + "]";
 	}
 	
+	public static String getMsnTargetString(final Target[] targets, final Boolean pretty)
+	{
+		if (targets == null)
+		{
+			return "";
+		}
+		final StringBuilder sb = new StringBuilder();		
+		for (final Target target : targets)
+		{
+			final String targetString = getMsnTargetString(target);
+			if (sb.length() != 0)
+			{
+				sb.append(", ");
+			}
+			if (pretty)
+			{
+				sb.append("\n");
+			}
+			sb.append(targetString);
+		}
+		return sb.toString();
+	}
+	
 	public static String getMsnTargetString(final Target target)
 	{
 		if (target == null)
@@ -1282,7 +1305,7 @@ public final class SemplestUtils
 		return sb.toString();
 	}
 	
-	public static String IsNullReturnBlank(String s)
+	public static String isNullReturnEmptyString(String s)
 	{
 		if (s == null)
 		{

@@ -120,7 +120,7 @@ public class CleanUpMsnAccounts extends BaseDB{
 	}
 	
 	private ArrayList<Long> getToDeleteAccounts() throws Exception{
-		ArrayList<Long> activeAccounts = getActiveAccounts();
+		List<Long> activeAccounts = getActiveAccounts();
 		ArrayList<Long> whiteListAccounts = getWhiteListAccounts();
 		
 		ArrayList<Long> toDeleteAccounts = new ArrayList<Long>();
@@ -136,8 +136,8 @@ public class CleanUpMsnAccounts extends BaseDB{
 		return toDeleteAccounts;
 	}
 	
-	public ArrayList<Long> getActiveAccounts() throws Exception{
-		ArrayList<Long> activeAccounts = new ArrayList<Long>();
+	public List<Long> getActiveAccounts() throws Exception{
+		List<Long> activeAccounts = new ArrayList<Long>();
 		
 		if(useReportData){
 			activeAccounts = readReportFile();

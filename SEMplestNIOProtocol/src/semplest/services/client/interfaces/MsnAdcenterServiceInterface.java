@@ -1,7 +1,5 @@
 package semplest.services.client.interfaces;
 
-import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +11,8 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
-
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
@@ -26,8 +24,8 @@ import com.microsoft.adcenter.v8.Keyword;
 import com.microsoft.adcenter.v8.ReportAggregation;
 import com.microsoft.adcenter.v8.Target;
 
-public interface MsnAdcenterServiceInterface extends ServiceInitialize {
-	
+public interface MsnAdcenterServiceInterface extends ServiceInitialize 
+{
 	// ============================
 	// Info 
 	// ===============================
@@ -52,7 +50,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	 */
 	MsnManagementIds createAccount(SemplestString name) throws Exception;  	
 	Account getAccountById(Long accountId) throws Exception;	
-	HashMap<String,Long> getAccountIDs() throws Exception;
+	Map<String,Long> getAccountIDs() throws Exception;
 	
 	// ==================================
 	// GeoTargeting Methods
@@ -68,7 +66,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	Campaign getCampaignById(Long accountId, Long campaignId) throws Exception;	
 	Campaign[] getCampaignsByAccountId(Long accountId) throws Exception;	
 	void pauseCampaignById(Long accountId, Long campaignId) throws Exception;
-	void unpauseCampaignById(Long accountId, Long campaignId) throws RemoteException;
+	void unpauseCampaignById(Long accountId, Long campaignId) throws MsnCloudException;
 	void pauseCampaignsByAccountId(Long accountId) throws Exception;	
 	void resumeCampaignById(Long accountId, Long campaignId) throws Exception;	
 	void deleteCampaignById(Long accountId, Long campaignId) throws Exception;	

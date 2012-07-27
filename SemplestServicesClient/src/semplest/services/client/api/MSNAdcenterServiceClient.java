@@ -19,6 +19,7 @@ import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
+import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
@@ -1310,7 +1311,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return ret;
 	}
 	@Override
-	public void unpauseCampaignById(Long accountId, Long campaignId) throws RemoteException
+	public void unpauseCampaignById(Long accountId, Long campaignId) throws MsnCloudException
 	{
 		// TODO Auto-generated method stub
 		
