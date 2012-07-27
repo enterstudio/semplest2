@@ -49,7 +49,8 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		// final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJava1:9898/semplest");
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(BASEURLTEST);
 		final Integer userID = 24;
-		client.sendRegistrationReminderEmail(userID);
+		//client.sendRegistrationReminderEmail(userID);
+		client.sendAccountActivationEmail(userID);
 		
 		/*
 		// validateGoogleAd 

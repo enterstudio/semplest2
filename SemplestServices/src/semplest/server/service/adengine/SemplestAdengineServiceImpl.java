@@ -22,6 +22,7 @@ import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.MsnManagementIds;
+import semplest.server.job.AccountActivationEmailSender;
 import semplest.server.job.ExpiredCredentialsEmailSender;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
@@ -3122,8 +3123,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			else
 			{
 				logger.info("Found User [" + user + "]");
-				final ExpiredCredentialsEmailSender emailSender = ExpiredCredentialsEmailSender.getDefaultExpiredEmailSender();
-				emailSender.engageForUser(userID);	
+				final AccountActivationEmailSender emailSender = AccountActivationEmailSender.getDefaultAccountActivationEmailSender();
+				emailSender.sendAccountActivationEmail(userID);	
 			}			
 		}
 		catch (Exception e)
