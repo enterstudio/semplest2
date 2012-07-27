@@ -3123,11 +3123,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	/**
 	 	Validation checks:
 	 	
-	 	1) Does the User exists?
-		2) Do the username and password exist for this user specifically?
-		3) Is the datetime not more than 4 days (configurable) before now?
+	 	1) Does the User exists for the passed-in userID? If No, then validation fails.
+	 	2) Does this User have non-null username and password in our system?  If any of these are null, then validation fails because the user's account data in our systems are not valid, and validation fails.
+	 	3) Are the passed-in username and password both same as the username and password in our systems? If no, then validation fails.
+		4) Is the passed-in datetime not more than 4 days (configurable) before now? If it's older than 4 days before now, then validation fails.
 		
-		Validation passes if all 3 conditions above are true.
+		Validation passes if all above conditions pass.
 	 */
 	@Override
 	public List<String> validateAccountActivationToken(final String ecryptedToken) throws Exception
