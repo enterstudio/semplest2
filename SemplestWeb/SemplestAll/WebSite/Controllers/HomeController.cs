@@ -8,6 +8,7 @@ using System.Net.Mail;
 using Semplest.WebSite.Models;
 using SemplestModel;
 using SharedResources.Models;
+using Semplest.SharedResources.Services;
 
 namespace Semplest.WebSite.Controllers
 {
@@ -123,7 +124,8 @@ namespace Semplest.WebSite.Controllers
                         dbContext.SaveChanges();
 
                         // send email using smtp server
-                            SendMail(model, semEmail);
+                        
+                        SendMail(model, semEmail);
                     }
                 }
                 catch (Exception ex)
@@ -143,39 +145,19 @@ namespace Semplest.WebSite.Controllers
 
         private void SendMail(SEMCustomerDetail model, string sEmail)
         {
-            string strSmtpHost = "172.18.9.36";
-            int iSmtpPort =25;
-
-            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
-            // get from config file
-            // smtp host
-
-            string smtphostSetting = dbcontext.Configurations.Single().ServiceSMTP; 
-            if (!String.IsNullOrEmpty(smtphostSetting))
-                strSmtpHost = smtphostSetting;
-            // smtp port
-            string smtpportSetting = System.Configuration.ConfigurationManager.AppSettings["SmtpPort"];
-            if (!String.IsNullOrEmpty(smtpportSetting))
-                iSmtpPort = Convert.ToInt32(smtpportSetting);
-
-            MailMessage mail = new MailMessage();
-            SmtpClient SmtpServer = new SmtpClient(strSmtpHost, iSmtpPort);
-
-            mail.From = new MailAddress("website@semplest.com");
-            mail.To.Add(sEmail);
-            mail.Subject = "Semplest Website Inquiry";
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Name: " + model.FirstName + " " + model.LastName);
-            sb.AppendLine("Company: " + model.Company);
-            if (!String.IsNullOrEmpty(model.Phone))
-                sb.AppendLine("Phone: " + model.Phone);
-            if (!String.IsNullOrEmpty(model.email))
-                sb.AppendLine("Email: " + model.email);
-            sb.AppendLine("Notes: " + model.notes);
-
-            mail.Body = sb.ToString();
-
-            SmtpServer.Send(mail); 
+            using (SemplestModel.Semplest dbcontext = new SemplestModel.Semplest())
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Name: " + model.FirstName + " " + model.LastName);
+                sb.AppendLine("Company: " + model.Company);
+                if (!String.IsNullOrEmpty(model.Phone))
+                    sb.AppendLine("Phone: " + model.Phone);
+                if (!String.IsNullOrEmpty(model.email))
+                    sb.AppendLine("Email: " + model.email);
+                sb.AppendLine("Notes: " + model.notes);
+                var scw = new ServiceClientWrapper();
+                scw.SendEmail(dbcontext.Configurations.First().RunMode + " - Semplest Website Inquiry", "website@semplest.com", sEmail, sb.ToString());
+            }
 
         }
     }

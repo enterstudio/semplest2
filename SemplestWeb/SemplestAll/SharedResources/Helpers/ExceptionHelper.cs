@@ -48,7 +48,7 @@ namespace Semplest.SharedResources.Helpers
             //}
         }
 
-        public static void LogException(Exception ex)
+        public static void LogException(Exception ex, bool sendEmail = true)
         {
             var _dbContext = new SemplestModel.Semplest();
             SemplestModel.Error er = new SemplestModel.Error();
@@ -77,15 +77,19 @@ namespace Semplest.SharedResources.Helpers
             }
             try
             {
-                var scw = new ServiceClientWrapper();
-                scw.SendEmail(_dbContext.Configurations.First().RunMode + " - WebSite Error Message", "website@semplest.com",
-                              _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);
+                if (sendEmail)
+                {
+                    var scw = new ServiceClientWrapper();
+                    scw.SendEmail(_dbContext.Configurations.First().RunMode + " - WebSite Error Message", "website@semplest.com",
+                                  _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);
+                }
             }
             catch
             {
             }
         }
 
+        
         public static string GetErrorMessage(Exception ex)
         {
             if (ex is System.Data.Entity.Validation.DbEntityValidationException)

@@ -572,8 +572,9 @@ namespace Semplest.SharedResources.Services
                 string boolResult = dict.Values.First();
                 return Convert.ToBoolean(boolResult);
             }
-            catch
+            catch(Exception ex)
             {
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex, false);
             }
             return false;
         }
