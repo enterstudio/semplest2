@@ -6,9 +6,9 @@ public class SystemTester {
 	
 	public static void main(String[] args){
 		try{			
-			//SystemTestFunc.InitializeReport();			
+			SystemTestFunc.InitializeReport();			
 			SystemTestFunc.InitializeSystemTest();
-			/*
+			
 			AdEngineServiceTest adEngineTest = new AdEngineServiceTest();
 			BiddingServiceTest biddingTest = new BiddingServiceTest();
 			KeywordServiceTest keywordTest = new KeywordServiceTest();
@@ -18,9 +18,9 @@ public class SystemTester {
 			biddingTest.Test_BiddingService(serviceURL);
 			keywordTest.Test_KeywordService(serviceURL);
 			mailTest.Test_MailService(serviceURL);
-			*/
+			
 			SystemTestFunc.CleanUpTestData();			
-			//SystemTestFunc.FinalizeReport();
+			SystemTestFunc.FinalizeReport();
 		}
 		catch(Exception e){
 			e.printStackTrace();
