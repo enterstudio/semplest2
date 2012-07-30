@@ -3219,7 +3219,20 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		logger.info("Will try to " + operationDescriptionPretty);
 		try
 		{
-			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			
+			final Account account = getAccountById(accountId);
+			final String accountName = account.getName();
+			logger.info("MSN Account Name: " + accountName);
+			final Long msnCustomerID = getCustomerID(accountName);
+			if (msnCustomerID != null)
+			{
+				logger.info("MSN customerID: " + msnCustomerID);
+			}
+			else
+			{
+				throw new MsnCloudException("Problems retrieving MsnCustomerID for AccountID [" + accountId + "]");
+			}
+			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, msnCustomerID);
 			
 			// delete existing geo targets
 			final DeleteTargetFromCampaignRequest deleteRequest = new DeleteTargetFromCampaignRequest(campaignId); 
