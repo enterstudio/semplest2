@@ -65,7 +65,6 @@ namespace Semplest.WebSite.Controllers
                         dbContext.SaveChanges();
 
                         // send email using smtp server
-                        if (model.EmailMe == true)
                             SendMail(model, semEmail);
                     }
                 }
@@ -124,7 +123,6 @@ namespace Semplest.WebSite.Controllers
                         dbContext.SaveChanges();
 
                         // send email using smtp server
-                        if (model.EmailMe == true)
                             SendMail(model, semEmail);
                     }
                 }
@@ -148,9 +146,11 @@ namespace Semplest.WebSite.Controllers
             string strSmtpHost = "172.18.9.36";
             int iSmtpPort =25;
 
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
             // get from config file
             // smtp host
-            string smtphostSetting = System.Configuration.ConfigurationManager.AppSettings["SmtpHost"];
+
+            string smtphostSetting = dbcontext.Configurations.Single().ServiceSMTP; 
             if (!String.IsNullOrEmpty(smtphostSetting))
                 strSmtpHost = smtphostSetting;
             // smtp port
@@ -161,7 +161,7 @@ namespace Semplest.WebSite.Controllers
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient(strSmtpHost, iSmtpPort);
 
-            mail.From = new MailAddress(model.email);
+            mail.From = new MailAddress("website@semplest.com");
             mail.To.Add(sEmail);
             mail.Subject = "Semplest Website Inquiry";
             StringBuilder sb = new StringBuilder();
@@ -171,6 +171,7 @@ namespace Semplest.WebSite.Controllers
                 sb.AppendLine("Phone: " + model.Phone);
             if (!String.IsNullOrEmpty(model.email))
                 sb.AppendLine("Email: " + model.email);
+            sb.AppendLine("Notes: " + model.notes);
 
             mail.Body = sb.ToString();
 
