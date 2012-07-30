@@ -588,13 +588,15 @@ public class AdengineServiceTest extends BaseDB{
 			//Verification
 			System.out.println("Verify result...");
 			
+			Double updatedBudget = 0d;
+			/*
 			//get the BudgetToAddToNextCycle from database
 			String sql = "SELECT P.BudgetToAddToNextCycle FROM Promotion P WHERE PromotionPK = ?";
-			Double updatedBudget = jdbcTemplate.queryForObject(sql, new Object[]
+			updatedBudget = jdbcTemplate.queryForObject(sql, new Object[]
 					{testData.semplestPromotionId}, Double.class);
 			
 			updatedBudget = updatedBudget + changeInBudget;
-			
+			*/
 			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");

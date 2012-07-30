@@ -2,8 +2,10 @@ package semplest.system.monitor;
 
 import java.util.Properties;
 
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -15,7 +17,7 @@ import semplest.system.monitor.MonitorObject.SERVICE;
 
 public class Notification {
 	
-	private static String emailFrom = "system@semplest.com";
+	private static String emailFrom = "devuser@semplest.com";
 	//private static String emailTo = "nan@semplest.com";
 	private static String emailTo = "development@semplest.com";
 	
@@ -33,13 +35,28 @@ public class Notification {
 	
 	private static void sendEmail(String subject, String from, String to, String msg)
 	{			
+		class GMailAuthenticator extends Authenticator {
+		     String user;
+		     String pw;
+		     public GMailAuthenticator (String username, String password)
+		     {
+		        super();
+		        this.user = username;
+		        this.pw = password;
+		     }
+		    public PasswordAuthentication getPasswordAuthentication()
+		    {
+		       return new PasswordAuthentication(user, pw);
+		    }
+		}
+		
 		String host = "smtp.gmail.com";
 	    String username = "devuser@semplest.com";
 	    String password = "devuser2012";
 	    Properties props = new Properties();
 	    props.put("mail.smtps.auth", "true");
 	    
-	    Session session = Session.getDefaultInstance(props);	
+	    Session session = Session.getInstance(props, new GMailAuthenticator(username, password));
 	    
 	    MimeMessage message = new MimeMessage(session);	   
 	    Transport t = null;

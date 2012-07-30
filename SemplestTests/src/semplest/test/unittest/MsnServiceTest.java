@@ -37,7 +37,6 @@ import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
-import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.service.SemplestConfiguration;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
@@ -270,7 +269,7 @@ public class MsnServiceTest {
 					errorHandler(new Exception(vMsg + "No account data returned."));
 				
 			}
-			catch(MsnCloudException e){
+			catch(Exception e){
 				errorHandler(e);
 			}			
 						
@@ -290,7 +289,7 @@ public class MsnServiceTest {
 				if(campaignId == 0L)
 					errorHandler(new Exception(vMsg + "No campaign ID returned."));
 			}
-			catch(MsnCloudException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
@@ -384,9 +383,6 @@ public class MsnServiceTest {
 				Campaign cp = test.getCampaignById(accountId, tmpId);
 				if(cp != null)
 					errorHandler(new Exception(vMsg + "Campaign is not deleted."));
-			}
-			catch(MsnCloudException e){
-				errorHandler(e);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1110,9 +1106,6 @@ public class MsnServiceTest {
 					errorHandler(new Exception(vMsg + "No TrafficEstimator data returned."));
 			}
 			catch(RemoteException e){
-				errorHandler(e);
-			}
-			catch(MsnCloudException e){
 				errorHandler(e);
 			}
 			catch(Exception e){

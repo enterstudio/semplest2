@@ -70,10 +70,10 @@ public class SystemTestFunc extends BaseDB{
 		
 		SystemTestDataModel.semplestPromotionName = "AdEng_" + System.currentTimeMillis();
 		sql = "INSERT INTO Promotion (ProductGroupFK,PromotionName,PromotionDescription,PromotionStartDate,PromotionEndDate," +
-				"LandingPageURL,DisplayURL,PromotionBudgetAmount,BudgetCycleFK,CycleStartDate,CycleEndDate,StartBudgetInCycle,RemainingBudgetInCycle,BudgetToAddToNextCycle," +
+				"LandingPageURL,DisplayURL,PromotionBudgetAmount,BudgetCycleFK,CycleStartDate,CycleEndDate,StartBudgetInCycle,RemainingBudgetInCycle," +
 				"IsPaused,IsCompleted,IsLaunched,CreatedDate,IsDeleted)" +
 				"VALUES (?, ?, '" + SystemTestDataModel.promotionDescription + "', CURRENT_TIMESTAMP, '2020-01-01', " +
-				"'http://www.semplest.com', 'www.semplest.com',100.00, 3, CURRENT_TIMESTAMP, '2020-01-01', 100.00, 100.00, 100.00, " +
+				"'http://www.semplest.com', 'www.semplest.com',100.00, 3, CURRENT_TIMESTAMP, '2020-01-01', 100.00, 100.00, " +
 				"0, 0, 1, CURRENT_TIMESTAMP, 0)";
 		jdbcTemplate.update(sql, new Object[]
 				{SystemTestDataModel.semplestProductGroupId, SystemTestDataModel.semplestPromotionName});
