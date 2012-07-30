@@ -1,0 +1,67 @@
+﻿@section Nav{
+                            <!--<a id="various1" href="#inline1" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>-->
+                            <a href ="/SemplestCore" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>
+                    	<ul class="flt_Rt">                   
+							<li>@Html.ActionLink("Home", "index", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("About", "SEMAbout", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("Team", "team", "Home", new { area = "" }, null)</li>
+                            <li class="last" style="padding-right: 9px;" ><a href="/contact" class="active" >Contact</a></li>
+				        </ul>	
+}
+@model SemplestModel.SEMCustomerDetail
+	    		<div id="bar">Contact</div>
+				<div class="space20">
+					<div class="rowCenter">		
+						<div class="contactBold">Yes, Please Contact Me</div>
+						@using (Html.BeginForm())
+      { 
+    @Html.ValidationSummary(true)
+				        <div class="row">
+							<div class="formLeft">First Name</div>	
+							<div class="formRight">
+                            @Html.TextBoxFor(model => model.FirstName, new { style = "width: 100%;" })
+                            @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "error" })
+                            </div>
+						</div>
+						<div class="row">
+							<div class="formLeft">Last Name</div>	
+							<div class="formRight">
+                            @Html.TextBoxFor(model => model.LastName, new { style = "width: 100%;" })
+                            @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "error" })
+                            </div>
+						</div>
+						<div class="row">
+							<div class="formLeft">Company</div>	
+							<div class="formRight"> 
+                            @Html.TextBoxFor(model => model.Company, new { style = "width: 100%;" })
+                            @Html.ValidationMessageFor(model => model.Company, null, new { @class = "error" })</div>
+						</div>
+						<div class="row">
+							<div class="formLeft">@Html.CheckBoxFor(m => m.CallMe, new { style = "padding-top: 2px;" })&nbsp;Call Me</div>	
+							<div class="formRight"> 
+                            @Html.TextBoxFor(model => model.Phone, new { style = "width: 100%;" })
+                            @Html.ValidationMessageFor(model => model.Phone, null, new { @class = "error" })
+                            </div>
+						</div>
+						<div class="row">
+							<div class="formLeft">@Html.CheckBoxFor(m => m.EmailMe, new { style = "padding-top: 2px;" })<!--style="padding-top: 2px;"-->&nbsp;Email Me</div>	
+							<div class="formRight">
+                            @Html.TextBoxFor(model => model.email, new { style = "width: 100%;" })
+                            @Html.ValidationMessageFor(model => model.email, null, new { @class = "error" })
+						</div>
+						<div class="row">
+							<div class="formLeft">Notes</div>	
+							<div class="formRight">@Html.TextBoxFor(model => model.notes, new { style = "width: 100%; height: 100px;" })</div>
+						</div>
+						<div class="row">
+							<div class="formLeft">&nbsp;</div>	
+							<div class="formRight">Your contact information will only be used to process your request for more information. Please see our Privacy Policy @Html.ActionLink("here", "PrivacyPolicy", "Home", new { area = "" }, null).</div>
+						</div>
+						<div class="row">
+							<div class="formLeft">&nbsp;</div>	
+							<div class="formRight" ><div class="centerItem"><input type="image" src="images/button_submit.gif"></div></div>
+						</div>
+					</div>	
+      }
+				</div>
+                </div>

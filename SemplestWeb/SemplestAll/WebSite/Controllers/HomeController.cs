@@ -24,6 +24,11 @@ namespace Semplest.WebSite.Controllers
         {
             return View();
         }
+
+        public ActionResult Team()
+        {
+            return View();
+        }
         public ActionResult OpenInvitation()
         {
             return View();
@@ -31,6 +36,51 @@ namespace Semplest.WebSite.Controllers
         public ActionResult ContactUs()
         {
             return View();
+        }
+
+        public ActionResult Contact()
+        { return View(); }
+
+        [HttpPost]
+        public ActionResult Contact(SEMCustomerDetail model)
+        {
+            if (ModelState.IsValid && !(model.CallMe == false && model.EmailMe == false))
+            {
+                try
+                {
+                    model.CreatedDate = DateTime.Now;
+                    using (var dbContext = new SemplestModel.Semplest())
+                    {
+                        string semEmail = dbContext.Configurations.Select(m => m.DefalutEmailContactMe).FirstOrDefault();
+
+                        if (model.EmailMe == false)
+                        {
+                            model.email = "";
+                        }
+                        else if (model.CallMe == false)
+                        {
+                            model.Phone = "";
+                        }
+                        dbContext.SEMCustomerDetails.Add(model);
+                        dbContext.SaveChanges();
+
+                        // send email using smtp server
+                        if (model.EmailMe == true)
+                            SendMail(model, semEmail);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    string errMsg = "Error: " + ex.Message + "\r\n" + ex.StackTrace;
+                    var errModel = new ErrorModel() { MsgToLog = errMsg, MsgToShow = "Error" };
+                    return View("ErrorPage", errModel);
+                }
+                return RedirectToAction("ThankYou");
+            }
+            else
+            {
+                return View(model);
+            }
         }
         public ActionResult ThankYou()
         {

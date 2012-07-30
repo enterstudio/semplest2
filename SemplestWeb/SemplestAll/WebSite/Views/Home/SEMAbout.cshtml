@@ -1,36 +1,32 @@
-﻿@{
-    ViewBag.Title = "Home";
+﻿@section Nav{
+                            <!--<a id="various1" href="#inline1" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>-->
+                            <a href ="/SemplestCore" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>
+                    	<ul class="flt_Rt">                   
+							<li>@Html.ActionLink("Home", "index", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("About", "SEMAbout", "Home", new { area = "" }, new { @class = "active" })</li>
+                            <li>@Html.ActionLink("Team", "team", "Home", new { area = "" }, null)</li>
+                            <li class="last" style="padding-right: 9px;" ><a href="/contact" >Contact</a></li>
+				        </ul>	
 }
-<h2>
-    Why We Launched This SEM Company</h2>
-<center>
-    <p>
-        Conceived by a marketer in 2009 with a need to generate traffic to 18,000 local
-        retailers, we recognized the need for a tool that eliminates the fear of SEM, 
-        frees up resources by automating the process, and eliminates tedious entry requirements 
-        by simultaneously launching ad campaigns on Google, Bing and Yahoo! </p>
+					
 
-        <p> Our automated tool dramatically reduces overhead costs associated with data entry, keyword selection & management,
-        and bid optimization. </p>
-        
-         <p>There are no hidden costs, fees or other unwelcomed surprises.
-            We deliver results effectively and efficiently.  Let us show you @Html.ActionLink("how", "ContactUs", "Home", new { area = "" }, null).
-        </p>
-</center>
-<style>
-    h2
-    {
-        color: #8ebc00;
-        font-size: 26px;
-        line-height: 1.5em;
-        font-family: arial;
-    }
-    p
-    {
-        width: 950px;
-        text-align: center;
-        font-size: 15px;
-        line-height: 1.5em;
-        font-family: arial;
-    }
-</style>
+    		<!-- SET: MAIN CONTENT -->
+	    		<div id="bar">About</div>
+				<div class="space20about">				
+					<div class="row">
+						<div class="aboutCol">							
+				            <div class="aboutpad">
+				            	SEMplest was conceived in 2009 by a marketer with a need to generate traffic to 18,000 local retailers. He recognized the need for a tool that eliminates the fear of SEM, frees up resources by automating the process and eliminates tedious entry requirements by simultaneously launching ad campaigns on Google, Bing and Yahoo.
+								<div class="row20">SEMplest's automated tool dramatically reduces overhead costs associated with data entry, keyword selection and management, and bid optimization.</div>
+								<div class="row20">There are no hidden costs, fees or other unwelcome surprises. We deliver results effectively and efficiently. </div>
+							</div>				            
+				            <div class="row20"><a href="/contact"><img src="images/button_letusshow.jpg" border="0" alt="Let us show you how"></a></div>
+						</div>
+						<div class="aboutRight">
+							<img src="images/about_rocket.jpg" border="0" alt="Your campaign on Google, Bing and yahoo!">
+						</div>
+					</div>				
+				</div>					
+				<img class="shuffle" src="" alt="">				
+				<div class="row20"></div>
+    		<!-- END: MAIN CONTENT -->

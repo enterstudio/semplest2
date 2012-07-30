@@ -1,15 +1,13 @@
 ﻿@model SharedResources.Models.StaticModel
-@{
-    ViewBag.Title = "PrivacyPolicy";
+           @section Nav{
+                            <!--<a id="various1" href="#inline1" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>-->
+                            <a href ="/SemplestCore" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>
+                    	<ul class="flt_Rt">                   
+							<li>@Html.ActionLink("Home", "index", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("About", "SEMAbout", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("Team", "team", "Home", new { area = "" }, null)</li>
+                            <li class="last" style="padding-right: 9px;" ><a href="/contact" >Contact</a></li>
+				        </ul>	
 }
-<div id="exampleTitleHeader" style="text-align: left; margin-left: 10px; margin-right: 10px;
-    margin-top: -100px;">
-    <p id="exampleTitle">
-       Privacy Policy
-    </p>
-</div>
-<div id="privacyPolicy" style="text-align: left; margin-left: 10px; margin-right: 10px;
-    margin-top: 10px;">
     @Html.Raw(Model.Text)
-</div>
 
