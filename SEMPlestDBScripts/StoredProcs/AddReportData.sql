@@ -32,8 +32,7 @@ CREATE PROCEDURE dbo.AddReportData
 AS
 BEGIN TRY
 	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250), @keywordBidPK int,  @BidTypeID int, 
-			@AdEngineID int
+	DECLARE @ErrMsg VARCHAR(250),  @BidTypeID int, @AdEngineID int, @keywordPK int
 	-- make sure keyword is in promotion
 	if not exists (select * from PromotionKeywordAssociation pka inner join Keyword k on k.KeywordPK = pka.KeywordFK
 					where k.Keyword = @Keyword and pka.PromotionFK = @PromotionID)
@@ -44,23 +43,19 @@ BEGIN TRY
 	set @ID = 0
 	select @BidTypeID = bt.BidTypePK from BidType bt where bt.BidType = @BidType 
 	select @AdEngineID = ae.AdvertisingEnginePK from AdvertisingEngine ae where ae.AdvertisingEngine = @AdvertisingEngine		
-	--check to see if the KeywordBid Exists for the MatchType
-	select @keywordBidPK = kb.KeywordBidPK from PromotionKeywordAssociation pka
-		inner join Keyword k on k.KeywordPK = pka.KeywordFK
-		inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK
-		where kb.PromotionFK = @PromotionID and kb.AdvertisingEngineFK = @AdEngineID and k.Keyword = @Keyword and kb.BidTypeFK = @BidTypeID
-		
-	if (@keywordBidPK is null)
+	select @keywordPK = k.KeywordPK from Keyword k where k.Keyword = @Keyword
+	if (@BidTypeID is null or @AdEngineID is null or @keywordPK is null)
 	BEGIN
-		SELECT @ErrMsg = 'The Selected keyword has not been bid on for the Promotion'; 
+		SELECT @ErrMsg = 'The Bid Type, AdEngine or keyword Not found'; 
 		RAISERROR (@ErrMsg, 16, 1);
-	END;	
+	END;
 	--ADD ONLY IF THE TRANSACTION DOES NOT EXIST
-	if not exists (select * from AdvertisingEngineReportData aerd where aerd.KeywordBidFK = @keywordBidPK and aerd.TransactionDate = @TransactionDate)
+	if not exists (select * from AdvertisingEngineReportData aerd where aerd.PromotionFK = @PromotionID and aerd.KeywordFK = @keywordPK 
+		and aerd.BidTypeFK =  @BidTypeID and aerd.TransactionDate = @TransactionDate)
 	BEGIN
-		insert into AdvertisingEngineReportData(KeywordBidFK, TransactionDate, MicroBidAmount, NumberImpressions, NumberClick, 
+		insert into AdvertisingEngineReportData(PromotionFK, KeywordFK,AdvertisingEngineFK, TransactionDate, MicroBidAmount, NumberImpressions, NumberClick, 
 			AveragePosition, AverageCPC, BidTypeFK, QualityScore,ApprovalStatus, FirstPageMicroCPC, MicroCost, CreatedDate)
-			VALUES (@keywordBidPK, @TransactionDate, @MicroBidAmount,@NumberImpressions, @NumberClick, @AveragePosition, @AverageCPC, @BidTypeID, @QualityScore, @ApprovalStatus,
+			VALUES (@PromotionID,@keywordPK,@AdEngineID, @TransactionDate, @MicroBidAmount,@NumberImpressions, @NumberClick, @AveragePosition, @AverageCPC, @BidTypeID, @QualityScore, @ApprovalStatus,
 			@FirstPageMicroCpc,@MicroCost,CURRENT_TIMESTAMP)
 		set @ID = @@IDENTITY		
 	END
@@ -68,9 +63,16 @@ BEGIN TRY
 	BEGIN
 		update AdvertisingEngineReportData
 		set MicroBidAmount = @MicroBidAmount, NumberImpressions = @NumberImpressions, NumberClick = @NumberClick, 
-			AveragePosition = @AveragePosition, AverageCPC = @AverageCPC, BidTypeFK = @BidTypeID, QualityScore = @QualityScore,ApprovalStatus = @ApprovalStatus, 
+			AveragePosition = @AveragePosition, AverageCPC = @AverageCPC, QualityScore = @QualityScore,ApprovalStatus = @ApprovalStatus, 
 			FirstPageMicroCPC = @FirstPageMicroCpc, MicroCost = @MicroCost
-		from AdvertisingEngineReportData aerd where aerd.KeywordBidFK = @keywordBidPK and aerd.TransactionDate = @TransactionDate
+		from AdvertisingEngineReportData aerd 
+		where aerd.PromotionFK = @PromotionID and aerd.KeywordFK = @keywordPK 
+			and aerd.BidTypeFK =  @BidTypeID and aerd.AdvertisingEngineFK = @AdEngineID and aerd.TransactionDate = @TransactionDate
+		
+		select @ID = aerd.AdvertisingEngineBidDataPK from AdvertisingEngineReportData aerd 
+		where aerd.PromotionFK = @PromotionID and aerd.KeywordFK = @keywordPK 
+			and aerd.BidTypeFK =  @BidTypeID and aerd.AdvertisingEngineFK = @AdEngineID and aerd.TransactionDate = @TransactionDate	
+			
 	END
 END TRY
 BEGIN CATCH

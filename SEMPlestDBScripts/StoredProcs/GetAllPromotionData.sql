@@ -27,7 +27,7 @@ BEGIN TRY
 	--get general info
 	select p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL,p.DisplayURL,
 		p.PromotionBudgetAmount,p.PromotionStartDate, p.PromotionEndDate,bc.BudgetCycle,
-		p.BudgetToAddToNextCycle,p.CycleStartDate,
+		p.CycleStartDate,
 		p.RemainingBudgetInCycle,p.StartBudgetInCycle,
 		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate, aep.AdvertisingEngineCampaignPK, aep.AdvertisingEngineAdGroupID , aea.AdvertisingEngineAccountPK,aea.AdvertisingEngineAccountNumber, ae.AdvertisingEngine
 

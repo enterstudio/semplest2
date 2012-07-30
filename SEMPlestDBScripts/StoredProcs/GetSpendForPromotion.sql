@@ -21,7 +21,9 @@ CREATE PROCEDURE dbo.GetSpendForPromotion
 AS
 BEGIN TRY
 	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250)
+	DECLARE @ErrMsg VARCHAR(250), @AdEngineID int
+	
+	set @AdEngineID = null
 
 	--validate data
 	IF NOT EXISTS (select * from Promotion p where p.PromotionPK =@PromotionPK)
@@ -29,16 +31,29 @@ BEGIN TRY
 		SELECT @ErrMsg = 'The Promotion was not found.'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
+	if (@AdvertisingEngine is not null)
+	BEGIN
+		if exists (select * from AdvertisingEngine ae where ae.AdvertisingEngine = @AdvertisingEngine)
+		BEGIN
+			select @AdEngineID = ae.AdvertisingEnginePK from AdvertisingEngine ae where ae.AdvertisingEngine = @AdvertisingEngine
+		END
+		ELSE
+		BEGIN
+			SELECT @ErrMsg = 'The AdEngine ' + @AdvertisingEngine + ' was not found.'; 
+			RAISERROR (@ErrMsg, 16, 1);
+		END	
+	END
+			
+
 	Declare @costTable Table(KeywordFK int, Cost Bigint);
 	--get general info
 	insert into @costTable(KeywordFK, Cost)
-	select kb.KeywordFK, Sum(aerd.MicroCost) [TotalMicroSpent] from KeywordBid kb 
-	inner join AdvertisingEngineReportData aerd on aerd.KeywordBidFK = kb.KeywordBidPK
-	inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
-	where kb.PromotionFK = @PromotionPK and ae.AdvertisingEngine = @AdvertisingEngine
-	and aerd.TransactionDate >= @StartDate and (@EndDate is null or aerd.TransactionDate <= @EndDate)
-	group by kb.KeywordFK	
-	having Sum(aerd.MicroCost) > 0
+	select aerd.KeywordFK, Sum(aerd.MicroCost) [TotalMicroSpent] from 
+		AdvertisingEngineReportData aerd
+		where aerd.PromotionFK = @PromotionPK and (@AdEngineID is null or aerd.AdvertisingEngineFK = @AdEngineID)
+			and aerd.TransactionDate >= @StartDate and (@EndDate is null or aerd.TransactionDate <= @EndDate)
+		group by aerd.KeywordFK	
+		having Sum(aerd.MicroCost) > 0
 	
 	select @Cost = SUM(cost) from @costTable
 	

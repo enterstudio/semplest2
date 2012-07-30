@@ -28,13 +28,11 @@ BEGIN TRY
 		SELECT @ErrMsg = 'The Promotion was not found.'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
-	Declare @ReportDataTable Table(KeywordBidFK int, TransactionDate datetime2, MicroCost bigint)
+	Declare @ReportDataTable Table(TransactionDate datetime2, MicroCost bigint)
 	--Table of transactions not yet applied to promotion from all AdEngines
-	insert into @ReportDataTable(KeywordBidFK,TransactionDate,MicroCost)
-	select aerd.KeywordBidFK, aerd.TransactionDate, aerd.MicroCost from KeywordBid kb 
-		inner join AdvertisingEngineReportData aerd on aerd.KeywordBidFK = kb.KeywordBidPK
-		inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
-		where kb.PromotionFK = @PromotionPK
+	insert into @ReportDataTable(TransactionDate,MicroCost)
+	select aerd.TransactionDate, aerd.MicroCost from AdvertisingEngineReportData aerd
+		where aerd.PromotionFK = @PromotionPK
 		and aerd.TransactionDate >= @StartDate and aerd.TransactionDate <= @EndDate and aerd.MicroCost > 0 and aerd.CostAppliedToPromotionDate is null
 		
 	--Total cost update a given Date
@@ -54,7 +52,7 @@ BEGIN TRY
 	
 	 update AdvertisingEngineReportData set CostAppliedToPromotionDate = CURRENT_TIMESTAMP
 	 from AdvertisingEngineReportData aerd
-	 inner join @ReportDataTable rd on rd.KeywordBidFK = aerd.KeywordBidFK and rd.TransactionDate = aerd.TransactionDate
+	 inner join @ReportDataTable rd on aerd.PromotionFK = @PromotionPK and rd.TransactionDate = aerd.TransactionDate
 	
 	COMMIT TRANSACTION
 	
