@@ -108,6 +108,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static String RunMode = null;
 	private static Double BudgetMultFactor = null;
 	private static String AdengineExecuteBidProcessFrequency = null;
+	private static Integer SemplestAdEngineReportLookbackDays;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 	// CustomerID = 2 State Farm coffee machine promotionID = 4
@@ -249,6 +250,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		DevelopmentEmail = (String) SemplestConfiguration.configData.get("DevelopmentEmail");
 		RunMode = (String) SemplestConfiguration.configData.get("RunMode");
+		SemplestAdEngineReportLookbackDays = (Integer) SemplestConfiguration.configData.get("SemplestAdEngineReportLookbackDays");
 		AdengineExecuteBidProcessFrequency = (String) SemplestConfiguration.configData.get("AdengineExecuteBidProcessFrequency");
 		if (!ProtocolEnum.ScheduleFrequency.existsFrequency(AdengineExecuteBidProcessFrequency))
 		{
@@ -1088,11 +1090,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Map<AdEngine, AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(PromotionID);
 		final java.util.Date now = new Date();
 		cal.setTime(now);
-		cal.add(Calendar.DAY_OF_MONTH, -5);
-		final java.util.Date fiveDaysBefore = cal.getTime();
-		final String reportStartDate = YYYYMMDD.format(fiveDaysBefore);
+		cal.add(Calendar.DAY_OF_MONTH, -SemplestAdEngineReportLookbackDays);
+		final java.util.Date daysBefore = cal.getTime();
+		final String reportStartDate = YYYYMMDD.format(daysBefore);
 		final String reportEndDate = YYYYMMDD.format(now);
-		emailContent.append("Start Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(fiveDaysBefore)).append("\n")
+		emailContent.append("Start Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(daysBefore)).append("\n")
         		    .append("End Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(now)).append("\n\n");
 		try
 		{
@@ -1169,7 +1171,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					try
 					{
 						final DateTime todayJodaTime = new DateTime(now.getTime());
-						final DateTime todayJodaTimeMinus5Days = new DateTime(fiveDaysBefore.getTime());
+						final DateTime todayJodaTimeMinus5Days = new DateTime(daysBefore.getTime());
 						final ReportObject[] reportData = msn.getKeywordReport(accountId, campaignID, todayJodaTimeMinus5Days, todayJodaTime);
 						logger.info("Will try to get Bid Performance Report from MSN using AccountID [" + accountId + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");						
 						logger.info("Got MSN report of size " + (reportData == null ? 0 : reportData.length));

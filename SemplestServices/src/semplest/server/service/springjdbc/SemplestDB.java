@@ -1114,38 +1114,27 @@ public class SemplestDB extends BaseDB
 	public static List<ReportObject> getReportData(int promotionID, AdEngine adEngine, java.util.Date startDate, java.util.Date endDate)
 			throws Exception
 	{
-		String strSQL = null;
+		String strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, " +
+				"bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost " +
+				"from AdvertisingEngineReportData aerd " + 
+				"inner join Keyword k on k.KeywordPK = aerd.KeywordFK  " +
+				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aerd.AdvertisingEngineFK  " +
+				"inner join Promotion p on p.PromotionPK = aerd.PromotionFK  " +
+				"inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK " +
+				"inner join BidType bt on bt.BidTypePK = aerd.BidTypeFK ";
 		try
 		{
 			java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
 			if (endDate == null)
 			{
-				strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
-						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost, kb.KeywordAdEngineID [keywordID]  "
-						+ "from AdvertisingEngineReportData aerd "
-						+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
-						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
-						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-						+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK "
-						+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
-						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
-						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.TransactionDate >= ?";
+				strSQL = strSQL + "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.TransactionDate >= ?";
 				return jdbcTemplate.query(strSQL, new Object[]
 				{ promotionID, adEngine.name(), startDateSQL }, reportObjectjMapper);
 			}
 			else
 			{
 				java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
-				strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
-						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost, kb.KeywordAdEngineID [keywordID]  "
-						+ "from AdvertisingEngineReportData aerd "
-						+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
-						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
-						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-						+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK "
-						+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
-						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
-						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.TransactionDate >= ? and aerd.TransactionDate <= ?";
+				strSQL = strSQL + "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.TransactionDate >= ? and aerd.TransactionDate <= ?";
 				return jdbcTemplate.query(strSQL, new Object[]
 				{ promotionID, adEngine.name(), startDateSQL, endDateSQL }, reportObjectjMapper);
 			}

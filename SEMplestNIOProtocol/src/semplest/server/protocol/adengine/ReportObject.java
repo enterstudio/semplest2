@@ -18,6 +18,10 @@ CREATE TABLE [dbo].[AdvertisingEngineBidData](
 public class ReportObject implements Serializable
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -978406788879282975L;
 	private Long accountID;
 	private Long campaignID;
 	private String Keyword;
@@ -34,7 +38,7 @@ public class ReportObject implements Serializable
 	private Date createdDate;
 	private Long microCost;
 	private Long adGroupID;
-	private Long keywordID;
+	//private Long keywordID;
 	
 	// added for search query report
 	private String searchTerm;
@@ -175,12 +179,15 @@ public class ReportObject implements Serializable
 	public void setAdGroupID(Long adGroupID) {
 		this.adGroupID = adGroupID;
 	}
+
+	/*
 	public Long getKeywordID() {
 		return keywordID;
 	}
 	public void setKeywordID(Long keywordID) {
 		this.keywordID = keywordID;
 	}
+	*/
 	@Override
 	public int hashCode()
 	{
@@ -196,7 +203,7 @@ public class ReportObject implements Serializable
 		result = prime * result + ((campaignID == null) ? 0 : campaignID.hashCode());
 		result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
 		result = prime * result + ((firstPageCPC == null) ? 0 : firstPageCPC.hashCode());
-		result = prime * result + ((keywordID == null) ? 0 : keywordID.hashCode());
+		//result = prime * result + ((keywordID == null) ? 0 : keywordID.hashCode());
 		result = prime * result + ((microBidAmount == null) ? 0 : microBidAmount.hashCode());
 		result = prime * result + ((microCost == null) ? 0 : microCost.hashCode());
 		result = prime * result + ((numberClick == null) ? 0 : numberClick.hashCode());
@@ -286,6 +293,7 @@ public class ReportObject implements Serializable
 		}
 		else if (!firstPageCPC.equals(other.firstPageCPC))
 			return false;
+		/*
 		if (keywordID == null)
 		{
 			if (other.keywordID != null)
@@ -293,6 +301,7 @@ public class ReportObject implements Serializable
 		}
 		else if (!keywordID.equals(other.keywordID))
 			return false;
+			*/
 		if (microBidAmount == null)
 		{
 			if (other.microBidAmount != null)
@@ -349,7 +358,7 @@ public class ReportObject implements Serializable
 	{
 		return "ReportObject [accountID=" + accountID + ", campaignID=" + campaignID + ", Keyword=" + Keyword + ", transactionDate=" + transactionDate + ", microBidAmount=" + microBidAmount + ", BidMatchType=" + BidMatchType + ", numberImpressions=" + numberImpressions + ", numberClick="
 				+ numberClick + ", averagePosition=" + averagePosition + ", averageCPC=" + averageCPC + ", qualityScore=" + qualityScore + ", approvalStatus=" + approvalStatus + ", firstPageCPC=" + firstPageCPC + ", createdDate=" + createdDate + ", microCost=" + microCost + ", adGroupID="
-				+ adGroupID + ", keywordID=" + keywordID + ", searchTerm=" + searchTerm + "]";
+				+ adGroupID + /*", keywordID=" + keywordID  + */", searchTerm=" + searchTerm + "]";
 	}
 
 	

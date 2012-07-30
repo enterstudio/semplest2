@@ -205,7 +205,7 @@ public class GoogleReportDownloader
 					rdata.setFirstPageCPC(Long.valueOf(data[13]));
 					rdata.setMicroCost(Long.valueOf(data[7]));
 					rdata.setAdGroupID(Long.valueOf(data[1]));
-					rdata.setKeywordID(Long.valueOf(data[2]));
+					//rdata.setKeywordID(Long.valueOf(data[2]));
 
 
 					//yyyy-mm-dd
