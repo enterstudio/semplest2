@@ -45,8 +45,6 @@ namespace SemplestModel
         public Nullable<System.DateTime> CycleEndDate { get; set; }
         public Nullable<decimal> StartBudgetInCycle { get; set; }
         public Nullable<decimal> RemainingBudgetInCycle { get; set; }
-        public Nullable<decimal> BudgetToAddToNextCycle { get; set; }
-        public Nullable<System.DateTime> BudgetToAddDate { get; set; }
         public bool IsPaused { get; set; }
         public bool IsCompleted { get; set; }
         public bool IsLaunched { get; set; }

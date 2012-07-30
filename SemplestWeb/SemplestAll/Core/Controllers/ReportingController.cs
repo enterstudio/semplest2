@@ -76,7 +76,6 @@ namespace Semplest.Core.Controllers
                 SearchCTR = v.Sum(t => t.NumberClick / t.NumberImpressions),
                 CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
                 AveragePosition = v.Average(t => t.AveragePosition),
-                IsActive = v.FirstOrDefault().IsActive ? "Live" : "Paused"
             }).ToList();
             return Json(reports, JsonRequestBehavior.AllowGet);
         }
@@ -97,7 +96,6 @@ namespace Semplest.Core.Controllers
                 SearchCTR = v.Sum(t => t.NumberClick / t.NumberImpressions),
                 CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
                 AveragePosition = v.Average(t => t.AveragePosition),
-                IsActive = v.FirstOrDefault().IsActive ? "Live" : "Paused"
             }).ToList();
             return Json(reports, JsonRequestBehavior.AllowGet);
         }

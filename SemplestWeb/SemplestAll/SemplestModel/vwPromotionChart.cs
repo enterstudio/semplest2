@@ -24,5 +24,7 @@ namespace SemplestModel
         public Nullable<decimal> AverageCPC { get; set; }
         public int AdvertisingEngineBidDataPK { get; set; }
         public int UserPK { get; set; }
+        public int PromotionFK { get; set; }
+        public int AdvertisingEngineFK { get; set; }
     }
 }
