@@ -15,7 +15,6 @@ namespace SemplestModel
     public partial class AdvertisingEngineReportData
     {
         public int AdvertisingEngineBidDataPK { get; set; }
-        public int KeywordBidFK { get; set; }
         public System.DateTime TransactionDate { get; set; }
         public int MicroBidAmount { get; set; }
         public int NumberImpressions { get; set; }
@@ -29,8 +28,13 @@ namespace SemplestModel
         public Nullable<int> MicroCost { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> CostAppliedToPromotionDate { get; set; }
+        public int KeywordFK { get; set; }
+        public int PromotionFK { get; set; }
+        public int AdvertisingEngineFK { get; set; }
     
+        public virtual AdvertisingEngine AdvertisingEngine { get; set; }
         public virtual BidType BidType { get; set; }
-        public virtual KeywordBid KeywordBid { get; set; }
+        public virtual Keyword Keyword { get; set; }
+        public virtual Promotion Promotion { get; set; }
     }
 }

@@ -12,18 +12,14 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class SEMCustomerDetail
+    public partial class KeywordInitialBidData
     {
-        public int SEMCustomerDetailsPK { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Company { get; set; }
-        public string Phone { get; set; }
-        public string email { get; set; }
-        public bool CallMe { get; set; }
-        public bool EmailMe { get; set; }
+        public int KeywordInitialBidDataPK { get; set; }
+        public Nullable<int> QualityScore { get; set; }
+        public string ApprovalStatus { get; set; }
+        public Nullable<int> FirstPageMicroCPC { get; set; }
+        public bool IsEligibleForShowing { get; set; }
         public System.DateTime CreatedDate { get; set; }
-        public Nullable<System.DateTime> EditedDate { get; set; }
-        public string notes { get; set; }
+        public Nullable<int> KeywordBidFK { get; set; }
     }
 }

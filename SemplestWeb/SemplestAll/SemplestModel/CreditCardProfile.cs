@@ -21,15 +21,15 @@ namespace SemplestModel
         }
     
         public int CreditCardProfilePK { get; set; }
-        public int CustomerFK { get; set; }
         public string CustomerRefNum { get; set; }
         public string AuthCode { get; set; }
         public string TxRefNum { get; set; }
         public Nullable<int> PromotionFK { get; set; }
+        public Nullable<int> CustomerFK { get; set; }
     
         public virtual ICollection<CreditCardTransaction> CreditCardTransactions { get; set; }
         public virtual Customer Customer { get; set; }
-        public virtual ICollection<CreditCardNickName> CreditCardNickNames { get; set; }
         public virtual Promotion Promotion { get; set; }
+        public virtual ICollection<CreditCardNickName> CreditCardNickNames { get; set; }
     }
 }

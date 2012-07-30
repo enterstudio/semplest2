@@ -17,18 +17,19 @@ namespace SemplestModel
         public Promotion()
         {
             this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
+            this.AdvertisingEngineReportDatas = new HashSet<AdvertisingEngineReportData>();
+            this.CreditCardProfiles = new HashSet<CreditCardProfile>();
             this.GeoTargetings = new HashSet<GeoTargeting>();
             this.KeywordCategories = new HashSet<KeywordCategory>();
             this.PromotionAdEngineSelecteds = new HashSet<PromotionAdEngineSelected>();
             this.PromotionAdengineStatus = new HashSet<PromotionAdengineStatu>();
             this.PromotionAds = new HashSet<PromotionAd>();
+            this.PromotionBiddings = new HashSet<PromotionBidding>();
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
             this.PromotionPayments = new HashSet<PromotionPayment>();
             this.Schedules = new HashSet<Schedule>();
             this.SiteLinks = new HashSet<SiteLink>();
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
-            this.PromotionBiddings = new HashSet<PromotionBidding>();
-            this.CreditCardProfiles = new HashSet<CreditCardProfile>();
         }
     
         public int PromotionPK { get; set; }
@@ -56,19 +57,20 @@ namespace SemplestModel
         public string DisplayURL { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
+        public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
         public virtual BudgetCycle BudgetCycle { get; set; }
+        public virtual ICollection<CreditCardProfile> CreditCardProfiles { get; set; }
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
         public virtual ICollection<KeywordCategory> KeywordCategories { get; set; }
         public virtual ProductGroup ProductGroup { get; set; }
         public virtual ICollection<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
         public virtual ICollection<PromotionAdengineStatu> PromotionAdengineStatus { get; set; }
         public virtual ICollection<PromotionAd> PromotionAds { get; set; }
+        public virtual ICollection<PromotionBidding> PromotionBiddings { get; set; }
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
         public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<SiteLink> SiteLinks { get; set; }
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
-        public virtual ICollection<PromotionBidding> PromotionBiddings { get; set; }
-        public virtual ICollection<CreditCardProfile> CreditCardProfiles { get; set; }
     }
 }

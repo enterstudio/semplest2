@@ -16,6 +16,7 @@ namespace SemplestModel
     {
         public Keyword()
         {
+            this.AdvertisingEngineReportDatas = new HashSet<AdvertisingEngineReportData>();
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
         }
     
@@ -24,6 +25,7 @@ namespace SemplestModel
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
     
+        public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
     }
 }

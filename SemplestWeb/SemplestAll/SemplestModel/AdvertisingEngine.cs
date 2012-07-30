@@ -18,11 +18,12 @@ namespace SemplestModel
         {
             this.AdvertisingEngineAccounts = new HashSet<AdvertisingEngineAccount>();
             this.AdvertisingEngineAds = new HashSet<AdvertisingEngineAd>();
+            this.AdvertisingEngineReportDatas = new HashSet<AdvertisingEngineReportData>();
             this.KeywordBids = new HashSet<KeywordBid>();
             this.PromotionAdEngineSelecteds = new HashSet<PromotionAdEngineSelected>();
             this.PromotionAdengineStatus = new HashSet<PromotionAdengineStatu>();
-            this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
             this.PromotionBiddings = new HashSet<PromotionBidding>();
+            this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
         }
     
         public int AdvertisingEnginePK { get; set; }
@@ -31,10 +32,11 @@ namespace SemplestModel
     
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
         public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
+        public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
         public virtual ICollection<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
         public virtual ICollection<PromotionAdengineStatu> PromotionAdengineStatus { get; set; }
-        public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
         public virtual ICollection<PromotionBidding> PromotionBiddings { get; set; }
+        public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
     }
 }

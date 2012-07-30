@@ -135,5 +135,6 @@ namespace SemplestModel
         public string AdengineExecuteBidProcessFrequency { get; set; }
         public Nullable<double> BiddingServiceBidMultiplierForGoogleFromMSNHistory { get; set; }
         public Nullable<int> BiddingServiceGoogleVolMultiplierFromMSNHistory { get; set; }
+        public Nullable<int> SemplestAdEngineReportLookbackDays { get; set; }
     }
 }

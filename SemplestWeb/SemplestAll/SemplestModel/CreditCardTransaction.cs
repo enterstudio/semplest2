@@ -28,7 +28,7 @@ namespace SemplestModel
         public decimal MediaSpend { get; set; }
         public bool IsRefund { get; set; }
     
-        public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
         public virtual CreditCardProfile CreditCardProfile { get; set; }
+        public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
     }
 }

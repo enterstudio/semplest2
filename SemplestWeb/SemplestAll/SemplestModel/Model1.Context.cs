@@ -37,7 +37,10 @@ namespace SemplestModel
         public DbSet<BidType> BidTypes { get; set; }
         public DbSet<BillType> BillTypes { get; set; }
         public DbSet<BudgetCycle> BudgetCycles { get; set; }
+        public DbSet<Configuration> Configurations { get; set; }
         public DbSet<Credential> Credentials { get; set; }
+        public DbSet<CreditCardNickName> CreditCardNickNames { get; set; }
+        public DbSet<CreditCardProfile> CreditCardProfiles { get; set; }
         public DbSet<CreditCardTransaction> CreditCardTransactions { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
@@ -55,10 +58,12 @@ namespace SemplestModel
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<GeoTargeting> GeoTargetings { get; set; }
         public DbSet<HelpDefinition> HelpDefinitions { get; set; }
+        public DbSet<InvoiceTransaction> InvoiceTransactions { get; set; }
         public DbSet<Keyword> Keywords { get; set; }
         public DbSet<KeywordBid> KeywordBids { get; set; }
         public DbSet<KeywordBidData> KeywordBidDatas { get; set; }
         public DbSet<KeywordCategory> KeywordCategories { get; set; }
+        public DbSet<KeywordInitialBidData> KeywordInitialBidDatas { get; set; }
         public DbSet<Phone> Phones { get; set; }
         public DbSet<PhoneType> PhoneTypes { get; set; }
         public DbSet<ProductGroup> ProductGroups { get; set; }
@@ -67,6 +72,7 @@ namespace SemplestModel
         public DbSet<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
         public DbSet<PromotionAdengineStatu> PromotionAdengineStatus { get; set; }
         public DbSet<PromotionAd> PromotionAds { get; set; }
+        public DbSet<PromotionBidding> PromotionBiddings { get; set; }
         public DbSet<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
         public DbSet<PromotionPayment> PromotionPayments { get; set; }
         public DbSet<PromotionStatu> PromotionStatus { get; set; }
@@ -78,6 +84,7 @@ namespace SemplestModel
         public DbSet<ScheduleLog> ScheduleLogs { get; set; }
         public DbSet<ScheduleTaskAssociation> ScheduleTaskAssociations { get; set; }
         public DbSet<SEMCustomerDetail> SEMCustomerDetails { get; set; }
+        public DbSet<SemplestBidType> SemplestBidTypes { get; set; }
         public DbSet<SiteLink> SiteLinks { get; set; }
         public DbSet<StateCode> StateCodes { get; set; }
         public DbSet<sysdiagram> sysdiagrams { get; set; }
@@ -89,18 +96,12 @@ namespace SemplestModel
         public DbSet<User> Users { get; set; }
         public DbSet<WebContent> WebContents { get; set; }
         public DbSet<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps { get; set; }
+        public DbSet<WebsiteWebContent> WebsiteWebContents { get; set; }
+        public DbSet<SchedulerView> SchedulerViews { get; set; }
         public DbSet<vwCreditCardTransactionDetail> vwCreditCardTransactionDetails { get; set; }
         public DbSet<vwGetLivePromotionsForUser> vwGetLivePromotionsForUsers { get; set; }
         public DbSet<vwProductPromotion> vwProductPromotions { get; set; }
         public DbSet<vwPromotionChart> vwPromotionCharts { get; set; }
-        public DbSet<WebsiteWebContent> WebsiteWebContents { get; set; }
-        public DbSet<CreditCardNickName> CreditCardNickNames { get; set; }
-        public DbSet<InvoiceTransaction> InvoiceTransactions { get; set; }
-        public DbSet<PromotionBidding> PromotionBiddings { get; set; }
-        public DbSet<SemplestBidType> SemplestBidTypes { get; set; }
-        public DbSet<CreditCardProfile> CreditCardProfiles { get; set; }
-        public DbSet<Configuration> Configurations { get; set; }
-        public DbSet<SchedulerView> SchedulerViews { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {
@@ -113,10 +114,8 @@ namespace SemplestModel
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_GetRigtsRolesInteraction_Result>("sp_GetRigtsRolesInteraction", roleIdParameter);
         }
     
-        public virtual ObjectResult<vwPromotionChart> GetMondayChart(Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate)
+        public virtual int GetMondayChart(Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate)
         {
-            ((IObjectContextAdapter)this).ObjectContext.MetadataWorkspace.LoadFromAssembly(typeof(vwPromotionChart).Assembly);
-    
             var startDateParameter = startDate.HasValue ?
                 new ObjectParameter("StartDate", startDate) :
                 new ObjectParameter("StartDate", typeof(System.DateTime));
@@ -125,22 +124,7 @@ namespace SemplestModel
                 new ObjectParameter("EndDate", endDate) :
                 new ObjectParameter("EndDate", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<vwPromotionChart>("GetMondayChart", startDateParameter, endDateParameter);
-        }
-    
-        public virtual ObjectResult<vwPromotionChart> GetMondayChart(Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate, MergeOption mergeOption)
-        {
-            ((IObjectContextAdapter)this).ObjectContext.MetadataWorkspace.LoadFromAssembly(typeof(vwPromotionChart).Assembly);
-    
-            var startDateParameter = startDate.HasValue ?
-                new ObjectParameter("StartDate", startDate) :
-                new ObjectParameter("StartDate", typeof(System.DateTime));
-    
-            var endDateParameter = endDate.HasValue ?
-                new ObjectParameter("EndDate", endDate) :
-                new ObjectParameter("EndDate", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<vwPromotionChart>("GetMondayChart", mergeOption, startDateParameter, endDateParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetMondayChart", startDateParameter, endDateParameter);
         }
     }
 }

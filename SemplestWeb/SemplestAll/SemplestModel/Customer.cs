@@ -17,6 +17,8 @@ namespace SemplestModel
         public Customer()
         {
             this.AdvertisingEngineAccounts = new HashSet<AdvertisingEngineAccount>();
+            this.CreditCardNickNames = new HashSet<CreditCardNickName>();
+            this.CreditCardProfiles = new HashSet<CreditCardProfile>();
             this.CustomerHierarchies = new HashSet<CustomerHierarchy>();
             this.ProductGroups = new HashSet<ProductGroup>();
             this.CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
@@ -26,12 +28,10 @@ namespace SemplestModel
             this.CustomerNotes = new HashSet<CustomerNote>();
             this.EmailTemplates = new HashSet<EmailTemplate>();
             this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
+            this.InvoiceTransactions = new HashSet<InvoiceTransaction>();
             this.Schedules = new HashSet<Schedule>();
             this.WebContents = new HashSet<WebContent>();
             this.Users = new HashSet<User>();
-            this.CreditCardNickNames = new HashSet<CreditCardNickName>();
-            this.InvoiceTransactions = new HashSet<InvoiceTransaction>();
-            this.CreditCardProfiles = new HashSet<CreditCardProfile>();
         }
     
         public int CustomerPK { get; set; }
@@ -50,6 +50,8 @@ namespace SemplestModel
     
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
         public virtual BillType BillType { get; set; }
+        public virtual ICollection<CreditCardNickName> CreditCardNickNames { get; set; }
+        public virtual ICollection<CreditCardProfile> CreditCardProfiles { get; set; }
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies { get; set; }
         public virtual ICollection<ProductGroup> ProductGroups { get; set; }
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
@@ -61,11 +63,9 @@ namespace SemplestModel
         public virtual CustomerStyle CustomerStyle { get; set; }
         public virtual ICollection<EmailTemplate> EmailTemplates { get; set; }
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
+        public virtual ICollection<InvoiceTransaction> InvoiceTransactions { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<WebContent> WebContents { get; set; }
         public virtual ICollection<User> Users { get; set; }
-        public virtual ICollection<CreditCardNickName> CreditCardNickNames { get; set; }
-        public virtual ICollection<InvoiceTransaction> InvoiceTransactions { get; set; }
-        public virtual ICollection<CreditCardProfile> CreditCardProfiles { get; set; }
     }
 }
