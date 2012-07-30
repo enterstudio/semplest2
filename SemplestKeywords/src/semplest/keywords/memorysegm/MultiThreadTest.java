@@ -26,10 +26,12 @@ public class MultiThreadTest implements Runnable{
 				Thread.sleep(delay);
 				logger.info("Iterating thread "+threadCount);
 				String[] cats = splitter.getAllCats();
-				int[] randInd = CatSplitter.randIndexArray(1, cats.length-100);
+				int[] randInd = CatSplitter.randIndexArray(3, cats.length-100);
 				ArrayList<String> categories = new ArrayList<String>();
 				for(int i=0; i<100 ; i++){
 					categories.add(cats[i+randInd[0]]);
+					categories.add(cats[i+randInd[1]]);
+					categories.add(cats[i+randInd[2]]);
 				}
 				splitter.getCatData(categories);
 			} catch (FileNotFoundException e) {
@@ -42,7 +44,7 @@ public class MultiThreadTest implements Runnable{
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException{
-		Thread[] threads = new Thread[10];
+		Thread[] threads = new Thread[100];
 		for(int i=0; i< threads.length ; i++){
 			threads[i] = new Thread(new MultiThreadTest("/home/lluis/Documents/splitTest/arts/arts.spl",i));
 			threads[i].start();
