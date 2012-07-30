@@ -21,7 +21,7 @@ public class PromotionObj
 	private Date PromotionStartDate;
 	private Date PromotionEndDate;
 	private String BudgetCycle;
-	private Double BudgetToAddToNextCycle;
+	//private Double BudgetToAddToNextCycle;
 	private Date CycleStartDate;
 	private Double RemainingBudgetInCycle;
 	private Double StartBudgetInCycle;
@@ -108,6 +108,7 @@ public class PromotionObj
 	{
 		BudgetCycle = budgetCycle;
 	}
+	/*
 	public Double getBudgetToAddToNextCycle()
 	{
 		return BudgetToAddToNextCycle;
@@ -116,6 +117,7 @@ public class PromotionObj
 	{
 		BudgetToAddToNextCycle = budgetToAddToNextCycle;
 	}
+	*/
 	public Date getCycleStartDate()
 	{
 		return CycleStartDate;
@@ -220,7 +222,7 @@ public class PromotionObj
 		return "PromotionObj [PromotionPK=" + PromotionPK + ", ProductGroupFK=" + ProductGroupFK + ", PromotionName=" + PromotionName
 				+ ", PromotionDescription=" + PromotionDescription + ", LandingPageURL=" + LandingPageURL + ", DisplayURL=" + DisplayURL
 				+ ", PromotionBudgetAmount=" + PromotionBudgetAmount + ", PromotionStartDate=" + PromotionStartDate + ", PromotionEndDate="
-				+ PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", BudgetToAddToNextCycle=" + BudgetToAddToNextCycle + ", CycleStartDate="
+				+ PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", BudgetToAddToNextCycle=" + /* BudgetToAddToNextCycle + */", CycleStartDate="
 				+ CycleStartDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle + ", StartBudgetInCycle=" + StartBudgetInCycle
 				+ ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused
 				+ ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK="; // + AdvertisingEngineCampaignPK + ", AdvertisingEngineAdGroupID="
