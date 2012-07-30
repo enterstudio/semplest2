@@ -1,6 +1,7 @@
 package semplest.service.chaseorbitalgateway;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -312,8 +313,13 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		RequestIF request = null;
 		try
 		{
-			String startingDate = ChaseOrbitalGatewayObject.MMDDYYYY.format(startDate);
-			String dayOfMonth =  recurringDayOfMonth(startDate);
+			final Calendar endDateCal = Calendar.getInstance();
+			endDateCal.setTime(startDate);
+			endDateCal.add(Calendar.YEAR, 10);
+			final java.util.Date endDate = endDateCal.getTime();
+			final String endingDate = ChaseOrbitalGatewayObject.MMDDYYYY.format(endDate);
+			final String startingDate = ChaseOrbitalGatewayObject.MMDDYYYY.format(startDate);
+			final String dayOfMonth = recurringDayOfMonth(startDate);
 			
 			request = new Request(RequestIF.PROFILE_TRANSACTION);
 
@@ -333,6 +339,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("MBType", "R"); //Recurring
 			request.setFieldValue("MBOrderIdGenerationMethod", "DI"); //Dynamically generate orderID
 			request.setFieldValue("MBRecurringStartDate", startingDate);
+			request.setFieldValue("MBRecurringEndDate", endingDate);
 			request.setFieldValue("MBRecurringFrequency", dayOfMonth + " * ?");  //Bill Monthly
 			// Display the request
 			//logger.debug("\nProfile Request:\n" + request.getXML());
@@ -386,19 +393,19 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 
 		return ret;
 	}
-	/*
-	 * this needs to be fixed
-	 */
-	private String recurringDayOfMonth(java.util.Date startDate)
+
+	private String recurringDayOfMonth(java.util.Date date)
 	{
-		int day = startDate.getDay();
-		return String.valueOf(day);
+		final Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		final int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+		return String.valueOf(dayOfMonth);
 	}
 	
 	public String terminateRecurringPayments(String json) throws Exception
 	{
 		logger.debug("call UpdateProfileRecurringBilling(String json)" + json);
-		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);			
 		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
 		final GatewayReturnObject response = terminateRecurringPayments(new SemplestString(customerProfileRefNumber));
 		return gson.toJson(response);
