@@ -9,6 +9,7 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -106,10 +107,10 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//Report
 	ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception;
 
-	// GeoTargeting
+	// GeoTargeting	
 	List<GoogleViolation> validateUpdateGeoTargets(final String validationAccountID, final Long validationCampaignId, final List<GeoTargetObject> geoTargets) throws Exception;
 	Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception;
-	Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception;	
+	Boolean updateGeoTargets(final String accountId, final Long campaignId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws Exception;
 	 
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService

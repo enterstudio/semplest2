@@ -9,6 +9,8 @@ import org.joda.time.DateTime;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
+import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.MsnCloudException;
@@ -56,7 +58,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize
 	// GeoTargeting Methods
 	// ==================================
 	
-	Boolean setGeoTarget(Long accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String country, String zip) throws Exception; 	
+	Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Long adGroupId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException;
 	void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws Exception;
 	
 	// ==================================

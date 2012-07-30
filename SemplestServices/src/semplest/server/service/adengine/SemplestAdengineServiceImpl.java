@@ -42,6 +42,7 @@ import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.PromotionStatus;
@@ -109,7 +110,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static String AdengineExecuteBidProcessFrequency = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
-
 	// CustomerID = 2 State Farm coffee machine promotionID = 4
 	// ProductGroupID=37 coffee machine
 	public static void main(String[] args) throws Exception
@@ -872,13 +872,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		PromotionObj promotionData = getPromoDataSP.getPromotionData();
 		final String displayURL = promotionData.getDisplayURL();
 		final String url = promotionData.getLandingPageURL();
-		Long adGroupID = null;
 		final List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
+		final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoObjList);
 		final List<AdsObject> nonDeletedAds = getNonDeletedAds(adList);
 		if (adEngine == AdEngine.Google)
 		{
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			adGroupID = google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status, defaultMicroBid);
+			final Long adGroupID = google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status, defaultMicroBid);
 			adGrpData.setAdGroupID(adGroupID);
 			final List<GoogleAddAdRequest> textRequests = new ArrayList<GoogleAddAdRequest>();
 			for (AdsObject ad : nonDeletedAds)
@@ -894,15 +894,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Map<GoogleAddAdRequest, Long> requestToGoogleAdIdMap = google.addTextAds(request);
 			logger.info("Added " + requestToGoogleAdIdMap.size() + " Google ads in bulk:\n" + SemplestUtils.getEasilyReadableString(requestToGoogleAdIdMap));
 			backfillAdEngineAdID(nonDeletedAds, requestToGoogleAdIdMap);
-			adGrpData.setAds(nonDeletedAds);
-			google.updateGeoTargets(accountID, campaignID, geoObjList);
-			logger.info("Added Google GeoTargets: " + geoObjList);
+			adGrpData.setAds(nonDeletedAds);						
+			google.updateGeoTargets(accountID, campaignID, geoTargetVsTypeMap);
+			logger.info("Added Google GeoTargets:\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap));
 		}
 		else if (adEngine == AdEngine.MSN)
 		{
 			final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			final Long msnAccountId = Long.valueOf(accountID);
-			adGroupID = msn.createAdGroup(msnAccountId, campaignID);
+			final Long adGroupID = msn.createAdGroup(msnAccountId, campaignID);
 			logger.info("Created MSN AdGroup with ID [" + adGroupID + "]");
 			int counter = 0;
 			for (AdsObject ad : nonDeletedAds)
@@ -917,20 +917,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			adGrpData.setAdGroupID(adGroupID);
 			adGrpData.setAds(nonDeletedAds);
-			for (final GeoTargetObject geoTarget : geoObjList)
-			{
-				final Long accountId = Long.valueOf(accountID);
-				Double latitude = geoTarget.getLatitude();
-				Double longitude = geoTarget.getLongitude();
-				Double radius = geoTarget.getRadius();
-				String addr = geoTarget.getAddress();
-				String city = geoTarget.getCity();
-				String state = geoTarget.getState();
-				String country = "US";
-				String zip = geoTarget.getZip();
-				msn.setGeoTarget(accountId, campaignID, latitude, longitude, radius, addr, city, state, country, zip);
-				logger.info("Added MSN GeoTarget: " + geoTarget);
-			}
+			msn.updateGeoTargets(msnAccountId, campaignID, adGroupID, geoTargetVsTypeMap);
+			logger.info("Added MSN GeoTargets:\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap));			
 		}
 		else
 		{
@@ -1346,11 +1334,36 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new Exception(errMsg, e);
 		}
 	}
+	
+	public static Map<GeoTargetObject, GeoTargetType> getGeoTargetVsTypeMap(final List<GeoTargetObject> geoTargets) throws Exception
+	{
+		final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = new HashMap<GeoTargetObject, GeoTargetType>();
+		for (final GeoTargetObject geoTarget : geoTargets)
+		{			
+			final Double latitude = geoTarget.getLatitude();
+			final Double longtitude = geoTarget.getLongitude();
+			final Double radius = geoTarget.getRadius();
+			final String state = geoTarget.getState();
+			if (latitude == null || longtitude == null || radius == null)
+			{
+				if (state == null)
+				{
+					throw new Exception("Encountered GeoTarget that is neither a State type nor a Geo-Point type: [" + geoTarget + "]");
+				}
+				geoTargetVsTypeMap.put(geoTarget, GeoTargetType.STATE);
+			}
+			else 
+			{
+				geoTargetVsTypeMap.put(geoTarget, GeoTargetType.GEO_POINT);
+			}
+		}
+		return geoTargetVsTypeMap;
+	}
 
 	@Override
 	public Boolean UpdateGeoTargeting(Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
-		logger.info("call UpdateGeoTargeting(" + promotionID + ", " + adEngines + ")");
+		logger.info("Will try to update Geo Targets for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
 		final List<GeoTargetObject> geoTargets = getPromoDataSP.getGeoTargets();
@@ -1365,7 +1378,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long campaignId = promotionAdEngineData.getCampaignID();
 				logger.info("Will try to update within Google Adwords the Account[" + accountId + "]/CampaignId[" + campaignId + "]/Promotion[" + promotionID + "] with the following GeoTargets: [" + geoTargets + "]");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargets);
+				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);				
+				googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
 			}
 			else if (AdEngine.MSN == adEngine)
 			{
@@ -1374,18 +1388,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
 				final Long accountId = promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
-				for (final GeoTargetObject geoTarget : geoTargets)
-				{
-					final String address = geoTarget.getAddress();
-					final String city = geoTarget.getCity();
-					final String state = geoTarget.getState();
-					final String zip = geoTarget.getZip();
-					final Double radius = geoTarget.getRadius();
-					final Double latitude = geoTarget.getLatitude();
-					final Double longitude = geoTarget.getLongitude();
-					final String country = "US";
-					msn.setGeoTarget(accountId, campaignId, latitude, longitude, radius, address, city, state, country, zip);
-				}
+				final Long adGroupId = promotionAdEngineData.getAdGroupID();
+				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);	
+				msn.updateGeoTargets(accountId, campaignId, adGroupId, geoTargetVsTypeMap);
 			}
 			else
 			{
@@ -2431,7 +2436,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						final String headline = SemplestUtils.getTrimmedNonNullString(ad.getAdTitle());
 						final String description1 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine1());
 						final String description2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());
-						final String combinedText = description1 + description2;
+						final String combinedText = description1 + " " + description2;
 						final long msnAdID = msn.createAd(accountID, adGroupID, headline, combinedText, displayURL, url);
 						final Integer rowCount = SemplestDB.setAdIDForAdGroup(msnAdID, adEngine, promotionAdID);
 						if (rowCount != 1)

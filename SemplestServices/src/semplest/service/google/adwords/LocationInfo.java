@@ -109,10 +109,8 @@ public class LocationInfo {
   private LocationCriterion[] getCriteria( String l) throws Exception {
     Selector s = new Selector();
     s.setFields( fields );
-    Predicate sp = new Predicate("LocationName",PredicateOperator.IN, 
-        new String[]{ l });
-    Predicate lp = new Predicate("Locale",PredicateOperator.EQUALS, 
-        new String[]{ "en" });
+    Predicate sp = new Predicate("LocationName",PredicateOperator.IN, new String[]{ l });
+    Predicate lp = new Predicate("Locale",PredicateOperator.EQUALS, new String[]{ "en" });
     s.setPredicates( new Predicate[]{sp,lp});
 
     // get CampaignCriterions

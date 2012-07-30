@@ -21,6 +21,8 @@ import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.RegistrationLinkDecryptedInfo;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.google.GoogleViolation;
 
@@ -102,6 +104,7 @@ public final class SemplestUtils
 	public static final Long GOOGLE_MONEY_UNIT = 1000000L;
 	public static final Double MICRO_AMOUNT_FACTOR = 1000000d;
 	public static final Long DOUBLE_TO_LONG_MICRO_DIVISOR_HELPER = 10000L;
+	public static final Integer DOUBLE_TO_INTEGER_MICRO_DIVISOR_HELPER = 10000;
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	public static final Type TYPE_LIST_OF_STRINGS = new TypeToken<List<String>>(){}.getType();
 	public static final Type TYPE_LIST_OF_INTEGERS = new TypeToken<List<Integer>>(){}.getType();
@@ -110,7 +113,8 @@ public final class SemplestUtils
 	public static final Type TYPE_MAP_OF_STRING_TO_STRING = new TypeToken<Map<String, String>>(){}.getType();
 	public static final Type TYPE_LIST_OF_GOOGLE_VIOLATIONS = new TypeToken<List<GoogleViolation>>(){}.getType();
 	public static final Type TYPE_MAP_OF_ADENGINE_TO_DOUBLE = new TypeToken<Map<AdEngine, Double>>(){}.getType();
-	public static final Type TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS = new TypeToken<List<KeywordIdRemoveOppositePair>>(){}.getType();	
+	public static final Type TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS = new TypeToken<List<KeywordIdRemoveOppositePair>>(){}.getType();
+	public static final Type TYPE_MAP_OF_GEO_TARGET_OBJECT_TO_GEO_TARGET_TYPE = new TypeToken<Map<GeoTargetObject, GeoTargetType>>(){}.getType();
 	public static final List<Character> ALLOWED_CHARS = Arrays.asList('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','-');
 	public static final Character SUBSTITUTION_CHARACTER = '-';
 	public static final Integer USER_NAME_MIN_LENGTH = 6;
@@ -311,6 +315,12 @@ public final class SemplestUtils
 	{		
 		final AESBouncyCastle aes = AESBouncyCastle.getInstance(semplestEncryptionKey);
 		return aes;
+	}
+	
+	public static Integer getIntegerMicroAmount(final Double d)
+	{
+		final Double dMicroDouble = d * SemplestUtils.MICRO_AMOUNT_FACTOR;
+		return dMicroDouble.intValue() / SemplestUtils.DOUBLE_TO_INTEGER_MICRO_DIVISOR_HELPER * SemplestUtils.DOUBLE_TO_INTEGER_MICRO_DIVISOR_HELPER;
 	}
 		
 	public static Long getLongMicroAmount(final Double d)

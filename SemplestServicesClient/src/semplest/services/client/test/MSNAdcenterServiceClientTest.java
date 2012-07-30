@@ -114,14 +114,7 @@ public class MSNAdcenterServiceClientTest {
 		}
 
 	}
-	
-	public void setGeoTarget() throws Exception{
 
-		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
-		test.deleteAllTargetsInCampaign(accountID, campaignID);
-		Boolean res = test.setGeoTarget(accountID, campaignID, latitude, longitude, radius, addr, city, state, country, zip);
-	}
-	
 	public void getAccountID() throws Exception{
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
 		 HashMap<String,Long> accounts = test.getAccountIDs();

@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.swing.SwingWorker.StateValue;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.BasicConfigurator;
@@ -33,6 +34,7 @@ import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -129,11 +131,14 @@ import com.google.api.adwords.v201109.cm.CriterionBidLandscapePage;
 import com.google.api.adwords.v201109.cm.CriterionType;
 import com.google.api.adwords.v201109.cm.DataServiceInterface;
 import com.google.api.adwords.v201109.cm.DateRange;
+import com.google.api.adwords.v201109.cm.GeoPoint;
 import com.google.api.adwords.v201109.cm.Keyword;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Language;
 import com.google.api.adwords.v201109.cm.ListReturnValue;
 import com.google.api.adwords.v201109.cm.Location;
+import com.google.api.adwords.v201109.cm.LocationCriterion;
+import com.google.api.adwords.v201109.cm.LocationCriterionServiceInterface;
 import com.google.api.adwords.v201109.cm.ManualCPC;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupBids;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupCriterionBids;
@@ -148,6 +153,8 @@ import com.google.api.adwords.v201109.cm.PolicyViolationError;
 import com.google.api.adwords.v201109.cm.PolicyViolationKey;
 import com.google.api.adwords.v201109.cm.Predicate;
 import com.google.api.adwords.v201109.cm.PredicateOperator;
+import com.google.api.adwords.v201109.cm.Proximity;
+import com.google.api.adwords.v201109.cm.ProximityDistanceUnits;
 import com.google.api.adwords.v201109.cm.QualityInfo;
 import com.google.api.adwords.v201109.cm.RateExceededError;
 import com.google.api.adwords.v201109.cm.Selector;
@@ -218,6 +225,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private Long AdwordsValidationAccountID = null;
 	private Long AdwordsValidationCampaignID = null;
 	private Long AdwordsValidationAdGroupID = null;
+	private final static String[] GEO_TARGET_FIELDS = {"Id","CampaignId","LocationName","DisplayType", "RadiusInUnits","GeoPoint","Address"};
+	private final LocationCriterionServiceInterface LOCATION_CRITERION_SERVICE;
 
 	public GoogleAdwordsServiceImpl() throws Exception
 	{
@@ -234,6 +243,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
 			AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 			AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
+			final AdWordsUser user = new AdWordsUser(email, password, "" + AdwordsValidationCampaignID, userAgent, developerToken, useSandbox);
+			LOCATION_CRITERION_SERVICE = user.getService( AdWordsService.V201109.LOCATION_CRITERION_SERVICE);
 		}
 		catch (Exception e)
 		{
@@ -3599,15 +3610,282 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return false;
 		return true;
 	}
+	
+	public void removeAllGeoLocations(final String accountId, final Long campaignId) throws Exception  
+	{ 
+		final String operationDescription = "Remove All Geo Locations for AccountId [" + accountId + "], Campaign [" + campaignId + "]";
+		logger.info("Will try to " + operationDescription);
+		try
+		{
+			AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
+			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+			final Selector selector = new Selector();
+			selector.setFields(GEO_TARGET_FIELDS);
+			final Predicate cp = new Predicate("CampaignId", PredicateOperator.EQUALS, new String[]{"" + campaignId});
+			selector.setPredicates(new Predicate[]{cp});
+			final CampaignCriterionPage page = campaignCriterionService.get(selector);
+			final CampaignCriterion[] campaignCriterion = page.getEntries();
+			final List<Long> existingProximityIds = new ArrayList<Long>();	    
+			for (int i = 0; i < campaignCriterion.length; ++i)
+			{
+				final CampaignCriterion campaignCriteria = campaignCriterion[i];
+				final Criterion criterion = campaignCriteria.getCriterion();			
+				if (criterion.getType() == CriterionType.PROXIMITY)
+				{
+					existingProximityIds.add(criterion.getId());
+				}
+			}
+			logger.info("Found " + existingProximityIds.size() + " Proximity IDs within Google Adwords: [" + existingProximityIds + "]");
+			if (existingProximityIds.isEmpty())
+			{
+				return;
+			}
+			final List<CampaignCriterionOperation> removeProximityOperations = new ArrayList<CampaignCriterionOperation>();
+			for (final Long proximityId : existingProximityIds)
+			{
+				final Criterion removeProximityCriterion = new Criterion();
+				removeProximityCriterion.setId(proximityId);
+				removeProximityCriterion.setType(CriterionType.PROXIMITY);
+				final CampaignCriterion removeProximityCampaignCriterion = new CampaignCriterion();
+				removeProximityCampaignCriterion.setCampaignId(campaignId);
+				removeProximityCampaignCriterion.setCriterion(removeProximityCriterion);
+				final CampaignCriterionOperation removeProximityOperation = new CampaignCriterionOperation();
+				removeProximityOperation.setOperand(removeProximityCampaignCriterion);
+				removeProximityOperation.setOperator(Operator.REMOVE);
+				removeProximityOperations.add(removeProximityOperation);
+			}
+			final CampaignCriterionOperation[] removeProximityOperationsArray = removeProximityOperations.toArray(new CampaignCriterionOperation[removeProximityOperations.size()]);
+			final CampaignCriterionServiceInterface ccs = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+			final CampaignCriterionMutateRetriableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableGoogleOperation(ccs, removeProximityOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT); 		
+			final CampaignCriterion[] resultCampaignCriterionArray = retriableOperation.performOperation().getValue();
+			final List<Long> resultCriterionIds = new ArrayList<Long>();
+			for (int i = 0; i < resultCampaignCriterionArray.length; ++i)
+			{
+				final CampaignCriterion resultCampaignCriterion = resultCampaignCriterionArray[i];
+				final Long resultCriterionId = resultCampaignCriterion.getCriterion().getId();
+				resultCriterionIds.add(resultCriterionId);
+			}
+			logger.info("Criterion IDs returned from Google Adwords call to remove all Proximities: [" + resultCriterionIds + "]");
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Problem with " + operationDescription, e);
+		}
+	}
 
 	@Override
-	public Boolean updateGeoTargets(final String accountId, final Long campaignId, final List<GeoTargetObject> geoTargets) throws Exception
-	{
+	public Boolean updateGeoTargets(final String accountId, final Long campaignId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws Exception
+	{ 
+		final String operationDescription = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], GeoTarget<->Type map [" + geoTargetVsTypeMap + "]";
+		final String operationDescriptionPretty = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], GeoTarget<->Type map\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap);		
+		logger.info("Will try to " + operationDescriptionPretty);
+		/* OLD
 		final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
 		final semplest.service.google.adwords.CampaignData semplestCampaign = new semplest.service.google.adwords.CampaignData(accountId, campaignId, user);
 		semplestCampaign.removeAllGeoLoc(campaignId);
 		semplestCampaign.addGeoLoc(geoTargets);
 		return true;
+		*/
+		try
+		{
+			if (geoTargetVsTypeMap == null || geoTargetVsTypeMap.isEmpty())
+			{
+				logger.info("No GeoTarget data to deal with");
+				return true;
+			}
+			removeAllGeoLocations(accountId, campaignId);
+			addGeoLocations(accountId, campaignId, geoTargetVsTypeMap);			
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Problem doing " + operationDescription, e);
+		}
+		return true;
+	}
+	
+	public List<GeoTargetObject> getGeoTargets(final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap, final GeoTargetType type)
+	{
+		final List<GeoTargetObject> geoTargets = new ArrayList<GeoTargetObject>();
+		final Set<Entry<GeoTargetObject, GeoTargetType>> entrySet = geoTargetVsTypeMap.entrySet();
+		for (final Entry<GeoTargetObject, GeoTargetType> entry : entrySet)
+		{
+			final GeoTargetType currentType = entry.getValue();
+			if (currentType == type)
+			{
+				final GeoTargetObject geoTarget = entry.getKey();
+				geoTargets.add(geoTarget);
+			}			
+		}
+		return geoTargets;
+	}
+	
+	public Long getLocationId(final String state) throws Exception  
+	{
+		logger.info("Will try to get Google Location ID for State [" + state + "]");
+		final Selector selector = new Selector();
+		selector.setFields(GEO_TARGET_FIELDS);
+	    final Predicate locationNamePredicate = new Predicate("LocationName",PredicateOperator.IN, new String[]{state});
+	    final Predicate localePredicate = new Predicate("Locale",PredicateOperator.EQUALS, new String[]{"en"});
+	    selector.setPredicates(new Predicate[]{locationNamePredicate,localePredicate});	    
+	    final LocationCriterion[] locationCriterions;
+		try
+		{
+			locationCriterions = LOCATION_CRITERION_SERVICE.get(selector);
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Problem getting Google Location ID for State [" + state + "]");
+		}
+	    if (locationCriterions == null || locationCriterions.length == 0)
+	    {
+	    	return null;
+	    }
+	    for (final LocationCriterion locationCriterion : locationCriterions)
+	    {
+	    	final Location location = locationCriterion.getLocation();
+	    	final String displayName = location.getDisplayType();
+	    	if ("State".equals(displayName))
+	    	{	    		
+	    		return location.getId(); 
+	    	}
+	    }
+	    return null;
+	}
+	
+	public List<CampaignCriterionOperation> getGeoPointGeoTargetOperations(final Long campaignId, final List<GeoTargetObject> geoTargets, final Operator operator) throws Exception
+	{
+		final List<CampaignCriterionOperation> operations = new ArrayList<CampaignCriterionOperation>();
+		for (final GeoTargetObject geoTarget : geoTargets)
+		{
+			final Double latitude = geoTarget.getLatitude();
+			final Double longitude = geoTarget.getLongitude();
+			final Double radius = geoTarget.getRadius();			
+			final GeoPoint geoPoint = new GeoPoint();			
+			final Integer latitudeInMicroDegrees = SemplestUtils.getIntegerMicroAmount(latitude);
+			final Integer longitudeInMicroDegrees = SemplestUtils.getIntegerMicroAmount(longitude);
+			geoPoint.setLatitudeInMicroDegrees(latitudeInMicroDegrees);
+			geoPoint.setLongitudeInMicroDegrees(longitudeInMicroDegrees);
+			final Proximity proximity = new Proximity();
+			proximity.setGeoPoint(geoPoint);
+			proximity.setRadiusDistanceUnits(ProximityDistanceUnits.MILES);
+			proximity.setRadiusInUnits(radius);
+			final CampaignCriterion campaignCriterion = new CampaignCriterion();
+			campaignCriterion.setCampaignId(campaignId);
+			campaignCriterion.setCriterion(proximity);
+		    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
+		    operation.setOperand(campaignCriterion);
+		    operation.setOperator(operator);
+		    operations.add(operation);		    
+		}
+		return operations;
+	}
+	
+	public List<CampaignCriterionOperation> getStateGeoTargetOperations(final Long campaignId, final List<GeoTargetObject> geoTargets, final Operator operator) throws Exception
+	{
+		final List<CampaignCriterionOperation> operations = new ArrayList<CampaignCriterionOperation>();
+		for (final GeoTargetObject geoTarget : geoTargets)
+		{
+			final String state = geoTarget.getState();
+			final Long locationId = getLocationId(state);
+			if (locationId == null)
+			{
+				throw new Exception("Could not find Google LocationID for State [" + state + "]");
+			}
+			logger.info("Google ID for State [" + state + "] is [" + locationId + "]");
+			final Location location = new Location();			
+			location.setId(locationId);			
+			final CampaignCriterion campaignCriterion = new CampaignCriterion();
+			campaignCriterion.setCampaignId(campaignId);
+			campaignCriterion.setCriterion(location);
+		    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
+		    operation.setOperand(campaignCriterion);
+		    operation.setOperator(operator);
+		    operations.add(operation);		    
+		}
+		return operations;
+	}
+	
+	public void addGeoLocations(final String accountId, final Long campaignId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws Exception 
+	{
+		final String operationDescription = "Add Geo Locations for AccountID [" + accountId + "], CampaignID [" + campaignId + "], " + geoTargetVsTypeMap.size() + " Geo Locations";
+		logger.info("Will try to " + operationDescription);
+		final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
+		final CampaignCriterionServiceInterface campaignCriterionService;
+		try
+		{
+			campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+		}
+		catch (ServiceException e)
+		{
+			throw new Exception("Problem doing " + operationDescription + " Could not get a handle on Google CAMPAIGN_CRITERION_SERVICE");
+		}	
+		final List<GeoTargetObject> stateGeoTargets = getGeoTargets(geoTargetVsTypeMap, GeoTargetType.STATE);
+		final List<GeoTargetObject> geoPointGeoTargets = getGeoTargets(geoTargetVsTypeMap, GeoTargetType.GEO_POINT);
+		final List<CampaignCriterionOperation> operationList = new ArrayList<CampaignCriterionOperation>();
+		if (!stateGeoTargets.isEmpty())
+		{
+			final List<CampaignCriterionOperation> geoTargetOperations = getStateGeoTargetOperations(campaignId, stateGeoTargets, Operator.ADD);
+			operationList.addAll(geoTargetOperations);
+		}
+		if (!geoPointGeoTargets.isEmpty())
+		{
+			final List<CampaignCriterionOperation> geoTargetOperations = getGeoPointGeoTargetOperations(campaignId, geoPointGeoTargets, Operator.ADD);
+			operationList.addAll(geoTargetOperations);
+		}
+		if (operationList.isEmpty())
+		{
+			logger.info("No Geo Criterions generated, so nothing to do");
+			return;
+		}
+		logger.info(operationList.size() + " Geo Criterions generated");
+		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
+		final CampaignCriterionReturnValue result = campaignCriterionService.mutate(operations);
+		if (result == null)
+		{
+			throw new Exception("Call to Google to update Geo Targets returned nothing, this is not expected");
+		}
+		final CampaignCriterion[] campaignCriterionsReturned = result.getValue();
+		if (campaignCriterionsReturned == null || campaignCriterionsReturned.length == 0)
+		{
+			throw new Exception("Call to Google to update Geo Targets returned nothing, this is not expected");
+		}
+		final List<CampaignCriterion> returnCampaignCriterionList = Arrays.asList(campaignCriterionsReturned);
+		final List<Long> stateGoogleIds = new ArrayList<Long>();
+		final List<Long> proximityGoogleIds = new ArrayList<Long>();		
+		for (final CampaignCriterion campaignCriterion : returnCampaignCriterionList)
+		{
+			final Criterion criterion = campaignCriterion.getCriterion();
+			if (criterion instanceof Location)
+			{
+				final Location location = (Location)criterion;
+				final Long locationId = location.getId();
+				stateGoogleIds.add(locationId);
+			}
+			else if (criterion instanceof Proximity)
+			{
+				final Proximity proximity = (Proximity)criterion;
+				final Long proximityId = proximity.getId();
+				proximityGoogleIds.add(proximityId);
+			}			
+		}
+		logger.info("Google confirmed creation of " + stateGoogleIds.size() + " State GeoTargets with these Google Ids:\n" + stateGoogleIds);
+		logger.info("Google confirmed creation of " + proximityGoogleIds.size() + " Proximity GeoTargets with these Google Ids:\n" + proximityGoogleIds);
+		if (stateGeoTargets.size() != stateGoogleIds.size())
+		{
+			logger.warn("Number of State GeoTargets we intended to Add to Google [" + stateGeoTargets.size() + "] is not equal to the number actually added [" + stateGoogleIds.size() + "]");
+		}
+		else
+		{
+			logger.warn("As expoected the number of State GeoTargets we intended to Add to Google [" + stateGeoTargets.size() + "] is equal to the number actually added [" + stateGoogleIds.size() + "]");
+		}
+		if (geoPointGeoTargets.size() != proximityGoogleIds.size())
+		{
+			logger.warn("Number of GeoPoint GeoTargets we intended to Add to Google [" + geoPointGeoTargets.size() + "] is not equal to the number actually added [" + proximityGoogleIds.size() + "]");
+		}
+		else
+		{
+			logger.warn("As expected the number of GeoPoint GeoTargets we intended to Add to Google [" + geoPointGeoTargets.size() + "] is equal to the number actually added [" + proximityGoogleIds.size() + "]");
+		}
 	}
 
 	public void updateDefaultBid(String json) throws Exception

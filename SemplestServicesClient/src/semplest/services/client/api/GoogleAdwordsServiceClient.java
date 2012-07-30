@@ -14,6 +14,7 @@ import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -647,14 +648,6 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return null;
 	}
 
-	// this class only going to be called directly by Adengine Service
-	@Override
-	public Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public Boolean ChangeCampaignStartDate(String accountID, Long campaignID, Date newStartDate) throws Exception
 	{
@@ -764,6 +757,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
 		return ret;
+	}
+
+	@Override
+	public Boolean updateGeoTargets(String accountId, Long campaignId, Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

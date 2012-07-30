@@ -15,6 +15,8 @@ import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.BidElement;
+import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.MsnAccountObject;
@@ -553,30 +555,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		logger.debug("createCampaign: campaignId = " + campaignId.toString());		
 		return campaignId;
 	}
-	
-	@Override
-	public Boolean setGeoTarget(Long accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, 
-			String city, String state, String country, String zip) throws Exception
-	{
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("accountId", (accountId == null)? null:Long.toString(accountId.longValue()));
-		jsonHash.put("campaignId", (campaignId == null)? null:Long.toString(campaignId.longValue()));
-		jsonHash.put("latitude", (latitude == null)? null:Double.toString(latitude));
-		jsonHash.put("longitude", (longitude == null)? null: Double.toString(longitude));
-		jsonHash.put("radius",  (radius == null)? null:Double.toString(radius));
-		jsonHash.put("addr",(addr == null)? null: addr);
-		jsonHash.put("city", (city == null)? null:city);
-		jsonHash.put("state", (state == null)? null:state);
-		jsonHash.put("country", (country == null)? null:country);
-		jsonHash.put("zip", (zip == null)? null:zip);
-		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "setGeoTarget", json, timeoutMS);
-		Boolean res = gson.fromJson(returnData, Boolean.class);		
-		logger.debug("setGeoTarget: res = " + res.toString());		
-		return res;
-	}
-	
 	@Override
 	public Boolean updateAdGroupDefaultBids(Long accountId, Long campaignId, Long adGroupId, 
 			Double exactMatchBid, Double phraseMatchBid, Double broadMatchBid) throws Exception{
@@ -1315,6 +1294,12 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public Boolean updateGeoTargets(Long accountId, Long campaignId, Long adGroupId, Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

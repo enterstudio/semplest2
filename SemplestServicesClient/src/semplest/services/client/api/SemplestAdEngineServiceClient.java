@@ -35,7 +35,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
-	// private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
+	//private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
 	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
 	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";
 	private static String timeoutMS = "18000000"; // 5 hours
@@ -49,9 +49,9 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		// final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://23.22.63.111:9898/semplest");
 		// final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJava1:9898/semplest");
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(BASEURLTEST);
-		final Integer userID = 24;
+		//final Integer userID = 24;
 		//client.sendRegistrationReminderEmail(userID);
-		client.sendAccountActivationEmail(userID);
+		//client.sendAccountActivationEmail(userID);
 		
 		/*
 		// validateGoogleAd 
@@ -108,10 +108,12 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 * promotionID_scheduleUpdateGeoTargeting = 62; final List<String> adEngines_scheduleUpdateGeoTargeting =
 		 * Arrays.asList(AdEngine.Google.name()); client.scheduleUpdateGeoTargeting(customerID_scheduleUpdateGeoTargeting,
 		 * promotionID_scheduleUpdateGeoTargeting, adEngines_scheduleUpdateGeoTargeting);
-		 * 
-		 * // UpdateGeoTargeting final Integer promotionID_UpdateGeoTargeting = 62; final List<String> adEngines_UpdateGeoTargeting =
-		 * Arrays.asList(AdEngine.Google.name()); client.UpdateGeoTargeting(promotionID_UpdateGeoTargeting, adEngines_UpdateGeoTargeting);
-		 * 
+		 */ 
+		 // UpdateGeoTargeting 
+		final Integer promotionID_UpdateGeoTargeting = 62; 
+		final List<AdEngine> adEngines_UpdateGeoTargeting = Arrays.asList(AdEngine.Google); 
+		client.UpdateGeoTargeting(promotionID_UpdateGeoTargeting, adEngines_UpdateGeoTargeting);
+		 /* 
 		 * // scheduleChangePromotionStartDate final Integer customerID_scheduleChangePromotionStartDate = 12; final Integer
 		 * promotionID_scheduleChangePromotionStartDate = 62; final java.util.Date newStartDate_scheduleChangePromotionStartDate = new
 		 * java.util.Date(); final List<String> adEngines_scheduleChangePromotionStartDate = Arrays.asList(AdEngine.Google.name());
