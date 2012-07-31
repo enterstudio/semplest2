@@ -1,6 +1,8 @@
 package semplest.keywords.lda;
 /**
  * Production version of the Keyword Generation Server
+ * For Crawl 2 were words are not stemmed. Other improvements added, such as google suggestions and keyword 
+ * probability independent of number of words 
  */
 
 import java.io.FileOutputStream;

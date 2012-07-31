@@ -1,7 +1,12 @@
 package semplest.keywords.lda;
 /**
  * Production version of the Keyword Generation Server
+ * 
+ *Version of the keyword service for the first version of the crawl were words were stemmed
+ * @author lluis
+ *
  */
+ 
 
 import java.io.FileOutputStream;
 import java.io.IOException;

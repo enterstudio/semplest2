@@ -12,6 +12,11 @@ import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.ioUtils;
 import semplest.keywords.properties.ProjectProperties;
+/**
+ * Production version of the Keyword Generation Server
+ * It considers the regional category and takes the reverse cat approach show the results
+ * If GeoTargeting is specified it selects the specific sub-branch from regional
+ */
 
 
 public class KWGenDmozLDAdata3 implements Runnable{

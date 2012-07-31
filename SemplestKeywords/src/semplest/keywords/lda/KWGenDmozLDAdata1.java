@@ -12,9 +12,15 @@ import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.ioUtils;
 import semplest.keywords.properties.ProjectProperties;
-
+/**
+ *Version of the keyword service for the first version of the crawl were words were stemmed
+ * @author lluis
+ *
+ */
 
 public class KWGenDmozLDAdata1 implements Runnable{
+	
+	
 	
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdata1.class);
 	public DmozLucene dl; //Index of categories

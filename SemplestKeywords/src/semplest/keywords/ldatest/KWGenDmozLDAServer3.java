@@ -1,6 +1,8 @@
 package semplest.keywords.ldatest;
 /**
  * Production version of the Keyword Generation Server
+ * It considers the regional category and takes the reverse cat approach show the results
+ * If GeoTargeting is specified it selects the specific sub-branch from regional
  */
 
 import java.io.FileOutputStream;

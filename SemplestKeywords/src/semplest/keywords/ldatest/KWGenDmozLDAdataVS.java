@@ -1,6 +1,7 @@
 package semplest.keywords.ldatest;
 /**
  * Production version of the Keyword Generation Server
+ * Using vector space implementation
  */
 
 import java.io.FileOutputStream;
