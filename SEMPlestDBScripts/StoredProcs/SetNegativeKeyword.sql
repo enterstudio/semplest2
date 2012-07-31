@@ -17,7 +17,9 @@ GO
 CREATE PROCEDURE [dbo].[SetNegativeKeyword] 
 	-- Add the parameters for the stored procedure here
 	@keyword nvarchar(250),
-	@PromotionID int
+	@PromotionID int,
+	@NegativeKeywordID int output,
+	@Exists bit output
 AS
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
@@ -31,7 +33,8 @@ BEGIN TRY
 				inner join PromotionKeywordAssociation pka on pka.KeywordFK = k.KeywordPK 
 				where k.Keyword = @keyword and pka.PromotionFK = @PromotionID and pka.IsNegative = 1)
 	BEGIN
-		RETURN
+		 select k.KeywordPK from Keyword k where k.KeywordPK=-1
+		 return
 	END
 	
 	BEGIN Transaction
@@ -40,6 +43,7 @@ BEGIN TRY
 				inner join PromotionKeywordAssociation pka on pka.KeywordFK = k.KeywordPK 
 				where k.Keyword = @keyword and pka.PromotionFK = @PromotionID and pka.IsNegative = 0)
 	BEGIN
+		SET @Exists = 1
 		update PromotionKeywordAssociation set IsNegative = 1
 			from Keyword k
 			inner join PromotionKeywordAssociation pka on pka.KeywordFK = k.KeywordPK 
@@ -48,11 +52,13 @@ BEGIN TRY
 	--In keyword table but not associate to the promo
 	ELSE if exists	(select * from Keyword k where k.Keyword = @keyword)
 	BEGIN
+		SET @Exists = 0
 		insert into PromotionKeywordAssociation(KeywordFK, PromotionFK, IsActive,IsDeleted,IsNegative,IsTargetGoogle, IsTargetMSN,CreatedDate)
 		select k.KeywordPK,@PromotionID,1,0,1,1,1,CURRENT_TIMESTAMP from Keyword k where k.Keyword = @keyword
 	END
 	ELSE -- does not exists yet
 	BEGIN
+		SET @Exists = 0
 		insert into Keyword(Keyword,CreatedDate) values (@keyword,CURRENT_TIMESTAMP)
 		SET @ID = @@IDENTITY
 		insert into PromotionKeywordAssociation(KeywordFK, PromotionFK, IsActive,IsDeleted,IsNegative,IsTargetGoogle, IsTargetMSN,CreatedDate)
@@ -63,8 +69,8 @@ BEGIN TRY
 				inner join PromotionKeywordAssociation pka on pka.KeywordFK = k.KeywordPK 
 				where pka.PromotionFK = @PromotionID and pka.IsNegative = 0
 				and (k.Keyword like '% ' + @keyword or k.Keyword like @keyword + ' %' or k.Keyword like '% ' + @keyword + ' %')
-						
 	commit transaction											
+	set @NegativeKeywordID = @ID										
 END TRY
 BEGIN CATCH
 IF XACT_STATE() != 0 OR @@TRANCOUNT > 0
