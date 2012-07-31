@@ -2267,15 +2267,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			throw new Exception("Problem Setting Bid for Keyword for AccountID [" + accountID + "], KeywordID [" + keywordID + "], AdGroupID [" + adGroupID + "], MicroBidAmount [" + microBidAmount + "]", e);
 		}
 	}
-
-	public String addNegativeKeyWordToAdGroup(String json) throws Exception
-	{
-		logger.debug("call addKeyWordToAdGroup" + json);
-		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
-		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		KeywordDataObject res = addNegativeKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")));
-		return gson.toJson(res);
-	}
 	
 	public static List<CampaignCriterionOperation> getNegativeKeywordOperations(String accountID, Long campaignID, List<String> keywords, KeywordMatchType matchType)
 	{
@@ -2297,39 +2288,52 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType) throws Exception
+	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, KeywordProbabilityObject negativeKeyword, KeywordMatchType matchType, Integer promotionID) throws Exception
 	{
-		logger.info("Will try to Add Negative Keyword for AccountID [" + accountID + "], CampaignID [" + campaignID + "], Keyword [" + keyword + "], KeywordMatchType [" + matchType + "]");
+		logger.info("Will try to Add Negative Keyword for AccountID [" + accountID + "], CampaignID [" + campaignID + "], KeywordProbability [" + negativeKeyword + "], KeywordMatchType [" + matchType + "]");
 		try
 		{
 			// Log SOAP XML request and response. AdWordsServiceLogger.log();
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final String keyword = negativeKeyword.getKeyword();
 			final List<String> keywords = Arrays.asList(new String[]{keyword});
 			final List<CampaignCriterionOperation> operationList = getNegativeKeywordOperations(accountID, campaignID, keywords, matchType);
 			final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 			final CampaignCriterionMutateRetriableFilterableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableFilterableGoogleOperation(campaignCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final CampaignCriterionReturnValue results = retriableOperation.performOperation();
-			final KeywordDataObject bidRes = new KeywordDataObject();
-			if (results != null && results.getValue() != null && (results.getValue(0) instanceof CampaignCriterion))
+			final Map<CampaignCriterionOperation, String> removedOperations = retriableOperation.getRemovedOperations();
+			if (!removedOperations.isEmpty())
 			{
-				CampaignCriterion res = (CampaignCriterion) results.getValue(0);
-				Keyword akeyword = ((Keyword) res.getCriterion());
+				logger.info("The following negative keywords were rejected by Google for the following reasons:\n" + SemplestUtils.getEasilyReadableString(removedOperations));
+				final Map<Integer, String> keywordIdToCommentMap = new HashMap<Integer, String>();
+				final Set<Entry<CampaignCriterionOperation, String>> entrySet = removedOperations.entrySet();
+				final String googleRejectionMessage = entrySet.iterator().next().getValue();
+				final Integer keywordID = negativeKeyword.getKeywordPK();
+				keywordIdToCommentMap.put(keywordID, googleRejectionMessage);
+				SemplestDB.removeKeywordFromAdEngine(keywordIdToCommentMap, promotionID, AdEngine.Google);
+				return null;
+			}
+			else if (results != null && results.getValue() != null && (results.getValue(0) instanceof CampaignCriterion))
+			{
+				final KeywordDataObject bidRes = new KeywordDataObject();
+				final CampaignCriterion res = (CampaignCriterion) results.getValue(0);
+				final Keyword akeyword = ((Keyword) res.getCriterion());
 				bidRes.setBidID(res.getCriterion().getId());
 				bidRes.setMatchType(akeyword.getMatchType().getValue());
 				bidRes.setKeyword(akeyword.getText());
 				bidRes.setNegative(true);
 				return bidRes;
 			}
-			return bidRes;
+			throw new Exception("Keyword was not rejected by MSN, yet the operation's result doesn't show that the negative keyword was added");		
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception("Problem Adding Negative Keyword for AccountID [" + accountID + "], CampaignID [" + campaignID + "], Keyword [" + keyword + "], KeywordMatchType [" + matchType + "]", e);
+			throw new Exception("Problem Adding Negative Keyword for AccountID [" + accountID + "], CampaignID [" + campaignID + "], KeywordProbability [" + negativeKeyword + "], KeywordMatchType [" + matchType + "]", e);
 		}
 		catch (Exception e)
 		{
-			throw new Exception("Problem Adding Negative Keyword for AccountID [" + accountID + "], CampaignID [" + campaignID + "], Keyword [" + keyword + "], KeywordMatchType [" + matchType + "]", e);
+			throw new Exception("Problem Adding Negative Keyword for AccountID [" + accountID + "], CampaignID [" + campaignID + "], KeywordProbability [" + negativeKeyword + "], KeywordMatchType [" + matchType + "]", e);
 		}
 	}
 

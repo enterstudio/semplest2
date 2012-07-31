@@ -65,12 +65,14 @@ import semplest.server.protocol.bidding.AdEngineBidHistoryData;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.AddKeywordsRetriableMsnOperation;
+import semplest.server.protocol.msn.AddNegativeKeywordsRetriableMsnOperation;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
@@ -116,7 +118,7 @@ import com.microsoft.adcenter.api.customermanagement.Entities.User;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.*;
 
-public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface 
+public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 {
 	private static final Logger log = Logger.getLogger(MsnCloudServiceImpl.class);
 
@@ -159,7 +161,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		final double monthlyBudget = 10.0;
 		final CampaignStatus campaignStatus = CampaignStatus.Active;
 
-		//		
+		//
 		try
 		{
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
@@ -237,7 +239,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		this.timeoutMillis = milliseconds;
 	}
 
-	public MsnCloudServiceImpl() throws Exception 
+	public MsnCloudServiceImpl() throws Exception
 	{
 		try
 		{
@@ -733,7 +735,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return keywords;
 	}
 
-	public List<AdEngineBidHistoryData> getHistoricData(List<AdEngineBidHistoryData> keywords, Integer position, IAdIntelligenceService adInteligenceService) throws Exception  
+	public List<AdEngineBidHistoryData> getHistoricData(List<AdEngineBidHistoryData> keywords, Integer position, IAdIntelligenceService adInteligenceService) throws Exception
 	{
 		final String operationDescription = "Get Historic Data for Position [], " + keywords.size() + " Keywords [" + keywords + "]";
 		final String[] kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
@@ -938,17 +940,17 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	{
 		logger.debug("call getCampaignById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
-		final Campaign ret = getCampaignById(new Long(data.get("accountId")), new Long(data.get("campaignId")));		
+		final Campaign ret = getCampaignById(new Long(data.get("accountId")), new Long(data.get("campaignId")));
 		return gson.toJson(ret);
 	}
 
 	@Override
-	public Campaign getCampaignById(Long accountId, Long campaignId) throws MsnCloudException 
+	public Campaign getCampaignById(Long accountId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Get Campaign By ID using AccountID [" + accountId + "], CampaignID [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
 		final GetCampaignsByIdsResponse campaignsById;
-		
+
 		ICampaignManagementService campaignManagement;
 		try
 		{
@@ -981,7 +983,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return campaignsById.getCampaigns()[0];
 	}
 
-	public String getCampaignsByAccountId(String json) throws Exception 
+	public String getCampaignsByAccountId(String json) throws Exception
 	{
 		logger.debug("call getCampaignsByAccountId(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -990,8 +992,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public Campaign[] getCampaignsByAccountId(Long accountId) throws MsnCloudException 
-	{		
+	public Campaign[] getCampaignsByAccountId(Long accountId) throws MsnCloudException
+	{
 		final String operationDescription = "Get Campaigns By Account ID for AccountID [" + accountId + "]";
 		logger.info("Will try to " + operationDescription);
 		final GetCampaignsByAccountIdResponse campaigns;
@@ -1005,7 +1007,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
 		}
 		try
-		{			
+		{
 			campaigns = campaignManagement.getCampaignsByAccountId(new GetCampaignsByAccountIdRequest((long) accountId));
 		}
 		catch (AdApiFaultDetail e)
@@ -1027,16 +1029,16 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return campaigns.getCampaigns();
 	}
 
-	public String pauseCampaignById(String json) throws Exception 
+	public String pauseCampaignById(String json) throws Exception
 	{
 		logger.debug("call pauseCampaignById(String json)" + json);
 		HashMap<String, String> data = protocolJson.getHashMapFromJson(json);
 		pauseCampaignById(new Long(data.get("accountId")), new Long(data.get("campaignId")));
-		return gson.toJson(0); 
+		return gson.toJson(0);
 	}
 
 	@Override
-	public void unpauseCampaignById(Long accountId, Long campaignId) throws MsnCloudException 
+	public void unpauseCampaignById(Long accountId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Unpause Campaign By ID for AccountID [" + accountId + "], CampaignID [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1066,14 +1068,14 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void pauseCampaignById(Long accountId, Long campaignId) throws MsnCloudException 
+	public void pauseCampaignById(Long accountId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Pause Campaign By ID using AccountID [" + accountId + "] and CampaignID [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
 			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final PauseCampaignsRequest request = new PauseCampaignsRequest((long) accountId, new long[]{campaignId});
+			final PauseCampaignsRequest request = new PauseCampaignsRequest((long) accountId, new long[] { campaignId });
 			campaignManagement.pauseCampaigns(request);
 		}
 		catch (AdApiFaultDetail e)
@@ -1094,16 +1096,16 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String pauseCampaignsByAccountId(String json) throws Exception 
+	public String pauseCampaignsByAccountId(String json) throws Exception
 	{
 		logger.debug("call pauseCampaignsByAccountId(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
 		pauseCampaignsByAccountId(new Long(data.get("accountId")));
-		return gson.toJson(0); 
+		return gson.toJson(0);
 	}
 
 	@Override
-	public void pauseCampaignsByAccountId(Long accountId) throws MsnCloudException 
+	public void pauseCampaignsByAccountId(Long accountId) throws MsnCloudException
 	{
 		final String operationDescription = "Pause Campaign by AccountID for AccountID [" + accountId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1135,9 +1137,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
 		}
-	}		
+	}
 
-	public String resumeCampaignById(String json) throws Exception 
+	public String resumeCampaignById(String json) throws Exception
 	{
 		logger.debug("call resumeCampaignById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1146,9 +1148,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void resumeCampaignById(Long accountId, Long campaignId) throws MsnCloudException 
+	public void resumeCampaignById(Long accountId, Long campaignId) throws MsnCloudException
 	{
-		final String operationDescription = "Resume Campaign By ID for AccountID [" + accountId + "] and CampaignID [" + campaignId + "]";		
+		final String operationDescription = "Resume Campaign By ID for AccountID [" + accountId + "] and CampaignID [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
@@ -1173,16 +1175,16 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String deleteCampaignById(String json) throws Exception 
+	public String deleteCampaignById(String json) throws Exception
 	{
 		logger.debug("call deleteCampaignById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
-		deleteCampaignById(new Long(data.get("accountId")), new Long(data.get("campaignId")));		
+		deleteCampaignById(new Long(data.get("accountId")), new Long(data.get("campaignId")));
 		return gson.toJson(0); // return 0 if successful
 	}
 
 	@Override
-	public void deleteCampaignById(Long accountId, Long campaignId) throws MsnCloudException 
+	public void deleteCampaignById(Long accountId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Delete Campaign By ID for AccountID [" + accountId + "], CampaignID [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1209,7 +1211,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String setCampaignStateTargets(String json) throws Exception 
+	public String setCampaignStateTargets(String json) throws Exception
 	{
 		logger.debug("call setCampaignStateTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1221,7 +1223,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	public void setCampaignStateTargets(Long accountId, long customerId, Long campaignId, List<String> states) throws MsnCloudException
 	{
 		final String operationDescription = "Set Campaign State Targets for AccountID [" + accountId + "], CustomerID [" + customerId + "], CampaignID [" + campaignId + "], States [" + states + "]";
-		logger.info("Will try to " + operationDescription);		
+		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
@@ -1248,7 +1250,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String deleteCampaignTargets(String json) throws Exception 
+	public String deleteCampaignTargets(String json) throws Exception
 	{
 		logger.debug("call deleteCampaignTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1256,7 +1258,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return gson.toJson(0);
 	}
 
-	public List<AccountMigrationStatusesInfo> getAccountMigrationStatuses(final Long accountId, final Long customerId) throws MsnCloudException 
+	public List<AccountMigrationStatusesInfo> getAccountMigrationStatuses(final Long accountId, final Long customerId) throws MsnCloudException
 	{
 		final String operationDescription = "Get Account Migration statuses for AccountID [" + accountId + "], CustomerID [" + customerId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1290,7 +1292,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void deleteCampaignTargets(Long accountId, long customerId, Long campaignId) throws MsnCloudException 
+	public void deleteCampaignTargets(Long accountId, long customerId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Delete Campaign Targets for AccountID [" + accountId + "], CustomerID [" + customerId + "], CampaignID [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1320,7 +1322,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String getCampaignTargets(String json) throws Exception 
+	public String getCampaignTargets(String json) throws Exception
 	{
 		logger.debug("call getCampaignTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1329,10 +1331,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public Target getCampaignTargets(Long accountId, long customerId, Long campaignId) throws MsnCloudException 
+	public Target getCampaignTargets(Long accountId, long customerId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Get Campaign Targets for AccountID [" + accountId + "], CustomerID [" + customerId + "], CampaignID [" + campaignId + "]";
-		logger.info("Will try to " + operationDescription);		
+		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
@@ -1361,10 +1363,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}		
+		}
 	}
 
-	public String updateCampaignBudget(String json) throws Exception 
+	public String updateCampaignBudget(String json) throws Exception
 	{
 		logger.debug("call updateCampaignBudget(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1373,7 +1375,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void updateCampaignBudget(Long accountId, Long campaignId, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget) throws MsnCloudException 
+	public void updateCampaignBudget(Long accountId, Long campaignId, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget) throws MsnCloudException
 	{
 		final String operationDescription = "Update Campaign Budget for AccountID [" + accountId + "], CampaignID [" + campaignId + "], BudgetLimitType [" + budgetLimitType + "], DailyBudget [" + dailyBudget + "], MonthlyBudget [" + monthlyBudget + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1406,22 +1408,22 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
 	// ==================================
 	// AdGroup Methods
 	// ==================================
-	public String createAdGroup(String json) throws Exception 
+	public String createAdGroup(String json) throws Exception
 	{
 		logger.debug("call createAdGroup(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
-		final long ret = createAdGroup(new Long(data.get("accountId")), new Long(data.get("campaignId")));		
+		final long ret = createAdGroup(new Long(data.get("accountId")), new Long(data.get("campaignId")));
 		return gson.toJson(ret);
 	}
 
 	@Override
-	public long createAdGroup(Long accountId, Long campaignId) throws MsnCloudException 
+	public long createAdGroup(Long accountId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Create AdGroup for AccountID [" + accountId + "], CampaignID [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1464,11 +1466,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
 	@Override
-	public Boolean updateAdGroupDefaultBids(Long accountId, Long campaignId, Long adGroupId, Double exactMatchBid, Double phraseMatchBid, Double broadMatchBid) throws MsnCloudException 
+	public Boolean updateAdGroupDefaultBids(Long accountId, Long campaignId, Long adGroupId, Double exactMatchBid, Double phraseMatchBid, Double broadMatchBid) throws MsnCloudException
 	{
 		final String operationDescription = "Update AdGroup (Default Bids) for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "], ExactMatachBid [" + exactMatchBid + "], PhraseMatchBid [" + phraseMatchBid + "], BroadMatchBid [" + broadMatchBid + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1514,29 +1516,29 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 		return true;
 	}
 
-	public String updateAdGroupDefaultBids(String json) throws Exception 
+	public String updateAdGroupDefaultBids(String json) throws Exception
 	{
 		logger.debug("call updateAdGroupDefaultBids(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
 		final Boolean ret = updateAdGroupDefaultBids((data.get("accountId") == null) ? null : new Long(data.get("accountId")), (data.get("campaignId") == null) ? null : new Long(data.get("campaignId")), (data.get("adGroupId") == null) ? null : new Long(data.get("adGroupId")),
-					(data.get("exactMatchBid") == null) ? null : Double.valueOf(data.get("exactMatchBid")), (data.get("phraseMatchBid") == null) ? null : Double.valueOf(data.get("phraseMatchBid")), (data.get("broadMatchBid") == null) ? null : Double.valueOf(data.get("broadMatchBid")));
+				(data.get("exactMatchBid") == null) ? null : Double.valueOf(data.get("exactMatchBid")), (data.get("phraseMatchBid") == null) ? null : Double.valueOf(data.get("phraseMatchBid")), (data.get("broadMatchBid") == null) ? null : Double.valueOf(data.get("broadMatchBid")));
 		return gson.toJson(ret);
 	}
 
-	public String getAdGroupsByCampaignId(String json) throws Exception 
+	public String getAdGroupsByCampaignId(String json) throws Exception
 	{
 		logger.debug("call getAdGroupsByCampaignId(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
-		final AdGroup[] ret = getAdGroupsByCampaignId(new Long(data.get("accountId")), new Long(data.get("campaignId")));		
+		final AdGroup[] ret = getAdGroupsByCampaignId(new Long(data.get("accountId")), new Long(data.get("campaignId")));
 		return gson.toJson(ret);
 	}
 
 	@Override
-	public AdGroup[] getAdGroupsByCampaignId(Long accountId, Long campaignId) throws MsnCloudException 
+	public AdGroup[] getAdGroupsByCampaignId(Long accountId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Get AdGroup By Campaign ID for AccountID [" + accountId + "], CampaignID [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1545,7 +1547,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 			final GetAdGroupsByCampaignIdResponse adGroups = campaignManagement.getAdGroupsByCampaignId(new GetAdGroupsByCampaignIdRequest(campaignId));
 			return adGroups.getAdGroups();
-		}	
+		}
 		catch (AdApiFaultDetail e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
@@ -1564,23 +1566,23 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String getAdGroupById(String json) throws Exception 
+	public String getAdGroupById(String json) throws Exception
 	{
 		logger.debug("call getAdGroupById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
-		final AdGroup ret = getAdGroupById(new Long(data.get("accountId")), new Long(data.get("campaignId")), new Long(data.get("adGroupId")));		
+		final AdGroup ret = getAdGroupById(new Long(data.get("accountId")), new Long(data.get("campaignId")), new Long(data.get("adGroupId")));
 		return gson.toJson(ret);
 	}
 
 	@Override
-	public AdGroup getAdGroupById(Long accountId, Long campaignId, Long adGroupId) throws MsnCloudException 
+	public AdGroup getAdGroupById(Long accountId, Long campaignId, Long adGroupId) throws MsnCloudException
 	{
 		final String operationDescription = "Get AdGroup By ID for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final GetAdGroupsByIdsResponse adGroupsByIds = campaignManagement.getAdGroupsByIds(new GetAdGroupsByIdsRequest(campaignId, new long[] { adGroupId }));		
+			final GetAdGroupsByIdsResponse adGroupsByIds = campaignManagement.getAdGroupsByIds(new GetAdGroupsByIdsRequest(campaignId, new long[] { adGroupId }));
 			return adGroupsByIds.getAdGroups()[0];
 		}
 		catch (AdApiFaultDetail e)
@@ -1601,7 +1603,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String deleteAdGroupById(String json) throws Exception 
+	public String deleteAdGroupById(String json) throws Exception
 	{
 		logger.debug("call deleteAdGroupById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1610,14 +1612,14 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void deleteAdGroupById(Long accountId, Long campaignId, Long adGroupId) throws MsnCloudException 
+	public void deleteAdGroupById(Long accountId, Long campaignId, Long adGroupId) throws MsnCloudException
 	{
 		final String operationDescription = "Get Delete AdGroup ID for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final DeleteAdGroupsRequest request = new DeleteAdGroupsRequest(campaignId, new long[] {adGroupId});
+			final DeleteAdGroupsRequest request = new DeleteAdGroupsRequest(campaignId, new long[] { adGroupId });
 			campaignManagement.deleteAdGroups(request);
 		}
 		catch (AdApiFaultDetail e)
@@ -1638,16 +1640,16 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String setAdGroupStateTargets(String json) throws Exception 
+	public String setAdGroupStateTargets(String json) throws Exception
 	{
 		logger.debug("call setAdGroupStateTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
-		setAdGroupStateTargets(new Long(data.get("accountId")), new Long(data.get("customerId")), new Long(data.get("adGroupId")), Arrays.asList(data.get("states").split(separator)));		
+		setAdGroupStateTargets(new Long(data.get("accountId")), new Long(data.get("customerId")), new Long(data.get("adGroupId")), Arrays.asList(data.get("states").split(separator)));
 		return gson.toJson(0);
 	}
 
 	@Override
-	public void setAdGroupStateTargets(Long accountId, long customerId, Long adGroupId, List<String> states) throws MsnCloudException 
+	public void setAdGroupStateTargets(Long accountId, long customerId, Long adGroupId, List<String> states) throws MsnCloudException
 	{
 		final String operationDescription = "Set AdGroup State Targets for AccountID [" + accountId + "], CustomerID [" + customerId + "], AdGroupID [" + adGroupId + "], States [" + states + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1675,7 +1677,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String setAdGroupCityTargets(String json) throws Exception 
+	public String setAdGroupCityTargets(String json) throws Exception
 	{
 		logger.debug("call setAdGroupCityTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1684,7 +1686,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void setAdGroupCityTargets(Long accountId, long customerId, Long adGroupId, List<String> cities) throws MsnCloudException 
+	public void setAdGroupCityTargets(Long accountId, long customerId, Long adGroupId, List<String> cities) throws MsnCloudException
 	{
 		final String operationDescription = "Set AdGroup City Targets for AccountID [" + accountId + "], CustomerID [" + customerId + "], AdGroupID [" + adGroupId + "], Cities [" + cities + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1712,7 +1714,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String setAdGroupMetroAreaTargets(String json) throws Exception 
+	public String setAdGroupMetroAreaTargets(String json) throws Exception
 	{
 		logger.debug("call setAdGroupMetroAreaTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1725,7 +1727,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void setAdGroupMetroAreaTargets(Long accountId, long customerId, long msnAdGroupId, List<String> metroTargets) throws MsnCloudException 
+	public void setAdGroupMetroAreaTargets(Long accountId, long customerId, long msnAdGroupId, List<String> metroTargets) throws MsnCloudException
 	{
 		final String operationDescription = "Set AdGroup Metro Area Targets for AccountID [" + accountId + "], CustomerID [" + customerId + "], MsnAdGroupID [" + msnAdGroupId + "], MetroTargets [" + metroTargets + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1753,7 +1755,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	private void addTargetsToAdGroup(Long adGroupId, ICampaignManagementService campaignManagement, Target[] targets) throws MsnCloudException 
+	private void addTargetsToAdGroup(Long adGroupId, ICampaignManagementService campaignManagement, Target[] targets) throws MsnCloudException
 	{
 		final String operationDescription = "Add Targets To AdGroup for AdGroupID [" + adGroupId + "], Targets [" + SemplestUtils.getMsnTargetString(targets, false) + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1781,7 +1783,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String deleteAdGroupTargets(String json) throws Exception 
+	public String deleteAdGroupTargets(String json) throws Exception
 	{
 		logger.debug("call deleteAdGroupTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1790,7 +1792,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void deleteAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws MsnCloudException 
+	public void deleteAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws MsnCloudException
 	{
 		final String operationDescription = "Delete AdGroup Targets for AccountID [" + accountId + "], CustomerID [" + customerId + "], AdGroupID [" + adGroupId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1824,7 +1826,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String getAdGroupTargets(String json) throws Exception 
+	public String getAdGroupTargets(String json) throws Exception
 	{
 		logger.debug("call getAdGroupTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1833,7 +1835,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public Target getAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws MsnCloudException 
+	public Target getAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws MsnCloudException
 	{
 		final String operationDescription = "Get AdGroup Targets for AccountID [" + accountId + "], CustomerID [" + customerId + "], AdGroupID [" + adGroupId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1841,7 +1843,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
 			final GetTargetByAdGroupIdRequest getTargetByAdGroupIdRequest = new GetTargetByAdGroupIdRequest(adGroupId);
-			final GetTargetByAdGroupIdResponse targetByAdGroupId = campaignManagement.getTargetByAdGroupId(getTargetByAdGroupIdRequest);		
+			final GetTargetByAdGroupIdResponse targetByAdGroupId = campaignManagement.getTargetByAdGroupId(getTargetByAdGroupIdRequest);
 			return targetByAdGroupId.getTarget();
 		}
 		catch (AdApiFaultDetail e)
@@ -1865,7 +1867,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	// ==================================
 	// Ad Methods
 	// ==================================
-	public String createAd(String json) throws Exception 
+	public String createAd(String json) throws Exception
 	{
 		logger.debug("call createAd(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1874,7 +1876,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public long createAd(Long accountId, Long adGroupId, String title, String text, String displayUrl, String destinationUrl) throws MsnCloudException 
+	public long createAd(Long accountId, Long adGroupId, String title, String text, String displayUrl, String destinationUrl) throws MsnCloudException
 	{
 		final String operationDescription = "Get Create Ad for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Title [" + title + "], Text [" + text + "], DisplayURL [" + displayUrl + "], DestinationURL [" + destinationUrl + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1908,7 +1910,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String getAdById(String json) throws Exception 
+	public String getAdById(String json) throws Exception
 	{
 		logger.debug("call getAdById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1917,7 +1919,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public Ad getAdById(Long accountId, Long adGroupId, long adId) throws MsnCloudException 
+	public Ad getAdById(Long accountId, Long adGroupId, long adId) throws MsnCloudException
 	{
 		final String operationDescription = "Get Ad by ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], AdID [" + adId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -1942,10 +1944,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}		
+		}
 	}
 
-	public String getAdsByAdGroupId(String json) throws Exception 
+	public String getAdsByAdGroupId(String json) throws Exception
 	{
 		logger.debug("call getAdsByAdGroupId(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1960,14 +1962,14 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public Ad[] getAdsByAdGroupId(Long accountId, Long adGroupId) throws MsnCloudException 
+	public Ad[] getAdsByAdGroupId(Long accountId, Long adGroupId) throws MsnCloudException
 	{
 		final String operationDescription = "Get Ads By AdGroup ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final GetAdsByAdGroupIdResponse ads = campaignManagement.getAdsByAdGroupId(new GetAdsByAdGroupIdRequest(adGroupId));		
+			final GetAdsByAdGroupIdResponse ads = campaignManagement.getAdsByAdGroupId(new GetAdsByAdGroupIdRequest(adGroupId));
 			return ads.getAds();
 		}
 		catch (AdApiFaultDetail e)
@@ -1985,10 +1987,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
-	public String updateAdById(String json) throws Exception 
+	public String updateAdById(String json) throws Exception
 	{
 		logger.debug("call updateAdById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -1996,7 +1998,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return gson.toJson(0);
 	}
 
-	public Map<UpdateAdRequest, Long> updateAllAdById(UpdateAdsRequestObj request) throws MsnCloudException 
+	public Map<UpdateAdRequest, Long> updateAllAdById(UpdateAdsRequestObj request) throws MsnCloudException
 	{
 		final String operationDescription = "Update All Ads By ID for Request [" + request + "]";
 		final String operationDescriptionPretty = "Update All Ads By ID for Request [" + request.toStringPretty() + "]";
@@ -2022,7 +2024,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void updateAdById(Long accountId, Long adGroupId, long adId, String title, String text, String displayUrl, String destinationUrl) throws MsnCloudException 
+	public void updateAdById(Long accountId, Long adGroupId, long adId, String title, String text, String displayUrl, String destinationUrl) throws MsnCloudException
 	{
 		final String operationDescription = "Update ad By ID for AccountID [" + adGroupId + "], AdGroupId [" + adGroupId + "], AdId [" + adId + "], Title [" + title + "], Text [" + text + "], DisplayUrl [" + displayUrl + "], DestinationURL [" + destinationUrl + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2056,10 +2058,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
-	public String pauseAdById(String json) throws Exception 
+	public String pauseAdById(String json) throws Exception
 	{
 		logger.debug("call pauseAdById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2068,7 +2070,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void pauseAdById(Long accountId, Long adGroupId, long adId) throws MsnCloudException 
+	public void pauseAdById(Long accountId, Long adGroupId, long adId) throws MsnCloudException
 	{
 		final String operationDescription = "Pause Ad By ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], AdID [" + adId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2092,10 +2094,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
-	public String resumeAdById(String json) throws Exception 
+	public String resumeAdById(String json) throws Exception
 	{
 		logger.debug("call resumeAdById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2104,7 +2106,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void resumeAdById(Long accountId, Long adGroupId, long adId) throws MsnCloudException 
+	public void resumeAdById(Long accountId, Long adGroupId, long adId) throws MsnCloudException
 	{
 		final String operationDescription = "Resume Ad By ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], AdID [" + adId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2128,10 +2130,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
-	public String deleteAdById(String json) throws Exception 
+	public String deleteAdById(String json) throws Exception
 	{
 		logger.debug("call deleteAdById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2140,9 +2142,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void deleteAdById(Long accountId, Long adGroupId, long adId) throws MsnCloudException 
+	public void deleteAdById(Long accountId, Long adGroupId, long adId) throws MsnCloudException
 	{
-		final String operationDescription = "Delete Ad By ID for AccountID [" +accountId  + "], AdGroupID [" + adGroupId + "], AdID [" + adId + "]";
+		final String operationDescription = "Delete Ad By ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], AdID [" + adId + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
@@ -2164,13 +2166,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
 	// ==================================
 	// Keyword Methods
 	// ==================================
-	public String createKeyword(String json) throws Exception 
+	public String createKeyword(String json) throws Exception
 	{
 		logger.debug("call createKeyword(String json) [" + json + "]");
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2183,23 +2185,36 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		final String adGroupIdString = data.get("adGroupId");
 		final Long adGroupId = Long.valueOf(adGroupIdString);
 		final String text = data.get("text");
-		final long ret = createKeyword(accountId, adGroupId, text, matchType, bid);		
+		final long ret = createKeyword(accountId, adGroupId, text, matchType, bid);
 		return gson.toJson(ret);
 	}
 
 	@Override
-	public void setNegativeKeywords(final Long accountId, final Long campaignId, final List<String> negativeKeywords) throws MsnCloudException 
+	public Map<Integer, String> setNegativeKeywords(final Long accountId, final Long campaignId, final Map<String, Integer> negativeKeywordToPkMap) throws MsnCloudException
 	{
-		final String operationDescription = "Set Negative Keywords for AccountID [" + accountId + "], CampaignID [" + campaignId + "], NegativeKeywords [" + negativeKeywords + "]";	
+		final String operationDescription = "Set Negative Keywords for AccountID [" + accountId + "], CampaignID [" + campaignId + "], NegativeKeywords [" + negativeKeywordToPkMap + "]";
 		logger.info("Will try to " + operationDescription);
+		final Map<Integer, String> filteredPkToCommentMap = new HashMap<Integer, String>();
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final String[] negativeKeywordsArray = negativeKeywords.toArray(new String[negativeKeywords.size()]);
-			final CampaignNegativeKeywords campaignNegativeKeywords = new CampaignNegativeKeywords(campaignId, negativeKeywordsArray);
-			final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[] { campaignNegativeKeywords };
-			final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
-			final SetNegativeKeywordsToCampaignsResponse response = campaignManagement.setNegativeKeywordsToCampaigns(request);
+			final Set<Entry<String, Integer>> entrySet = negativeKeywordToPkMap.entrySet();
+			for (final Entry<String, Integer> entry : entrySet)
+			{
+				final String negativeKeyword = entry.getKey();
+				final Integer pk = entry.getValue();
+				final String[] negativeKeywordsArray = new String[] { negativeKeyword };
+				final CampaignNegativeKeywords campaignNegativeKeywords = new CampaignNegativeKeywords(campaignId, negativeKeywordsArray);
+				final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[] { campaignNegativeKeywords };
+				final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
+				final Map<CampaignNegativeKeywords, Integer> negKeywordToPkMap = new HashMap<CampaignNegativeKeywords, Integer>();
+				negKeywordToPkMap.put(campaignNegativeKeywords, pk);
+				final AddNegativeKeywordsRetriableMsnOperation operation = new AddNegativeKeywordsRetriableMsnOperation(campaignManagement, request, negKeywordToPkMap, SemplestUtils.DEFAULT_RETRY_COUNT);
+				operation.performOperation();
+				final Map<Integer, String> currentFilteredPkToCommentMap = operation.getFilteredOutKeywordPkToCommentMap();
+				filteredPkToCommentMap.putAll(currentFilteredPkToCommentMap);
+			}
+			return filteredPkToCommentMap;
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -2216,10 +2231,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	 
+		}
 	}
 
-	public Keyword getKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws Exception 
+	public Keyword getKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws Exception
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(text);
@@ -2247,7 +2262,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws MsnCloudException 
+	public long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws MsnCloudException
 	{
 		final String operationDescription = "Create Keyword for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Text [" + text + "], MatchType [" + matchType + "], Bid [" + bid + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2273,7 +2288,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
 	public static String getKeywordsString(final Keyword... keywords)
@@ -2305,7 +2320,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public MsnCreateKeywordsResponse createKeywords(final Long accountId, final Long adGroupId, final Map<Keyword, Integer> keywordToPkMap) throws MsnCloudException 
+	public MsnCreateKeywordsResponse createKeywords(final Long accountId, final Long adGroupId, final Map<Keyword, Integer> keywordToPkMap) throws MsnCloudException
 	{
 		final String operationDescription = "Create Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywordToPkMap.size() + " Keywords<->PK map [<potentially too many to list>]";
 		logger.info("Will try to " + operationDescription);
@@ -2343,7 +2358,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String getKeywordById(String json) throws Exception 
+	public String getKeywordById(String json) throws Exception
 	{
 		logger.debug("call getKeywordById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2352,18 +2367,18 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws MsnCloudException 
+	public Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws MsnCloudException
 	{
 		final String operationDescription = "Create Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], KeywordID [" + keywordId + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final GetKeywordsByIdsResponse keywordsByIds = campaignManagement.getKeywordsByIds(new GetKeywordsByIdsRequest(adGroupId, new long[] { keywordId }));	
+			final GetKeywordsByIdsResponse keywordsByIds = campaignManagement.getKeywordsByIds(new GetKeywordsByIdsRequest(adGroupId, new long[] { keywordId }));
 			final Keyword[] keywords = keywordsByIds.getKeywords();
 			if (keywords.length == 1 && keywords[0] != null)
 			{
-				return keywords[0];			
+				return keywords[0];
 			}
 		}
 		catch (AdApiFaultDetail e)
@@ -2385,7 +2400,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return null;
 	}
 
-	public String getKeywordByAdGroupId(String json) throws Exception 
+	public String getKeywordByAdGroupId(String json) throws Exception
 	{
 		logger.debug("call getKeywordByAdGroupId(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2404,7 +2419,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws MsnCloudException 
+	public Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws MsnCloudException
 	{
 		final String operationDescription = "Create Keywords By AdGroup ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2429,10 +2444,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}		
+		}
 	}
 
-	public String updateKeywordBidById(String json) throws Exception 
+	public String updateKeywordBidById(String json) throws Exception
 	{
 		logger.debug("JSON: [" + json + "]");
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2451,9 +2466,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, MatchType matchType, Bid bid) throws MsnCloudException 
+	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, MatchType matchType, Bid bid) throws MsnCloudException
 	{
-		final String operationDescription = "Update Keywords Bid By ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], KeywordID [" + keywordId + "], MatchType [" + matchType + "], Bid [" + bid + "]";		
+		final String operationDescription = "Update Keywords Bid By ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], KeywordID [" + keywordId + "], MatchType [" + matchType + "], Bid [" + bid + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
@@ -2498,13 +2513,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
-	public Boolean updateKeywordStatus(Long accountID, Long adGroupID, Map<Long, Boolean> kwCriterionIsActive) throws MsnCloudException 
+	public Boolean updateKeywordStatus(Long accountID, Long adGroupID, Map<Long, Boolean> kwCriterionIsActive) throws MsnCloudException
 	{
 		final String operationDescription = "Update Keyword Status for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], KeywordData [" + SemplestUtils.getEasilyReadableString(kwCriterionIsActive) + "]";
-		logger.info("Will try to " + operationDescription);		
+		logger.info("Will try to " + operationDescription);
 		final List<List<Long>> kwBatchPause;
 		final List<List<Long>> kwBatchResume;
 		try
@@ -2567,7 +2582,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					resumeReq.setKeywordIds(kwIds);
 					campaignManagement.resumeKeywords(resumeReq);
 				}
-			}		
+			}
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -2618,7 +2633,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void updateKeywordBidsByIds(Long accountId, Long adGroupId, List<BidElement> bids) throws MsnCloudException 
+	public void updateKeywordBidsByIds(Long accountId, Long adGroupId, List<BidElement> bids) throws MsnCloudException
 	{
 		final String operationDescription = "Update Keyword Bids By Ids for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], BidElements [" + bids + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2653,7 +2668,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String pauseKeywordById(String json) throws Exception 
+	public String pauseKeywordById(String json) throws Exception
 	{
 		logger.debug("call pauseKeywordById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2662,7 +2677,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void pauseKeywordById(Long accountId, Long adGroupId, long keywordId) throws MsnCloudException 
+	public void pauseKeywordById(Long accountId, Long adGroupId, long keywordId) throws MsnCloudException
 	{
 		final String operationDescription = "Pause Keyword By ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], KeywordID [" + keywordId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2689,7 +2704,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public void pauseKeywordsByIds(Long accountId, Long adGroupId, long[] keywordIds) throws MsnCloudException 
+	public void pauseKeywordsByIds(Long accountId, Long adGroupId, long[] keywordIds) throws MsnCloudException
 	{
 		final String operationDescription = "Pause Keyword By IDs for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], KeywordID [" + Arrays.asList(keywordIds) + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2716,16 +2731,16 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String deleteKeywordById(String json) throws Exception 
+	public String deleteKeywordById(String json) throws Exception
 	{
 		logger.debug("call deleteKeywordById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
-		deleteKeywordById(new Long(data.get("accountId")), new Long(data.get("adGroupId")), new Long(data.get("keywordId")));		
+		deleteKeywordById(new Long(data.get("accountId")), new Long(data.get("adGroupId")), new Long(data.get("keywordId")));
 		return gson.toJson(0);
 	}
 
 	@Override
-	public void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws MsnCloudException 
+	public void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws MsnCloudException
 	{
 		final String operationDescription = "Delete Keyword By ID for AccountID [" + accountId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2752,7 +2767,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String deleteKeywordsById(String json) throws Exception 
+	public String deleteKeywordsById(String json) throws Exception
 	{
 		logger.debug("call deleteKeywordsById(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2763,7 +2778,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void deleteKeywordsById(Long accountId, Long adGroupId, long[] keywordIds) throws MsnCloudException 
+	public void deleteKeywordsById(Long accountId, Long adGroupId, long[] keywordIds) throws MsnCloudException
 	{
 		final String operationDescription = "Delete Keywords By ID for AccountId [" + accountId + "], AdGroupID [" + adGroupId + "], KeywordIds [" + SemplestUtils.getStringForArray(keywordIds) + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2806,7 +2821,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	// }
 	//
 
-	public String getKeywordEstimateByBids(String json) throws Exception 
+	public String getKeywordEstimateByBids(String json) throws Exception
 	{
 		logger.debug("call getKeywordEstimateByBids(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2814,7 +2829,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return gson.toJson(ret);
 	}
 
-	public String deleteAllTargetsInCampaign(String json) throws Exception 
+	public String deleteAllTargetsInCampaign(String json) throws Exception
 	{
 		logger.debug("call deleteAllTargetsInCampaign(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -2823,7 +2838,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws MsnCloudException 
+	public void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws MsnCloudException
 	{
 		final String operationDescription = "Delete All Targets In Campaign for AccountId [" + accountId + "], CampaignId [" + campaignId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -2856,14 +2871,14 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				reqDelTarg.setCampaignId(campaignId);
 				final DeleteTargetFromCampaignResponse respDelTar = campaignManagement.deleteTargetFromCampaign(reqDelTarg);
 			}
-			
+
 			// Get businesses already installed
 			final GetBusinessesInfoRequest busreq = new GetBusinessesInfoRequest();
 			final GetBusinessesInfoResponse busres = campaignManagement.getBusinessesInfo(busreq);
 			final BusinessInfo[] busInf = busres.getBusinessesInfo();
 			final long[] storedBusIDs = new long[busInf.length];
 
-			// Delete businesses installed			
+			// Delete businesses installed
 			if (busInf != null && busInf.length > 0 && busInf[0].getId() > 0)
 			{
 				for (int i = 0; i < busInf.length; i++)
@@ -2893,9 +2908,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 
 	}
 
-	private Boolean setBusinessTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, Double radius, String addr, String city, String state, String country, String zip) throws MsnCloudException 
+	private Boolean setBusinessTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, Double radius, String addr, String city, String state, String country, String zip) throws MsnCloudException
 	{
-		final String operationDescription = "Set Business Target Object for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignId [" + campaignId + "], Radius [" + radius + "], Address [" + addr + "], City [" + city + "], State [" + state + "], Country [" + country + "], Zip [" + zip + "], Targets [" + SemplestUtils.getMsnTargetString(targetsStored, false) + "]";
+		final String operationDescription = "Set Business Target Object for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignId [" + campaignId + "], Radius [" + radius + "], Address [" + addr + "], City [" + city + "], State [" + state + "], Country [" + country + "], Zip ["
+				+ zip + "], Targets [" + SemplestUtils.getMsnTargetString(targetsStored, false) + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
@@ -3022,9 +3038,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	private Boolean setRadiusTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, Double radius, Double latitude, Double longitude) throws MsnCloudException 
+	private Boolean setRadiusTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, Double radius, Double latitude, Double longitude) throws MsnCloudException
 	{
-		final String operationDescription = "Set Radius Target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignId [" + campaignId + "], Radius [" + radius + "], Latitude [" + latitude + "], Longitude [" + longitude + "], Targets [" + SemplestUtils.getMsnTargetString(targetsStored, false) + "]";
+		final String operationDescription = "Set Radius Target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignId [" + campaignId + "], Radius [" + radius + "], Latitude [" + latitude + "], Longitude [" + longitude + "], Targets ["
+				+ SemplestUtils.getMsnTargetString(targetsStored, false) + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
@@ -3114,7 +3131,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	private Boolean setStateTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, String state) throws MsnCloudException 
+	private Boolean setStateTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, String state) throws MsnCloudException
 	{
 		final String operationDescription = "Set State Target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignId [" + campaignId + "], State [" + state + "], Targets [" + SemplestUtils.getMsnTargetString(targetsStored, false) + "]";
 		logger.info("Will try to " + operationDescription);
@@ -3202,7 +3219,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String updateGeoTargets(String json) throws Exception 
+	public String updateGeoTargets(String json) throws Exception
 	{
 		logger.debug("call updateGeoTargets(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -3217,16 +3234,16 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		final Boolean ret = updateGeoTargets(accountId, campaignId, adGroupId, geoTargetVsTypeMap);
 		return gson.toJson(ret);
 	}
-	
+
 	@Override
 	public Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Long adGroupId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException
 	{
 		final String operationDescription = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "], GeoTarget<->Type map [" + geoTargetVsTypeMap + "]";
-		final String operationDescriptionPretty = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "], GeoTarget<->Type map\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap);		
+		final String operationDescriptionPretty = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "], GeoTarget<->Type map\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap);
 		logger.info("Will try to " + operationDescriptionPretty);
 		try
 		{
-			
+
 			final Account account = getAccountById(accountId);
 			final String accountName = account.getName();
 			logger.info("MSN Account Name: " + accountName);
@@ -3240,11 +3257,26 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				throw new MsnCloudException("Problems retrieving MsnCustomerID for AccountID [" + accountId + "]");
 			}
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, msnCustomerID);
-			
+
 			// delete existing geo targets
-			final DeleteTargetFromCampaignRequest deleteRequest = new DeleteTargetFromCampaignRequest(campaignId); 
-			final DeleteTargetFromCampaignResponse deleteResponse = campaignManagement.deleteTargetFromCampaign(deleteRequest);
-			
+			final GetTargetsByCampaignIdsRequest getTargetsRequest = new GetTargetsByCampaignIdsRequest(new long[] { campaignId });
+			final GetTargetsByCampaignIdsResponse getTargetResponse = campaignManagement.getTargetsByCampaignIds(getTargetsRequest);
+			final Target[] existingTargets = getTargetResponse.getTargets();
+			final List<Long> existingTargetIds = new ArrayList<Long>();
+			for (final Target target : existingTargets)
+			{
+				final Long targetId = target.getId();
+				existingTargetIds.add(targetId);
+			}
+			logger.info("IDs for existing targets that we'll delete before refreshing with new ones:" + existingTargetIds);
+			final long[] targetIdArray = new long[existingTargetIds.size()];
+			for (int i = 0; i < existingTargetIds.size(); ++i)
+			{
+				targetIdArray[i] = existingTargetIds.get(i);
+			}
+			final DeleteTargetsFromLibraryRequest deleteRequest = new DeleteTargetsFromLibraryRequest(targetIdArray);
+			final DeleteTargetsFromLibraryResponse deleteResponse = campaignManagement.deleteTargetsFromLibrary(deleteRequest);
+
 			// add latest geo targets
 			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();
 			final List<Target> targets = new ArrayList<Target>();
@@ -3263,7 +3295,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					final String usState = "US-" + state;
 					stateTargetBid.setState(usState);
 					final StateTarget stateTarget = new StateTarget();
-					final StateTargetBid[] stateTargetBids = new StateTargetBid[]{stateTargetBid};
+					final StateTargetBid[] stateTargetBids = new StateTargetBid[] { stateTargetBid };
 					stateTarget.setBids(stateTargetBids);
 					location.setStateTarget(stateTarget);
 				}
@@ -3276,9 +3308,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					final double radius = getTarget.getRadius();
 					radiusTargetBid.setLatitudeDegrees(latitudeDegrees);
 					radiusTargetBid.setLongitudeDegrees(longitudeDegrees);
-					final int radiusInt = (int)radius;
+					final int radiusInt = (int) radius;
 					radiusTargetBid.setRadius(radiusInt);
-					final RadiusTargetBid[] radiusTargetBids = new RadiusTargetBid[]{radiusTargetBid};
+					final RadiusTargetBid[] radiusTargetBids = new RadiusTargetBid[] { radiusTargetBid };
 					final RadiusTarget radiusTarget = new RadiusTarget();
 					radiusTarget.setBids(radiusTargetBids);
 					location.setRadiusTarget(radiusTarget);
@@ -3296,7 +3328,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				return true;
 			}
 			final Target[] targetArray = targets.toArray(new Target[targets.size()]);
-			addRequest.setTargets(targetArray);			
+			addRequest.setTargets(targetArray);
 			final AddTargetsToLibraryResponse response = campaignManagement.addTargetsToLibrary(addRequest);
 			final long[] targetIds = response.getTargetIds();
 			final Integer numTargetsRequested = geoTargetVsTypeMap.size();
@@ -3330,10 +3362,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Long[] microBidAmount, MatchType matchType) throws MsnCloudException 
+	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Long[] microBidAmount, MatchType matchType) throws MsnCloudException
 	{
 		final String operationDescription = "Get Keyword Estimate By Bids [" + accountId + "], Keywords [" + Arrays.asList(keywords) + "], MicroBidAmounts [" + Arrays.asList(microBidAmount) + "], MatchType [" + matchType + "]";
-		logger.info("Will try to " + operationDescription);		
+		logger.info("Will try to " + operationDescription);
 		logger.info("Will try to get Keyword Estimate by Bids using AccountID [" + accountId + "], " + keywords.length + " Keywords, " + microBidAmount.length + " MicroBidAmounts, MatchType [" + matchType + "]");
 		final List<String> keywordList = Arrays.asList(keywords);
 		final List<Long> microBidAmountList = Arrays.asList(microBidAmount);
@@ -3412,7 +3444,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	 * API to get search volume data by keyword, by month from the start month to the most recent month available Returns a HashMap mapping search
 	 * terms (keywords) to int[][] element i of the int[][] holds a 3-element int[] giving month, year, and search volume for keyword i
 	 */
-	public HashMap<String, int[][]> getKeywordVolumes(Long accountId, String[] keywords, MonthAndYear startMonth) throws MsnCloudException 
+	public HashMap<String, int[][]> getKeywordVolumes(Long accountId, String[] keywords, MonthAndYear startMonth) throws MsnCloudException
 	{
 		final String operationDescription = "Get Keyword Volumes [" + accountId + "], Keywords [" + Arrays.asList(keywords) + "], MonthAndYear [" + startMonth + "]";
 		logger.info("Will try to " + operationDescription);
@@ -3522,7 +3554,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	 * Get MSN-suggested keywords for a given set of input words. Takes an account id, a String[] of keywords to get suggestions for, and an int
 	 * giving the maximum number of suggestions per input word. Returns a HashMap mapping input keywords to String[]'s holding the suggested keywords
 	 */
-	public HashMap<String, String[]> getKeywordSuggestions(Long accountId, String[] keywords, int maxRecs) throws MsnCloudException 
+	public HashMap<String, String[]> getKeywordSuggestions(Long accountId, String[] keywords, int maxRecs) throws MsnCloudException
 	{
 		final String operationDescription = "Get Keyword Suggestions [" + accountId + "], Keywords [" + Arrays.asList(keywords) + "], MaxRecs [" + maxRecs + "]";
 		logger.info("Will try to " + operationDescription);
@@ -3628,10 +3660,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	// ==================================
 	// Target Methods
 	// ==================================
-	private long addTargetsToLibrary(ICampaignManagementService campaignManagement, Target[] targets) throws MsnCloudException 
+	private long addTargetsToLibrary(ICampaignManagementService campaignManagement, Target[] targets) throws MsnCloudException
 	{
 		final String operationDescription = "Add Targets To Library for Targets [" + SemplestUtils.getMsnTargetString(targets, false) + "]";
-		logger.info("Will try to " + operationDescription);		
+		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final AddTargetsToLibraryRequest addTargetsToLibraryRequest = new AddTargetsToLibraryRequest();
@@ -3655,7 +3687,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}		
+		}
 	}
 
 	private Target[] makeStateTargets(List<String> states)
@@ -3742,7 +3774,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return targets;
 	}
 
-	public String requestKeywordReport(String json) throws Exception 
+	public String requestKeywordReport(String json) throws Exception
 	{
 		logger.debug("call requestKeywordReport(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -3752,7 +3784,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws MsnCloudException 
+	public String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws MsnCloudException
 	{
 		final String operationDescription = "Request Keyword Report for AccountID [" + accountId + "], CampaignID [" + campaignId + "], FirstDay [" + firstDay + "], LastDay [" + lastDay + "], Aggregation [" + aggregation + "]";
 		logger.info("Will try to " + operationDescription);
@@ -3769,9 +3801,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 
 	/**
 	 * Request a report for account, campaign. Set campaignId == 0 to report on all campaigns.
-	 * @throws MsnCloudException 
+	 * 
+	 * @throws MsnCloudException
 	 */
-	public String requestKeywordReport(Long accountId, Long campaignId, ReportTime time, ReportAggregation aggregation) throws MsnCloudException 
+	public String requestKeywordReport(Long accountId, Long campaignId, ReportTime time, ReportAggregation aggregation) throws MsnCloudException
 	{
 		final String operationDescription = "Request Keyword Report for AccountID [" + accountId + "], CampaignID [" + campaignId + "], ReportTime [" + time + "], ReportAggregation [" + aggregation + "]";
 		logger.info("Will try to " + operationDescription);
@@ -3794,7 +3827,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String requestCampaignReport(String json) throws Exception 
+	public String requestCampaignReport(String json) throws Exception
 	{
 		logger.debug("call requestCampaignReport(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -3808,23 +3841,20 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	 * 
 	 * @param accountId
 	 * @param campaignId
-	 * @throws MsnCloudException 
+	 * @throws MsnCloudException
 	 */
 	@Override
-	public String requestCampaignReport(Long accountId, Long campaignId, int daysInReport, ReportAggregation aggregation) throws MsnCloudException 
+	public String requestCampaignReport(Long accountId, Long campaignId, int daysInReport, ReportAggregation aggregation) throws MsnCloudException
 	{
 		final String operationDescription = "Request Campaign Report for AccountID [" + accountId + "], CampaignID [" + campaignId + "], DaysInReport [" + daysInReport + "], Aggregation [" + aggregation + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
-			CampaignPerformanceReportColumn[] columns = new CampaignPerformanceReportColumn[] 
-				{
-					CampaignPerformanceReportColumn.AccountName, CampaignPerformanceReportColumn.AccountNumber, CampaignPerformanceReportColumn.TimePeriod, CampaignPerformanceReportColumn.Status, CampaignPerformanceReportColumn.CampaignName, CampaignPerformanceReportColumn.CampaignId,
-					CampaignPerformanceReportColumn.CurrencyCode, CampaignPerformanceReportColumn.AdDistribution, CampaignPerformanceReportColumn.Impressions, CampaignPerformanceReportColumn.Clicks, CampaignPerformanceReportColumn.Ctr, CampaignPerformanceReportColumn.AverageCpc,
-					CampaignPerformanceReportColumn.Spend, CampaignPerformanceReportColumn.AveragePosition, CampaignPerformanceReportColumn.Conversions, CampaignPerformanceReportColumn.ConversionRate, CampaignPerformanceReportColumn.CostPerConversion, CampaignPerformanceReportColumn.LowQualityClicks,
-					CampaignPerformanceReportColumn.LowQualityClicksPercent, CampaignPerformanceReportColumn.LowQualityImpressions, CampaignPerformanceReportColumn.LowQualityImpressionsPercent, CampaignPerformanceReportColumn.LowQualityConversions,
-					CampaignPerformanceReportColumn.LowQualityConversionRate, CampaignPerformanceReportColumn.AverageCpm, CampaignPerformanceReportColumn.AverageCpc 
-				};
+			CampaignPerformanceReportColumn[] columns = new CampaignPerformanceReportColumn[] { CampaignPerformanceReportColumn.AccountName, CampaignPerformanceReportColumn.AccountNumber, CampaignPerformanceReportColumn.TimePeriod, CampaignPerformanceReportColumn.Status,
+					CampaignPerformanceReportColumn.CampaignName, CampaignPerformanceReportColumn.CampaignId, CampaignPerformanceReportColumn.CurrencyCode, CampaignPerformanceReportColumn.AdDistribution, CampaignPerformanceReportColumn.Impressions, CampaignPerformanceReportColumn.Clicks,
+					CampaignPerformanceReportColumn.Ctr, CampaignPerformanceReportColumn.AverageCpc, CampaignPerformanceReportColumn.Spend, CampaignPerformanceReportColumn.AveragePosition, CampaignPerformanceReportColumn.Conversions, CampaignPerformanceReportColumn.ConversionRate,
+					CampaignPerformanceReportColumn.CostPerConversion, CampaignPerformanceReportColumn.LowQualityClicks, CampaignPerformanceReportColumn.LowQualityClicksPercent, CampaignPerformanceReportColumn.LowQualityImpressions, CampaignPerformanceReportColumn.LowQualityImpressionsPercent,
+					CampaignPerformanceReportColumn.LowQualityConversions, CampaignPerformanceReportColumn.LowQualityConversionRate, CampaignPerformanceReportColumn.AverageCpm, CampaignPerformanceReportColumn.AverageCpc };
 			final CampaignPerformanceReportFilter filter = null;
 			final String title = "Weekly Campaign Report AccountId " + accountId + " CampaignId " + campaignId;
 			final ReportLanguage language = ReportLanguage.English;
@@ -3850,10 +3880,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String sendReportRequest(Long accountId, final ReportRequest reportRequest) throws MsnCloudException 
+	public String sendReportRequest(Long accountId, final ReportRequest reportRequest) throws MsnCloudException
 	{
 		final String operationDescription = "Send Request Report for AccountID [" + accountId + "], ReportRequest [" + reportRequest + "]";
-		logger.info("Will try to " + operationDescription);		
+		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final SubmitGenerateReportRequest submitGenerateReportRequest = new SubmitGenerateReportRequest();
@@ -3878,10 +3908,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
-	public String getReportData(String json) throws Exception 
+	public String getReportData(String json) throws Exception
 	{
 		logger.debug("call getReportData(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -3890,10 +3920,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public Map<String, String[]> getReportData(String reportId, Long accountId) throws MsnCloudException 
+	public Map<String, String[]> getReportData(String reportId, Long accountId) throws MsnCloudException
 	{
 		final String operationDescription = "Get Report Data for AccountID [" + accountId + "], ReportId [" + reportId + "]";
-		logger.info("Will try to " + operationDescription);		
+		logger.info("Will try to " + operationDescription);
 		try
 		{
 			final InputStreamReader streamReader = new InputStreamReader(getReportStream(reportId, accountId));
@@ -3961,10 +3991,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
-	public void printReportToConsole(String reportId, Long accountId) throws RemoteException, MsnCloudException 
+	public void printReportToConsole(String reportId, Long accountId) throws RemoteException, MsnCloudException
 	{
 		InputStream is = getReportStream(reportId, accountId);
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -3982,7 +4012,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public InputStream getReportStream(String reportId, Long accountId) throws RemoteException, MsnCloudException 
+	public InputStream getReportStream(String reportId, Long accountId) throws RemoteException, MsnCloudException
 	{
 		InputStream stream = getReportAsZipStream(reportId, accountId);
 		ZipInputStream zip = new ZipInputStream(stream);
@@ -4002,7 +4032,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		throw new MsnCloudException("Empty report zip package");
 	}
 
-	private InputStream getReportAsZipStream(String reportId, Long accountId) throws RemoteException, MsnCloudException 
+	private InputStream getReportAsZipStream(String reportId, Long accountId) throws RemoteException, MsnCloudException
 	{
 		final String operationDescription = "Get Report As Zip Stream for AccountID [" + accountId + "], ReportId [" + reportId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -4182,7 +4212,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	private ICampaignManagementService getCampaignManagementService(Long accountId, long customerId) throws Exception
-	{		
+	{
 		final String namespace = adCenterCredentials.getCampaignManagementNamespace();
 		final CampaignManagementServiceLocator campaignManagementServiceLocator = new CampaignManagementServiceLocator();
 		campaignManagementServiceLocator.setBasicHttpBinding_ICampaignManagementServiceEndpointAddress(adCenterCredentials.getCampaignManagementUrl());
@@ -4211,7 +4241,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			stub.setHeader(namespace, "CustomerId", customerId);
 			logger.info("Customer ID [" + customerId + "]");
 		}
-		return campaignManagementService;		
+		return campaignManagementService;
 	}
 
 	private IAdIntelligenceService getAdInteligenceService(Long accountId)
@@ -4269,7 +4299,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	}
 
 	@Override
-	public void initializeService(String input) throws InterruptedException 
+	public void initializeService(String input) throws InterruptedException
 	{
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
@@ -4284,7 +4314,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	public String getKeywordReport(String json) throws Exception 
+	public String getKeywordReport(String json) throws Exception
 	{
 		logger.debug("call getKeywordReport(String json)" + json);
 		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
@@ -4292,7 +4322,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		return gson.toJson(ret);
 	}
 
-	public Double[] getAdGroupDefaultBidValue(Long accountId, Long campaignId, Long adGroupId) throws MsnCloudException 
+	public Double[] getAdGroupDefaultBidValue(Long accountId, Long campaignId, Long adGroupId) throws MsnCloudException
 	{
 		final String operationDescription = "Get AdGroup Default Bid Value for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "]";
 		logger.info("Will try to " + operationDescription);
@@ -4330,11 +4360,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
 	@Override
-	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay) throws MsnCloudException 
+	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay) throws MsnCloudException
 	{
 		final String operationDescription = "Get AdGroup Default Bid Value for AccountID [" + accountId + "], CampaignID [" + campaignId + "], FirstDay [" + firstDay + "], LastDay [" + lastDay + "]";
 		logger.info("Will try to " + operationDescription);
@@ -4350,7 +4380,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			Double[] defaultBids = this.getAdGroupDefaultBidValue(accountId, campaignId, adGroupId);
 			Keyword[] keywords = this.getKeywordByAdGroupId(accountId, adGroupId);
 			Map<String, String[]> ret2 = this.getReportData(ret1, accountId);
-			ArrayList<ReportObject> reportObjectList = new ArrayList<ReportObject>();	
+			ArrayList<ReportObject> reportObjectList = new ArrayList<ReportObject>();
 			if (ret2.get("keyword") != null)
 			{
 				for (int i = 0; i < ret2.get("keyword").length; i++)
@@ -4400,10 +4430,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					reportObjectList.add(data);
 				}
 			}
-	
+
 			if (reportObjectList.size() == 0)
 				return null;
-	
+
 			ReportObject[] ret = new ReportObject[reportObjectList.size()];
 			reportObjectList.toArray(ret);
 			return ret;
@@ -4423,11 +4453,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}	
+		}
 	}
 
 	@Override
-	public String checkStatus(String input1, String input2) 
+	public String checkStatus(String input1, String input2)
 	{
 		return ServiceStatus.Up.getServiceStatusValue();
 	}

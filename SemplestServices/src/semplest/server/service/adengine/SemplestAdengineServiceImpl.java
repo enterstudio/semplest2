@@ -305,12 +305,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				Long accountID = null;
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(advertisingEngine);
 				final Double monthlyBudget = adEngineInitialData.getMonthlyBudget();
-				emailMessageSB.append("\t").append("Monthly Budget: ").append(monthlyBudget).append("\n");
+				emailMessageSB.append("\t").append("Monthly Budget: $").append(monthlyBudget).append("\n");
 				final Double dailyBudget = adEngineInitialData.getDailyBudget();
-				emailMessageSB.append("\t").append("Daily Budget: ").append(dailyBudget).append("\n");
+				emailMessageSB.append("\t").append("Daily Budget: $").append(dailyBudget).append("\n");
 				logger.info("AdEngine Initial Data found: [" + adEngineInitialData + "]");
-				GetAdEngineAccountSP getAdEngineAccount = new GetAdEngineAccountSP();
-				AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
+				final GetAdEngineAccountSP getAdEngineAccount = new GetAdEngineAccountSP();
+				final AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
 				companyName = AdEngineAccoutRow.getCustomerName();
 				emailMessageSB.append("\t").append("Customer Name: ").append(companyName).append("\n");
 				if (AdEngineAccoutRow.getAccountID() == null)
@@ -349,8 +349,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					storeAdGroupData(advertisingEngine, campaignID, adGroupData);
 					// Keywords
 					final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, advertisingEngine == AdEngine.Google, advertisingEngine == AdEngine.MSN);
+					emailMessageSB.append("Keywords").append("\n");
+					emailMessageSB.append("\t").append(advertisingEngine).append("\n");
 					final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
-					addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupId, advertisingEngine, keywordList, semplestMatchType, null);
+					emailMessageSB.append("\t\t").append("Match Type: ").append(semplestMatchType).append("\n");
+					addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupId, advertisingEngine, keywordList, semplestMatchType, null, emailMessageSB);
 					// Set initial bidding
 					final BudgetObject budgetData = new BudgetObject();
 					budgetData.setRemainingBudgetInCycle(monthlyBudget);
@@ -687,7 +690,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return addKeywordRequests;
 	}
 
-	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, AdEngine adEngine, List<KeywordProbabilityObject> keywordList, final String semplestMatchType, Long microBidAmount) throws Exception
+	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, AdEngine adEngine, List<KeywordProbabilityObject> keywordList, final String semplestMatchType, Long microBidAmount, final StringBuilder emailMessageSB) throws Exception
 	{
 		logger.info("Will try to add keywords to ad group for AccountID [" + accountID + "], CampaignID [" + campaignID + "], PromotionID [" + promotionID + "], AdGroupID [" + adGroupID + "], AdEngine [" + adEngine + "], SemplestMatchType [" + semplestMatchType + "], MicroBidAmount ["
 				+ microBidAmount + "], " + keywordList.size() + " Keywords [<not printing because can be way too many to realistically print>]");
@@ -701,19 +704,37 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			int counter = 0;
 			final List<KeywordProbabilityObject> regularKeywordProbabilities = getKeywordProbabilities(keywordList, false);
 			final List<KeywordProbabilityObject> negativeKeywordProbabilities = getKeywordProbabilities(keywordList, true);
+			
 			// Add Negative Keywords
+			final Integer numNegativeKeywordsTotal = negativeKeywordProbabilities.size();
+			Integer numNegativeKeywordsAdded = 0;
+			Integer numNegativeKeywordsRejected = 0;
 			for (KeywordProbabilityObject negativeKeyword : negativeKeywordProbabilities)
-			{
-				final String negativeKeywordText = negativeKeyword.getKeyword();
-				KeywordDataObject keywordDataObj = google.addNegativeKeyWordToAdGroup(accountID, campaignID, negativeKeywordText, keywordMatchType);
-				final Long keywordBidID = keywordDataObj.getBidID();
-				logger.info(++counter + ": will try to save in db Google Negative Keyword for GoogleID [" + keywordBidID + "], Text [" + negativeKeywordText + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + true + "]");
-				final Long microBidAmt = keywordDataObj.getMicroBidAmount();
-				final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();
-				Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null, true);
-				Thread.sleep(1000); // Wait for google
+			{			
+				final KeywordDataObject keywordDataObj = google.addNegativeKeyWordToAdGroup(accountID, campaignID, negativeKeyword, keywordMatchType, promotionID);
+				if (keywordDataObj == null)
+				{
+					++numNegativeKeywordsRejected;
+				}
+				else
+				{
+					++numNegativeKeywordsAdded;
+					final Long keywordBidID = keywordDataObj.getBidID();
+					logger.info(++counter + ": will try to save in db Google Negative Keyword for GoogleID [" + keywordBidID + "], KeywordProbability [" + negativeKeyword + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + true + "]");
+					final Long microBidAmt = keywordDataObj.getMicroBidAmount();
+					final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();
+					Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null, true);
+				}
 			}
+			emailMessageSB.append("\t\t").append("Negative").append("\n");
+			emailMessageSB.append("\t\t\t").append("Total: ").append(numNegativeKeywordsTotal).append("\n");
+			emailMessageSB.append("\t\t\t").append("Added: ").append(numNegativeKeywordsAdded).append("\n");
+			emailMessageSB.append("\t\t\t").append("Rejected: ").append(numNegativeKeywordsRejected).append("\n");
+			
 			// Add Positive Keywords
+			final Integer numPositiveKeywordsTotal = regularKeywordProbabilities.size();
+			emailMessageSB.append("\t\t").append("Positive").append("\n");
+			emailMessageSB.append("\t\t\t").append("Total: ").append(numPositiveKeywordsTotal).append("\n");		
 			final List<GoogleAddKeywordRequest> positiveKeywordRequests = getAddKeywordRequests(regularKeywordProbabilities, keywordMatchType, 0L);
 			final List<List<GoogleAddKeywordRequest>> positiveKeywordRequestBatches = SemplestUtils.getBatches(positiveKeywordRequests, 500);
 			final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
@@ -722,6 +743,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch, promotionID);
 				requestToGoogleIdMap.putAll(requestToGoogleIdMapForBatch);
 			}
+			final Integer numPositiveKeywordsAdded = requestToGoogleIdMap.size();
+			emailMessageSB.append("\t\t\t").append("Added: ").append(numPositiveKeywordsAdded).append("\n");
+			final Integer numPositiveKeywordsRejected = numPositiveKeywordsTotal - numPositiveKeywordsAdded;
+			emailMessageSB.append("\t\t\t").append("Rejected").append(numPositiveKeywordsRejected).append("\n");
 			logger.info("Generated total of " + requestToGoogleIdMap.size() + " GoogleAddKeywordRequest<->GoogleKeywordId mappings");
 			final Set<Entry<GoogleAddKeywordRequest, Long>> entrySet = requestToGoogleIdMap.entrySet();
 			counter = 0;
@@ -742,7 +767,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			final Long accId = Long.valueOf(accountID);
 			int counter = 0;
-
 			final List<KeywordProbabilityObject> regularKeywordProbabilities = getKeywordProbabilities(keywordList, false);
 			final List<KeywordProbabilityObject> negativeKeywordProbabilities = getKeywordProbabilities(keywordList, true);
 			final Map<com.microsoft.adcenter.v8.Keyword, Integer> regularKeywordsToPkMap = new HashMap<com.microsoft.adcenter.v8.Keyword, Integer>();
@@ -773,15 +797,40 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				regularKeywordsToPkMap.put(msnKeyword, keywordPK);
 			}
+			// Add Negative Keywords
+			Integer numNegativeKeywordsRejected = 0;
+			if (!negativeKeywordProbabilities.isEmpty())
+			{
+				logger.info("Will try to add " + negativeKeywordProbabilities.size() + " Negative Keywords to MSN");
+				final Map<String, Integer> negativeKeywordToPkMap = getKywordToPkMap(negativeKeywordProbabilities);
+				final Map<Integer, String> filteredPkToCommentMap = msn.setNegativeKeywords(accId, campaignID, negativeKeywordToPkMap);
+				numNegativeKeywordsRejected = filteredPkToCommentMap.size(); 
+				if (!filteredPkToCommentMap.isEmpty())
+				{
+					logger.info(filteredPkToCommentMap.size() + " negative keywords were rejected by MSN.  Map of KeywordPK <-> Reject Comment from MSN:\n" + SemplestUtils.getEasilyReadableString(filteredPkToCommentMap));
+					SemplestDB.removeKeywordFromAdEngine(filteredPkToCommentMap, promotionID, adEngine);
+				}
+			}
+			final Integer numNegativeKeywordsTotal = negativeKeywordProbabilities.size();
+			final Integer numNegativeKeywordsAdded = numNegativeKeywordsTotal - numNegativeKeywordsRejected;
+			emailMessageSB.append("\t\t").append("Negative").append("\n");
+			emailMessageSB.append("\t\t\t").append("Total: ").append(numNegativeKeywordsTotal).append("\n");
+			emailMessageSB.append("\t\t\t").append("Added: ").append(numNegativeKeywordsAdded).append("\n");
+			emailMessageSB.append("\t\t\t").append("Rejected: ").append(numNegativeKeywordsRejected).append("\n");
 			// Add Positive Keywords
 			final int batchSize = 1000;
 			final List<Map<com.microsoft.adcenter.v8.Keyword, Integer>> keywordBatches = SemplestUtils.getBatches(regularKeywordsToPkMap, batchSize);
-			logger.info("Out of " + regularKeywordsToPkMap.size() + " MSN keywords, created " + keywordBatches.size() + " batches of max " + batchSize);
+			final Integer numPositiveKeywordsTotal = regularKeywordsToPkMap.size();
+			logger.info("Out of " + numPositiveKeywordsTotal + " MSN keywords, created " + keywordBatches.size() + " batches of max " + batchSize);	
+			Integer numPositiveKeywordsAdded = 0;
+			Integer numPositiveKeywordsRejected = 0;
 			for (final Map<com.microsoft.adcenter.v8.Keyword, Integer> batch : keywordBatches)
 			{
 				final MsnCreateKeywordsResponse response = msn.createKeywords(accId, adGroupID, batch);
 				final Map<String, Long> keywordToMsnIdMap = response.getKeywordToMsnIdMap();
+				numPositiveKeywordsAdded += keywordToMsnIdMap.size();
 				final Map<Integer, String> filteredOutKeywordIdsToCommentMap = response.getFilteredOutKeywordPkToCommentMap();
+				numPositiveKeywordsRejected += filteredOutKeywordIdsToCommentMap.size();
 				logger.info("Successfully created Keywords in MSN (KeywordText<->MsnID):\n" + SemplestUtils.getEasilyReadableString(keywordToMsnIdMap) + "\n\nCould not create these Keywords in MSN (KeywordPK<->Comment):\n" + SemplestUtils.getEasilyReadableString(filteredOutKeywordIdsToCommentMap));
 				// Mark as Deleted in DB for Keywords that could not be added to MSN
 				SemplestDB.removeKeywordFromAdEngine(filteredOutKeywordIdsToCommentMap, promotionID, adEngine);
@@ -794,14 +843,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
 					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null, true);
 				}
-			}
-			// Add Negative Keywords
-			if (!negativeKeywordProbabilities.isEmpty())
-			{
-				logger.info("Will try to add " + negativeKeywordProbabilities.size() + " Negative Keywords to MSN");
-				final List<String> keywordTexts = getKywordTextList(negativeKeywordProbabilities);
-				msn.setNegativeKeywords(accId, campaignID, keywordTexts);
-			}
+			}			
+			emailMessageSB.append("\t\t").append("Positive").append("\n");
+			emailMessageSB.append("\t\t\t").append("Total: ").append(numPositiveKeywordsTotal).append("\n");	
+			emailMessageSB.append("\t\t\t").append("Added: ").append(numPositiveKeywordsAdded).append("\n");
+			emailMessageSB.append("\t\t\t").append("Rejected").append(numPositiveKeywordsRejected).append("\n");
 		}
 		else
 		{
@@ -809,15 +855,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 	}
 
-	private List<String> getKywordTextList(final List<KeywordProbabilityObject> keywords)
+	private Map<String, Integer> getKywordToPkMap(final List<KeywordProbabilityObject> keywords)
 	{
-		final List<String> keywordTextList = new ArrayList<String>();
+		final Map<String, Integer> keywordToPkMap = new HashMap<String, Integer>();
 		for (final KeywordProbabilityObject keyword : keywords)
 		{
 			final String keywordText = keyword.getKeyword();
-			keywordTextList.add(keywordText);
+			final Integer keywordPk = keyword.getKeywordPK();
+			keywordToPkMap.put(keywordText, keywordPk);
 		}
-		return keywordTextList;
+		return keywordToPkMap;
 	}
 
 	private Map<AdEngine, HashMap<String, Object>> setupAdEngineBudget(Integer PromotionID, List<AdEngine> adEngines, SemplestBiddingServiceClient bidClient) throws Exception
@@ -1979,7 +2026,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long adGroupID = adEngineData.getAdGroupID();
 				final Long campaignID = adEngineData.getCampaignID();
 				final Set<Entry<KeywordProbabilityObject, Boolean>> entrySet = keywordToRemoveOppositeMap.entrySet();
-				final List<String> negativeKeywordsToAdd = new ArrayList<String>();
+				final Map<String, Integer> negativeKeywordToPkMap = new HashMap<String, Integer>();
 				final List<BidElement> bids = SemplestDB.getLatestBids(promotionID, adEngine);
 				final List<Long> msnPositiveKeywordIdsToRemove = new ArrayList<Long>();
 				for (final Entry<KeywordProbabilityObject, Boolean> entry : entrySet)
@@ -1988,7 +2035,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					if (keywordProbability.getIsNegative())
 					{
 						final String keywordText = keywordProbability.getKeyword();
-						negativeKeywordsToAdd.add(keywordText);
+						final Integer keywordPk = keywordProbability.getKeywordPK();
+						negativeKeywordToPkMap.put(keywordText, keywordPk);
 						final Boolean removeOpposite = entry.getValue();
 						if (removeOpposite)
 						{
@@ -2009,7 +2057,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					msnPositiveKeywordIdsToRemoveArray[i] = msnPositiveKeywordIdsToRemove.get(i);
 				}
-				logger.info("Will try to:\nDelete MSN keywords for MSN IDs [" + msnPositiveKeywordIdsToRemove + "]\nAdd Negative Keywords: [" + negativeKeywordsToAdd + "]");				
+				logger.info("Will try to:\nDelete " + msnPositiveKeywordIdsToRemove.size() + " MSN keywords for MSN IDs [" + msnPositiveKeywordIdsToRemove + "]\nAdd " + negativeKeywordToPkMap.size() + " Negative Keywords: [" + negativeKeywordToPkMap + "]");				
 				if (msnPositiveKeywordIdsToRemoveArray.length != 0)
 				{
 					msn.deleteKeywordsById(accountID, adGroupID, msnPositiveKeywordIdsToRemoveArray);
@@ -2018,13 +2066,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					logger.info("No positive keywords to remove");
 				}
-				if (negativeKeywordsToAdd.isEmpty())
+				if (negativeKeywordToPkMap.isEmpty())
 				{
 					logger.info("No negative keywords to add");	
 				}
 				else
 				{
-					msn.setNegativeKeywords(accountID, campaignID, negativeKeywordsToAdd);
+					msn.setNegativeKeywords(accountID, campaignID, negativeKeywordToPkMap);
 				}
 			}
 			else
@@ -2196,7 +2244,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long campaignID = adEngineData.getCampaignID();
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
 				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
-				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, semplestMatchType, null);
+				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, semplestMatchType, null, new StringBuilder());
 			}
 			else if (AdEngine.MSN == adEngine)
 			{

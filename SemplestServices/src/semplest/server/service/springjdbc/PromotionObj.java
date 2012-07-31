@@ -216,18 +216,6 @@ public class PromotionObj
 		AdvertisingEngineAccountPK = advertisingEngineAccountPK;
 	}
 	
-	@Override
-	public String toString()
-	{
-		return "PromotionObj [PromotionPK=" + PromotionPK + ", ProductGroupFK=" + ProductGroupFK + ", PromotionName=" + PromotionName
-				+ ", PromotionDescription=" + PromotionDescription + ", LandingPageURL=" + LandingPageURL + ", DisplayURL=" + DisplayURL
-				+ ", PromotionBudgetAmount=" + PromotionBudgetAmount + ", PromotionStartDate=" + PromotionStartDate + ", PromotionEndDate="
-				+ PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", BudgetToAddToNextCycle=" + /* BudgetToAddToNextCycle + */", CycleStartDate="
-				+ CycleStartDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle + ", StartBudgetInCycle=" + StartBudgetInCycle
-				+ ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused
-				+ ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK="; // + AdvertisingEngineCampaignPK + ", AdvertisingEngineAdGroupID="
-				//+ AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + "]";
-	}
 	public String getAdvertisingEngine()
 	{
 		return AdvertisingEngine;
@@ -245,4 +233,218 @@ public class PromotionObj
 		AdvertisingEngineAccountNumber = advertisingEngineAccountNumber;
 	}
 	
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((AdvertisingEngine == null) ? 0 : AdvertisingEngine.hashCode());
+		result = prime * result + ((AdvertisingEngineAccountNumber == null) ? 0 : AdvertisingEngineAccountNumber.hashCode());
+		result = prime * result + ((AdvertisingEngineAccountPK == null) ? 0 : AdvertisingEngineAccountPK.hashCode());
+		result = prime * result + ((AdvertisingEngineAdGroupID == null) ? 0 : AdvertisingEngineAdGroupID.hashCode());
+		result = prime * result + ((AdvertisingEngineCampaignPK == null) ? 0 : AdvertisingEngineCampaignPK.hashCode());
+		result = prime * result + ((BudgetCycle == null) ? 0 : BudgetCycle.hashCode());
+		result = prime * result + ((CreatedDate == null) ? 0 : CreatedDate.hashCode());
+		result = prime * result + ((CycleStartDate == null) ? 0 : CycleStartDate.hashCode());
+		result = prime * result + ((DisplayURL == null) ? 0 : DisplayURL.hashCode());
+		result = prime * result + ((EditedDate == null) ? 0 : EditedDate.hashCode());
+		result = prime * result + ((LandingPageURL == null) ? 0 : LandingPageURL.hashCode());
+		result = prime * result + ((ProductGroupFK == null) ? 0 : ProductGroupFK.hashCode());
+		result = prime * result + ((PromotionBudgetAmount == null) ? 0 : PromotionBudgetAmount.hashCode());
+		result = prime * result + ((PromotionDescription == null) ? 0 : PromotionDescription.hashCode());
+		result = prime * result + ((PromotionEndDate == null) ? 0 : PromotionEndDate.hashCode());
+		result = prime * result + ((PromotionName == null) ? 0 : PromotionName.hashCode());
+		result = prime * result + ((PromotionPK == null) ? 0 : PromotionPK.hashCode());
+		result = prime * result + ((PromotionStartDate == null) ? 0 : PromotionStartDate.hashCode());
+		result = prime * result + ((RemainingBudgetInCycle == null) ? 0 : RemainingBudgetInCycle.hashCode());
+		result = prime * result + ((StartBudgetInCycle == null) ? 0 : StartBudgetInCycle.hashCode());
+		result = prime * result + ((isCompleted == null) ? 0 : isCompleted.hashCode());
+		result = prime * result + ((isLaunched == null) ? 0 : isLaunched.hashCode());
+		result = prime * result + ((isPaused == null) ? 0 : isPaused.hashCode());
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PromotionObj other = (PromotionObj) obj;
+		if (AdvertisingEngine == null)
+		{
+			if (other.AdvertisingEngine != null)
+				return false;
+		}
+		else if (!AdvertisingEngine.equals(other.AdvertisingEngine))
+			return false;
+		if (AdvertisingEngineAccountNumber == null)
+		{
+			if (other.AdvertisingEngineAccountNumber != null)
+				return false;
+		}
+		else if (!AdvertisingEngineAccountNumber.equals(other.AdvertisingEngineAccountNumber))
+			return false;
+		if (AdvertisingEngineAccountPK == null)
+		{
+			if (other.AdvertisingEngineAccountPK != null)
+				return false;
+		}
+		else if (!AdvertisingEngineAccountPK.equals(other.AdvertisingEngineAccountPK))
+			return false;
+		if (AdvertisingEngineAdGroupID == null)
+		{
+			if (other.AdvertisingEngineAdGroupID != null)
+				return false;
+		}
+		else if (!AdvertisingEngineAdGroupID.equals(other.AdvertisingEngineAdGroupID))
+			return false;
+		if (AdvertisingEngineCampaignPK == null)
+		{
+			if (other.AdvertisingEngineCampaignPK != null)
+				return false;
+		}
+		else if (!AdvertisingEngineCampaignPK.equals(other.AdvertisingEngineCampaignPK))
+			return false;
+		if (BudgetCycle == null)
+		{
+			if (other.BudgetCycle != null)
+				return false;
+		}
+		else if (!BudgetCycle.equals(other.BudgetCycle))
+			return false;
+		if (CreatedDate == null)
+		{
+			if (other.CreatedDate != null)
+				return false;
+		}
+		else if (!CreatedDate.equals(other.CreatedDate))
+			return false;
+		if (CycleStartDate == null)
+		{
+			if (other.CycleStartDate != null)
+				return false;
+		}
+		else if (!CycleStartDate.equals(other.CycleStartDate))
+			return false;
+		if (DisplayURL == null)
+		{
+			if (other.DisplayURL != null)
+				return false;
+		}
+		else if (!DisplayURL.equals(other.DisplayURL))
+			return false;
+		if (EditedDate == null)
+		{
+			if (other.EditedDate != null)
+				return false;
+		}
+		else if (!EditedDate.equals(other.EditedDate))
+			return false;
+		if (LandingPageURL == null)
+		{
+			if (other.LandingPageURL != null)
+				return false;
+		}
+		else if (!LandingPageURL.equals(other.LandingPageURL))
+			return false;
+		if (ProductGroupFK == null)
+		{
+			if (other.ProductGroupFK != null)
+				return false;
+		}
+		else if (!ProductGroupFK.equals(other.ProductGroupFK))
+			return false;
+		if (PromotionBudgetAmount == null)
+		{
+			if (other.PromotionBudgetAmount != null)
+				return false;
+		}
+		else if (!PromotionBudgetAmount.equals(other.PromotionBudgetAmount))
+			return false;
+		if (PromotionDescription == null)
+		{
+			if (other.PromotionDescription != null)
+				return false;
+		}
+		else if (!PromotionDescription.equals(other.PromotionDescription))
+			return false;
+		if (PromotionEndDate == null)
+		{
+			if (other.PromotionEndDate != null)
+				return false;
+		}
+		else if (!PromotionEndDate.equals(other.PromotionEndDate))
+			return false;
+		if (PromotionName == null)
+		{
+			if (other.PromotionName != null)
+				return false;
+		}
+		else if (!PromotionName.equals(other.PromotionName))
+			return false;
+		if (PromotionPK == null)
+		{
+			if (other.PromotionPK != null)
+				return false;
+		}
+		else if (!PromotionPK.equals(other.PromotionPK))
+			return false;
+		if (PromotionStartDate == null)
+		{
+			if (other.PromotionStartDate != null)
+				return false;
+		}
+		else if (!PromotionStartDate.equals(other.PromotionStartDate))
+			return false;
+		if (RemainingBudgetInCycle == null)
+		{
+			if (other.RemainingBudgetInCycle != null)
+				return false;
+		}
+		else if (!RemainingBudgetInCycle.equals(other.RemainingBudgetInCycle))
+			return false;
+		if (StartBudgetInCycle == null)
+		{
+			if (other.StartBudgetInCycle != null)
+				return false;
+		}
+		else if (!StartBudgetInCycle.equals(other.StartBudgetInCycle))
+			return false;
+		if (isCompleted == null)
+		{
+			if (other.isCompleted != null)
+				return false;
+		}
+		else if (!isCompleted.equals(other.isCompleted))
+			return false;
+		if (isLaunched == null)
+		{
+			if (other.isLaunched != null)
+				return false;
+		}
+		else if (!isLaunched.equals(other.isLaunched))
+			return false;
+		if (isPaused == null)
+		{
+			if (other.isPaused != null)
+				return false;
+		}
+		else if (!isPaused.equals(other.isPaused))
+			return false;
+		return true;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "PromotionObj [PromotionPK=" + PromotionPK + ", ProductGroupFK=" + ProductGroupFK + ", PromotionName=" + PromotionName + ", PromotionDescription=" + PromotionDescription + ", LandingPageURL=" + LandingPageURL + ", DisplayURL=" + DisplayURL + ", PromotionBudgetAmount="
+				+ PromotionBudgetAmount + ", PromotionStartDate=" + PromotionStartDate + ", PromotionEndDate=" + PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", CycleStartDate=" + CycleStartDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle + ", StartBudgetInCycle="
+				+ StartBudgetInCycle + ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused + ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK=" + AdvertisingEngineCampaignPK + ", AdvertisingEngineAdGroupID="
+				+ AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + ", AdvertisingEngine=" + AdvertisingEngine + ", AdvertisingEngineAccountNumber=" + AdvertisingEngineAccountNumber + "]";
+	}
+		
 }

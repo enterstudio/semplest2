@@ -641,14 +641,6 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Boolean ChangeCampaignStartDate(String accountID, Long campaignID, Date newStartDate) throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -761,6 +753,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 	@Override
 	public Boolean updateGeoTargets(String accountId, Long campaignId, Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, KeywordProbabilityObject negativeKeyword, KeywordMatchType matchType, Integer promotionID) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

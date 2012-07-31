@@ -74,7 +74,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
 	Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> requests, Integer promotionID) throws Exception;
 	Boolean deleteKeyWords(String accountID, Long adGroupID, List<String> keywords) throws Exception;
-	KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType) throws Exception;
+	KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, KeywordProbabilityObject negativeKeyword, KeywordMatchType matchType, Integer promotionID) throws Exception;
 	List<GoogleViolation> validateNegativeKeywords(final String validationAccountID, final Long validationCampaignId, final List<String> negativeKeywords) throws Exception;
 	List<KeywordDataObject> setBidForKeyWords(final String accountID, final List<GoogleSetBidForKeywordRequest> requests) throws Exception;
 	KeywordDataObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception;

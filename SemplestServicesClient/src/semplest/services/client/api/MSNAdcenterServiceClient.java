@@ -1268,12 +1268,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
-	@Override
-	public void setNegativeKeywords(Long accountId, Long campaignId, List<String> negativeKeywords) throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
+	
 	@Override
 	public MsnCreateKeywordsResponse createKeywords(Long accountId, Long adGroupId, Map<Keyword, Integer> keywordToPkMap) throws Exception
 	{
@@ -1297,6 +1292,12 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 	@Override
 	public Boolean updateGeoTargets(Long accountId, Long campaignId, Long adGroupId, Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Map<Integer, String> setNegativeKeywords(Long accountId, Long campaignId, Map<String, Integer> negativeKeywordToPkMap) throws MsnCloudException
 	{
 		// TODO Auto-generated method stub
 		return null;

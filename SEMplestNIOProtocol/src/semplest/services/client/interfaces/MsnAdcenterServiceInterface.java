@@ -115,7 +115,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize
 	void pauseKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	void deleteKeywordsById(Long accountId, Long adGroupId, long[] keywordIds) throws Exception;
-	void setNegativeKeywords(final Long accountId, final Long campaignId, final List<String> negativeKeywords) throws Exception;
+	Map<Integer, String> setNegativeKeywords(final Long accountId, final Long campaignId, final Map<String, Integer> negativeKeywordToPkMap) throws MsnCloudException;
 	
 	// ==================================
 	// Keyword Estimates
