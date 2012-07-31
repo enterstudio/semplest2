@@ -17,7 +17,7 @@ import java.util.Date;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
 
 import semplest.keywords.javautils.dictUtils;
-import semplest.service.msn.adcenter.MsnCloudException;
+import semplest.server.protocol.msn.MsnCloudException;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class MultiWordsMSNVolFiltered {

@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
 
-import semplest.service.msn.adcenter.MsnCloudException;
+import semplest.server.protocol.msn.MsnCloudException;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class VolumeMSN {
@@ -39,7 +39,7 @@ public class VolumeMSN {
 				}
 					
 			}
-		} catch (MsnCloudException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
