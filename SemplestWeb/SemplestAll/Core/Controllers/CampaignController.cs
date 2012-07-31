@@ -251,6 +251,7 @@ namespace Semplest.Core.Controllers
                 }
                 _campaignRepository.SaveProductPromotion(custFK, model, (CampaignSetupModel)
                                                                         Session["CampaignSetupModel"]);
+                Session["CampaignSetupModel"] = model;
                 return Json("Create Ads");
             }
             catch (Exception ex)
@@ -440,9 +441,6 @@ namespace Semplest.Core.Controllers
                 var customerFK = cred.User.CustomerFK;
                 csm.AdModelProp.NegativeKeywords = model.NegativeKeywords;
                 csm.AdModelProp.NegativeKeywordsText = model.NegativeKeywordsText;
-                GoogleViolation[] gv = _campaignRepository.ValidateGoogleNegativeKeywords(model.NegativeKeywords);
-                if (gv.Length > 0)
-                    return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                 csm.AllKeywords = _campaignRepository.SaveNegativeKeywords(csm, customerFK.Value);
                 return Json("NegativeKeywords");
             }

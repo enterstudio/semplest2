@@ -143,5 +143,20 @@ namespace SemplestModel
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<vwPromotionChart>("GetMondayChart", mergeOption, startDateParameter, endDateParameter);
         }
+    
+        public virtual ObjectResult<SetNegativeKeyword_Result> SetNegativeKeyword(string keyword, Nullable<int> promotionID, ObjectParameter negativeKeywordID, ObjectParameter exists)
+        {
+            ((IObjectContextAdapter)this).ObjectContext.MetadataWorkspace.LoadFromAssembly(typeof(SetNegativeKeyword_Result).Assembly);
+    
+            var keywordParameter = keyword != null ?
+                new ObjectParameter("keyword", keyword) :
+                new ObjectParameter("keyword", typeof(string));
+    
+            var promotionIDParameter = promotionID.HasValue ?
+                new ObjectParameter("PromotionID", promotionID) :
+                new ObjectParameter("PromotionID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SetNegativeKeyword_Result>("SetNegativeKeyword", keywordParameter, promotionIDParameter, negativeKeywordID, exists);
+        }
     }
 }

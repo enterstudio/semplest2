@@ -2804,6 +2804,12 @@
           <Parameter Name="IsDefaultValue" Type="bit" Mode="In" />
           <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
+        <Function Name="SetNegativeKeyword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="keyword" Type="nvarchar" Mode="In" />
+          <Parameter Name="PromotionID" Type="int" Mode="In" />
+          <Parameter Name="NegativeKeywordID" Type="int" Mode="InOut" />
+          <Parameter Name="Exists" Type="bit" Mode="InOut" />
+        </Function>
         <Function Name="SetNextJobToRun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="SetPromotionBidding" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="PromotionID" Type="int" Mode="In" />
@@ -3300,6 +3306,12 @@
           <FunctionImport Name="GetMondayChart" EntitySet="vwPromotionCharts" ReturnType="Collection(SemplestModel.vwPromotionChart)">
             <Parameter Name="StartDate" Mode="In" Type="DateTime" />
             <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="SetNegativeKeyword" ReturnType="Collection(SemplestModel.SetNegativeKeyword_Result)">
+            <Parameter Name="keyword" Mode="In" Type="String" />
+            <Parameter Name="PromotionID" Mode="In" Type="Int32" />
+            <Parameter Name="NegativeKeywordID" Mode="InOut" Type="Int32" />
+            <Parameter Name="Exists" Mode="InOut" Type="Boolean" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
@@ -5519,6 +5531,9 @@
           <End Type="SemplestModel.CreditCardNickName" Role="CreditCardNickName" Multiplicity="*" />
           <End Type="SemplestModel.CreditCardProfile" Role="CreditCardProfile" Multiplicity="*" />
         </Association>
+        <ComplexType Name="SetNegativeKeyword_Result">
+          <Property Type="Int32" Name="KeywordPK" Nullable="false" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6619,6 +6634,13 @@
             </EndProperty>
           </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="GetMondayChart" FunctionName="SemplestModel.Store.GetMondayChart" />
+          <FunctionImportMapping FunctionImportName="SetNegativeKeyword" FunctionName="SemplestModel.Store.SetNegativeKeyword">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SemplestModel.SetNegativeKeyword_Result">
+                <ScalarProperty Name="KeywordPK" ColumnName="KeywordPK" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
