@@ -159,10 +159,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		final double monthlyBudget = 10.0;
 		final CampaignStatus campaignStatus = CampaignStatus.Active;
 
-		//
-
-		// DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
-		// DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
+		//		
 		try
 		{
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
@@ -175,6 +172,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				object.wait();
 			}
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+			
+			DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
+			DateTime lastDay = new DateTime(2012,8,30,0,0,0,0);
+			ReportObject[] ret = msn.getKeywordReport(1774491L, 51103550L, firstDay, lastDay);
+			for(ReportObject ro : ret){
+				System.out.println(ro.toString());
+			}
+			
+			/*
 			Map<String, ProtocolEnum.SemplestMatchType> map = new HashMap<String, ProtocolEnum.SemplestMatchType>();
 
 			map.put("aoidfnainef", SemplestMatchType.Exact);
@@ -186,6 +192,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			{
 				logger.info(examp.toString());
 			}
+			*/
 
 			// msn.createKeyword(1758634L, 709270153L, "Sneakers", MatchType.Exact, new Bid(0.55));
 			// 1758634L
@@ -3771,7 +3778,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		try
 		{
 			KeywordPerformanceReportColumn[] columns;
-			columns = new KeywordPerformanceReportColumn[] { KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.AveragePosition, KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, KeywordPerformanceReportColumn.QualityScore,
+			columns = new KeywordPerformanceReportColumn[] { KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.KeywordId, KeywordPerformanceReportColumn.AveragePosition, KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, KeywordPerformanceReportColumn.QualityScore,
 					KeywordPerformanceReportColumn.Impressions, KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, KeywordPerformanceReportColumn.TimePeriod, KeywordPerformanceReportColumn.CampaignId, KeywordPerformanceReportColumn.Spend };
 			final boolean returnOnlyCompleteData = false;
 			final String reportName = "Keyword Report for Account " + accountId + " Campaign ";
@@ -4352,6 +4359,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					data.setAccountID(accountId);
 					data.setCampaignID(Long.valueOf(ret2.get("campaignid")[i]));
 					data.setKeyword(ret2.get("keyword")[i]);
+					data.setKeywordID(Long.valueOf(ret2.get("keywordid")[i]));
 					data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
 					Double maxcpc = 0.0;
 					String maxCpcStr = ret2.get("currentmaxcpc")[i];

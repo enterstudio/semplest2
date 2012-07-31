@@ -364,7 +364,7 @@ public class ReportObject implements Serializable
 	{
 		return "ReportObject [accountID=" + accountID + ", campaignID=" + campaignID + ", Keyword=" + Keyword + ", transactionDate=" + transactionDate + ", microBidAmount=" + microBidAmount + ", BidMatchType=" + BidMatchType + ", numberImpressions=" + numberImpressions + ", numberClick="
 				+ numberClick + ", averagePosition=" + averagePosition + ", averageCPC=" + averageCPC + ", qualityScore=" + qualityScore + ", approvalStatus=" + approvalStatus + ", firstPageCPC=" + firstPageCPC + ", createdDate=" + createdDate + ", microCost=" + microCost + ", adGroupID="
-				+ adGroupID + /*", keywordID=" + keywordID  + */", searchTerm=" + searchTerm + "]";
+				+ adGroupID + ", keywordID=" + keywordID  + ", searchTerm=" + searchTerm + "]";
 	}
 
 	
