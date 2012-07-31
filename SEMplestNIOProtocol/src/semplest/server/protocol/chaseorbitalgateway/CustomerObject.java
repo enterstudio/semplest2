@@ -11,10 +11,15 @@ public class CustomerObject
 	private String ZipCode;
 	private String Email;
 	private String Phone;
+	private CardBrand cardBrand;
 	private String creditCardNumber;
 	private String creditCardSecurityCode;
     private String ExpireDateMMYY;
-    	
+        	
+	public CardBrand getCardBrand()
+	{
+		return cardBrand;
+	}
 	public String getCreditCardSecurityCode()
 	{
 		return creditCardSecurityCode;
@@ -111,7 +116,6 @@ public class CustomerObject
 	{
 		this.name = name;
 	}
-	
 	@Override
 	public int hashCode()
 	{
@@ -125,13 +129,13 @@ public class CustomerObject
 		result = prime * result + ((Phone == null) ? 0 : Phone.hashCode());
 		result = prime * result + ((StateAbbr == null) ? 0 : StateAbbr.hashCode());
 		result = prime * result + ((ZipCode == null) ? 0 : ZipCode.hashCode());
+		result = prime * result + ((cardBrand == null) ? 0 : cardBrand.hashCode());
 		result = prime * result + ((creditCardNumber == null) ? 0 : creditCardNumber.hashCode());
 		result = prime * result + ((creditCardSecurityCode == null) ? 0 : creditCardSecurityCode.hashCode());
 		result = prime * result + ((customerProfileRefNum == null) ? 0 : customerProfileRefNum.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
-	
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -198,6 +202,8 @@ public class CustomerObject
 		}
 		else if (!ZipCode.equals(other.ZipCode))
 			return false;
+		if (cardBrand != other.cardBrand)
+			return false;
 		if (creditCardNumber == null)
 		{
 			if (other.creditCardNumber != null)
@@ -231,10 +237,8 @@ public class CustomerObject
 	@Override
 	public String toString()
 	{
-		return "CustomerObject [customerProfileRefNum=" + customerProfileRefNum + ", name=" + name + ", Address1=" + Address1 + ", Address2="
-				+ Address2 + ", City=" + City + ", StateAbbr=" + StateAbbr + ", ZipCode=" + ZipCode + ", Email=" + Email + ", Phone=" + Phone
-				+ ", creditCardNumber=" + creditCardNumber + ", creditCardSecurityCode=" + creditCardSecurityCode + ", ExpireDateMMYY="
-				+ ExpireDateMMYY + "]";
+		return "CustomerObject [customerProfileRefNum=" + customerProfileRefNum + ", name=" + name + ", Address1=" + Address1 + ", Address2=" + Address2 + ", City=" + City + ", StateAbbr=" + StateAbbr + ", ZipCode=" + ZipCode + ", Email=" + Email + ", Phone=" + Phone + ", cardBrand=" + cardBrand
+				+ ", creditCardNumber=" + creditCardNumber + ", creditCardSecurityCode=" + creditCardSecurityCode + ", ExpireDateMMYY=" + ExpireDateMMYY + "]";
 	}
-
+	
 }

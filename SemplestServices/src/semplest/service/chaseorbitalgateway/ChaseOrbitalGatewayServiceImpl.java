@@ -110,7 +110,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("CustomerCity", customerObject.getCity());
 			request.setFieldValue("CustomerState", customerObject.getStateAbbr());
 			request.setFieldValue("CustomerZIP", customerObject.getZipCode());
-			request.setFieldValue("CustomerEmail", customerObject.getEmail());
+			//request.setFieldValue("CustomerEmail", customerObject.getEmail());
 			request.setFieldValue("CustomerPhone", customerObject.getPhone());
 			// Create
 			request.setFieldValue("CustomerProfileAction", "C");
@@ -121,8 +121,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			//Account type credit card
 			request.setFieldValue("CustomerAccountType", "CC");
 			request.setFieldValue("CCAccountNum", customerObject.getCreditCardNumber());
-			request.setFieldValue("CCExpireDate", customerObject.getExpireDateMMYY());
-			request.setFieldValue("CardSecVal", customerObject.getCreditCardSecurityCode());
+			request.setFieldValue("CCExpireDate", customerObject.getExpireDateMMYY());						
 			
 			//request.setFieldValue("SDMerchantName", ChaseOrbitalGatewayObject.MerchantName);
 
@@ -186,7 +185,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	public String AuthorizeAndCapture(String json) throws Exception
 	{
 		logger.debug("call AuthorizeAndCapture(String json)" + json);
-		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);			
 		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
 		final Double Amount = Double.parseDouble(data.get("Amount"));		
 		final GatewayReturnObject response = AuthorizeAndCapture(customerProfileRefNumber, Amount);
@@ -213,6 +212,9 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("MessageType", "AC"); //Authorize and mark for capture
 			request.setFieldValue("BIN", ChaseOrbitalGatewayObject.SALEM_PLATFORM);
 			request.setFieldValue("MerchantID", ChaseOrbitalGatewayObject.MERCHANTID);
+			request.setFieldValue("CardSecVal", "192");
+			
+			request.setFieldValue("CardSecValInd", "1");
 			
 			//Use Profile Data
 			request.setFieldValue("CustomerRefNum", customerProfileRefNumber);
@@ -297,7 +299,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	public String UpdateProfileRecurringBilling(String json) throws Exception
 	{
 		logger.debug("call UpdateProfileRecurringBilling(String json) [" + json + "]");
-		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);			
 		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
 		final Double recurringAmount = Double.parseDouble(data.get("recurringAmount"));
 		final String startDateString = data.get("startDate");

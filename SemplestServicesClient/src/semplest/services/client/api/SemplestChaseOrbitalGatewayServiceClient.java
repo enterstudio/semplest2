@@ -21,7 +21,8 @@ import com.google.gson.Gson;
 public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun implements ChaseOrbitalGatewayInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService";
-	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
+	//private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();

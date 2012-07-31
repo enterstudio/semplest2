@@ -44,11 +44,12 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		customerObject.setCity("Bedrock");
 		customerObject.setEmail("Fred@flinstone.com");
 		customerObject.setName("Fred Flintstone");
-		customerObject.setPhone("5555555555");
 		customerObject.setStateAbbr("NY");
+		customerObject.setPhone("5555555555");
 		customerObject.setZipCode("67676");
 		customerObject.setCreditCardNumber("4112344112344113");
 		customerObject.setExpireDateMMYY("0912");
+		customerObject.setCreditCardSecurityCode("192");
 		final GatewayReturnObject gatewayReturnObject = client.CreateProfile(customerObject);
 		logger.info("Response from CreateProfile(...): " + gatewayReturnObject.toStringPretty());
 		return gatewayReturnObject;
