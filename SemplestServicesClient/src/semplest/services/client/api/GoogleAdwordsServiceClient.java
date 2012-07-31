@@ -728,14 +728,6 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public List<GoogleViolation> validateUpdateGeoTargets(String validationAccountID, Long validationCampaignId, List<GeoTargetObject> geoTargets)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<GoogleViolation> validateNegativeKeywords(String validationAccountID, Long validationCampaignId, List<String> negativeKeywords) throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -760,6 +752,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 	@Override
 	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, KeywordProbabilityObject negativeKeyword, KeywordMatchType matchType, Integer promotionID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<GoogleViolation> validateUpdateGeoTargets(String validationAccountID, Long validationCampaignId, Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
