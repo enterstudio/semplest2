@@ -57,7 +57,7 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 
 	public void testAuthorizeAndCapture(final GatewayReturnObject gatewayReturnObject) throws Exception
 	{
-		final GatewayReturnObject response = client.AuthorizeAndCapture(gatewayReturnObject.getCustomerRefNum(), 10.75);
+		final GatewayReturnObject response = client.AuthorizeAndCapture(gatewayReturnObject.getCustomerRefNum(), 10.75, gatewayReturnObject.getCVV2ResponseCode());
 		logger.info("Response from AuthorizeAndCapture(...): " + response.toStringPretty());
 	}
 	

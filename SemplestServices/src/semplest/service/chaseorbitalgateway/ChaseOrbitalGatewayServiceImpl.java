@@ -2,12 +2,10 @@ package semplest.service.chaseorbitalgateway;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
@@ -187,15 +185,16 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		logger.debug("call AuthorizeAndCapture(String json)" + json);
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);			
 		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
+		final String cardSecVal = data.get("cardSecVal");
 		final Double Amount = Double.parseDouble(data.get("Amount"));		
-		final GatewayReturnObject response = AuthorizeAndCapture(customerProfileRefNumber, Amount);
+		final GatewayReturnObject response = AuthorizeAndCapture(customerProfileRefNumber, Amount, cardSecVal);
 		return gson.toJson(response);
 	}
 
 	@Override
-	public GatewayReturnObject AuthorizeAndCapture(String customerProfileRefNumber, Double Amount) throws Exception
+	public GatewayReturnObject AuthorizeAndCapture(String customerProfileRefNumber, Double Amount, final String cardSecVal) throws Exception
 	{
-		logger.info("Will try to AuthorizeAndCampture for CustomerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "]");
+		logger.info("Will try to AuthorizeAndCampture for CustomerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "], CardSecVal [" + cardSecVal + "]");
 		// Create a request object
 		// The request object uses the XML templates along with data we provide
 		// to generate a String representation of the xml request
@@ -212,7 +211,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("MessageType", "AC"); //Authorize and mark for capture
 			request.setFieldValue("BIN", ChaseOrbitalGatewayObject.SALEM_PLATFORM);
 			request.setFieldValue("MerchantID", ChaseOrbitalGatewayObject.MERCHANTID);
-			request.setFieldValue("CardSecVal", "192");
+			request.setFieldValue("CardSecVal", cardSecVal);
 			
 			request.setFieldValue("CardSecValInd", "1");
 			

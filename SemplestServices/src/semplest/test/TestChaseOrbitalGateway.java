@@ -46,7 +46,7 @@ public class TestChaseOrbitalGateway
 			logger.info("------------------------------------------------------------");
 			
 			// Authorize and capture
-			GatewayReturnObject a = gatew.AuthorizeAndCapture(r.getCustomerRefNum(), 100.99);
+			GatewayReturnObject a = gatew.AuthorizeAndCapture(r.getCustomerRefNum(), 100.99, "222");
 			if (a.getIsError())
 			{
 				logger.info("Error: " + a.getMessage());

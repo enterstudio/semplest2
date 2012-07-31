@@ -75,12 +75,13 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	}
 
 	@Override
-	public GatewayReturnObject AuthorizeAndCapture(String customerProfileRefNumber, Double Amount) throws Exception 
+	public GatewayReturnObject AuthorizeAndCapture(String customerProfileRefNumber, Double Amount, String cardSecVal) throws Exception 
 	{
-		logger.info("Got request to authorize and capture for customerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "]");
+		logger.info("Got request to authorize and capture for customerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "], CardSecVal [" + cardSecVal + "]");
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerProfileRefNumber", customerProfileRefNumber);
 		jsonHash.put("Amount", String.valueOf(Amount));
+		jsonHash.put("cardSecVal", cardSecVal);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("Request JSON: [" + json + "]");
 		final String returnData = runMethod(baseurl, SERVICEOFFERED, "AuthorizeAndCapture", json, timeoutMS);
