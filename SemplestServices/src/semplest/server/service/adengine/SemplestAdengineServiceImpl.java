@@ -349,8 +349,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					storeAdGroupData(advertisingEngine, campaignID, adGroupData);
 					// Keywords
 					final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, advertisingEngine == AdEngine.Google, advertisingEngine == AdEngine.MSN);
-					emailMessageSB.append("Keywords").append("\n");
-					emailMessageSB.append("\t").append(advertisingEngine).append("\n");
+					emailMessageSB.append("\t").append("Keywords").append("\n");
 					final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 					emailMessageSB.append("\t\t").append("Match Type: ").append(semplestMatchType).append("\n");
 					addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupId, advertisingEngine, keywordList, semplestMatchType, null, emailMessageSB);
@@ -746,7 +745,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Integer numPositiveKeywordsAdded = requestToGoogleIdMap.size();
 			emailMessageSB.append("\t\t\t").append("Added: ").append(numPositiveKeywordsAdded).append("\n");
 			final Integer numPositiveKeywordsRejected = numPositiveKeywordsTotal - numPositiveKeywordsAdded;
-			emailMessageSB.append("\t\t\t").append("Rejected").append(numPositiveKeywordsRejected).append("\n");
+			emailMessageSB.append("\t\t\t").append("Rejected: ").append(numPositiveKeywordsRejected).append("\n");
 			logger.info("Generated total of " + requestToGoogleIdMap.size() + " GoogleAddKeywordRequest<->GoogleKeywordId mappings");
 			final Set<Entry<GoogleAddKeywordRequest, Long>> entrySet = requestToGoogleIdMap.entrySet();
 			counter = 0;
@@ -847,7 +846,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			emailMessageSB.append("\t\t").append("Positive").append("\n");
 			emailMessageSB.append("\t\t\t").append("Total: ").append(numPositiveKeywordsTotal).append("\n");	
 			emailMessageSB.append("\t\t\t").append("Added: ").append(numPositiveKeywordsAdded).append("\n");
-			emailMessageSB.append("\t\t\t").append("Rejected").append(numPositiveKeywordsRejected).append("\n");
+			emailMessageSB.append("\t\t\t").append("Rejected: ").append(numPositiveKeywordsRejected).append("\n");
 		}
 		else
 		{
