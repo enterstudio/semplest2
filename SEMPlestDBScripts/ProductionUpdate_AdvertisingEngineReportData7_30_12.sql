@@ -77,9 +77,9 @@ GO
 
 ALTER VIEW [dbo].[vwPromotionChart]
 AS
-SELECT     k.Keyword, p.PromotionName, a.NumberImpressions, a.NumberClick, a.TransactionDate, CONVERT(DECIMAL, a.MicroBidAmount) / 1000000. AS MicroBidAmount, 
-                      CONVERT(INT, a.AveragePosition) AS AveragePosition, CONVERT(DECIMAL, a.AverageCPC) / 1000000. AS AverageCPC, a.AdvertisingEngineBidDataPK, 
-                      u.UserPK
+SELECT     k.Keyword, p.PromotionName, a.NumberImpressions, a.NumberClick, a.TransactionDate, CONVERT(DECIMAL, ISNULL(a.MicroBidAmount, 0)) 
+                      / 1000000. AS MicroBidAmount, CONVERT(INT, ISNULL(a.AveragePosition, 0)) AS AveragePosition, CONVERT(DECIMAL, ISNULL(a.AverageCPC, 0)) 
+                      / 1000000. AS AverageCPC, a.AdvertisingEngineBidDataPK, u.UserPK, a.PromotionFK, a.AdvertisingEngineFK
 FROM         dbo.AdvertisingEngineReportData AS a INNER JOIN
                       dbo.Keyword AS k ON a.KeywordFK = k.KeywordPK INNER JOIN
                       dbo.Promotion AS p ON a.PromotionFK = p.PromotionPK INNER JOIN
