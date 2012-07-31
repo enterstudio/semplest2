@@ -3265,17 +3265,30 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			final List<Long> existingTargetIds = new ArrayList<Long>();
 			for (final Target target : existingTargets)
 			{
-				final Long targetId = target.getId();
-				existingTargetIds.add(targetId);
+				if(target != null)
+				{
+					final Long targetId = target.getId();
+					if (targetId != null)
+					{
+						existingTargetIds.add(targetId);
+					}
+				}
 			}
-			logger.info("IDs for existing targets that we'll delete before refreshing with new ones:" + existingTargetIds);
-			final long[] targetIdArray = new long[existingTargetIds.size()];
-			for (int i = 0; i < existingTargetIds.size(); ++i)
+			if (existingTargetIds.isEmpty())
 			{
-				targetIdArray[i] = existingTargetIds.get(i);
+				logger.info("No previous GeoTargets found, so won't try to delete them as part of GeoTarget refresh");
 			}
-			final DeleteTargetsFromLibraryRequest deleteRequest = new DeleteTargetsFromLibraryRequest(targetIdArray);
-			final DeleteTargetsFromLibraryResponse deleteResponse = campaignManagement.deleteTargetsFromLibrary(deleteRequest);
+			else
+			{
+				logger.info("IDs for existing targets that we'll delete before refreshing with new ones:" + existingTargetIds);
+				final long[] targetIdArray = new long[existingTargetIds.size()];
+				for (int i = 0; i < existingTargetIds.size(); ++i)
+				{
+					targetIdArray[i] = existingTargetIds.get(i);
+				}
+				final DeleteTargetsFromLibraryRequest deleteRequest = new DeleteTargetsFromLibraryRequest(targetIdArray);
+				final DeleteTargetsFromLibraryResponse deleteResponse = campaignManagement.deleteTargetsFromLibrary(deleteRequest);
+			}
 
 			// add latest geo targets
 			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();
