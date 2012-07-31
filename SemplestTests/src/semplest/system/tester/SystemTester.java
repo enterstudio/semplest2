@@ -6,7 +6,9 @@ public class SystemTester {
 	
 	public static void main(String[] args){
 		try{			
-			SystemTestFunc.InitializeReport();			
+			String reportPath = args[0];
+			
+			SystemTestFunc.InitializeReport(reportPath);			
 			SystemTestFunc.InitializeSystemTest();
 			
 			AdEngineServiceTest adEngineTest = new AdEngineServiceTest();

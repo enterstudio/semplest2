@@ -31,8 +31,8 @@ import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class SystemTestFunc extends BaseDB{	
 	
-	//private static final String reportDir = "/semplest/Test Report/System Test Report/";
-	private static final String reportDir = "Z:\\Test Report\\System Test Report\\";
+	//private static final String reportDir = "/semplest/Test_Report/System_Test_Report/";
+	private static String reportDir;
 	
 	private static final String eol = System.getProperty("line.separator");
 	
@@ -355,16 +355,17 @@ public class SystemTestFunc extends BaseDB{
 		}
 	}
 	
-	public static void InitializeReport(){
+	public static void InitializeReport(String reportPath){
 		try{
+			reportDir = reportPath;
 			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yy_HH-mm");
 			Date date = new Date();
 			String now = dateFormat.format(date);
 			SystemTestDataModel.reportName = "SystemTestReport_" + now + ".txt";			
-			String reportPath = reportDir + SystemTestDataModel.reportName;
+			String reportFullPath = reportDir + SystemTestDataModel.reportName;
 			
 			//Create Report Header						
-			PrintStream out = new PrintStream(new FileOutputStream(reportPath));
+			PrintStream out = new PrintStream(new FileOutputStream(reportFullPath));
 			System.setOut(out);
 			
 			System.out.println("************************************************************************************");
