@@ -2711,7 +2711,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<GeoTargetObject> geoTargets = getPromoDataSP.getGeoTargets();
 		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 		final String validationAccountId = "" + AdwordsValidationAccountID;
-		final List<GoogleViolation> violations = googleAdwordsService.validateUpdateGeoTargets(validationAccountId, AdwordsValidationCampaignID, geoTargets);
+		final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);
+		final List<GoogleViolation> violations = googleAdwordsService.validateUpdateGeoTargets(validationAccountId, AdwordsValidationCampaignID, geoTargetVsTypeMap);
 		return violations;
 	}
 

@@ -4192,22 +4192,43 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public List<GoogleViolation> validateUpdateGeoTargets(final String validationAccountID, final Long validationCampaignId, final List<GeoTargetObject> geoTargets) throws Exception
+	public List<GoogleViolation> validateUpdateGeoTargets(final String validationAccountID, final Long validationCampaignId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws Exception
 	{
-		logger.info("Will try to Validate Geo Targets using ValidationAccountID [" + validationAccountID + "], ValidationCampaignID [" + validationCampaignId + "], GeoTargets [" + geoTargets + "]");
-		final List<CampaignCriterionOperation> operationList = getCampaignCriterionOperations(validationAccountID, validationCampaignId, geoTargets);
-		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
+		logger.info("Will try to Validate Geo Targets using ValidationAccountID [" + validationAccountID + "], ValidationCampaignID [" + validationCampaignId + "], GeoTarget<->Type Map [" + geoTargetVsTypeMap + "]");
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
-		final CampaignCriterionServiceInterface validationService = user.getValidationService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
-		try
+		final List<GeoTargetObject> stateGeoTargets = getGeoTargets(geoTargetVsTypeMap, GeoTargetType.STATE);
+		final List<GeoTargetObject> geoPointGeoTargets = getGeoTargets(geoTargetVsTypeMap, GeoTargetType.GEO_POINT);
+		final List<CampaignCriterionOperation> operationList = new ArrayList<CampaignCriterionOperation>();
+		if (!stateGeoTargets.isEmpty())
 		{
-			validationService.mutate(operations);
+			final List<CampaignCriterionOperation> geoTargetOperations = getStateGeoTargetOperations(validationCampaignId, stateGeoTargets, Operator.ADD);
+			operationList.addAll(geoTargetOperations);
 		}
-		catch (ApiException e)
+		if (!geoPointGeoTargets.isEmpty())
 		{
-			violations.addAll(SemplestUtils.getGoogleViolations_v201109(e));
+			final List<CampaignCriterionOperation> geoTargetOperations = getGeoPointGeoTargetOperations(validationCampaignId, geoPointGeoTargets, Operator.ADD);
+			operationList.addAll(geoTargetOperations);
 		}
+		if (operationList.isEmpty())
+		{
+			logger.info("No GeoTarget operations generated, so nothing to validate");
+			return violations;
+		}
+		else
+		{
+			logger.info(operationList.size() + " Geo Criterions generated");
+			final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
+			final CampaignCriterionServiceInterface validationService = user.getValidationService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+			try
+			{
+				final CampaignCriterionReturnValue result = validationService.mutate(operations);
+			}
+			catch (ApiException e)
+			{
+				violations.addAll(SemplestUtils.getGoogleViolations_v201109(e));
+			}	
+		}		
 		return violations;
 	}
 
