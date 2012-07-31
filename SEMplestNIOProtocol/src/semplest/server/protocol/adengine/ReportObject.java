@@ -38,7 +38,7 @@ public class ReportObject implements Serializable
 	private Date createdDate;
 	private Long microCost;
 	private Long adGroupID;
-	//private Long keywordID;
+	private Long keywordID;
 	
 	// added for search query report
 	private String searchTerm;
@@ -74,6 +74,12 @@ public class ReportObject implements Serializable
 	public void setKeyword(String keyword)
 	{
 		Keyword = keyword;
+	}
+	public Long getKeywordID() {
+		return keywordID;
+	}
+	public void setKeywordID(Long keywordID) {
+		this.keywordID = keywordID;
 	}
 	public Long getMicroBidAmount()
 	{
