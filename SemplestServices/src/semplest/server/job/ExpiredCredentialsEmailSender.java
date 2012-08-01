@@ -151,7 +151,7 @@ public class ExpiredCredentialsEmailSender
 		{
 			log.info("Starting process for sending reminder emails to customers who have not finished registering");
 			PropertyConfigurator.configure("log4j_server.properties");
-			//BasicConfigurator.configure();	
+			BasicConfigurator.configure();	
 			final ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
 			SemplestConfiguration configDB = new SemplestConfiguration(object);
