@@ -2,7 +2,7 @@
 @using System.Web.Mvc
 
 @model SemplestModel.SiteLink
-    <li class="sitelinks">
+    <div class="sitelinks">
         <label>
             Name
         
@@ -13,7 +13,8 @@
             Url</label>
         @Html.TextBoxFor(t => t.LinkURL, new {@class = "k-textbox", @required = true, @validationmessage = "Please enter {0}"})
         @Html.ValidationMessageFor(t => t.LinkURL)
-        @Html.LinkToRemoveNestedForm("Delete", "li.sitelinks", "input.mark-for-delete")
+        @Html.LinkToRemoveNestedForm("Delete", "div.sitelinks", "input.mark-for-delete")
         @Html.HiddenFor(t => t.SiteLInkPK)
-    </li>
+        @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+    </div>
 

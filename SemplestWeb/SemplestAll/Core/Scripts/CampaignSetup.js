@@ -325,14 +325,14 @@ $(document).ready(function () {
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
-    if (container == "div.ads") {
-        if ($container.find('input')[1].value == null || $container.find('input')[1].value == '')
-            $container.find('input')[1].value = 'deleted';
-        if ($container.find('input')[2].value == null || $container.find('input')[2].value == '')
-            $container.find('input')[2].value = 'deleted';
-        if ($container.find('input')[3].value == null || $container.find('input')[3].value == '')
-            $container.find('input')[3].value = 'deleted';
-    }
+//    if (container == "div.ads") {
+//        if ($container.find('input')[1].value == null || $container.find('input')[1].value == '')
+//            $container.find('input')[1].value = 'deleted';
+//        if ($container.find('input')[2].value == null || $container.find('input')[2].value == '')
+//            $container.find('input')[2].value = 'deleted';
+//        if ($container.find('input')[3].value == null || $container.find('input')[3].value == '')
+//            $container.find('input')[3].value = 'deleted';
+    //    }
     $container.find(deleteElement).val('True');
     $container.hide();
 }

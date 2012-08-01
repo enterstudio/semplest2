@@ -273,10 +273,13 @@ namespace Semplest.Core.Models.Repositories
                                                                        model.AdModelProp.DisplayUrl, verifyAds);
                 if (gv.Length > 0)
                     throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-
-                gv = ValidateGeotargeting(SerializeToGeoTargetObjectArray(model));
+                var gtos = SerializeToGeoTargetObjectArray(model);
+                if (gtos.Any())
+                {
+                    gv = ValidateGeotargeting(gtos);
                     if (gv.Length > 0)
                         throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                }
 
                 var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, customerFK, oldModel,
                                            ((IObjectContextAdapter) dbcontext).ObjectContext);
@@ -723,19 +726,19 @@ namespace Semplest.Core.Models.Repositories
             using (var dbcontext = new SemplestModel.Semplest())
             {
                 var queryProd = (from c in dbcontext.ProductGroups
-                                   where
-                                       c.CustomerFK == customerFk &&
-                                       c.ProductGroupName == model.ProductGroup.ProductGroupName
-                                   select c).Single();
+                                 where
+                                     c.CustomerFK == customerFk &&
+                                     c.ProductGroupName == model.ProductGroup.ProductGroupName
+                                 select c).Single();
                 var promo = GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
-                if (model.SiteLinks != null && model.SiteLinks.Any())
+                List<GoogleSiteLink> sl =
+                                          model.SiteLinks.Where(t => !t.Delete).Select(row => new GoogleSiteLink
+                                          {
+                                              LinkText = row.LinkText,
+                                              LinkURL = row.LinkURL
+                                          }).ToList();
+                if (sl.Any())
                 {
-                    List<GoogleSiteLink> sl =
-                          model.SiteLinks.Where(t => !t.Delete).Select(row => new GoogleSiteLink
-                          {
-                              LinkText = row.LinkText,
-                              LinkURL = row.LinkURL
-                          }).ToList();
                     GoogleViolation[] gv = ValidateSiteLinks(sl);
                     if (gv.Length > 0)
                         throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
@@ -1034,9 +1037,12 @@ namespace Semplest.Core.Models.Repositories
         }
         public List<CampaignSetupModel.KeywordsModel> SaveNegativeKeywords(CampaignSetupModel model, int customerFk)
         {
-            GoogleViolation[] gv = ValidateGoogleNegativeKeywords(model.AdModelProp.NegativeKeywords);
-            if (gv.Length > 0)
-                throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+            if (model.AdModelProp.NegativeKeywords.Any())
+            {
+                GoogleViolation[] gv = ValidateGoogleNegativeKeywords(model.AdModelProp.NegativeKeywords);
+                if (gv.Length > 0)
+                    throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+            }
             using (var dbcontext = new SemplestModel.Semplest())
             {
                 var promo = GetPromoitionFromCampaign(dbcontext, customerFk, model);
