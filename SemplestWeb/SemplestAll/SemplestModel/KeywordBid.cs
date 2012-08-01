@@ -16,8 +16,8 @@ namespace SemplestModel
     {
         public KeywordBid()
         {
-            this.KeywordBidDatas = new HashSet<KeywordBidData>();
             this.TrafficEstimators = new HashSet<TrafficEstimator>();
+            this.KeywordBidDatas = new HashSet<KeywordBidData>();
         }
     
         public int KeywordBidPK { get; set; }
@@ -36,8 +36,8 @@ namespace SemplestModel
     
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
         public virtual BidType BidType { get; set; }
-        public virtual ICollection<KeywordBidData> KeywordBidDatas { get; set; }
         public virtual ICollection<TrafficEstimator> TrafficEstimators { get; set; }
         public virtual PromotionKeywordAssociation PromotionKeywordAssociation { get; set; }
+        public virtual ICollection<KeywordBidData> KeywordBidDatas { get; set; }
     }
 }

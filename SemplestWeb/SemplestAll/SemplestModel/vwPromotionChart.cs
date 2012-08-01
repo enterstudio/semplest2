@@ -19,9 +19,9 @@ namespace SemplestModel
         public int NumberImpressions { get; set; }
         public int NumberClick { get; set; }
         public System.DateTime TransactionDate { get; set; }
-        public Nullable<decimal> MicroBidAmount { get; set; }
-        public Nullable<int> AveragePosition { get; set; }
-        public Nullable<decimal> AverageCPC { get; set; }
+        public decimal MicroBidAmount { get; set; }
+        public int AveragePosition { get; set; }
+        public decimal AverageCPC { get; set; }
         public int AdvertisingEngineBidDataPK { get; set; }
         public int UserPK { get; set; }
         public int PromotionFK { get; set; }

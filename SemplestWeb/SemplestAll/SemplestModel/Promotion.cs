@@ -26,10 +26,10 @@ namespace SemplestModel
             this.PromotionAds = new HashSet<PromotionAd>();
             this.PromotionBiddings = new HashSet<PromotionBidding>();
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
-            this.PromotionPayments = new HashSet<PromotionPayment>();
             this.Schedules = new HashSet<Schedule>();
             this.SiteLinks = new HashSet<SiteLink>();
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
+            this.PromotionPayments = new HashSet<PromotionPayment>();
         }
     
         public int PromotionPK { get; set; }
@@ -66,9 +66,9 @@ namespace SemplestModel
         public virtual ICollection<PromotionAd> PromotionAds { get; set; }
         public virtual ICollection<PromotionBidding> PromotionBiddings { get; set; }
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
-        public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<SiteLink> SiteLinks { get; set; }
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
+        public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
     }
 }

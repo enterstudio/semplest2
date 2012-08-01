@@ -109,7 +109,7 @@ namespace SemplestModel
         public Nullable<int> SemplestKeywordsnumKeywordsGoogle { get; set; }
         public Nullable<int> SemplestKeywordsnumKeywordsMSN { get; set; }
         public Nullable<int> SemplestKeywordsnumThreads { get; set; }
-        public bool DisplayTargetCPCLevel { get; set; }
+        public Nullable<bool> DisplayTargetCPCLevel { get; set; }
         public Nullable<int> ServiceESBPingWaitMS { get; set; }
         public string AdwordsBillingAccount { get; set; }
         public Nullable<decimal> AdwordsAPICostPer1000 { get; set; }
@@ -126,8 +126,8 @@ namespace SemplestModel
         public Nullable<long> MSNTrafficEstAccountID { get; set; }
         public Nullable<double> SemplestBiddingBudgetMultFactor { get; set; }
         public string RunMode { get; set; }
-        public string PGPPrivateKeyPassword { get; set; }
         public string RSAPrivateKeyPassword { get; set; }
+        public string PGPPrivateKeyPassword { get; set; }
         public string ReminderEmailUrlPrefix { get; set; }
         public Nullable<int> BiddingServiceTargetPosition { get; set; }
         public Nullable<int> RegistrationReminderEmailDaysBack { get; set; }

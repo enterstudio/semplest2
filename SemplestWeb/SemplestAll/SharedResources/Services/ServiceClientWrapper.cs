@@ -271,13 +271,14 @@ namespace Semplest.SharedResources.Services
             }
         }
 
-        public GoogleViolation[] ValidateGoogleRefreshSiteLinks(int promotionID)
+        public GoogleViolation[] ValidateGoogleRefreshSiteLinks(List<GoogleSiteLink> sl)
         {
             String returnData = string.Empty;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
-                jsonHash.Add("promotionID", promotionID.ToString());
+                String slStr = JsonConvert.SerializeObject(sl, Formatting.Indented);
+                jsonHash.Add("siteLinks", slStr);
                 returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleRefreshSiteLinks",
                                        JsonConvert.SerializeObject(jsonHash), timeoutMS);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
@@ -292,13 +293,14 @@ namespace Semplest.SharedResources.Services
             }
         }
 
-        public GoogleViolation[] ValidateGoogleGeoTargets(int promotionID)
+        public GoogleViolation[] ValidateGoogleGeoTargets(List<GeoTargetObject> gto )
         {
             String returnData = string.Empty;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
-                jsonHash.Add("promotionID", promotionID.ToString());
+                String gtoStr = JsonConvert.SerializeObject(gto, Formatting.Indented);
+                jsonHash.Add("geoTargets", gtoStr);
                 returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleGeoTargets",
                                        JsonConvert.SerializeObject(jsonHash), timeoutMS);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
@@ -710,6 +712,12 @@ namespace Semplest.SharedResources.Services
                 this.radius = radius;
             }
         }
+
+    public class GoogleSiteLink
+    {
+        public string LinkText { get; set; }
+        public string LinkURL { get; set; }
+    }
 
         public class KeywordProbabilityObject
         {

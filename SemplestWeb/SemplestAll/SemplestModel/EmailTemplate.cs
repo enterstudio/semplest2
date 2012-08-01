@@ -22,5 +22,6 @@ namespace SemplestModel
         public int EmailTypeFK { get; set; }
     
         public virtual Customer Customer { get; set; }
+        public virtual EmailType EmailType { get; set; }
     }
 }

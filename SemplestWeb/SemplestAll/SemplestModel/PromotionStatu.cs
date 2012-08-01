@@ -14,7 +14,14 @@ namespace SemplestModel
     
     public partial class PromotionStatu
     {
+        public PromotionStatu()
+        {
+            this.PromotionAdengineStatus = new HashSet<PromotionAdengineStatu>();
+        }
+    
         public int PromotionStatusPK { get; set; }
         public string PromotionStatus { get; set; }
+    
+        public virtual ICollection<PromotionAdengineStatu> PromotionAdengineStatus { get; set; }
     }
 }

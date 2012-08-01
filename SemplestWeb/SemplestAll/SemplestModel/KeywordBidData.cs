@@ -20,7 +20,7 @@ namespace SemplestModel
         public Nullable<int> FirstPageMicroCPC { get; set; }
         public bool IsEligibleForShowing { get; set; }
         public System.DateTime CreatedDate { get; set; }
-        public Nullable<int> KeywordBidFK { get; set; }
+        public int KeywordBidFK { get; set; }
     
         public virtual KeywordBid KeywordBid { get; set; }
     }

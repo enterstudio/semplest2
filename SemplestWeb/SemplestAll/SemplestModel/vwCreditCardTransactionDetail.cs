@@ -15,7 +15,7 @@ namespace SemplestModel
     public partial class vwCreditCardTransactionDetail
     {
         public int CreditCardProfilePK { get; set; }
-        public int CustomerFK { get; set; }
+        public Nullable<int> CustomerFK { get; set; }
         public string CustomerRefNum { get; set; }
         public string AuthCode { get; set; }
         public string TxRefNum { get; set; }
@@ -56,8 +56,6 @@ namespace SemplestModel
         public Nullable<System.DateTime> CycleEndDate { get; set; }
         public Nullable<decimal> StartBudgetInCycle { get; set; }
         public Nullable<decimal> RemainingBudgetInCycle { get; set; }
-        public Nullable<decimal> BudgetToAddToNextCycle { get; set; }
-        public Nullable<System.DateTime> BudgetToAddDate { get; set; }
         public bool IsPaused { get; set; }
         public bool IsCompleted { get; set; }
         public bool IsLaunched { get; set; }

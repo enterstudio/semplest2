@@ -125,7 +125,7 @@ namespace Semplest.Core.Models.Repositories
                                                                                        }).ToList();
         }
 
-        public List<GeoTargetObject> SerializeToGeoTargetObjectArray(CampaignSetupModel model)
+        private List<GeoTargetObject> SerializeToGeoTargetObjectArray(CampaignSetupModel model)
         {
             var geoList = new List<GeoTargetObject>();
             foreach (var geo in model.AdModelProp.Addresses)
@@ -250,25 +250,12 @@ namespace Semplest.Core.Models.Repositories
         {
             using (var dbcontext = new SemplestModel.Semplest())
             {
-
                 var queryProd = (from c in dbcontext.ProductGroups
                                  where
                                      c.CustomerFK == customerFK &&
                                      c.ProductGroupName == model.ProductGroup.ProductGroupName
                                  select c).Single();
                 var promo = GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
-                var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, customerFK, oldModel,
-                                           ((IObjectContextAdapter) dbcontext).ObjectContext);
-                List<PromotionAd> addAds;
-                List<int> updateAds;
-                List<int> deleteAds;
-                var shouldscheduleAds = AddPromotionAdsToPromotion(promo, model, customerFK, oldModel,
-                                                                   out addAds, out updateAds, out deleteAds);
-                promo.LandingPageURL = model.AdModelProp.LandingUrl.Trim();
-                promo.DisplayURL = model.AdModelProp.DisplayUrl.Trim();
-                dbcontext.SaveChanges();
-                _savedCampaign = true;
-
 
                 List<GoogleAddAdRequest> verifyAds =
                            model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
@@ -286,15 +273,22 @@ namespace Semplest.Core.Models.Repositories
                                                                        model.AdModelProp.DisplayUrl, verifyAds);
                 if (gv.Length > 0)
                     throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                if (!string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Address) ||
-                    !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().City) ||
-                    !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Zip))
-                {
-                    gv = ValidateGeotargeting(promo.PromotionPK);
+
+                gv = ValidateGeotargeting(SerializeToGeoTargetObjectArray(model));
                     if (gv.Length > 0)
                         throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                }
 
+                var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, customerFK, oldModel,
+                                           ((IObjectContextAdapter) dbcontext).ObjectContext);
+                List<PromotionAd> addAds;
+                List<int> updateAds;
+                List<int> deleteAds;
+                var shouldscheduleAds = AddPromotionAdsToPromotion(promo, model, customerFK, oldModel,
+                                                                   out addAds, out updateAds, out deleteAds);
+                promo.LandingPageURL = model.AdModelProp.LandingUrl.Trim();
+                promo.DisplayURL = model.AdModelProp.DisplayUrl.Trim();
+                dbcontext.SaveChanges();
+                _savedCampaign = true;
 
                 if (promo.IsLaunched)
                 {
@@ -303,9 +297,6 @@ namespace Semplest.Core.Models.Repositories
                     adEngines.AddRange(
                             promo.PromotionAdEngineSelecteds.Select(
                                 pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                    if (shouldUpdateGeoTargeting)
-                        sw.scheduleUpdateGeoTargeting(promo.PromotionPK, adEngines);
-
                     if (shouldscheduleAds)
                     {
                         if (addAds.Any())
@@ -327,6 +318,9 @@ namespace Semplest.Core.Models.Repositories
                         if (deleteAds.Any())
                             sw.scheduleAds(promo.PromotionPK, deleteAds, adEngines,
                                            SEMplestConstants.PromotionAdAction.Delete);
+
+                        if (shouldUpdateGeoTargeting)
+                            sw.scheduleUpdateGeoTargeting(promo.PromotionPK, adEngines);
                     }
                 }
             }
@@ -725,6 +719,7 @@ namespace Semplest.Core.Models.Repositories
 
         public void SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel)
         {
+            bool shouldRefreshSiteLinks = false;
             using (var dbcontext = new SemplestModel.Semplest())
             {
                 var queryProd = (from c in dbcontext.ProductGroups
@@ -733,19 +728,40 @@ namespace Semplest.Core.Models.Repositories
                                        c.ProductGroupName == model.ProductGroup.ProductGroupName
                                    select c).Single();
                 var promo = GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
+                if (model.SiteLinks != null && model.SiteLinks.Any())
+                {
+                    List<GoogleSiteLink> sl =
+                          model.SiteLinks.Where(t => !t.Delete).Select(row => new GoogleSiteLink
+                          {
+                              LinkText = row.LinkText,
+                              LinkURL = row.LinkURL
+                          }).ToList();
+                    GoogleViolation[] gv = ValidateSiteLinks(sl);
+                    if (gv.Length > 0)
+                        throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                }
                 AddSiteLinksToPromotion(promo, model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel);
                 dbcontext.SaveChanges();
                 _savedCampaign = true;
-                if (model.SiteLinks != null && model.SiteLinks.Any())
+                try
                 {
-                    GoogleViolation[] gv = ValidateSiteLinks(promo.PromotionPK);
-                    if (gv.Length > 0)
-                        throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    var adEngines = new List<string>();
+                    if (promo.IsLaunched && shouldRefreshSiteLinks)
+                    {
+                        adEngines.AddRange(
+                            promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                        var sw = new ServiceClientWrapper();
+                        sw.scheduleRefreshSiteLinks(promo.PromotionPK, adEngines);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SharedResources.Helpers.ExceptionHelper.LogException(ex);
                 }
             }
         }
 
-        private static void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, System.Data.Objects.ObjectContext context, CampaignSetupModel oldModel)
+        private bool AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, System.Data.Objects.ObjectContext context, CampaignSetupModel oldModel)
         {
             bool shouldRefreshSiteLinks = false;
             if (model.SiteLinks != null)
@@ -782,21 +798,8 @@ namespace Semplest.Core.Models.Repositories
                             }
                     }
                 }
-            try
-            {
-                var adEngines = new List<string>();
-                if (promo.IsLaunched && shouldRefreshSiteLinks)
-                {
-                    adEngines.AddRange(
-                        promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                    var sw = new ServiceClientWrapper();
-                    sw.scheduleRefreshSiteLinks(promo.PromotionPK, adEngines);
-                }
-            }
-            catch (Exception ex)
-            {
-                SharedResources.Helpers.ExceptionHelper.LogException(ex);
-            }
+            return shouldRefreshSiteLinks;
+           
         }
 
         private static bool AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk,
@@ -1201,16 +1204,16 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        private GoogleViolation[] ValidateSiteLinks(int promoId)
+        private GoogleViolation[] ValidateSiteLinks(List<GoogleSiteLink> sl)
         {
             var sw = new ServiceClientWrapper();
-            return sw.ValidateGoogleRefreshSiteLinks(promoId);
+            return sw.ValidateGoogleRefreshSiteLinks(sl);
         }
 
-        private GoogleViolation[] ValidateGeotargeting(int promoId)
+        private GoogleViolation[] ValidateGeotargeting(List<GeoTargetObject> gto)
         {
             var sw = new ServiceClientWrapper();
-            return sw.ValidateGoogleGeoTargets(promoId);
+            return sw.ValidateGoogleGeoTargets(gto);
         }
 
         private GoogleViolation[] ValidateAds(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)

@@ -14,7 +14,14 @@ namespace SemplestModel
     
     public partial class EmailType
     {
+        public EmailType()
+        {
+            this.EmailTemplates = new HashSet<EmailTemplate>();
+        }
+    
         public int EmailTypePK { get; set; }
         public string EmailType1 { get; set; }
+    
+        public virtual ICollection<EmailTemplate> EmailTemplates { get; set; }
     }
 }
