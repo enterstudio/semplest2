@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.encryption.AESBouncyCastle;
@@ -149,7 +150,8 @@ public class ExpiredCredentialsEmailSender
 		try
 		{
 			log.info("Starting process for sending reminder emails to customers who have not finished registering");
-			BasicConfigurator.configure();	
+			PropertyConfigurator.configure("properties/log4j_server.properties");
+			//BasicConfigurator.configure();	
 			final ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
 			SemplestConfiguration configDB = new SemplestConfiguration(object);
