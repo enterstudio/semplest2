@@ -25,11 +25,12 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import semplest.server.protocol.Credential;
 import semplest.server.protocol.CustomOperation;
 import semplest.server.protocol.CustomerHierarchy;
-import semplest.server.protocol.CustomerType;
 import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.EmailType;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
@@ -86,66 +87,64 @@ public class SemplestDB extends BaseDB
 
 	public static final String SQL_MARK_KEYWORD_DELETED = "update PromotionKeywordAssociation " + "set IsDeleted = 1, " + "Comment = ? "
 			+ "where KeywordFK = ?" + "  and PromotionFK = ?";
-	
-	public static final String GET_EMAIL_TEMPLATE_SQL = "select	e.EmailTemplatePK, e.CustomerFK, e.EmailSubject, e.EmailBody, e.EmailFrom, e.EmailTypeFK " + 
-														"from	EmailTemplate e, " + 
-															   "EmailType t " + 
-														"where	e.EmailTypeFK = t.EmailTypePK " + 
-														   "and t.EmailTypePK = ?";
-	
-	public static final String GET_USERS_FOR_REGISTRATION_REMINDER_SQL = "select	UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate " +
-																		   "from	Users  " +
-																		  "where	IsRegistered = 0 " +
-																		    "and	IsActive = 1 " +
-																		    "and	((LastEmailReminderDate is null and DATEADD(DD, ?, CreatedDate) < ?) " + 
-																				   "	or " +
-																				   "(LastEmailReminderDate is not null and DATEADD(DD, ?, LastEmailReminderDate) < ?))";
-	
+
+	public static final String GET_EMAIL_TEMPLATE_SQL = "select	e.EmailTemplatePK, e.CustomerFK, e.EmailSubject, e.EmailBody, e.EmailFrom, e.EmailTypeFK "
+			+ "from	EmailTemplate e, " + "EmailType t " + "where	e.EmailTypeFK = t.EmailTypePK " + "and t.EmailTypePK = ?";
+
+	public static final String GET_USERS_FOR_REGISTRATION_REMINDER_SQL = "select	UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate "
+			+ "from	Users  "
+			+ "where	IsRegistered = 0 "
+			+ "and	IsActive = 1 "
+			+ "and	((LastEmailReminderDate is null and DATEADD(DD, ?, CreatedDate) < ?) "
+			+ "	or "
+			+ "(LastEmailReminderDate is not null and DATEADD(DD, ?, LastEmailReminderDate) < ?))";
+
 	public static final String GET_USER_FOR_REGISTRATION_REMINDER_SQL = GET_USERS_FOR_REGISTRATION_REMINDER_SQL + " and UserPK = ?";
-	
+
 	public static final String GET_USER_SQL = "select UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate from Users where UserPK = ?";
-	
+
 	public static final RowMapper<User> USER_ROW_MAPPER;
 	public static final RowMapper<CustomerHierarchy> CUSTOMER_HIERARCHY_ROW_MAPPER;
-	
+
 	static
 	{
 		USER_ROW_MAPPER = new RowMapper<User>()
-					{
-						@Override
-						public User mapRow(ResultSet rs, int rowNum) throws SQLException
-						{							
-							final Integer userPk = rs.getInt("UserPK");
-							final Integer customerFk = rs.getInt("CustomerFK");
-							final String firstName = rs.getString("FirstName");
-							final String middleInidial = rs.getString("MiddleInitial");
-							final String lastName = rs.getString("LastName");
-							final String email = rs.getString("Email");			
-							final java.util.Date editedDate = rs.getTimestamp("EditedDate");			
-							final Boolean isActive = rs.getBoolean("IsActive");
-							final Boolean isRegistered = rs.getBoolean("IsRegistered");
-							final java.util.Date lastEmailReminderDate = rs.getTimestamp("LastEmailReminderDate");
-							final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
-							final User user = new User(userPk, customerFk, firstName, middleInidial, lastName, email, isActive, isRegistered, createdDate, editedDate, lastEmailReminderDate);
-							return user;
-						}
-					};
-					
+		{
+			@Override
+			public User mapRow(ResultSet rs, int rowNum) throws SQLException
+			{
+				final Integer userPk = rs.getInt("UserPK");
+				final Integer customerFk = rs.getInt("CustomerFK");
+				final String firstName = rs.getString("FirstName");
+				final String middleInidial = rs.getString("MiddleInitial");
+				final String lastName = rs.getString("LastName");
+				final String email = rs.getString("Email");
+				final java.util.Date editedDate = rs.getTimestamp("EditedDate");
+				final Boolean isActive = rs.getBoolean("IsActive");
+				final Boolean isRegistered = rs.getBoolean("IsRegistered");
+				final java.util.Date lastEmailReminderDate = rs.getTimestamp("LastEmailReminderDate");
+				final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
+				final User user = new User(userPk, customerFk, firstName, middleInidial, lastName, email, isActive, isRegistered, createdDate,
+						editedDate, lastEmailReminderDate);
+				return user;
+			}
+		};
+
 		CUSTOMER_HIERARCHY_ROW_MAPPER = new RowMapper<CustomerHierarchy>()
-					{
-						@Override
-						public CustomerHierarchy mapRow(ResultSet rs, int rowNum) throws SQLException
-						{							
-							final Integer customerHierarchyID = rs.getInt("CustomerHierarchyPK");
-							final Integer customerID = rs.getInt("CustomerFK");
-							final Integer customerParentID = rs.getInt("CustomerParentFK");
-							final java.util.Date createdDate = rs.getTimestamp("CreatedDate");										
-							final CustomerHierarchy hierarchy = new CustomerHierarchy(customerHierarchyID, customerID, customerParentID, createdDate);
-							return hierarchy;
-						}
-					};					
+		{
+			@Override
+			public CustomerHierarchy mapRow(ResultSet rs, int rowNum) throws SQLException
+			{
+				final Integer customerHierarchyID = rs.getInt("CustomerHierarchyPK");
+				final Integer customerID = rs.getInt("CustomerFK");
+				final Integer customerParentID = rs.getInt("CustomerParentFK");
+				final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
+				final CustomerHierarchy hierarchy = new CustomerHierarchy(customerHierarchyID, customerID, customerParentID, createdDate);
+				return hierarchy;
+			}
+		};
 	}
-	
+
 	public static <T> T executeRetryOnDeadlock(final CustomOperation<T> customOperation, final int maxNumRetries) throws Exception
 	{
 		final SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
@@ -173,17 +172,20 @@ public class SemplestDB extends BaseDB
 			throw new Exception("Problem performing operation even after max " + maxNumRetries + " retries", e);
 		}
 	}
-	
+
 	public static CustomerHierarchy getCustomerHierarchy(final Integer customerID) throws Exception
 	{
-		final List<CustomerHierarchy> hierarchies = jdbcTemplate.query("select CustomerHierarchyPK, CustomerFK, CustomerParentFK, CreatedDate from CustomerHierarchy where CustomerFK = ?", CUSTOMER_HIERARCHY_ROW_MAPPER, customerID);
+		final List<CustomerHierarchy> hierarchies = jdbcTemplate.query(
+				"select CustomerHierarchyPK, CustomerFK, CustomerParentFK, CreatedDate from CustomerHierarchy where CustomerFK = ?",
+				CUSTOMER_HIERARCHY_ROW_MAPPER, customerID);
 		if (hierarchies == null || hierarchies.isEmpty())
 		{
 			return null;
 		}
 		if (hierarchies.size() > 1)
 		{
-			throw new Exception("Found " + hierarchies.size() + " Customer Hierarchies for CustomerID [" + customerID + "], but there should be only 1");
+			throw new Exception("Found " + hierarchies.size() + " Customer Hierarchies for CustomerID [" + customerID
+					+ "], but there should be only 1");
 		}
 		final CustomerHierarchy hierarchy = hierarchies.get(0);
 		return hierarchy;
@@ -245,29 +247,31 @@ public class SemplestDB extends BaseDB
 			throw new Exception("Problem performing operations even after max " + maxRetries + " retries", e);
 		}
 	}
-	
+
 	public static Credential getCredential(final Integer userID)
-	{		
-		final Credential credential = jdbcTemplate.queryForObject("select CredentialPK, UsersFK, Username, Password, RememberMe, SecurityQuestion, SecurityAnswer from Credential where UsersFK = ?", 
-												new RowMapper<Credential>()
-												{
-													@Override
-													public Credential mapRow(ResultSet rs, int rowNum) throws SQLException
-													{							
-														final Integer credentialPK = rs.getInt("CredentialPK");
-														final Integer usersFK = rs.getInt("UsersFK");
-														final String username = rs.getString("Username");
-														final String password = rs.getString("Password");
-														final Boolean rememberMe = rs.getBoolean("RememberMe");
-														final String securityQuestion = rs.getString("SecurityQuestion");
-														final String securityAnswer = rs.getString("SecurityAnswer");														
-														final Credential credential = new Credential(credentialPK, usersFK, username, password, rememberMe, securityQuestion, securityAnswer);
-														return credential;
-													}											
-												}, userID);
+	{
+		final Credential credential = jdbcTemplate.queryForObject(
+				"select CredentialPK, UsersFK, Username, Password, RememberMe, SecurityQuestion, SecurityAnswer from Credential where UsersFK = ?",
+				new RowMapper<Credential>()
+				{
+					@Override
+					public Credential mapRow(ResultSet rs, int rowNum) throws SQLException
+					{
+						final Integer credentialPK = rs.getInt("CredentialPK");
+						final Integer usersFK = rs.getInt("UsersFK");
+						final String username = rs.getString("Username");
+						final String password = rs.getString("Password");
+						final Boolean rememberMe = rs.getBoolean("RememberMe");
+						final String securityQuestion = rs.getString("SecurityQuestion");
+						final String securityAnswer = rs.getString("SecurityAnswer");
+						final Credential credential = new Credential(credentialPK, usersFK, username, password, rememberMe, securityQuestion,
+								securityAnswer);
+						return credential;
+					}
+				}, userID);
 		return credential;
 	}
-	
+
 	public static User getUser(final Integer userID) throws Exception
 	{
 		logger.info("Will try to get User data for UserID [" + userID + "]");
@@ -287,11 +291,13 @@ public class SemplestDB extends BaseDB
 			return user;
 		}
 	}
-	
+
 	public static User getUserForRegistrationReminder(final java.util.Date asOfDate, final Integer daysBack, final Integer userID) throws Exception
 	{
-		logger.info("Will try to find User for registration reminder using UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack [" + daysBack + "]");
-		final List<User> userList = jdbcTemplate.query(GET_USER_FOR_REGISTRATION_REMINDER_SQL, USER_ROW_MAPPER, daysBack, asOfDate, daysBack, asOfDate, userID);
+		logger.info("Will try to find User for registration reminder using UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack ["
+				+ daysBack + "]");
+		final List<User> userList = jdbcTemplate.query(GET_USER_FOR_REGISTRATION_REMINDER_SQL, USER_ROW_MAPPER, daysBack, asOfDate, daysBack,
+				asOfDate, userID);
 		if (userList == null || userList.isEmpty())
 		{
 			return null;
@@ -301,35 +307,36 @@ public class SemplestDB extends BaseDB
 			final Integer numUsersFound = userList.size();
 			if (numUsersFound != 1)
 			{
-				throw new Exception("Found " + numUsersFound + " Users in database for UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack [" + daysBack + "], but should be 1");
+				throw new Exception("Found " + numUsersFound + " Users in database for UserID [" + userID + "], AsOfDate [" + asOfDate
+						+ "], DaysBack [" + daysBack + "], but should be 1");
 			}
 			final User user = userList.get(0);
 			return user;
 		}
 	}
-	
+
 	public static List<User> getUsersForRegistrationReminder(final java.util.Date asOfDate, final Integer daysBack)
-	{		
+	{
 		return jdbcTemplate.query(GET_USERS_FOR_REGISTRATION_REMINDER_SQL, USER_ROW_MAPPER, daysBack, asOfDate, daysBack, asOfDate);
 	}
-	
+
 	public static List<EmailTemplate> getEmailTemplates(final semplest.server.protocol.EmailType emailType)
 	{
-		final List<EmailTemplate> emailTemplates = new ArrayList<EmailTemplate>(); 
+		final List<EmailTemplate> emailTemplates = new ArrayList<EmailTemplate>();
 		final Integer emailTypeCode = emailType.getCode();
 		final List<Map<String, Object>> rows = jdbcTemplate.queryForList(GET_EMAIL_TEMPLATE_SQL, emailTypeCode);
 		for (final Map<String, Object> row : rows)
 		{
-			final Integer code = (Integer)row.get("EmailTemplatePK");
-			final Integer customerFK = (Integer)row.get("CustomerFK");
-			final Integer emailTypeCodeFromDB = (Integer)row.get("EmailTypeFK");
+			final Integer code = (Integer) row.get("EmailTemplatePK");
+			final Integer customerFK = (Integer) row.get("CustomerFK");
+			final Integer emailTypeCodeFromDB = (Integer) row.get("EmailTypeFK");
 			final EmailType emailTypeFromDB = EmailType.fromCode(emailTypeCodeFromDB);
-			final String emailFrom = (String)row.get("EmailFrom");
-			final String emailSubject = (String)row.get("EmailSubject");
-			final String emailBody = (String)row.get("EmailBody");
+			final String emailFrom = (String) row.get("EmailFrom");
+			final String emailSubject = (String) row.get("EmailSubject");
+			final String emailBody = (String) row.get("EmailBody");
 			final EmailTemplate emailTemplate = new EmailTemplate(code, customerFK, emailTypeFromDB, emailFrom, emailSubject, emailBody);
 			emailTemplates.add(emailTemplate);
-		}		
+		}
 		return emailTemplates;
 	}
 
@@ -384,11 +391,12 @@ public class SemplestDB extends BaseDB
 				new Object[]
 				{ promotionID, adEngineCode, promotionStatusCode, promotionID, adEngineCode, promotionID, promotionStatusCode, adEngineCode });
 	}
-	
+
 	public static void updateUserLastEmailReminderDate(final Integer userID, final java.util.Date now)
 	{
 		logger.info("Will update LastEmailReminderDate to [" + now + "] for UserID [" + userID + "]");
-		jdbcTemplate.update("update Users set LastEmailReminderDate = ? where UserPK = ?", new Object[]{now, userID});
+		jdbcTemplate.update("update Users set LastEmailReminderDate = ? where UserPK = ?", new Object[]
+		{ now, userID });
 	}
 
 	public static void SetCurrentDailyBudget(Double currentDailyBudget, Integer promotionID, String adEngine) throws Exception
@@ -456,21 +464,18 @@ public class SemplestDB extends BaseDB
 
 	public static BiddingParameters getBiddingParameters() throws Exception
 	{
-		String strSQL = "select c.SemplestBiddingBudgetMultFactor, c.SemplestBiddingInitialBidBoostFactor,	c.SemplestBiddingPercentileValue, c.SemplestBiddingMarginFactor, c.BiddingServiceTargetPosition, " +
-				"c.BiddingServiceBidMultiplierForGoogleFromMSNHistory, c.BiddingServiceGoogleVolMultiplierFromMSNHistory " +
-				"from Configuration c";
+		String strSQL = "select c.SemplestBiddingBudgetMultFactor, c.SemplestBiddingInitialBidBoostFactor,	c.SemplestBiddingPercentileValue, c.SemplestBiddingMarginFactor, c.BiddingServiceTargetPosition, "
+				+ "c.BiddingServiceBidMultiplierForGoogleFromMSNHistory, c.BiddingServiceGoogleVolMultiplierFromMSNHistory " + "from Configuration c";
 		return jdbcTemplate.queryForObject(strSQL, BiddingParametersObjMapper);
 	}
-	
-	public static CustomerObj getCustomer(final Integer customerID) 
+
+	public static CustomerObj getCustomer(final Integer customerID)
 	{
 		final String strSQL = "select c.CustomerPK, c.Name, c.TotalTargetCycleBudget, cct.ProductGroupCycleType, cct.CycleInDays, bt.BillType, c.CreatedDate, c.EditedDate from Customer c "
-						+ "inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK "
-						+ "inner join BillType bt on c.BillTypeFK = bt.BillTypePK "
-						+ "where c.CustomerPK = ?";
+				+ "inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK "
+				+ "inner join BillType bt on c.BillTypeFK = bt.BillTypePK " + "where c.CustomerPK = ?";
 		return jdbcTemplate.queryForObject(strSQL, CustomerObjMapper, customerID);
 	}
-
 
 	/*
 	 * Customer
@@ -525,13 +530,14 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	public static Integer disableSchedule(Integer ScheduleID ) throws Exception
+	public static Integer disableSchedule(Integer ScheduleID) throws Exception
 	{
 		String strSQL = "update Schedule set IsEnabled = 0 from Schedule s where s.SchedulePK = ?";
 
 		return jdbcTemplate.update(strSQL, new Object[]
 		{ ScheduleID });
 	}
+
 	public static Integer addSchedule(String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive,
 			Integer PromotionID, Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
 	{
@@ -539,7 +545,8 @@ public class SemplestDB extends BaseDB
 		if (ScheduleFrequency.existsFrequency(Frequency))
 		{
 			AddScheduleSP addsched = new AddScheduleSP();
-			Integer scheduleID = addsched.execute(ScheduleName, StartTime, EndDate, Frequency, isEnabled, isInactive, PromotionID, CustomerID, ProductGroupID, UserID);
+			Integer scheduleID = addsched.execute(ScheduleName, StartTime, EndDate, Frequency, isEnabled, isInactive, PromotionID, CustomerID,
+					ProductGroupID, UserID);
 			return scheduleID;
 		}
 		else
@@ -634,6 +641,7 @@ public class SemplestDB extends BaseDB
 	}
 
 	private static final RowMapper<DefaultBidObject> defaultBidObjectMapper = new BeanPropertyRowMapper<DefaultBidObject>(DefaultBidObject.class);
+
 	public static DefaultBidObject getDefaultBid(int promotionID, AdEngine adEngine) throws Exception
 	{
 		String strSQL = "select aep.MicroDefaultBid, aep.DefaultBidEditedDate from AdvertisingEnginePromotion aep  "
@@ -641,9 +649,8 @@ public class SemplestDB extends BaseDB
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK "
 				+ "where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
 
-		
 		List<DefaultBidObject> defaultBidObjects = jdbcTemplate.query(strSQL, new Object[]
-					{ promotionID, adEngine.name() }, defaultBidObjectMapper);
+		{ promotionID, adEngine.name() }, defaultBidObjectMapper);
 		if (defaultBidObjects.size() > 0)
 		{
 			return defaultBidObjects.get(0);
@@ -830,6 +837,37 @@ public class SemplestDB extends BaseDB
 
 			}
 		}
+	}
+
+	/*
+	 * In transaction
+	 */
+	public static void setBidInactive(final Integer promotionID, final String adEngine, final List<BidElement> bids) throws Exception
+	{
+		final String strSQL = "update KeywordBid set IsActive = 0, EndDate = CURRENT_TIMESTAMP from KeywordBid kb "
+				+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
+				+ "inner join AdvertisingEngine ae on kb.AdvertisingEngineFK = ae.AdvertisingEnginePK "
+				+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+				+ "where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and k.Keyword = ? and bt.BidType = ?";
+
+		// Start Transaction
+		if (TransactionManager.txTemplate == null)
+		{
+			throw new Exception ("Spring JDBC Transaction manager is null");
+		}
+		TransactionManager.txTemplate.execute(new TransactionCallbackWithoutResult()
+		{
+			public void doInTransactionWithoutResult(TransactionStatus status)
+
+			{
+				for (BidElement aBid : bids)
+				{
+					jdbcTemplate.update(strSQL, new Object[]
+					{ promotionID, adEngine, aBid.getKeyword(), aBid.getMatchType() });
+				}
+			}
+		});
+		logger.info("Completed setBidInactive:" + promotionID + ":" + adEngine);
 	}
 
 	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper<BidElement>(BidElement.class);
@@ -1070,7 +1108,8 @@ public class SemplestDB extends BaseDB
 
 	public static Integer storeAdvertisingEngineReportData(Integer promotionID, AdEngine adEngine, ReportObject[] reportObjList) throws Exception
 	{
-		logger.info("Will try to store AdEngine Bid Performance Report for PormotionID [" + promotionID + "], AdEngine [" + adEngine + "], <Report Items>");
+		logger.info("Will try to store AdEngine Bid Performance Report for PormotionID [" + promotionID + "], AdEngine [" + adEngine
+				+ "], <Report Items>");
 		Integer numInserted = 0;
 		if (reportObjList == null || reportObjList.length == 0)
 		{
@@ -1114,14 +1153,14 @@ public class SemplestDB extends BaseDB
 	public static List<ReportObject> getReportData(int promotionID, AdEngine adEngine, java.util.Date startDate, java.util.Date endDate)
 			throws Exception
 	{
-		String strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, " +
-				"bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost " +
-				"from AdvertisingEngineReportData aerd " + 
-				"inner join Keyword k on k.KeywordPK = aerd.KeywordFK  " +
-				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aerd.AdvertisingEngineFK  " +
-				"inner join Promotion p on p.PromotionPK = aerd.PromotionFK  " +
-				"inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK " +
-				"inner join BidType bt on bt.BidTypePK = aerd.BidTypeFK ";
+		String strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
+				+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost "
+				+ "from AdvertisingEngineReportData aerd "
+				+ "inner join Keyword k on k.KeywordPK = aerd.KeywordFK  "
+				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aerd.AdvertisingEngineFK  "
+				+ "inner join Promotion p on p.PromotionPK = aerd.PromotionFK  "
+				+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
+				+ "inner join BidType bt on bt.BidTypePK = aerd.BidTypeFK ";
 		try
 		{
 			java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
@@ -1168,12 +1207,14 @@ public class SemplestDB extends BaseDB
 			return null;
 		}
 	}
+
 	/*
-	public static List<User> getUsers(final Boolean isActive, final Boolean isRegistered, final java.util.Date lastEmailReminderDate)
-	{
-		logger.info("Will try to get Users for IsActive [" + isActive + "], IsRegistered [" + isRegistered + "], LastEmailReminderDate [" + lastEmailReminderDate + "]");
-	}
-*/
+	 * public static List<User> getUsers(final Boolean isActive, final Boolean
+	 * isRegistered, final java.util.Date lastEmailReminderDate) {
+	 * logger.info("Will try to get Users for IsActive [" + isActive +
+	 * "], IsRegistered [" + isRegistered + "], LastEmailReminderDate [" +
+	 * lastEmailReminderDate + "]"); }
+	 */
 	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, AdEngine adEngine, java.util.Date startDate,
 			java.util.Date endDate) throws Exception
 	{
@@ -1572,12 +1613,12 @@ public class SemplestDB extends BaseDB
 		{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID, currentDailyBudget });
 	}
 
-	public static String[] getGeotargetStates( Integer promotionId ) throws Exception {
+	public static String[] getGeotargetStates(Integer promotionId) throws Exception
+	{
 		final String sql = "Select  stateAbbr from GeoTargeting g, StateCode s where g.StateCodeFK = s.StateAbbrPK and g.promotionFK = ?";
-		return jdbcTemplate.queryForList(sql, String.class, promotionId).toArray( new String[0]);
+		return jdbcTemplate.queryForList(sql, String.class, promotionId).toArray(new String[0]);
 	}
 
-	
 	public static void logError(Exception e, String errorSource)
 	{
 		try
