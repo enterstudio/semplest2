@@ -222,7 +222,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private final boolean useSandbox;
 	private Long AdwordsValidationAccountID = null;
 	private Long AdwordsValidationAdGroupID = null;
-	private final static String[] GEO_TARGET_FIELDS = {"Id", "LocationName", "CanonicalName", "DisplayType", "ParentLocations", "Reach"};
+	private final static String[] GEO_TARGET_FIELDS = {"Id","CampaignId","LocationName","DisplayType", "RadiusInUnits","GeoPoint","Address"};
+	private final static String[] LOCATION_SERVICE_FIELDS = {"Id", "LocationName", "CanonicalName", "DisplayType", "ParentLocations", "Reach"};
 	private final LocationCriterionServiceInterface LOCATION_CRITERION_SERVICE;
 
 	public GoogleAdwordsServiceImpl() throws Exception
@@ -3723,7 +3724,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		logger.info("Will try to get Google Location ID for State [" + state + "]");
 		final Selector selector = new Selector();
-		selector.setFields(GEO_TARGET_FIELDS);
+		selector.setFields(LOCATION_SERVICE_FIELDS);
 	    final Predicate locationNamePredicate = new Predicate("LocationName",PredicateOperator.IN, new String[]{state});
 	    final Predicate localePredicate = new Predicate("Locale",PredicateOperator.EQUALS, new String[]{"en_US"});
 	    selector.setPredicates(new Predicate[]{locationNamePredicate,localePredicate});	    
