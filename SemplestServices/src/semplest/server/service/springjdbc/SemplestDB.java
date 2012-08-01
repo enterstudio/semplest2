@@ -42,6 +42,7 @@ import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.PromotionStatus;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.SemplestBiddingHistory;
@@ -62,6 +63,7 @@ import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 import semplest.server.service.springjdbc.storedproc.GetBiddableAdGroupCriteriaSP;
+import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.server.service.springjdbc.storedproc.GetLatestTrafficEstimatorSP;
 import semplest.server.service.springjdbc.storedproc.SetPromotionBiddingSP;
 import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
@@ -674,6 +676,11 @@ public class SemplestDB extends BaseDB
 
 	}
 
+	public static List<KeywordProbabilityObject> getKeywordProbObj(Integer promotionID, boolean isTargetGoogle, boolean isTargetMSN)
+	{
+		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
+		return getKeywordForAdEngineSP.execute(promotionID, isTargetGoogle, isTargetMSN);
+	}
 	public static void UpdateDefaultBidForKeywords(int promotionID, AdEngine adEngine) throws Exception
 	{
 		UpdateDefaultBidForKeywordsSP updateDefBiAmounts = new UpdateDefaultBidForKeywordsSP();
