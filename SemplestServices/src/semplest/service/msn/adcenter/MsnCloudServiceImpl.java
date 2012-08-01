@@ -168,13 +168,21 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			}
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			
+			final String accountID = "1758634";
+			final Long adGroupID = 709890649L;
+			final UpdateAdRequest updRequest = new UpdateAdRequest(1525522391L, "Some new headline4", "new desc 14", " new desc 24", "www.Fareed.com", "http://www.Fareed.com", 700);
+			final List<UpdateAdRequest> updateRequests = Arrays.asList(updRequest);
+			final UpdateAdsRequestObj updateRequest = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests);
+			msn.updateAllAdById(updateRequest);
+			
+			/*
 			DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 			DateTime lastDay = new DateTime(2012,8,30,0,0,0,0);
 			ReportObject[] ret = msn.getKeywordReport(1774491L, 51103550L, firstDay, lastDay);
 			for(ReportObject ro : ret){
 				System.out.println(ro.toString());
 			}
-			
+			*/
 			/*
 			Map<String, ProtocolEnum.SemplestMatchType> map = new HashMap<String, ProtocolEnum.SemplestMatchType>();
 
@@ -1918,8 +1926,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final GetAdsByIdsResponse adsByIds = campaignManagement.getAdsByIds(new GetAdsByIdsRequest(adGroupId, new long[] { adId }));
-			return adsByIds.getAds()[0];
+			final long[] adIds = new long[]{adId};
+			final GetAdsByIdsRequest request = new GetAdsByIdsRequest(adGroupId, adIds);
+			final GetAdsByIdsResponse response = campaignManagement.getAdsByIds(request);
+			final Ad[] ads = response.getAds();
+			return ads[0];
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -2004,8 +2015,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			for (UpdateAdRequest ad : adList)
 			{
 				final String adText = SemplestUtils.isNullReturnEmptyString(ad.getNewDescription1()) + " " + SemplestUtils.isNullReturnEmptyString(ad.getNewDescription2());
-				updateAdById(accountID, adGroupID, ad.getAdId(), ad.getNewHeadline(), adText.trim(), ad.getNewDisplayURL(), ad.getNewUrl());
-				requestToNewAdIdMap.put(ad, ad.getAdId());
+				final Long adId = ad.getAdId();
+				updateAdById(accountID, adGroupID, adId, ad.getNewHeadline(), adText.trim(), ad.getNewDisplayURL(), ad.getNewUrl());
+				requestToNewAdIdMap.put(ad, adId);
 			}
 			return requestToNewAdIdMap;
 		}
@@ -2034,6 +2046,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				textAd.setDisplayUrl(displayUrl);
 				textAd.setDestinationUrl(destinationUrl);
 			}
+			else
+			{
+				throw new Exception("Ad for MsnID [] is not a TextAd, but is " + ad.getType() + ", which is unexpected, so will not update it");
+			}
+			final Ad[] ads = new Ad[]{ad};
+			final UpdateAdsRequest request = new UpdateAdsRequest(adGroupId, ads);
+			final UpdateAdsResponse response = campaignManagement.updateAds(request);
 		}
 		catch (AdApiFaultDetail e)
 		{
