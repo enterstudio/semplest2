@@ -965,7 +965,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			adGrpData.setAdGroupID(adGroupID);
 			adGrpData.setAds(nonDeletedAds);
-			msn.updateGeoTargets(msnAccountId, campaignID, adGroupID, geoTargetVsTypeMap);
+			msn.updateGeoTargets(msnAccountId, campaignID, geoTargetVsTypeMap);
 			logger.info("Added MSN GeoTargets:\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap));			
 		}
 		else
@@ -1436,9 +1436,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
 				final Long accountId = promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
-				final Long adGroupId = promotionAdEngineData.getAdGroupID();
 				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);	
-				msn.updateGeoTargets(accountId, campaignId, adGroupId, geoTargetVsTypeMap);
+				msn.updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
 			}
 			else
 			{

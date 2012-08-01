@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -22,7 +21,6 @@ import java.util.Date;
 
 import javax.xml.rpc.ServiceException;
 
-import org.apache.axis.description.OperationDesc;
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.AdPosition;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.Currency;
@@ -72,15 +70,11 @@ import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.server.service.SemplestConfiguration;
-import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.google.api.adwords.v201109.cm.ApiException;
-import com.google.api.adwords.v201109.cm.Operation;
 import com.google.gson.Gson;
-import com.microsoft.adapi.AdApiError;
 import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.BasicHttpBinding_ICustomerManagementServiceStub;
 import com.microsoft.adcenter.api.customermanagement.CustomerManagementServiceLocator;
@@ -115,7 +109,6 @@ import com.microsoft.adcenter.api.customermanagement.Entities.PersonName;
 import com.microsoft.adcenter.api.customermanagement.Entities.SecretQuestion;
 import com.microsoft.adcenter.api.customermanagement.Entities.TimeZoneType;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
-import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.*;
 
 public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
@@ -1888,7 +1881,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			ad.setTitle(title);
 			ad.setDisplayUrl(displayUrl);
 			ad.setDestinationUrl(destinationUrl);
-			final AddAdsRequest adreq = new AddAdsRequest(adGroupId, new Ad[] { ad });
 			final AddAdsResponse addAds = campaignManagement.addAds(new AddAdsRequest(adGroupId, new Ad[] { ad }));
 			return addAds.getAdIds()[0];
 		}
@@ -3038,187 +3030,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 	}
 
-	private Boolean setRadiusTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, Double radius, Double latitude, Double longitude) throws MsnCloudException
-	{
-		final String operationDescription = "Set Radius Target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignId [" + campaignId + "], Radius [" + radius + "], Latitude [" + latitude + "], Longitude [" + longitude + "], Targets ["
-				+ SemplestUtils.getMsnTargetString(targetsStored, false) + "]";
-		logger.info("Will try to " + operationDescription);
-		try
-		{
-			Boolean res = false;
-			logger.info("Creating radius object with location...");
-			final RadiusTargetBid radiusTar = new RadiusTargetBid();
-			radiusTar.setLatitudeDegrees(latitude);
-			radiusTar.setLongitudeDegrees(longitude);
-			radiusTar.setRadius(radius.intValue());
-			radiusTar.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
-			if (targetsStored[0] == null)
-			{
-				final Target target = new Target();
-				final RadiusTarget radTarg = new RadiusTarget();
-				radTarg.setBids(new RadiusTargetBid[] { radiusTar });
-				LocationTarget locTarget = new LocationTarget();
-				locTarget.setRadiusTarget(radTarg);
-				target.setLocation(locTarget);
-				final Target[] targets = new Target[] { target };
-				final AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
-				requestTar.setTargets(targets);
-				final AddTargetsToLibraryResponse responseTar = campaignManagement.addTargetsToLibrary(requestTar);
-				long[] targetIDs = responseTar.getTargetIds();
-				// Add target object to campaign
-				logger.info("Adding target to campaign...");
-				final SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
-				requestCamp.setTargetId(targetIDs[0]);
-				requestCamp.setCampaignId(campaignId);
-				final SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
-				logger.info("Target loaded");
-				res = true;
-			}
-			else
-			{
-				// if target already exists add new business to bid array
-				if (targetsStored.length > 1)
-				{
-					throw new MsnCloudException("Too many targets in this campaign");
-				}
-				final Target targetUpdate = targetsStored[0];
-				final LocationTarget locUpdate = targetUpdate.getLocation();
-				RadiusTarget radiusTarUpdate = locUpdate.getRadiusTarget();
-				final RadiusTargetBid[] bidsStored;
-				if (radiusTarUpdate != null)
-				{
-					bidsStored = new RadiusTargetBid[radiusTarUpdate.getBids().length + 1];
-					for (int j = 0; j < radiusTarUpdate.getBids().length; j++)
-					{
-						bidsStored[j] = radiusTarUpdate.getBids()[j];
-					}
-					bidsStored[radiusTarUpdate.getBids().length] = radiusTar;
-				}
-				else
-				{
-					bidsStored = new RadiusTargetBid[] { radiusTar };
-					radiusTarUpdate = new RadiusTarget();
-				}
-				radiusTarUpdate.setBids(bidsStored);
-				// Update location target
-				locUpdate.setRadiusTarget(radiusTarUpdate);
-				targetUpdate.setLocation(locUpdate);
-				targetUpdate.setIsLibraryTarget(null);
-				// Update target in library
-				final UpdateTargetsInLibraryRequest updateTarRequest = new UpdateTargetsInLibraryRequest();
-				updateTarRequest.setTargets(new Target[] { targetUpdate });
-				final UpdateTargetsInLibraryResponse updateTarResponse = campaignManagement.updateTargetsInLibrary(updateTarRequest);
-				logger.info("Target Updated");
-				res = true;
-			}
-			return res;
-		}
-		catch (AdApiFaultDetail e)
-		{
-			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
-		}
-		catch (ApiFaultDetail e)
-		{
-			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
-		}
-		catch (EditorialApiFaultDetail e)
-		{
-			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
-		}
-		catch (Exception e)
-		{
-			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}
-	}
-
-	private Boolean setStateTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, String state) throws MsnCloudException
-	{
-		final String operationDescription = "Set State Target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignId [" + campaignId + "], State [" + state + "], Targets [" + SemplestUtils.getMsnTargetString(targetsStored, false) + "]";
-		logger.info("Will try to " + operationDescription);
-		try
-		{
-			Boolean res = false;
-			logger.info("Creating state object with location...");
-			final StateTargetBid stateTar = new StateTargetBid();
-			stateTar.setState(state);
-			stateTar.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
-			if (targetsStored[0] == null)
-			{
-				final Target target = new Target();
-				final StateTarget statTarg = new StateTarget();
-				statTarg.setBids(new StateTargetBid[] { stateTar });
-				final LocationTarget locTarget = new LocationTarget();
-				locTarget.setStateTarget(statTarg);
-				target.setLocation(locTarget);
-				final Target[] targets = new Target[] { target };
-				final AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
-				requestTar.setTargets(targets);
-				logger.info("About to request CampaignManagement to AddTargetsToLibrary: [" + SemplestUtils.getMsnAddTargetsToLibraryRequestString(requestTar) + "]");
-				final AddTargetsToLibraryResponse responseTar = campaignManagement.addTargetsToLibrary(requestTar);
-				final long[] targetIDs = responseTar.getTargetIds();
-				logger.info("Adding target to campaign...");
-				final SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
-				requestCamp.setTargetId(targetIDs[0]);
-				requestCamp.setCampaignId(campaignId);
-				final SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
-				logger.info("Target loaded");
-				res = true;
-			}
-			else
-			{
-				// if target already exists add new business to bid array
-				if (targetsStored.length > 1)
-				{
-					throw new MsnCloudException("Too many targets in this campaign");
-				}
-				final Target targetUpdate = targetsStored[0];
-				final LocationTarget locUpdate = targetUpdate.getLocation();
-				StateTarget stateTarUpdate = locUpdate.getStateTarget();
-				final StateTargetBid[] bidsStored;
-				if (stateTarUpdate != null)
-				{
-					bidsStored = new StateTargetBid[stateTarUpdate.getBids().length + 1];
-					for (int j = 0; j < stateTarUpdate.getBids().length; j++)
-					{
-						bidsStored[j] = stateTarUpdate.getBids()[j];
-					}
-					bidsStored[stateTarUpdate.getBids().length] = stateTar;
-				}
-				else
-				{
-					bidsStored = new StateTargetBid[] { stateTar };
-					stateTarUpdate = new StateTarget();
-				}
-				stateTarUpdate.setBids(bidsStored);
-				locUpdate.setStateTarget(stateTarUpdate);
-				targetUpdate.setLocation(locUpdate);
-				targetUpdate.setIsLibraryTarget(null);
-				final UpdateTargetsInLibraryRequest updateTarRequest = new UpdateTargetsInLibraryRequest();
-				updateTarRequest.setTargets(new Target[] { targetUpdate });
-				final UpdateTargetsInLibraryResponse updateTarResponse = campaignManagement.updateTargetsInLibrary(updateTarRequest);
-				logger.info("Target Updated");
-				res = true;
-			}
-			return res;
-		}
-		catch (AdApiFaultDetail e)
-		{
-			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
-		}
-		catch (ApiFaultDetail e)
-		{
-			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
-		}
-		catch (EditorialApiFaultDetail e)
-		{
-			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
-		}
-		catch (Exception e)
-		{
-			throw new MsnCloudException("Problem doing " + operationDescription, e);
-		}
-	}
-
 	public String updateGeoTargets(String json) throws Exception
 	{
 		logger.debug("call updateGeoTargets(String json)" + json);
@@ -3227,19 +3038,17 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		final Long accountId = Long.valueOf(accountIdString);
 		final String campaignIdString = data.get("campaignId");
 		final Long campaignId = Long.valueOf(campaignIdString);
-		final String adGroupIdString = data.get("adGroupId");
-		final Long adGroupId = Long.valueOf(adGroupIdString);
 		final String geoTargetVsTypeMapString = data.get("geoTargetVsTypeMap");
 		final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = gson.fromJson(geoTargetVsTypeMapString, SemplestUtils.TYPE_MAP_OF_GEO_TARGET_OBJECT_TO_GEO_TARGET_TYPE);
-		final Boolean ret = updateGeoTargets(accountId, campaignId, adGroupId, geoTargetVsTypeMap);
+		final Boolean ret = updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
 		return gson.toJson(ret);
 	}
 
 	@Override
-	public Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Long adGroupId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException
+	public Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException
 	{
-		final String operationDescription = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "], GeoTarget<->Type map [" + geoTargetVsTypeMap + "]";
-		final String operationDescriptionPretty = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], AdGroupID [" + adGroupId + "], GeoTarget<->Type map\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap);
+		final String operationDescription = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], GeoTarget<->Type map [" + geoTargetVsTypeMap + "]";
+		final String operationDescriptionPretty = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], GeoTarget<->Type map\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap);
 		logger.info("Will try to " + operationDescriptionPretty);
 		try
 		{
@@ -3291,15 +3100,14 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			}
 
 			// add latest geo targets
-			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();
-			final List<Target> targets = new ArrayList<Target>();
+			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();			
+			final List<StateTargetBid> stateBids = new ArrayList<StateTargetBid>();
+			final List<RadiusTargetBid> radiusBids = new ArrayList<RadiusTargetBid>();
 			final Set<Entry<GeoTargetObject, GeoTargetType>> entrySet = geoTargetVsTypeMap.entrySet();
 			for (final Entry<GeoTargetObject, GeoTargetType> entry : entrySet)
 			{
 				final GeoTargetType type = entry.getValue();
-				final GeoTargetObject getTarget = entry.getKey();
-				final Target target = new Target();
-				final LocationTarget location = new LocationTarget();
+				final GeoTargetObject getTarget = entry.getKey();				
 				if (GeoTargetType.STATE == type)
 				{
 					final StateTargetBid stateTargetBid = new StateTargetBid();
@@ -3307,10 +3115,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					final String state = getTarget.getState();
 					final String usState = "US-" + state;
 					stateTargetBid.setState(usState);
-					final StateTarget stateTarget = new StateTarget();
-					final StateTargetBid[] stateTargetBids = new StateTargetBid[] { stateTargetBid };
-					stateTarget.setBids(stateTargetBids);
-					location.setStateTarget(stateTarget);
+					stateBids.add(stateTargetBid);					
 				}
 				else if (GeoTargetType.GEO_POINT == type)
 				{
@@ -3323,37 +3128,50 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					radiusTargetBid.setLongitudeDegrees(longitudeDegrees);
 					final int radiusInt = (int) radius;
 					radiusTargetBid.setRadius(radiusInt);
-					final RadiusTargetBid[] radiusTargetBids = new RadiusTargetBid[] { radiusTargetBid };
-					final RadiusTarget radiusTarget = new RadiusTarget();
-					radiusTarget.setBids(radiusTargetBids);
-					location.setRadiusTarget(radiusTarget);
+					radiusBids.add(radiusTargetBid);					
 				}
 				else
 				{
 					throw new MsnCloudException("Problem doing " + operationDescription + " beucase encountered GeoTargetType [" + type + "] that is not either [" + GeoTargetType.STATE + "] or [" + GeoTargetType.GEO_POINT + "]");
-				}
-				target.setLocation(location);
-				targets.add(target);
-			}
-			if (targets.isEmpty())
+				}				
+			}			
+			final Target target = new Target();
+			final LocationTarget location = new LocationTarget();
+			
+			logger.info("Prepared " + stateBids.size() + " State Target Bids and " + radiusBids.size() + " Radius Target Bids");
+			if (stateBids.isEmpty() && radiusBids.isEmpty())
 			{
-				logger.info("No targets were generated, so doing nothing");
+				logger.info("No State or Radius Rargets were generated, so doing nothing");
 				return true;
 			}
-			final Target[] targetArray = targets.toArray(new Target[targets.size()]);
+			if (!stateBids.isEmpty())
+			{
+				final StateTarget stateTarget = new StateTarget();
+				final StateTargetBid[] stateTargetBids = stateBids.toArray(new StateTargetBid[stateBids.size()]); 
+				stateTarget.setBids(stateTargetBids);
+				location.setStateTarget(stateTarget);	
+			}
+			if (!radiusBids.isEmpty())
+			{
+				final RadiusTarget radiusTarget = new RadiusTarget();
+				final RadiusTargetBid[] radiusTargetBids = radiusBids.toArray(new RadiusTargetBid[radiusBids.size()]);
+				radiusTarget.setBids(radiusTargetBids);
+				location.setRadiusTarget(radiusTarget);
+			}			
+			target.setLocation(location);
+			final Target[] targetArray = new Target[]{target};
 			addRequest.setTargets(targetArray);
 			final AddTargetsToLibraryResponse response = campaignManagement.addTargetsToLibrary(addRequest);
 			final long[] targetIds = response.getTargetIds();
-			final Integer numTargetsRequested = geoTargetVsTypeMap.size();
-			final Integer numTargetsAdded = targetIds.length;
-			if (numTargetsRequested == numTargetsAdded)
+			logger.info("Resulting Target Ids: " + SemplestUtils.getStringForArray(targetIds));
+			for (final long targetId : targetIds)
 			{
-				logger.info("As expected, the number of targets added to MSN [" + numTargetsRequested + "] is the same as the number requested [" + numTargetsAdded + "]");
-			}
-			else
-			{
-				logger.warn("Number of targets requested to be added to MSN [" + numTargetsRequested + "] is not the same as the number requested [" + numTargetsAdded + "]");
-			}
+				logger.info("Will try to set Target for ID [" + targetId + "] into Campaign for ID [" + campaignId + "]");
+				final SetTargetToCampaignRequest setTargetRequest = new SetTargetToCampaignRequest();
+				setTargetRequest.setTargetId(targetId);
+				setTargetRequest.setCampaignId(campaignId);
+				final SetTargetToCampaignResponse setTargetResponse = campaignManagement.setTargetToCampaign(setTargetRequest);
+			}			
 			return true;
 		}
 		catch (AdApiFaultDetail e)
