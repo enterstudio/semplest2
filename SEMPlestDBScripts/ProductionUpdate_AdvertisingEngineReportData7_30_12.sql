@@ -378,3 +378,47 @@ IF XACT_STATE() != 0 OR @@TRANCOUNT > 0
 	RAISERROR (@ErrMessage, @ErrorSeverity, @ErrorState);
 END CATCH;
 GO
+
+USE [semplestTest]
+GO
+
+/****** Object:  View [dbo].[vwCreditCardTransactionDetail]    Script Date: 08/01/2012 13:01:09 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*-
+- CREATE VIEW: vwCreditCardTransactionDetail
+-*/
+ALTER VIEW [dbo].[vwCreditCardTransactionDetail]
+AS
+SELECT     dbo.CreditCardProfile.CreditCardProfilePK, dbo.CreditCardProfile.CustomerFK, dbo.CreditCardProfile.CustomerRefNum, dbo.CreditCardProfile.AuthCode, 
+                      dbo.CreditCardProfile.TxRefNum, dbo.CreditCardTransaction.CreditCardTransactionPK, dbo.CreditCardTransaction.CreditCardProfileFK, 
+                      dbo.CreditCardTransaction.OrderID, dbo.CreditCardTransaction.Amount, dbo.CreditCardTransaction.CreatedDate, dbo.CreditCardTransaction.SEMplestFee, 
+                      dbo.CreditCardTransaction.MediaSpend, dbo.CreditCardTransaction.IsRefund, dbo.Customer.CustomerPK, dbo.Customer.Name, 
+                      dbo.Customer.TotalTargetCycleBudget, dbo.Customer.ProductGroupCycleTypeFK, dbo.Customer.BillTypeFK, dbo.Customer.ServiceFee, dbo.Customer.PercentOfMedia,
+                       dbo.Customer.InternalCustomerId, dbo.Customer.CreditLimit, dbo.Customer.PromotionFeeOverride, dbo.Customer.PromotionFeeAmount, 
+                      dbo.ProductGroup.ProductGroupPK, dbo.ProductGroup.StartDate, dbo.ProductGroup.ProductGroupName, dbo.ProductGroup.EndDate, dbo.ProductGroup.IsActive, 
+                      dbo.Promotion.PromotionPK, dbo.Promotion.ProductGroupFK, dbo.Promotion.PromotionName, dbo.Promotion.PromotionDescription, 
+                      dbo.Promotion.PromotionStartDate, dbo.Promotion.PromotionEndDate, dbo.Promotion.LandingPageURL, dbo.Promotion.PromotionBudgetAmount, 
+                      dbo.Promotion.BudgetCycleFK, dbo.Promotion.CycleStartDate, dbo.Promotion.CycleEndDate, dbo.Promotion.StartBudgetInCycle, 
+                      dbo.Promotion.RemainingBudgetInCycle, dbo.Promotion.IsPaused, dbo.Promotion.IsCompleted, dbo.Promotion.IsLaunched, dbo.Promotion.IsDeleted, 
+                      dbo.Promotion.TargetCPCLevel, dbo.Promotion.DisplayURL, dbo.PromotionPayment.PromotionPaymentPK, dbo.PromotionPayment.PromotionFK, 
+                      dbo.PromotionPayment.BudgetToAddDate AS PaymentBudgetToAddDate, dbo.PromotionPayment.IsValid, dbo.PromotionPayment.CreditCardTransactionFK, 
+                      dbo.AdvertisingEngineAccount.AdvertisingEngineAccountPK, dbo.AdvertisingEngineAccount.AdvertisingEngineFK, 
+                      dbo.AdvertisingEngineAPICharge.AdvertisingEngineAPIChargePK, dbo.AdvertisingEngineAPICharge.AdvertisingEngineAccountFK, 
+                      dbo.AdvertisingEngineAPICharge.APIUnits, dbo.AdvertisingEngineAPICharge.APICost
+FROM         dbo.ProductGroup INNER JOIN
+                      dbo.Customer ON dbo.ProductGroup.CustomerFK = dbo.Customer.CustomerPK INNER JOIN
+                      dbo.Promotion ON dbo.ProductGroup.ProductGroupPK = dbo.Promotion.ProductGroupFK INNER JOIN
+                      dbo.PromotionPayment ON dbo.Promotion.PromotionPK = dbo.PromotionPayment.PromotionFK INNER JOIN
+                      dbo.CreditCardProfile INNER JOIN
+                      dbo.CreditCardTransaction ON dbo.CreditCardProfile.CreditCardProfilePK = dbo.CreditCardTransaction.CreditCardProfileFK ON 
+                      dbo.PromotionPayment.CreditCardTransactionFK = dbo.CreditCardTransaction.CreditCardTransactionPK INNER JOIN
+                      dbo.AdvertisingEngineAccount ON dbo.Customer.CustomerPK = dbo.AdvertisingEngineAccount.CustomerFK INNER JOIN
+                      dbo.AdvertisingEngineAPICharge ON dbo.AdvertisingEngineAccount.AdvertisingEngineAccountPK = dbo.AdvertisingEngineAPICharge.AdvertisingEngineAccountFK
+
+GO
+
