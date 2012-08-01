@@ -17,7 +17,9 @@ import com.google.api.adwords.v201109_1.cm.SitelinksExtension;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.google.GoogleAddAdRequest;
+import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.springjdbc.BaseDB;
@@ -601,15 +603,16 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		Thread.sleep(sleepTime);
 		return null;
 	}
+	
 	@Override
-	public List<GoogleViolation> validateGoogleRefreshSiteLinks(
-			Integer promotionID) throws Exception {
+	public List<GoogleViolation> validateGoogleRefreshSiteLinks(final List<GoogleSiteLink> siteLinks) throws Exception 
+	{
 		SystemTestFunc.PrintLineSeperator();	
 		List<GoogleViolation> ret = null;
 				
-		SystemTestFunc.PrintMethodCall("validateGoogleRefreshSiteLinks(" + SystemTestDataModel.semplestPromotionId + ")");
+		SystemTestFunc.PrintMethodCall("validateGoogleRefreshSiteLinks(" + siteLinks + ")");
 		try{			
-			ret = adEngineService.validateGoogleRefreshSiteLinks(SystemTestDataModel.semplestPromotionId);
+			ret = adEngineService.validateGoogleRefreshSiteLinks(siteLinks);
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
@@ -621,15 +624,16 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		Thread.sleep(sleepTime);
 		return null;
 	}
+	
 	@Override
-	public List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID)
-			throws Exception {
+	public List<GoogleViolation> validateGoogleGeoTargets(final List<GeoTargetObject> geoTargets) throws Exception 
+	{
 		SystemTestFunc.PrintLineSeperator();	
 		List<GoogleViolation> ret = null;
 				
-		SystemTestFunc.PrintMethodCall("validateGoogleGeoTargets(" + SystemTestDataModel.semplestPromotionId + ")");
+		SystemTestFunc.PrintMethodCall("validateGoogleGeoTargets(" + geoTargets + ")");
 		try{			
-			ret = adEngineService.validateGoogleGeoTargets(SystemTestDataModel.semplestPromotionId);
+			ret = adEngineService.validateGoogleGeoTargets(geoTargets);
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
@@ -1422,4 +1426,6 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 }

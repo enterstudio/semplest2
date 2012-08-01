@@ -24,6 +24,7 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
+import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleViolation;
 
 import com.google.api.adwords.v201109.cm.ApiError;
@@ -110,8 +111,10 @@ public final class SemplestUtils
 	public static final Type TYPE_LIST_OF_INTEGERS = new TypeToken<List<Integer>>(){}.getType();
 	public static final Type TYPE_LIST_OF_LONGS = new TypeToken<List<Long>>(){}.getType();
 	public static final Type TYPE_LIST_OF_CUSTOMER_OBJECTS = new TypeToken<List<CustomerObject>>(){}.getType();
+	public static final Type TYPE_LIST_OF_GOOGLE_SITE_LINKS = new TypeToken<List<GoogleSiteLink>>(){}.getType();
 	public static final Type TYPE_MAP_OF_STRING_TO_STRING = new TypeToken<Map<String, String>>(){}.getType();
 	public static final Type TYPE_LIST_OF_GOOGLE_VIOLATIONS = new TypeToken<List<GoogleViolation>>(){}.getType();
+	public static final Type TYPE_LIST_OF_GEO_TARGETS = new TypeToken<List<GeoTargetObject>>(){}.getType();
 	public static final Type TYPE_MAP_OF_ADENGINE_TO_DOUBLE = new TypeToken<Map<AdEngine, Double>>(){}.getType();
 	public static final Type TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS = new TypeToken<List<KeywordIdRemoveOppositePair>>(){}.getType();
 	public static final Type TYPE_MAP_OF_GEO_TARGET_OBJECT_TO_GEO_TARGET_TYPE = new TypeToken<Map<GeoTargetObject, GeoTargetType>>(){}.getType();

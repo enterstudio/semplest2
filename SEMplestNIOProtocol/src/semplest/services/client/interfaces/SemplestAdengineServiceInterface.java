@@ -4,6 +4,8 @@ import java.util.List;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.KeywordToolStats;
@@ -44,9 +46,9 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean PauseProductGroups(List<Integer> productGroupIds, List<AdEngine> adEngines) throws Exception;
 	
 	// Validation
-	List<GoogleViolation> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads) throws Exception;
-	List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception;	 
-	List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID) throws Exception;
+	List<GoogleViolation> validateGoogleAd(final String landingPageURL, final String displayURL, final List<GoogleAddAdRequest> ads) throws Exception;
+	List<GoogleViolation> validateGoogleRefreshSiteLinks(final List<GoogleSiteLink> siteLinks) throws Exception;	 
+	List<GoogleViolation> validateGoogleGeoTargets(final List<GeoTargetObject> geoTargets) throws Exception;
 	List<GoogleViolation> validateGoogleNegativeKeywords(final List<String> negativeKeywords) throws Exception;
 	List<String> validateAccountActivationToken(final String ecryptedToken) throws Exception;
 	

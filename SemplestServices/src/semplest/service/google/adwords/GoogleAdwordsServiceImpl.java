@@ -215,17 +215,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceImpl.class);
 	private static Gson gson = new Gson();
-
-	// TODO: This needs to be read from the Database
 	private final String email; // = "adwords@semplest.com";
 	private final String password; // = "ic0system";
 	private final String userAgent; // = "Icosystem";
 	private final String developerToken; // = "2H8l6aUm6K_Q44vDvxs3Og";
 	private final boolean useSandbox;
 	private Long AdwordsValidationAccountID = null;
-	private Long AdwordsValidationCampaignID = null;
 	private Long AdwordsValidationAdGroupID = null;
-	private final static String[] GEO_TARGET_FIELDS = {"Id","CampaignId","LocationName","DisplayType", "RadiusInUnits","GeoPoint","Address"};
+	private final static String[] GEO_TARGET_FIELDS = {"Id", "LocationName", "CanonicalName", "DisplayType", "ParentLocations", "Reach"};
 	private final LocationCriterionServiceInterface LOCATION_CRITERION_SERVICE;
 
 	public GoogleAdwordsServiceImpl() throws Exception
@@ -241,9 +238,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			useSandbox = (Boolean) SemplestConfiguration.configData.get("AdwordsUseSandbox");
 			logger.info("Initialized Google API sandbox=" + useSandbox);
 			AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
-			AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 			AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
-			final AdWordsUser user = new AdWordsUser(email, password, "" + AdwordsValidationCampaignID, userAgent, developerToken, useSandbox);
+			final AdWordsUser user = new AdWordsUser(email, password, "" + AdwordsValidationAccountID, userAgent, developerToken, useSandbox);
 			LOCATION_CRITERION_SERVICE = user.getService( AdWordsService.V201109.LOCATION_CRITERION_SERVICE);
 		}
 		catch (Exception e)
@@ -3729,7 +3725,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final Selector selector = new Selector();
 		selector.setFields(GEO_TARGET_FIELDS);
 	    final Predicate locationNamePredicate = new Predicate("LocationName",PredicateOperator.IN, new String[]{state});
-	    final Predicate localePredicate = new Predicate("Locale",PredicateOperator.EQUALS, new String[]{"en"});
+	    final Predicate localePredicate = new Predicate("Locale",PredicateOperator.EQUALS, new String[]{"en_US"});
 	    selector.setPredicates(new Predicate[]{locationNamePredicate,localePredicate});	    
 	    final LocationCriterion[] locationCriterions;
 		try
@@ -3738,7 +3734,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (Exception e)
 		{
-			throw new Exception("Problem getting Google Location ID for State [" + state + "]");
+			throw new Exception("Problem getting Google Location ID for State [" + state + "]", e);
 		}
 	    if (locationCriterions == null || locationCriterions.length == 0)
 	    {

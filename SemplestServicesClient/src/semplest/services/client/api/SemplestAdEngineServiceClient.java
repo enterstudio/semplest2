@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -18,6 +17,8 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.AdEngineInitialData;
+import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.KeywordToolStats;
@@ -56,30 +57,44 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		/*
 		// validateGoogleAd 
 		final String landingPageURL = "http://www.semplest.com"; 
-		final String displayURL = landingPageURL; final String
-		headline = "shit"; final String description1= "This is a test"; 
+		final String displayURL = landingPageURL; 
+		final String headline = "shit"; 
+		final String description1= "This is a test"; 
 		final String description2 = "description2 "; 
-		final List<GoogleAddAdRequest>
-		ads = new ArrayList<GoogleAddAdRequest>(); 
+		final List<GoogleAddAdRequest> ads = new ArrayList<GoogleAddAdRequest>(); 
 		final GoogleAddAdRequest ad1 = new GoogleAddAdRequest(null, headline, description1, description2); 
 		final GoogleAddAdRequest ad2 = new GoogleAddAdRequest(null, "shit", description1, description2); ads.add(ad1); ads.add(ad2);
 		final List<GoogleViolation> validations = client.validateGoogleAd(landingPageURL, displayURL, ads); 
 		if (validations != null) 
 		{
 			logger.error("Google Violations:\n" + SemplestUtils.getEasilyReadableString(validations)); 
-		}*/
-		/* 
-		 * // validateGoogleRefreshSiteLinks final Integer promotionID_validateGoogleRefreshSiteLinks = 23; final List<GoogleViolation>
-		 * googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(promotionID_validateGoogleRefreshSiteLinks);
-		 * logger.info("Google Violations from validateGoogleRefreshSiteLinks:\n" +
-		 * SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleRefreshSiteLinks));
-		 * 
-		 * // validateGoogleGeoTargets final Integer promotionID_validateGoogleGeoTargets = 33; final List<GoogleViolation>
-		 * googleViolations_validateGoogleGeoTargets = client.validateGoogleGeoTargets(promotionID_validateGoogleGeoTargets);
-		 * logger.info("Google Violations from validateGoogleGeoTargets:\n" +
-		 * SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleGeoTargets));
-		 * 
-		 * // scheduleAddAds final Integer customerID_ScheduleAddAds = 12; final Integer promotionID_ScheduleAddAds = 62; final List<Integer>
+		}
+		
+		// validateGoogleRefreshSiteLinks 
+		final GoogleSiteLink siteLink1 = new GoogleSiteLink("CNN baby!", "http://www.cnn.com");
+		final GoogleSiteLink siteLink2 = new GoogleSiteLink("Fareed Zakaria baby!", "http://www.zakaria.com");
+		final List<GoogleSiteLink> siteLinks = Arrays.asList(siteLink1, siteLink2);
+		final List<GoogleViolation> googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(siteLinks);
+		logger.info("Google Violations from validateGoogleRefreshSiteLinks:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleRefreshSiteLinks));
+		*/
+		
+		// validateGoogleGeoTargets 
+		final GeoTargetObject geoTargetGeoPoint = new GeoTargetObject();
+		geoTargetGeoPoint.setAddress("195 Broadway");
+		geoTargetGeoPoint.setCity("New York");
+		geoTargetGeoPoint.setState("NY");
+		geoTargetGeoPoint.setZip("10007");
+		geoTargetGeoPoint.setLatitude(40.7106100000);
+		geoTargetGeoPoint.setLongitude(-74.0093000000);
+		geoTargetGeoPoint.setRadius(30.0);
+		final GeoTargetObject geoTargetState = new GeoTargetObject();
+		geoTargetState.setState("FL");
+		final List<GeoTargetObject> geoTargets = Arrays.asList(geoTargetState);
+		//final List<GeoTargetObject> geoTargets = Arrays.asList(geoTargetGeoPoint, geoTargetState);
+		final List<GoogleViolation> googleViolations_validateGoogleGeoTargets = client.validateGoogleGeoTargets(geoTargets);
+		logger.info("Google Violations from validateGoogleGeoTargets:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleGeoTargets));
+		
+		 /* // scheduleAddAds final Integer customerID_ScheduleAddAds = 12; final Integer promotionID_ScheduleAddAds = 62; final List<Integer>
 		 * promotionAdIds_ScheduleAddAds = Arrays.asList(218); final List<String> adEngines_ScheduleAddAds = Arrays.asList(AdEngine.Google.name());
 		 * client.scheduleAddAds(customerID_ScheduleAddAds, promotionID_ScheduleAddAds, promotionAdIds_ScheduleAddAds, adEngines_ScheduleAddAds);
 		 * 
@@ -108,12 +123,12 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 * promotionID_scheduleUpdateGeoTargeting = 62; final List<String> adEngines_scheduleUpdateGeoTargeting =
 		 * Arrays.asList(AdEngine.Google.name()); client.scheduleUpdateGeoTargeting(customerID_scheduleUpdateGeoTargeting,
 		 * promotionID_scheduleUpdateGeoTargeting, adEngines_scheduleUpdateGeoTargeting);
-		 */ 
+		 * 
 		 // UpdateGeoTargeting 
 		final Integer promotionID_UpdateGeoTargeting = 62; 
 		final List<AdEngine> adEngines_UpdateGeoTargeting = Arrays.asList(AdEngine.Google); 
 		client.UpdateGeoTargeting(promotionID_UpdateGeoTargeting, adEngines_UpdateGeoTargeting);
-		 /* 
+		 * 
 		 * // scheduleChangePromotionStartDate final Integer customerID_scheduleChangePromotionStartDate = 12; final Integer
 		 * promotionID_scheduleChangePromotionStartDate = 62; final java.util.Date newStartDate_scheduleChangePromotionStartDate = new
 		 * java.util.Date(); final List<String> adEngines_scheduleChangePromotionStartDate = Arrays.asList(AdEngine.Google.name());
@@ -1176,11 +1191,12 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception
+	public List<GoogleViolation> validateGoogleRefreshSiteLinks(final List<GoogleSiteLink> siteLinks) throws Exception
 	{
 		final String methodName = "validateGoogleRefreshSiteLinks";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("promotionID", "" + promotionID);
+		final String siteLinksString = gson.toJson(siteLinks, List.class);
+		jsonHash.put("siteLinks", siteLinksString);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
 		try
@@ -1191,18 +1207,19 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			final String errMsg = "Problem Validating Google Refresh SiteLinks for PromotionID [" + promotionID + "]";
+			final String errMsg = "Problem Validating Google SiteLinks [" + siteLinks + "]";
 			logger.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
 	}
 
 	@Override
-	public List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID) throws Exception
+	public List<GoogleViolation> validateGoogleGeoTargets(final List<GeoTargetObject> geoTargets) throws Exception
 	{
 		final String methodName = "validateGoogleGeoTargets";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("promotionID", "" + promotionID);
+		final String geoTargetsString = gson.toJson(geoTargets, List.class);
+		jsonHash.put("geoTargets", geoTargetsString);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
 		try
@@ -1213,7 +1230,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			final String errMsg = "Problem Validating Google Geo Targets for PromotionID [" + promotionID + "]";
+			final String errMsg = "Problem Validating Google Geo Targets [" + geoTargets + "]";
 			logger.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		}

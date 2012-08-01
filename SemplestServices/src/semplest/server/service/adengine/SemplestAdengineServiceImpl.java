@@ -1424,7 +1424,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
 				final String accountId = "" + promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
-				logger.info("Will try to update within Google Adwords the Account[" + accountId + "]/CampaignId[" + campaignId + "]/Promotion[" + promotionID + "] with the following GeoTargets: [" + geoTargets + "]");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);				
 				googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
@@ -2693,21 +2692,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 	public String validateGoogleGeoTargets(String json) throws Exception
 	{
-		logger.debug("call (String json)" + json);
+		logger.debug("JSON [" + json + "]");
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
-		final String promotionIdString = data.get("promotionID");
-		final Integer promotionID = Integer.valueOf(promotionIdString);
-		final List<GoogleViolation> res = validateGoogleGeoTargets(promotionID);
+		final String geoTargetsString = data.get("geoTargets");
+		final List<GeoTargetObject> geoTargets = gson.fromJson(geoTargetsString, SemplestUtils.TYPE_LIST_OF_GEO_TARGETS);
+		final List<GoogleViolation> res = validateGoogleGeoTargets(geoTargets);
 		return gson.toJson(res);
 	}
 
 	@Override
-	public List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID) throws Exception
+	public List<GoogleViolation> validateGoogleGeoTargets(final List<GeoTargetObject> geoTargets) throws Exception
 	{
-		logger.info("Will try to Validate Google GeoTargets associated with PromotionID [" + promotionID + "]");
-		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		Boolean ret = getPromoDataSP.execute(promotionID);
-		final List<GeoTargetObject> geoTargets = getPromoDataSP.getGeoTargets();
+		logger.info("Will try to Validate Google GeoTargets\n" + SemplestUtils.getEasilyReadableString(geoTargets));
 		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 		final String validationAccountId = "" + AdwordsValidationAccountID;
 		final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);
@@ -2719,8 +2715,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		logger.info("JSON [" + json + "]");
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
-		final Integer promotionID = Integer.valueOf(data.get("promotionID"));
-		final List<GoogleViolation> res = validateGoogleRefreshSiteLinks(promotionID);
+		final String siteLinksString = data.get("siteLinks");
+		final List<GoogleSiteLink> siteLinks = gson.fromJson(siteLinksString, SemplestUtils.TYPE_LIST_OF_GOOGLE_SITE_LINKS);
+		final List<GoogleViolation> res = validateGoogleRefreshSiteLinks(siteLinks);
 		return gson.toJson(res);
 	}
 
@@ -2745,17 +2742,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception
+	public List<GoogleViolation> validateGoogleRefreshSiteLinks(final List<GoogleSiteLink> siteLinks) throws Exception
 	{
-		logger.info("Will try to Validate Refresh SiteLinks associated with PromotionID [" + promotionID + "]");
-		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		Boolean ret = getPromoDataSP.execute(promotionID);
+		logger.info("Will try to Validate SiteLinks:\n" + SemplestUtils.getEasilyReadableString(siteLinks));		
 		final String googleValidationAccount = String.valueOf(AdwordsValidationAccountID);
-		final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
-		Boolean r = getSiteLinksForPromotionSP.execute(promotionID);
-		final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();
-		final List<GoogleSiteLink> googleSiteLinks = getGoogleSiteLinks(siteLinks);
-		final GoogleRefreshSiteLinksRequest request = new GoogleRefreshSiteLinksRequest(googleValidationAccount, AdwordsValidationCampaignID, googleSiteLinks);
+		final GoogleRefreshSiteLinksRequest request = new GoogleRefreshSiteLinksRequest(googleValidationAccount, AdwordsValidationCampaignID, siteLinks);
 		logger.info("Generated the following request to validate the update of Google SiteLinks: " + request.toStringPretty());
 		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 		final List<GoogleViolation> googleValidations = googleAdwordsService.validateRefreshSiteLinks(googleValidationAccount, AdwordsValidationCampaignID, request);
