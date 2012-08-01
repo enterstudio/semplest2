@@ -1,6 +1,9 @@
 alter table promotion drop column BudgetToAddDate
 alter table promotion drop column BudgetToAddToNextCycle
 
+alter table promotionpayment drop column _BudgetCarryOverAmount_
+alter table promotionpayment add BudgetCarryOverAmount money
+
 -- NEED TO DROP THIS TABLE FIRST AdvertisingEngineReportData
 
 ---
