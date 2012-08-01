@@ -153,8 +153,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		final double dailyBudget = 259.25925925925924d;
 		final double monthlyBudget = 10.0;
 		final CampaignStatus campaignStatus = CampaignStatus.Active;
-
-		//
 		try
 		{
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
