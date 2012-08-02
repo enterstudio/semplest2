@@ -1877,7 +1877,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	@Override
 	public long createAd(Long accountId, Long adGroupId, String title, String text, String displayUrl, String destinationUrl) throws MsnCloudException
 	{
-		final String operationDescription = "Get Create Ad for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Title [" + title + "], Text [" + text + "], DisplayURL [" + displayUrl + "], DestinationURL [" + destinationUrl + "]";
+		final String operationDescription = "Create Ad for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Title [" + title + "], Text [" + text + "], DisplayURL [" + displayUrl + "], DestinationURL [" + destinationUrl + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
