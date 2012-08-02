@@ -1,6 +1,8 @@
 package semplest.services.client.api;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +31,145 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	private static SimpleDateFormat MMDDYYYY = new SimpleDateFormat("MMddyyyy");
 	private static final Logger logger = Logger.getLogger(SemplestChaseOrbitalGatewayServiceClient.class);
 	private String baseurl;	
+	
+	public static void main(String[] args){
+		try{
+			String testServer = "http://VMJAVA1:9898/semplest";
+			SemplestChaseOrbitalGatewayServiceClient test = new SemplestChaseOrbitalGatewayServiceClient(testServer);
+			
+			/*
+			CustomerObject customer = new CustomerObject();
+			customer.setName("Visa");
+			customer.setCreditCardNumber("4112344112344113");
+			customer.setAddress1("Apt 2");
+			customer.setAddress2("1 Northeastern Blvd");
+			customer.setCity("Bedford");
+			customer.setStateAbbr("NH");
+			customer.setZipCode("03109-1234");
+			GatewayReturnObject ret = test.CreateProfile(customer);			
+			
+			System.out.println(ret.toStringPretty());
+			*/
+			
+			//GatewayReturnObject ret = test.refundPayment("12878509", 10.00);
+			/*
+			Calendar cal = Calendar.getInstance();
+			cal.set(2012, 9, 1);			
+			GatewayReturnObject ret = test.UpdateProfileRecurringBilling("12878509", 10.00, cal.getTime());
+			*/
+			HashMap<String,String[]> Cards = new HashMap<String,String[]>();
+			Cards.put("American Express", new String[]{"341134113411347","13008451","1234","530.00"});
+			Cards.put("Discover", new String[]{"6559906559906557","13008459","613","304.00"});
+			Cards.put("MasterCard", new String[]{"5112345112345114","13008469","123","402.00"});
+			Cards.put("Visa", new String[]{"4112344112344113","13008473","411","999.00"});		
+			
+			/*
+			System.out.println("---------- Refund Testing");			
+			for(String cardName : Cards.keySet()){
+				System.out.println("* " + cardName);
+				
+				String customerProfileRefNumber = Cards.get(cardName)[1];
+				Double Amount = 10.00;
+				
+				GatewayReturnObject ret = test.refundPayment(customerProfileRefNumber, Amount);
+				System.out.println("OrderID = " + ret.getOrderID());
+				System.out.println("TxRefNum = " + ret.getTxRefNum());
+			}
+			*/
+			
+			CustomerObject customer = new CustomerObject();
+			customer.setName("Visa");
+			customer.setCreditCardNumber("4112344112344113");
+			customer.setAddress1("Apt 2");
+			customer.setAddress2("1 Northeastern Blvd");
+			customer.setCity("Bedford");
+			customer.setStateAbbr("NH");
+			customer.setZipCode("03109-1234");
+			GatewayReturnObject ret = test.CreateProfile(customer);
+			System.out.println(ret.toStringPretty());
+			
+			Calendar cal = Calendar.getInstance();
+			cal.set(2012, 9, 1);
+			Date startDate = cal.getTime();
+			GatewayReturnObject ret1 = test.UpdateProfileRecurringBilling(ret.getCustomerRefNum(), 100.00, startDate);
+			
+			System.out.println(ret1.toStringPretty());
+			
+			/*
+			System.out.println("---------- Using Customer Profile Testing");			
+			for(String cardName : Cards.keySet()){
+				System.out.println("* " + cardName);
+				
+				String customerProfileRefNumber = Cards.get(cardName)[1];
+				Double recurringAmount = 10.00;
+				Calendar cal = Calendar.getInstance();
+				cal.set(2012, 9, 1);
+				Date startDate = cal.getTime();
+				
+				GatewayReturnObject ret = test.UpdateProfileRecurringBilling(customerProfileRefNumber, recurringAmount, startDate);
+				System.out.println("CustomerRefNum = " + ret.getCustomerRefNum());
+				System.out.println("AuthCode = " + ret.getAuthCode());
+				System.out.println("OrderID = " + ret.getOrderID());
+				System.out.println("TxRefNum = " + ret.getTxRefNum());
+				System.out.println(ret.toString());
+			}
+			*/
+			/*
+			System.out.println("---------- Delete Customer Profile Testing");			
+			for(String cardName : Cards.keySet()){
+				System.out.println("* " + cardName);
+				String CardNum = Cards.get(cardName)[0];
+				
+				CustomerObject customer = new CustomerObject();
+				customer.setName(cardName);
+				customer.setCreditCardNumber(CardNum);
+				customer.setAddress1("Delete Test");
+				customer.setCity("Boston");
+				customer.setStateAbbr("MA");
+				customer.setZipCode("02101");
+				
+				GatewayReturnObject ret = test.CreateProfile(customer);				
+				String cusRefNum = ret.getCustomerRefNum();				
+				ret = test.terminateRecurringPayments(new SemplestString(cusRefNum));
+				
+				System.out.println("CustomerRefNum = " + ret.getCustomerRefNum());
+			}
+			
+			System.out.println("---------- Negative Testing Cases");			
+			for(String cardName : Cards.keySet()){
+				System.out.println("* " + cardName);
+				
+				String customerProfileRefNumber = Cards.get(cardName)[1];
+				String cardSecVal = Cards.get(cardName)[2];
+				Double Amount = Double.valueOf(Cards.get(cardName)[3]);
+				
+				GatewayReturnObject ret = test.AuthorizeAndCapture(customerProfileRefNumber, Amount, cardSecVal);
+				System.out.println("ResponseCode = " + ret.getResponseCode());
+				System.out.println("Message = " + ret.getMessage());
+				System.out.println("OrderID = " + ret.getOrderID());
+				System.out.println("TxRefNum = " + ret.getTxRefNum());
+			}
+			
+			
+			System.out.println("---------- Auth/Capture Testing");			
+			for(String cardName : Cards.keySet()){
+				System.out.println("* " + cardName);
+				
+				String customerProfileRefNumber = Cards.get(cardName)[1];
+				String cardSecVal = Cards.get(cardName)[2];
+				Double Amount = 10.00;
+				
+				GatewayReturnObject ret = test.AuthorizeAndCapture(customerProfileRefNumber, Amount, cardSecVal);
+				System.out.println("Auth Code = " + ret.getAuthCode());
+				System.out.println("OrderID = " + ret.getOrderID());
+				System.out.println("TxRefNum = " + ret.getTxRefNum());
+			}
+			*/
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void initializeService(String input) throws Exception
