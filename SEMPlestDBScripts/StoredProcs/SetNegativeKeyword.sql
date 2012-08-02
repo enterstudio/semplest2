@@ -65,11 +65,16 @@ BEGIN TRY
 		VALUES (@ID,@PromotionID,1,0,1,1,1,CURRENT_TIMESTAMP)
 	END
 	
+	update pka set pka.IsDeleted = 1 from PromotionKeywordAssociation pka
+		inner join keyword k on pka.KeywordFK = k.KeywordPK 
+		where pka.PromotionFK = @PromotionID and pka.IsNegative = 0 
+		and (k.Keyword like '% ' + @keyword or k.Keyword like @keyword + ' %' or k.Keyword like '% ' + @keyword + ' %')
+	
 	select k.KeywordPK from Keyword k
 				inner join PromotionKeywordAssociation pka on pka.KeywordFK = k.KeywordPK 
 				where pka.PromotionFK = @PromotionID and pka.IsNegative = 0
 				and (k.Keyword like '% ' + @keyword or k.Keyword like @keyword + ' %' or k.Keyword like '% ' + @keyword + ' %')
-	commit transaction											
+	commit transaction												
 	set @NegativeKeywordID = @ID										
 END TRY
 BEGIN CATCH
