@@ -167,11 +167,20 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			
 			final String accountID = "1758634";
+			final Long accountIdLong = 1758634L;
 			final Long adGroupID = 709890649L;
+			final Long campaignID = 110207618L;
+			/*
 			final UpdateAdRequest updRequest = new UpdateAdRequest(1525522391L, "Some new headline4", "new desc 14", " new desc 24", "www.Fareed.com", "http://www.Fareed.com", 700);
 			final List<UpdateAdRequest> updateRequests = Arrays.asList(updRequest);
 			final UpdateAdsRequestObj updateRequest = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests);
 			msn.updateAllAdById(updateRequest);
+			*/
+			final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = new HashMap<GeoTargetObject, GeoTargetType>();
+			final GeoTargetObject g1 = new GeoTargetObject();
+			g1.setState("NJ");
+			geoTargetVsTypeMap.put(g1,  GeoTargetType.STATE);
+			msn.updateGeoTargets(accountIdLong, campaignID, geoTargetVsTypeMap);
 			
 			/*
 			DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
@@ -3112,8 +3121,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				{
 					targetIdArray[i] = existingTargetIds.get(i);
 				}
-				final DeleteTargetsFromLibraryRequest deleteRequest = new DeleteTargetsFromLibraryRequest(targetIdArray);
-				final DeleteTargetsFromLibraryResponse deleteResponse = campaignManagement.deleteTargetsFromLibrary(deleteRequest);
+				final DeleteTargetFromCampaignRequest deleteRequest = new DeleteTargetFromCampaignRequest(campaignId);
+				final DeleteTargetFromCampaignResponse deleteResponse = campaignManagement.deleteTargetFromCampaign(deleteRequest);
 			}
 
 			// add latest geo targets
