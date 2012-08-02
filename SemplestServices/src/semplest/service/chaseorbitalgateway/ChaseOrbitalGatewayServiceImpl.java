@@ -337,6 +337,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("OrderDefaultDescription", "Profile Update");
 			final Double amountDouble = recurringAmount * 100.0;
 			final int amount = amountDouble.intValue();
+			logger.info(recurringAmount + " -> " + amount);
 			request.setFieldValue("OrderDefaultAmount", "" + amount);
 
 			//Managed Billing
