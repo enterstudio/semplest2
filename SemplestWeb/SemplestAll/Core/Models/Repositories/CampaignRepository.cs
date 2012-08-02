@@ -130,18 +130,15 @@ namespace Semplest.Core.Models.Repositories
             var geoList = new List<GeoTargetObject>();
             foreach (var geo in model.AdModelProp.Addresses)
             {
-                if (geo.PromotionFK > 0)
-                {
-                    var geoTObj = new GeoTargetObject();
-                    geoTObj.setAddress(geo.Address);
-                    geoTObj.setCity(geo.City);
-                    if (geo.StateCodeFK != null) geoTObj.setState(GetStateNameFromDb((int) geo.StateCodeFK));
-                    geoTObj.setZip(geo.Zip);
-                    geoTObj.setRadius((double) (geo.ProximityRadius ?? 0));
-                    geoTObj.setLatitude((double) (geo.Latitude ?? 0));
-                    geoTObj.setLongitude((double) (geo.Longitude ?? 0));
-                    geoList.Add(geoTObj);
-                }
+                var geoTObj = new GeoTargetObject();
+                geoTObj.setAddress(geo.Address);
+                geoTObj.setCity(geo.City);
+                if (geo.StateCodeFK != null) geoTObj.setState(GetStateNameFromDb((int)geo.StateCodeFK));
+                geoTObj.setZip(geo.Zip);
+                geoTObj.setRadius((double)(geo.ProximityRadius ?? 0));
+                geoTObj.setLatitude((double)(geo.Latitude ?? 0));
+                geoTObj.setLongitude((double)(geo.Longitude ?? 0));
+                geoList.Add(geoTObj);
             }
             return geoList;
         }
@@ -257,37 +254,41 @@ namespace Semplest.Core.Models.Repositories
                                  select c).Single();
                 var promo = GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
 
-                List<GoogleAddAdRequest> verifyAds =
-                           model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
-                           {
-                               promotionAdID = promo.PromotionPK,
-                               headline = pad.AdTitle,
-                               description1 =
-                                   pad.AdTextLine1,
-                               description2 =
-                                   pad.AdTextLine2
-                           }).ToList();
-
-
-                GoogleViolation[] gv = ValidateAds(model.AdModelProp.LandingUrl,
-                                                                       model.AdModelProp.DisplayUrl, verifyAds);
-                if (gv.Length > 0)
-                    throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                var gtos = SerializeToGeoTargetObjectArray(model);
-                if (gtos.Any())
-                {
-                    gv = ValidateGeotargeting(gtos);
-                    if (gv.Length > 0)
-                        throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                }
-
-                var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, customerFK, oldModel,
-                                           ((IObjectContextAdapter) dbcontext).ObjectContext);
                 List<PromotionAd> addAds;
                 List<int> updateAds;
                 List<int> deleteAds;
+                GoogleViolation[] gv;
                 var shouldscheduleAds = AddPromotionAdsToPromotion(promo, model, customerFK, oldModel,
-                                                                   out addAds, out updateAds, out deleteAds);
+                                                   out addAds, out updateAds, out deleteAds);
+                if (shouldscheduleAds)
+                {
+                    List<GoogleAddAdRequest> verifyAds =
+                      model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
+                      {
+                          promotionAdID = promo.PromotionPK,
+                          headline = pad.AdTitle,
+                          description1 =
+                              pad.AdTextLine1,
+                          description2 =
+                              pad.AdTextLine2
+                      }).ToList();
+                    gv = ValidateAds(model.AdModelProp.LandingUrl,
+                                                                           model.AdModelProp.DisplayUrl, verifyAds);
+                    if (gv.Length > 0)
+                        throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                }
+                var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, customerFK, oldModel,
+           ((IObjectContextAdapter)dbcontext).ObjectContext);
+                if (shouldUpdateGeoTargeting)
+                {
+                    var gtos = SerializeToGeoTargetObjectArray(model);
+                    if (gtos.Any())
+                    {
+                        gv = ValidateGeotargeting(gtos);
+                        if (gv.Length > 0)
+                            throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    }
+                }
                 promo.LandingPageURL = model.AdModelProp.LandingUrl.Trim();
                 promo.DisplayURL = model.AdModelProp.DisplayUrl.Trim();
                 dbcontext.SaveChanges();
@@ -321,10 +322,9 @@ namespace Semplest.Core.Models.Repositories
                         if (deleteAds.Any())
                             sw.scheduleAds(promo.PromotionPK, deleteAds, adEngines,
                                            SEMplestConstants.PromotionAdAction.Delete);
-
-                        if (shouldUpdateGeoTargeting)
-                            sw.scheduleUpdateGeoTargeting(promo.PromotionPK, adEngines);
                     }
+                    if (shouldUpdateGeoTargeting)
+                        sw.scheduleUpdateGeoTargeting(promo.PromotionPK, adEngines);
                 }
             }
         }
@@ -700,7 +700,7 @@ namespace Semplest.Core.Models.Repositories
                                 geoOld.Longitude != geo1.Longitude ||
                                 geoOld.ProximityRadius != geo1.ProximityRadius ||
                                 geoOld.Zip != geo1.Zip ||
-                                geoOld.StateCode != geo1.StateCode ||
+                                geoOld.StateCode.StateAbbrPK != geo1.StateCodeFK ||
                                 geoOld.Promotion.PromotionName != model.ProductGroup.ProductPromotionName)
                             {
                                 shouldUpdateGeoTargeting = true;
