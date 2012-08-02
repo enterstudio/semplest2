@@ -172,8 +172,8 @@ public class BidObject
 		googlePercent =  Double.valueOf("" + googlePercentInteger);
 		budgetFactor = (Double)SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		
-		final Float budgetBoostFactorDouble = (Float) SemplestConfiguration.configData.get("SemplestBiddingInitialBidBoostFactor"); 
-		budgetBoost = budgetBoostFactorDouble.doubleValue();
+//		final Float budgetBoostFactorDouble = (Float) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor"); 
+//		budgetBoost = budgetBoostFactorDouble.doubleValue();
 		
 		final Float bidBoostFactorFloat = (Float) SemplestConfiguration.configData.get("SemplestBiddingInitialBidBoostFactor");
 		bidBoostFactor = bidBoostFactorFloat.doubleValue();
@@ -276,12 +276,281 @@ public class BidObject
 	}
 	
 
-	
+	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
+	{
+		
+		/* ******************************************************************************************* */
+
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsInitial called for ad engine " + searchEngine);
+
+
+		/* ******************************************************************************************* */
+		// 1. Database call: get campaign specific IDs
+		
+		getCampaignIDsFromDatabase(promotionID, searchEngine);
+		
+		
+		
+		
+		/* ******************************************************************************************* */
+		// 2. Database call: get present bid info
+		
+		// get present bid status from database
+		List<BidElement> bidElementList = getBidDataFromDatabase(promotionID, searchEngine);
+
+		// create a hash map for faster access
+		Map<Long,BidElement> kwIDBidElementMap = new HashMap<Long,BidElement>();
+		for(BidElement b : bidElementList){
+			kwIDBidElementMap.put(b.getKeywordAdEngineID(), b.clone());
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + kwIDBidElementMap.get(b.getKeywordAdEngineID()));
+		}
+		
+		
+		
+		/* ******************************************************************************************* */
+		// 3. Report data via API call
+		
+		int daysInThePast = 30;
+		List<ReportObject> reportObjListYesterday = getReportDataFromSE(promotionID, searchEngine, daysInThePast);
+		
+		
+		/* ******************************************************************************************* */
+		// 4. Get pause list with keywords with impressions above a threshold but CTR below a threshold
+		
+		double ctrThreshold = 0.5; // 0.5%
+		int imprThreshold = 300;
+		
+		Map<Long,Boolean> pauseMap = getPauseMap(promotionID, searchEngine, reportObjListYesterday, ctrThreshold, imprThreshold, kwIDBidElementMap); 
+			
+		
+		/* ******************************************************************************************* */
+		// 5. SE database call: Pause the selected keywords 
+		pauseKeywordsInDatabase(promotionID, searchEngine, pauseMap, kwIDBidElementMap);
+		
+		
+		/* ******************************************************************************************* */
+		// 6. SE API call: Pause the selected keywords 
+		pauseKeywordsViaAPI(promotionID, searchEngine, pauseMap);
+		
+		
+		
+		/* ******************************************************************************************* */
+		// 7. Get average position update
+		double avgPosition = getAvgPosition(promotionID, searchEngine, reportObjListYesterday, kwIDBidElementMap);
+		
+		
+		
+		
+		/* ******************************************************************************************* */
+		// 8. Compute new default bid if position is below 4 and update database and SE
+		
+		if(avgPosition>4.0){
+			computeDefaultBidBasedOnPosition(promotionID, searchEngine, avgPosition);
+			updateDefaultBidInDatabase(promotionID, searchEngine);
+			updateDefaultBidWithSE(promotionID, searchEngine, defaultMicroBid.longValue()*1e-6);
+		}
+		
+		
+
+		
+		
+		return true;
+	}
 	
 
 
 	
 	
+	
+
+	private void computeDefaultBidBasedOnPosition(Integer promotionID, AdEngine searchEngine, double avgPosition) throws Exception {
+		DefaultBidObject presentDefaultBidObject;
+		BiddingParameters  bidParams;
+
+		try{
+			presentDefaultBidObject = SemplestDB.getDefaultBid(promotionID, searchEngine);
+			bidParams = SemplestDB.getBiddingParameters();
+		} catch (Exception e) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the default bid or bid parameter from the database. "+ e.getMessage(), e);
+			// e.printStackTrace();
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the default bid or bid parameter from the database. "+ e.getMessage(), e);
+		}
+		long presentDefaultMicroBid = presentDefaultBidObject.getMicroDefaultBid();
+		bidBoostFactor = 1.1;//bidParams.getSemplestBiddingInitialBidBoostFactor().doubleValue();
+		
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid boost factor: "+bidBoostFactor);
+		
+		double maxBid = 0.05;
+		try{
+			maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
+		} catch (Exception e) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the daily budget from the database. "+ e.getMessage(), e);
+			// e.printStackTrace();
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the daily budget from the database. "+ e.getMessage(), e);
+		}
+		if(maxBid<=0.05) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Daily budget is too low to do anything with this adgroup...");
+			return;
+			//throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Daily budget is too low to do anything with this adgroup...");
+		}
+		final Double maxBidDouble = new Double(maxBid * 0.95 * 1e6);
+		final Long maxBidDoubleLong = maxBidDouble.longValue();
+		Long maxBidL = new Long(maxBidDoubleLong / 10000L * 10000L);
+		
+		defaultMicroBid = Math.max(50000L,Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(bidBoostFactor,(avgPosition-1)/2))) / 10000L) * 10000L));
+		
+	}
+
+	private double getAvgPosition(Integer promotionID, AdEngine searchEngine, List<ReportObject> reportObjListYesterday, Map<Long, BidElement> kwIDBidElementMap) {
+
+		int totalImpression = 0;
+		double totalPosition = 0;
+		
+		for(ReportObject r : reportObjListYesterday){
+			if(!kwIDBidElementMap.get(r.getKeywordID()).getIsActive()){
+				continue;
+			}
+			if(r.getNumberImpressions()!=null && r.getAveragePosition()!=null){
+				totalImpression+= r.getNumberImpressions();
+				totalPosition+= r.getAveragePosition()*r.getNumberImpressions();
+			}
+		}
+		double avgPosition = 1.0;
+		if(totalImpression>0){
+			avgPosition = totalPosition/totalImpression;
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"  + " Average position : "+avgPosition);
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"  + " Average position cannot be computed since no impression registered!");
+		}
+		return avgPosition;
+	}
+
+	private void pauseKeywordsInDatabase(Integer promotionID, AdEngine searchEngine, Map<Long, Boolean> pauseMap, Map<Long, BidElement> kwIDBidElementMap) throws Exception {
+		if( pauseMap!=null && pauseMap.size()>0){
+			ArrayList<BidElement> pauseDataToDatabase = new ArrayList<BidElement>();
+			for(long kwID : pauseMap.keySet()){
+				BidElement b = kwIDBidElementMap.get(kwID);
+				b.setIsActive(false);
+				pauseDataToDatabase.add(b);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"  + " Pausing keyword in database: "+b.getKeyword());
+			}
+			try {
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write " +pauseDataToDatabase.size() + "  bid data to the database...");
+				SemplestDB.storeBidObjects(promotionID, searchEngine,pauseDataToDatabase);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ pauseDataToDatabase.size() + " keywords.");
+			} catch (Exception e) {
+				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to store bid data to the database. "+ e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to store bid data to the database. "+ e.getMessage(), e);
+			}
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No keywords to pause at this time in the database.");
+		}
+
+		
+	}
+
+	private void pauseKeywordsViaAPI(Integer promotionID, AdEngine searchEngine, Map<Long, Boolean> pauseMap) throws Exception {
+		
+		if( pauseMap!=null && pauseMap.size()>0){
+			if (searchEngine == AdEngine.Google){
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
+
+				try {
+					clientGoogle.updateKeywordStatus(googleAccountID, campaignID, adGroupID, pauseMap);
+				} catch (Exception e) {
+
+					// e.printStackTrace();
+					logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
+					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
+				} // try-catch
+			} else if(searchEngine == AdEngine.MSN){
+				try{
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
+					msnClient.updateKeywordStatus(msnAccountID, adGroupID, pauseMap);
+				} catch(Exception e){
+					logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+				}
+			}
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No keywords to pause at this time via API.");
+		}
+		
+	}
+
+	private Map<Long, Boolean> getPauseMap(Integer promotionID, AdEngine searchEngine, List<ReportObject> reportObjListYesterday,
+			double ctrThreshold, int imprThreshold, Map<Long,BidElement> kwIDBidElementMap) {
+		
+		Map<Long, Boolean> pauseMap = new HashMap<Long,Boolean>();
+		
+		Map<Long, Integer> impressionMap = new HashMap<Long, Integer>();
+		Map<Long, Integer> clickMap = new HashMap<Long, Integer>();
+
+		for(ReportObject r : reportObjListYesterday){
+			if(!kwIDBidElementMap.get(r.getKeywordID()).getIsActive()){
+				continue;
+			}
+			if(impressionMap.containsKey(r.getKeywordID())){
+				impressionMap.put(r.getKeywordID(), impressionMap.get(r.getKeywordID())+r.getNumberImpressions());
+				clickMap.put(r.getKeywordID(), clickMap.get(r.getKeywordID())+(r.getNumberClick()==null? 0 : r.getNumberClick()));
+			} else {
+				impressionMap.put(r.getKeywordID(), r.getNumberImpressions());
+				clickMap.put(r.getKeywordID(),r.getNumberClick()==null ? 0 : r.getNumberClick());
+			}
+		}
+		
+		for(long kwID : impressionMap.keySet()){
+			if(impressionMap.get(kwID)>=imprThreshold){// && 100.0*clickMap.get(kwID).doubleValue()/impressionMap.get(kwID) < ctrThreshold){
+				pauseMap.put(kwID, false);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"  + " Decided to pause keyword: "+kwIDBidElementMap.get(kwID).getKeyword());
+
+			}
+		}
+		
+		
+		return pauseMap;
+	}
+	
+	
+
+	private List<ReportObject> getReportDataFromSE(Integer promotionID,	AdEngine searchEngine, int daysInThePast) throws Exception {
+		
+		List<ReportObject> reportObjListYesterday = new ArrayList<ReportObject>();
+		ReportObject[] reportObjArray = null;
+		
+		try {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to get the report data via API call.");
+			if(searchEngine.equals(AdEngine.Google)){
+				final Date now = new Date();
+				SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+				final Calendar cal = Calendar.getInstance();
+				cal.setTime(now);
+				cal.add(Calendar.DAY_OF_MONTH, -daysInThePast);
+				reportObjArray = clientGoogle.getReportForAccount(googleAccountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+			} else {
+				final DateTime lastday = new DateTime(System.currentTimeMillis());
+				final DateTime firstday = lastday.minusDays(daysInThePast);
+				reportObjArray = msnClient.getKeywordReport(msnAccountID, campaignID, firstday, lastday);
+			}
+			if(reportObjArray!=null && reportObjArray.length > 0){
+				for (ReportObject r : reportObjArray){
+					if(r.getCampaignID().longValue() == campaignID.longValue()){
+						logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +r);
+						reportObjListYesterday.add(r);
+					}
+				}
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got report data via API call with "+reportObjListYesterday.size()+" entries.");
+			} else {
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No report data found via API call.");
+			}
+		} catch (Exception e) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the report data via API call. "+ e.getMessage(), e);
+			// e.printStackTrace();
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the report data via API call. "+ e.getMessage(), e);
+		}
+		return reportObjListYesterday;
+		
+	}
 	
 
 	public Boolean setBidsInitial(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
@@ -787,7 +1056,7 @@ public class BidObject
 		// get Map of BidElement in reset state
 		Map<Long,Boolean> pauseMap = new HashMap<Long,Boolean>();
 		Map<Long,BidElement> kwIDBidElementMap = getBidElementMapInResetState(promotionID, searchEngine, bidElementList, pauseMap);
-		
+
 
 
 		/* ******************************************************************************************* */
@@ -986,10 +1255,10 @@ public class BidObject
 			BidObject bidObject = new BidObject();
 
 			
-			AdEngine searchEngine = AdEngine.MSN;
+			AdEngine searchEngine = AdEngine.Google;
 			
 			
-			Integer promotionID = new Integer(175);
+			Integer promotionID = new Integer(230);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
@@ -1005,7 +1274,6 @@ public class BidObject
 
 			//List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
 			//System.out.println(bidHistory.size());
-//			System.out.println(bidHistory.get(0).getSemplestBidType()+": "+bidHistory.get(0).getBidCompleted());
 //			
 //			Date now = new Date();
 //			Date initialBidDate = bidHistory.get(0).getBidCompleted();
