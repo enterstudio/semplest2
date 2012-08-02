@@ -877,7 +877,32 @@ public class SemplestDB extends BaseDB
 		logger.info("Completed setBidInactive:" + promotionID + ":" + adEngine);
 	}
 	
-	public static List<String> getPromotionCategory(Integer promotionID)
+	public static Boolean updateKeywordInfo(final Integer promotionID, final KeywordProbabilityObject[] kwUpdate) throws Exception
+	{
+		final String strSQL = "UPDATE PromotionKeywordAssociation set SemplestProbability = ? " +
+				"from PromotionKeywordAssociation pka " +
+				"inner join Keyword k on k.KeywordPK = pka.KeywordFK " +
+				"where pka.PromotionFK = ? and k.Keyword = ?";
+		
+		if (TransactionManager.txTemplate == null)
+		{
+			throw new Exception ("Spring JDBC Transaction manager is null");
+		}
+		TransactionManager.txTemplate.execute(new TransactionCallbackWithoutResult()
+		{
+			public void doInTransactionWithoutResult(TransactionStatus status)
+
+			{
+				for (int i = 0; i < kwUpdate.length; i++)
+				{
+					jdbcTemplate.update(strSQL, new Object[]
+					{ kwUpdate[i].getSemplestProbability(), promotionID, kwUpdate[i].getKeyword() });
+				}
+			}
+		});
+		return true;
+	}
+	public static List<String> getPromotionCategory(Integer promotionID) throws Exception
 	{
 		String strSQL = "select kc.KeywordCategory from KeywordCategory kc where kc.PromotionFK = ?";
 		List<String> returnData = new ArrayList<String>();
