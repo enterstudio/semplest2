@@ -48,10 +48,6 @@ public class GetAllPromotionDataSP extends StoredProcedure
 				final java.util.Date deletedDate = rs.getTimestamp("DeletedDate");
 				final int adEngineId = rs.getInt("AdvertisingEngineFK");
 				final AdEngine adEngine = AdEngine.getAdEngine(adEngineId);
-				if (adEngine == null)
-				{
-					throw new SQLException("Could not find AdEngine for code [" + adEngineId + "]");
-				}
 				final AdsObject ad = new AdsObject(promotionAdsPK, promotionFK, adTitle, adTextLine1, adTextLine2, adEngineAdID, isDeleted, createdDate, deletedDate, adEngine);
 				return ad;
 			}
