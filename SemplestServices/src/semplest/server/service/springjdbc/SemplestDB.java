@@ -876,6 +876,21 @@ public class SemplestDB extends BaseDB
 		});
 		logger.info("Completed setBidInactive:" + promotionID + ":" + adEngine);
 	}
+	
+	public static List<String> getPromotionCategory(Integer promotionID)
+	{
+		String strSQL = "select kc.KeywordCategory from KeywordCategory kc where kc.PromotionFK = ?";
+		List<String> returnData = new ArrayList<String>();
+		
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(strSQL, new Object[]
+				{ promotionID});
+		for (Map row : rows) 
+		{
+			
+			returnData.add((String)row.get("KeywordCategory"));
+		}
+		return returnData;
+	}
 
 	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper<BidElement>(BidElement.class);
 
