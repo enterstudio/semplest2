@@ -335,6 +335,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("CustomerProfileFromOrderInd", "S"); //use Profile CustomerRefNum
 			request.setFieldValue("CustomerRefNum", customerProfileRefNumber);
 			request.setFieldValue("OrderDefaultDescription", "Profile Update");
+			request.setFieldValue("OrderDefaultAmount", "" + recurringAmount);
 
 			//Managed Billing
 			request.setFieldValue("MBType", "R"); //Recurring
