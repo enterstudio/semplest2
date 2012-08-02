@@ -634,83 +634,41 @@ namespace Semplest.SharedResources.Services
 
     public class GeoTargetObject
         {
-            private String address;
-            private String city;
-            private String state;
-            private String zip;
-            private Double latitude;
-            private Double longitude;
-            private Double radius;
-
-            public String getAddress()
+            public String address
             {
-                return address;
+                get; set;
             }
 
-            public void setAddress(String address)
+            public String city
             {
-                this.address = address;
+                get;set;
             }
 
-            public String getCity()
+            public String state
             {
-                return city;
+                get; set;
+            }
+        
+            public String zip
+            {
+                get; set;
             }
 
-            public void setCity(String city)
+            public Double latitude
             {
-                this.city = city;
+                get; set;
             }
 
-            public String getState()
+            public Double longitude
             {
-                return state;
+                get; set;
             }
 
-            public void setState(String state)
+            public Double radius
             {
-                this.state = state;
+                get; set;
             }
 
-            public String getZip()
-            {
-                return zip;
-            }
-
-            public void setZip(String zip)
-            {
-                this.zip = zip;
-            }
-
-            public Double getLatitude()
-            {
-                return latitude;
-            }
-
-            public void setLatitude(Double latitude)
-            {
-                this.latitude = latitude;
-            }
-
-            public Double getLongitude()
-            {
-                return longitude;
-            }
-
-            public void setLongitude(Double longitude)
-            {
-                this.longitude = longitude;
-            }
-
-            public Double getRadius()
-            {
-                return radius;
-            }
-
-            public void setRadius(Double radius)
-            {
-                this.radius = radius;
-            }
         }
 
     public class GoogleSiteLink

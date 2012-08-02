@@ -131,13 +131,13 @@ namespace Semplest.Core.Models.Repositories
             foreach (var geo in model.AdModelProp.Addresses)
             {
                 var geoTObj = new GeoTargetObject();
-                geoTObj.setAddress(geo.Address);
-                geoTObj.setCity(geo.City);
-                if (geo.StateCodeFK != null) geoTObj.setState(GetStateNameFromDb((int)geo.StateCodeFK));
-                geoTObj.setZip(geo.Zip);
-                geoTObj.setRadius((double)(geo.ProximityRadius ?? 0));
-                geoTObj.setLatitude((double)(geo.Latitude ?? 0));
-                geoTObj.setLongitude((double)(geo.Longitude ?? 0));
+                geoTObj.address = geo.Address;
+                geoTObj.city = geo.City;
+                if (geo.StateCodeFK != null) geoTObj.state = GetStateNameFromDb((int)geo.StateCodeFK);
+                geoTObj.zip = geo.Zip;
+                geoTObj.radius = (double)(geo.ProximityRadius ?? 0);
+                geoTObj.latitude = (double)(geo.Latitude ?? 0);
+                geoTObj.longitude = (double)(geo.Longitude ?? 0);
                 geoList.Add(geoTObj);
             }
             return geoList;
@@ -743,7 +743,7 @@ namespace Semplest.Core.Models.Repositories
                     if (gv.Length > 0)
                         throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                 }
-                AddSiteLinksToPromotion(promo, model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel);
+                shouldRefreshSiteLinks = AddSiteLinksToPromotion(promo, model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel);
                 dbcontext.SaveChanges();
                 _savedCampaign = true;
                 try
@@ -818,8 +818,6 @@ namespace Semplest.Core.Models.Repositories
                 {
                     shouldscheduleAds = true;
                     var singlePromo = promo.PromotionAds.Single(id => id.PromotionAdsPK == pad.PromotionAdsPK);
-                    singlePromo.IsDeleted = true;
-                    singlePromo.DeletedDate = DateTime.Now;
                     deleteAds.Add(pad.PromotionAdsPK);
                 }
                 else if (!pad.Delete && pad.PromotionAdsPK == 0)
@@ -1107,7 +1105,7 @@ namespace Semplest.Core.Models.Repositories
                     foreach (string kw in model.AdModelProp.NegativeKeywords)
                     {
                         //keywords that need to be deleted
-                        var snr = dbcontext.SetNegativeKeyword(kw, promo.PromotionPK, op, op2);
+                        var snr = dbcontext.SetNegativeKeyword(kw, promo.PromotionPK, op, op2).ToList();
                         if (snr.Any())
                         {
                             deletedKeywords.AddRange(snr.Select(ids => ids.KeywordPK));
