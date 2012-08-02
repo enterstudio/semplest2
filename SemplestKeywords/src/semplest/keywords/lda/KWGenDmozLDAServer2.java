@@ -32,12 +32,19 @@ import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.lda.*;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.EmailType;
+import semplest.server.protocol.adengine.AdEngineID;
+import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.mail.SemplestMailServiceImpl;
+import semplest.server.service.springjdbc.PromotionObj;
+import semplest.server.service.springjdbc.SemplestDB;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
+import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 
 
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
@@ -229,20 +236,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			//Get keywords sorted by probability
 			ArrayList<KeywordProbabilityObject> keywords = this.getKeywordsSorted(categories, description, stemdata1, srchE, nGrams, numkw);
 			
-			// Disable the necessary SE flags
-			int j=0;
-			for(SearchEngine se : srchE){
-				if(se.equalsSE(SearchEngine.Google) && data.numKeywordsGoogle<keywords.size()){
-					for(int i=data.numKeywordsGoogle ; i<keywords.size(); i++ ){
-						keywords.get(i).setIsTargetGoogle(false);
-					}
-				}
-				if(se.equalsSE(SearchEngine.MSN) && data.numKeywordsMSN<keywords.size()){
-					for(int i=data.numKeywordsGoogle ; i<keywords.size(); i++ ){
-						keywords.get(i).setIsTargetGoogle(false);
-					}
-				}
-			}
+			
 			
 			return keywords.toArray(new KeywordProbabilityObject[keywords.size()]);
 		
@@ -290,7 +284,24 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		    //Generate a maximum of 5000 keywords nGrams[0] bigrams + nGrams[1] trigrams and the rest split between 4 grams and 5 grams
 		    ArrayList<KeywordProbabilityObject> kwNOTSorted= this.getKwMultiCombined(optCateg, description, nGrams, wordMap, 5, srchE);
 		    
-		    return this.sortKeywords(kwNOTSorted, numKw);
+		    ArrayList<KeywordProbabilityObject> keywords = this.sortKeywords(kwNOTSorted, numKw);
+		    
+		    // Disable the necessary SE flags
+ 			int j=0;
+ 			for(SearchEngine se : srchE){
+ 				if(se.equalsSE(SearchEngine.Google) && data.numKeywordsGoogle<keywords.size()){
+ 					for(int i=data.numKeywordsGoogle ; i<keywords.size(); i++ ){
+ 						keywords.get(i).setIsTargetGoogle(false);
+ 					}
+ 				}
+ 				if(se.equalsSE(SearchEngine.MSN) && data.numKeywordsMSN<keywords.size()){
+ 					for(int i=data.numKeywordsGoogle ; i<keywords.size(); i++ ){
+ 						keywords.get(i).setIsTargetGoogle(false);
+ 					}
+ 				}
+ 			}
+		    
+		    return keywords;
 			
 		}catch(Exception e){
 			logger.error(e.toString());
@@ -466,6 +477,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			kwP.setKeyword(kw.replaceAll("\\p{Punct}", " ").trim().replaceAll(" s ", "'s "));
 			kwP.setSemplestProbability(kwProbMap.get(kw));
 			kwProb.add(kwP);
+			i++;
 		}
 		
 		return kwProb;
@@ -677,18 +689,117 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	}
 	
 	
-	public KeywordProbabilityObject[] recalculateProbabilities(Long promotionID, KeywordProbabilityObject[] kwIn ){
+	public KeywordProbabilityObject[] recalculateProbabilities(Integer promotionID) throws Exception{
 		
-		return null;
+		//Get Promotion data from database
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		final Boolean returnVal = getPromoDataSP.execute(promotionID);
+		final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		List<AdsObject> ads= getPromoDataSP.getAds();
+		String[] adsText = new String[ads.size()];
+		for(int i=0; i<adsText.length; i++){
+			AdsObject ad = ads.get(i);
+			adsText[i] = ad.getAdTitle()+" "+ad.getAdTextLine1()+" "+ad.getAdTextLine2();
+		}
+		String url = promotionData.getLandingPageURL();
+		String description = promotionData.getPromotionDescription();
+		String productProm = promotionData.getPromotionName();
+		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
+		final List<KeywordProbabilityObject> keywordList = getKeywordForAdEngineSP.execute(promotionID.intValue(), true, true);
+
+		
+		//Check Search Engines and decide number of kw per Search Engine
+		ArrayList<SearchEngine> srchE =  new ArrayList<SearchEngine>();
+		final Map<AdEngine,AdEngineID> adEngineInfo = getPromoDataSP.getPromotionAdEngineID(promotionID);
+		for(AdEngine adE : adEngineInfo.keySet()){
+			for (SearchEngine se : SearchEngine.values()){
+				if(se.equalsSE(adE.name()))
+					srchE.add(se);
+			}
+			if(srchE.size()<1)
+				throw new Exception(adE.name()+ " not a valid Search Engine");
+		}
+		
+		ArrayList<String> categories = new ArrayList<String>(SemplestDB.getPromotionCategory(promotionID));
+		categories = data.cu.decode(categories);
+		if(categories==null || categories.size()==0){
+			throw new Exception("No categories provided");
+		}
+		
+		//Check promotion data
+		
+		if(productProm!=null && productProm.length()>=0) 
+			productProm = productProm.toLowerCase().replaceAll("\\p{Punct}", " ");
+		if(description==null || description.length()==0) throw new Exception("No description provided");
+		description = description.toLowerCase().replaceAll("\\p{Punct}", " ");
+		
+		
+		//Weight data based on percentage
+		String data1 = this.weightData(data.userInfoWeight, url, adsText,"",productProm, description);
+		
+		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
+		//with data form those categories
+		ArrayList<String> optCateg = new ArrayList<String>();
+		ArrayList<String> trainList = getCatChildsAndData(categories, optCateg);
+	    logger.info("Number of categories to add " + trainList.size());
+	    
+		//Train LDA for categories selected and return sorted keywords
+	    //and obtain word probability
+	    HashMap<String, Double> wordMap= this.createWordMap(data1, trainList, description);
+	    logger.info("previous wordmap size: "+ wordMap.size());
+		
+	    //Calulate Keyword Probability
+	    ArrayList<String> keywords = new ArrayList<String>();
+	    for(KeywordProbabilityObject kw : keywordList){
+	    	keywords.add(kw.getKeyword().trim());
+	    }
+	    
+	    HashMap<String,Double> kwProbMap = this.getKwProbability(keywords, wordMap, "\\s+");	    
+	    ArrayList<KeywordProbabilityObject> kwOut = new ArrayList<KeywordProbabilityObject>(kwProbMap.size());
+	    for(String kw : kwProbMap.keySet()){
+	    	for(int j=0 ; j< keywordList.size(); j++){
+	    		if(kw.trim().equalsIgnoreCase(keywordList.get(j).getKeyword().trim())){
+	    			KeywordProbabilityObject kwUpd = keywordList.get(j);
+	    			kwUpd.setSemplestProbability(kwProbMap.get(kw));
+	    			kwOut.add(kwUpd);
+	    		}
+	    	}
+	    }
+	    kwOut = this.sortKeywords(kwOut, kwOut.size());
+		return kwOut.toArray(new KeywordProbabilityObject[kwOut.size()]);
 	}
 	
 	public static void main(String[] args) throws Exception {
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
+		Thread configThread = new Thread(configDB);
+		configThread.start();
+		synchronized (object)
+		{
+			object.wait();
+		}
 		
-		BasicConfigurator.configure();
-
+		PrintStream ps = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/updatedProbKw.txt"));
+		
+		
+		KWGenDmozLDAServer2 kwGen =  new KWGenDmozLDAServer2(null);
+		kwGen.initializeService(null);
+		KeywordProbabilityObject[] kwrds = kwGen.recalculateProbabilities(223);
+		for(KeywordProbabilityObject kw : kwrds ){
+			ps.println(kw.getKeyword()+", "+ kw.getSemplestProbability() +", IsTargetGoogle: " + kw.getIsTargetGoogle() 
+					+ ", IsTargetMSN: "+ kw.getIsTargetMSN()+", IsActive: "+kw.getIsActive()+", IsDeleted: "+kw.getIsDeleted()
+					+ ", IsNegative: " + kw.getIsNegative()+ ", kwPK:" + kw.getKeywordPK());
+		}
+		ps.close();
+	}
+	
+	/*
+	public static void main(String[] args) throws Exception {
+		
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
-		 */
+		 *
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		Object object = new Object();
 		SemplestConfiguration configDB = new SemplestConfiguration(object);
@@ -700,7 +811,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		}
 		/*
 		 * Init Keyword Data
-		 */
+		 *
 		logger.info("Initialized Keyword generator...");
 		
 		//KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
@@ -708,14 +819,13 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		kwGen.initializeService(null);
 		String[] searchTerm = new String[1];
 		String userInfo1="";
-		BasicConfigurator.configure();
 		PrintStream logging = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/categoriesTime.txt"));
 		/*
 		while(true){
 			Long start = System.currentTimeMillis();
 			ArrayList<String> categOpt = kwGen.getCategories(null, null , "science fiction", null, null);
 			logging.println(System.currentTimeMillis()-start);
-		}*/
+		}*
 		
 		
 		while (!userInfo1.equals("exit")){
@@ -808,6 +918,12 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			}
 		}
 	}
+	*/
+	
+	
+	
+	
+	
 	@Override
 	public String checkStatus(String input1, String input2) throws Exception {
 		// TODO Auto-generated method stub

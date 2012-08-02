@@ -30,7 +30,8 @@ public class KWGenDmozLDAdata2 implements Runnable{
 	public double userInfoWeight; 
 	public int numKeywordsGoogle; 
 	public int numKeywordsMSN; 
-	public static ProjectProperties pr; 
+	public static ProjectProperties pr;
+	public catUtils cu;
 	
 	public KWGenDmozLDAdata2(HashMap<String,Object> configData) throws IOException {
 		/*//Load property file if necessary for paths
@@ -55,7 +56,7 @@ public class KWGenDmozLDAdata2 implements Runnable{
 			numKeywordsMSN = pr.numKeywordsMSN;
 			//logger.info(pr.dfile+"\n"+pr.baseMultiWPath+"\n"+pr.numTopics);
 			
-		
+			cu = new catUtils();
 			logger.info("create DmozLucene()");
 			dl = new DmozLucene();
 			logger.info("Indexing dmoz description data...");
