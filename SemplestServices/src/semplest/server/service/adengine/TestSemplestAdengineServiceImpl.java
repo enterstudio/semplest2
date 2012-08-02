@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 
@@ -35,8 +36,8 @@ public class TestSemplestAdengineServiceImpl
 		final java.util.Date createdDate2 = new java.util.Date(System.currentTimeMillis() + 1);
 		final java.util.Date deletedDate1 = new java.util.Date(System.currentTimeMillis() + 2);
 		final java.util.Date deletedDate2 = new java.util.Date(System.currentTimeMillis() + 3);
-		final AdsObject ad1 = new AdsObject(promotionAdsPK1, promotionFK1, adTitle1, adTextLine1_1, adTextLine2_1, null, isDeleted1, createdDate1, deletedDate1);
-		final AdsObject ad2 = new AdsObject(promotionAdsPK2, promotionFK2, adTitle2, adTextLine1_2, adTextLine2_2, null, isDeleted2, createdDate2, deletedDate2);		
+		final AdsObject ad1 = new AdsObject(promotionAdsPK1, promotionFK1, adTitle1, adTextLine1_1, adTextLine2_1, null, isDeleted1, createdDate1, deletedDate1, AdEngine.Google);
+		final AdsObject ad2 = new AdsObject(promotionAdsPK2, promotionFK2, adTitle2, adTextLine1_2, adTextLine2_2, null, isDeleted2, createdDate2, deletedDate2, AdEngine.Google);		
 		final List<AdsObject> actualAds = new ArrayList<AdsObject>();
 		actualAds.add(ad1);
 		actualAds.add(ad2);
@@ -46,8 +47,8 @@ public class TestSemplestAdengineServiceImpl
 		requestToAdEngineAdIdMap.put(googleAddAdRequest1, adEngineAdID1);
 		requestToAdEngineAdIdMap.put(googleAddAdRequest2, adEngineAdID2);		
 		SemplestAdengineServiceImpl.backfillAdEngineAdID(actualAds, requestToAdEngineAdIdMap);
-		final AdsObject expectedAd1 = new AdsObject(promotionAdsPK1, promotionFK1, adTitle1, adTextLine1_1, adTextLine2_1, adEngineAdID1, isDeleted1, createdDate1, deletedDate1);
-		final AdsObject expectedAd2 = new AdsObject(promotionAdsPK2, promotionFK2, adTitle2, adTextLine1_2, adTextLine2_2, adEngineAdID2, isDeleted2, createdDate2, deletedDate2);
+		final AdsObject expectedAd1 = new AdsObject(promotionAdsPK1, promotionFK1, adTitle1, adTextLine1_1, adTextLine2_1, adEngineAdID1, isDeleted1, createdDate1, deletedDate1, AdEngine.Google);
+		final AdsObject expectedAd2 = new AdsObject(promotionAdsPK2, promotionFK2, adTitle2, adTextLine1_2, adTextLine2_2, adEngineAdID2, isDeleted2, createdDate2, deletedDate2, AdEngine.Google);
 		final List<AdsObject> expectedAds = new ArrayList<AdsObject>();
 		expectedAds.add(expectedAd1);
 		expectedAds.add(expectedAd2);

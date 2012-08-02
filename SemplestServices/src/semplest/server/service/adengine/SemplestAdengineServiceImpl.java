@@ -139,6 +139,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			
+			adEng.UpdateAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			//adEng.AddAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
+/*			
 			final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
 			final AESBouncyCastle bouncyCastle = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
 			final Integer userID = 24;
@@ -149,7 +152,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String encryptedToken = SemplestUtils.generateEncryptedToken(bouncyCastle, userID, dateTime, username, password);
 			final List<String> validationErrors = adEng.validateAccountActivationToken(encryptedToken);
 			logger.info("Validation errors:\n" + SemplestUtils.getEasilyReadableString(validationErrors));
-
+*/
 			// Schedule for next day at the same time
 			
 			//adEng.ExecuteBidProcess(136, Arrays.asList(AdEngine.MSN));
@@ -1865,6 +1868,19 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new Exception(errMsg);
 		}
 	}
+	
+	public static List<AdsObject> getFilteredAds(final List<AdsObject> ads, final AdEngine adEngine)
+	{
+		final List<AdsObject> adsFound = new ArrayList<AdsObject>();
+		for (final AdsObject ad : ads)
+		{
+			if (ad.getAdEngine() == adEngine)
+			{
+				adsFound.add(ad);
+			}
+		}
+		return adsFound;
+	}
 
 	public List<AdsObject> getFilteredAds(final List<AdsObject> ads, final Boolean isDeleted)
 	{
@@ -2901,12 +2917,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final String displayURL = SemplestUtils.getTrimmedNonNullString(promotion.getDisplayURL());
 		final String url = SemplestUtils.getTrimmedNonNullString(promotion.getLandingPageURL());
-		final List<AdsObject> ads = getPromoDataSP.getAds();
-		final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
+		final List<AdsObject> ads = getPromoDataSP.getAds();		
 		for (final AdEngine adEngine : adEngines)
 		{
 			if (AdEngine.Google == adEngine)
 			{
+				final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
 				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
 				final String accountID = SemplestUtils.getTrimmedNonNullString("" + adEngineData.getAccountID());
 				final Long adGroupID = adEngineData.getAdGroupID();
@@ -2914,13 +2930,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
 					final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);
+					final List<AdsObject> nonDeletedAdsForPromotionAdIdAndAdEngine = getFilteredAds(nonDeletedAdsForPromotionAdID, adEngine);
 					// TODO: once AdvertisingEngineAds table has constraint such
 					// that PromotionFK is unique in the table, remove the
 					// sorting code and only deal with 1 item (not List)
-					Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
-					if (!nonDeletedAdsForPromotionAdID.isEmpty())
+					Collections.sort(nonDeletedAdsForPromotionAdIdAndAdEngine, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+					if (!nonDeletedAdsForPromotionAdIdAndAdEngine.isEmpty())
 					{
-						final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);
+						final AdsObject ad = nonDeletedAdsForPromotionAdIdAndAdEngine.get(0);
 						nonDeletedAdsForPromotionAdIds.add(ad);
 					}
 				}
@@ -2954,6 +2971,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else if (AdEngine.MSN == adEngine)
 			{
+				final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
 				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
 				final String accountID = SemplestUtils.getTrimmedNonNullString("" + adEngineData.getAccountID());
 				final Long adGroupID = adEngineData.getAdGroupID();
@@ -2961,13 +2979,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
 					final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);
+					final List<AdsObject> nonDeletedAdsForPromotionAdIdAndAdEngine = getFilteredAds(nonDeletedAdsForPromotionAdID, adEngine);
 					// TODO: once AdvertisingEngineAds table has constraint such
 					// that PromotionFK is unique in the table, remove the
 					// sorting code and only deal with 1 item (not List)
-					Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
-					if (!nonDeletedAdsForPromotionAdID.isEmpty())
+					Collections.sort(nonDeletedAdsForPromotionAdIdAndAdEngine, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+					if (!nonDeletedAdsForPromotionAdIdAndAdEngine.isEmpty())
 					{
-						final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);
+						final AdsObject ad = nonDeletedAdsForPromotionAdIdAndAdEngine.get(0);
 						nonDeletedAdsForPromotionAdIds.add(ad);
 					}
 				}

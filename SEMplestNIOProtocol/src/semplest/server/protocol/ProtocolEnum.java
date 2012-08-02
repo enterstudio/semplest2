@@ -123,6 +123,19 @@ public class ProtocolEnum
 			}
 		}
 		
+		public static AdEngine getAdEngine(final int code)
+		{
+			final AdEngine[] adEngines = AdEngine.values();
+			for (final AdEngine adEngine : adEngines)
+			{
+				if (adEngine.getCode() == code)
+				{
+					return adEngine;
+				}
+			}
+			return null;
+		}
+		
 		public static List<AdEngine> getAdEngines(final List<String> adEngineStrings)
 		{
 			final List<AdEngine> adEngineList = new ArrayList<AdEngine>();

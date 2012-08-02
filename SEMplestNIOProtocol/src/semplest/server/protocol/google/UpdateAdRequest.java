@@ -136,8 +136,7 @@ public class UpdateAdRequest
 	@Override
 	public String toString()
 	{
-		return "GoogleUpdateAdRequest [adId=" + adId + ", newHeadline=" + newHeadline + ", newDescription1=" + newDescription1 + ", newDescription2="
-				+ newDescription2 + ", newDisplayURL=" + newDisplayURL + ", newUrl=" + newUrl + ", promotionAdID=" + promotionAdID + "]";
+		return "UpdateAdRequest [adId=" + adId + ", newHeadline=" + newHeadline + ", newDescription1=" + newDescription1 + ", newDescription2=" + newDescription2 + ", newDisplayURL=" + newDisplayURL + ", newUrl=" + newUrl + ", promotionAdID=" + promotionAdID + "]";
 	}
 	
 }

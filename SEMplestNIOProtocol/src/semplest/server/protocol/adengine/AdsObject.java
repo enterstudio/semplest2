@@ -2,6 +2,8 @@ package semplest.server.protocol.adengine;
 
 import java.util.Comparator;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
+
 public class AdsObject
 {
 	private Integer PromotionAdsPK;
@@ -13,10 +15,11 @@ public class AdsObject
 	private boolean IsDeleted;
 	private java.util.Date CreatedDate;
 	private java.util.Date DeletedDate;
+	private AdEngine adEngine;
 		
 	public AdsObject() {}  // needed by Spring
 	
-	public AdsObject(Integer promotionAdsPK, Integer promotionFK, String adTitle, String adTextLine1, String adTextLine2, Long adEngineAdID, boolean isDeleted, java.util.Date createdDate, java.util.Date deletedDate)
+	public AdsObject(Integer promotionAdsPK, Integer promotionFK, String adTitle, String adTextLine1, String adTextLine2, Long adEngineAdID, boolean isDeleted, java.util.Date createdDate, java.util.Date deletedDate, AdEngine adEngine)
 	{
 		PromotionAdsPK = promotionAdsPK;
 		PromotionFK = promotionFK;
@@ -27,8 +30,19 @@ public class AdsObject
 		IsDeleted = isDeleted;		
 		CreatedDate = createdDate;
 		DeletedDate = deletedDate;
+		this.adEngine = adEngine;
 	}
 	
+	public AdEngine getAdEngine()
+	{
+		return adEngine;
+	}
+
+	public void setAdEngine(AdEngine adEngine)
+	{
+		this.adEngine = adEngine;
+	}
+
 	public String getAdTitle()
 	{
 		return AdTitle;
@@ -122,6 +136,7 @@ public class AdsObject
 		result = prime * result + (IsDeleted ? 1231 : 1237);
 		result = prime * result + ((PromotionAdsPK == null) ? 0 : PromotionAdsPK.hashCode());
 		result = prime * result + ((PromotionFK == null) ? 0 : PromotionFK.hashCode());
+		result = prime * result + ((adEngine == null) ? 0 : adEngine.hashCode());
 		return result;
 	}
 
@@ -193,15 +208,16 @@ public class AdsObject
 		}
 		else if (!PromotionFK.equals(other.PromotionFK))
 			return false;
+		if (adEngine != other.adEngine)
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "AdsObject [PromotionAdsPK=" + PromotionAdsPK + ", PromotionFK=" + PromotionFK + ", AdTitle=" + AdTitle + ", AdTextLine1="
-				+ AdTextLine1 + ", AdTextLine2=" + AdTextLine2 + ", AdEngineAdID=" + AdEngineAdID + ", IsDeleted=" + IsDeleted + ", CreatedDate="
-				+ CreatedDate + ", DeletedDate=" + DeletedDate + "]";
+		return "AdsObject [PromotionAdsPK=" + PromotionAdsPK + ", PromotionFK=" + PromotionFK + ", AdTitle=" + AdTitle + ", AdTextLine1=" + AdTextLine1 + ", AdTextLine2=" + AdTextLine2 + ", AdEngineAdID=" + AdEngineAdID + ", IsDeleted=" + IsDeleted + ", CreatedDate=" + CreatedDate
+				+ ", DeletedDate=" + DeletedDate + ", adEngine=" + adEngine + "]";
 	}
 
 	/**

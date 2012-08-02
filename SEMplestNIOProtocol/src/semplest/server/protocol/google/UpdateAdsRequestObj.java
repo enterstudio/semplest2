@@ -76,15 +76,15 @@ public class UpdateAdsRequestObj
 			return false;
 		return true;
 	}
-
+	
 	@Override
 	public String toString()
 	{
-		return "GoogleUpdateAdsRequest [accountID=" + accountID + ", adGroupID=" + adGroupID + ", updateRequests=" + updateRequests + "]";
+		return "UpdateAdsRequestObj [accountID=" + accountID + ", adGroupID=" + adGroupID + ", updateRequests=" + updateRequests + "]";
 	}
-	
+
 	public String toStringPretty()
 	{
-		return "GoogleUpdateAdsRequest [accountID=" + accountID + ", adGroupID=" + adGroupID + ", updateRequests:" + SemplestUtils.getEasilyReadableString(updateRequests) + "]";
+		return "UpdateAdsRequestObj [accountID=" + accountID + ", adGroupID=" + adGroupID + ", updateRequests:" + SemplestUtils.getEasilyReadableString(updateRequests) + "]";
 	}
 }

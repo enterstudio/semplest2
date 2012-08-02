@@ -165,44 +165,34 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				object.wait();
 			}
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-			
+
 			final String accountID = "1758634";
 			final Long accountIdLong = 1758634L;
 			final Long adGroupID = 709890649L;
 			final Long campaignID = 110207618L;
 			/*
-			final UpdateAdRequest updRequest = new UpdateAdRequest(1525522391L, "Some new headline4", "new desc 14", " new desc 24", "www.Fareed.com", "http://www.Fareed.com", 700);
-			final List<UpdateAdRequest> updateRequests = Arrays.asList(updRequest);
-			final UpdateAdsRequestObj updateRequest = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests);
-			msn.updateAllAdById(updateRequest);
-			*/
+			 * final UpdateAdRequest updRequest = new UpdateAdRequest(1525522391L, "Some new headline4", "new desc 14", " new desc 24",
+			 * "www.Fareed.com", "http://www.Fareed.com", 700); final List<UpdateAdRequest> updateRequests = Arrays.asList(updRequest); final
+			 * UpdateAdsRequestObj updateRequest = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests); msn.updateAllAdById(updateRequest);
+			 */
 			final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = new HashMap<GeoTargetObject, GeoTargetType>();
 			final GeoTargetObject g1 = new GeoTargetObject();
 			g1.setState("NJ");
-			geoTargetVsTypeMap.put(g1,  GeoTargetType.STATE);
+			geoTargetVsTypeMap.put(g1, GeoTargetType.STATE);
 			msn.updateGeoTargets(accountIdLong, campaignID, geoTargetVsTypeMap);
-			
-			/*
-			DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
-			DateTime lastDay = new DateTime(2012,8,30,0,0,0,0);
-			ReportObject[] ret = msn.getKeywordReport(1774491L, 51103550L, firstDay, lastDay);
-			for(ReportObject ro : ret){
-				System.out.println(ro.toString());
-			}
-			*/
-			/*
-			Map<String, ProtocolEnum.SemplestMatchType> map = new HashMap<String, ProtocolEnum.SemplestMatchType>();
 
-			map.put("aoidfnainef", SemplestMatchType.Exact);
-			map.put("wedding bouquet", SemplestMatchType.Exact);
-			map.put("wedding flowers", SemplestMatchType.Broad);
-			List<AdEngineBidHistoryData> list = msn.getBidHistoryData(map, 14);
-
-			for (AdEngineBidHistoryData examp : list)
-			{
-				logger.info(examp.toString());
-			}
-			*/
+			/*
+			 * DateTime firstDay = new DateTime(2011,1,1,0,0,0,0); DateTime lastDay = new DateTime(2012,8,30,0,0,0,0); ReportObject[] ret =
+			 * msn.getKeywordReport(1774491L, 51103550L, firstDay, lastDay); for(ReportObject ro : ret){ System.out.println(ro.toString()); }
+			 */
+			/*
+			 * Map<String, ProtocolEnum.SemplestMatchType> map = new HashMap<String, ProtocolEnum.SemplestMatchType>();
+			 * 
+			 * map.put("aoidfnainef", SemplestMatchType.Exact); map.put("wedding bouquet", SemplestMatchType.Exact); map.put("wedding flowers",
+			 * SemplestMatchType.Broad); List<AdEngineBidHistoryData> list = msn.getBidHistoryData(map, 14);
+			 * 
+			 * for (AdEngineBidHistoryData examp : list) { logger.info(examp.toString()); }
+			 */
 
 			// msn.createKeyword(1758634L, 709270153L, "Sneakers", MatchType.Exact, new Bid(0.55));
 			// 1758634L
@@ -1932,12 +1922,40 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		logger.info("Will try to " + operationDescription);
 		try
 		{
-			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final long[] adIds = new long[]{adId};
+			final Account account = getAccountById(accountId);
+			final String accountName = account.getName();
+			logger.info("MSN Account Name: " + accountName);
+			final Long msnCustomerID = getCustomerID(accountName);
+			if (msnCustomerID != null)
+			{
+				logger.info("MSN customerID: " + msnCustomerID);
+			}
+			else
+			{
+				throw new MsnCloudException("Problems retrieving MsnCustomerID for AccountID [" + accountId + "]");
+			}
+			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, msnCustomerID);
+			final long[] adIds = new long[] { adId };
 			final GetAdsByIdsRequest request = new GetAdsByIdsRequest(adGroupId, adIds);
-			final GetAdsByIdsResponse response = campaignManagement.getAdsByIds(request);
-			final Ad[] ads = response.getAds();
+			final GetAdsByIdsResponse response = campaignManagement.getAdsByIds(request); 
+			final Ad[] ads = response.getAds(); 
 			return ads[0];
+/*
+			final GetAdsByAdGroupIdRequest adGroupIdrequest = new GetAdsByAdGroupIdRequest(adGroupId);
+			final GetAdsByAdGroupIdResponse response = campaignManagement.getAdsByAdGroupId(adGroupIdrequest);
+			final Ad[] ads = response.getAds();
+			Ad theAd = null;
+			for (final Ad ad : ads)
+			{
+				final long currentAdId = ad.getId();
+				logger.info(currentAdId);
+				theAd = ad;
+			}
+			return theAd;
+*/
+			/*
+			 * f
+			 */
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -1952,6 +1970,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (Exception e)
+		
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
 		}
@@ -2057,7 +2076,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			{
 				throw new Exception("Ad for MsnID [] is not a TextAd, but is " + ad.getType() + ", which is unexpected, so will not update it");
 			}
-			final Ad[] ads = new Ad[]{ad};
+			final Ad[] ads = new Ad[] { ad };
 			final UpdateAdsRequest request = new UpdateAdsRequest(adGroupId, ads);
 			final UpdateAdsResponse response = campaignManagement.updateAds(request);
 		}
@@ -3100,7 +3119,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			final List<Long> existingTargetIds = new ArrayList<Long>();
 			for (final Target target : existingTargets)
 			{
-				if(target != null)
+				if (target != null)
 				{
 					final Long targetId = target.getId();
 					if (targetId != null)
@@ -3126,14 +3145,14 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			}
 
 			// add latest geo targets
-			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();			
+			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();
 			final List<StateTargetBid> stateBids = new ArrayList<StateTargetBid>();
 			final List<RadiusTargetBid> radiusBids = new ArrayList<RadiusTargetBid>();
 			final Set<Entry<GeoTargetObject, GeoTargetType>> entrySet = geoTargetVsTypeMap.entrySet();
 			for (final Entry<GeoTargetObject, GeoTargetType> entry : entrySet)
 			{
 				final GeoTargetType type = entry.getValue();
-				final GeoTargetObject getTarget = entry.getKey();				
+				final GeoTargetObject getTarget = entry.getKey();
 				if (GeoTargetType.STATE == type)
 				{
 					final StateTargetBid stateTargetBid = new StateTargetBid();
@@ -3141,7 +3160,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					final String state = getTarget.getState();
 					final String usState = "US-" + state;
 					stateTargetBid.setState(usState);
-					stateBids.add(stateTargetBid);					
+					stateBids.add(stateTargetBid);
 				}
 				else if (GeoTargetType.GEO_POINT == type)
 				{
@@ -3154,16 +3173,16 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 					radiusTargetBid.setLongitudeDegrees(longitudeDegrees);
 					final int radiusInt = (int) radius;
 					radiusTargetBid.setRadius(radiusInt);
-					radiusBids.add(radiusTargetBid);					
+					radiusBids.add(radiusTargetBid);
 				}
 				else
 				{
 					throw new MsnCloudException("Problem doing " + operationDescription + " beucase encountered GeoTargetType [" + type + "] that is not either [" + GeoTargetType.STATE + "] or [" + GeoTargetType.GEO_POINT + "]");
-				}				
-			}			
+				}
+			}
 			final Target target = new Target();
 			final LocationTarget location = new LocationTarget();
-			
+
 			logger.info("Prepared " + stateBids.size() + " State Target Bids and " + radiusBids.size() + " Radius Target Bids");
 			if (stateBids.isEmpty() && radiusBids.isEmpty())
 			{
@@ -3173,9 +3192,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			if (!stateBids.isEmpty())
 			{
 				final StateTarget stateTarget = new StateTarget();
-				final StateTargetBid[] stateTargetBids = stateBids.toArray(new StateTargetBid[stateBids.size()]); 
+				final StateTargetBid[] stateTargetBids = stateBids.toArray(new StateTargetBid[stateBids.size()]);
 				stateTarget.setBids(stateTargetBids);
-				location.setStateTarget(stateTarget);	
+				location.setStateTarget(stateTarget);
 			}
 			if (!radiusBids.isEmpty())
 			{
@@ -3183,9 +3202,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				final RadiusTargetBid[] radiusTargetBids = radiusBids.toArray(new RadiusTargetBid[radiusBids.size()]);
 				radiusTarget.setBids(radiusTargetBids);
 				location.setRadiusTarget(radiusTarget);
-			}			
+			}
 			target.setLocation(location);
-			final Target[] targetArray = new Target[]{target};
+			final Target[] targetArray = new Target[] { target };
 			addRequest.setTargets(targetArray);
 			final AddTargetsToLibraryResponse response = campaignManagement.addTargetsToLibrary(addRequest);
 			final long[] targetIds = response.getTargetIds();
@@ -3197,7 +3216,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				setTargetRequest.setTargetId(targetId);
 				setTargetRequest.setCampaignId(campaignId);
 				final SetTargetToCampaignResponse setTargetResponse = campaignManagement.setTargetToCampaign(setTargetRequest);
-			}			
+			}
 			return true;
 		}
 		catch (AdApiFaultDetail e)
@@ -3668,8 +3687,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		try
 		{
 			KeywordPerformanceReportColumn[] columns;
-			columns = new KeywordPerformanceReportColumn[] { KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.KeywordId, KeywordPerformanceReportColumn.AveragePosition, KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, KeywordPerformanceReportColumn.QualityScore,
-					KeywordPerformanceReportColumn.Impressions, KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, KeywordPerformanceReportColumn.TimePeriod, KeywordPerformanceReportColumn.CampaignId, KeywordPerformanceReportColumn.Spend };
+			columns = new KeywordPerformanceReportColumn[] { KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.KeywordId, KeywordPerformanceReportColumn.AveragePosition, KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc,
+					KeywordPerformanceReportColumn.QualityScore, KeywordPerformanceReportColumn.Impressions, KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, KeywordPerformanceReportColumn.TimePeriod, KeywordPerformanceReportColumn.CampaignId,
+					KeywordPerformanceReportColumn.Spend };
 			final boolean returnOnlyCompleteData = false;
 			final String reportName = "Keyword Report for Account " + accountId + " Campaign ";
 			// Scope: this campaignId, all ad groups.

@@ -1,5 +1,7 @@
 package semplest.server.service.springjdbc.storedproc;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,7 @@ public class GetAllPromotionDataSP extends StoredProcedure
 {
 	private static final String SPROC_NAME = "GetAllPromotionData";
 	private static final RowMapper<PromotionObj> promotionObjMapper = new BeanPropertyRowMapper<PromotionObj>(PromotionObj.class);
-	private static final RowMapper<AdsObject> adsObjMapper = new BeanPropertyRowMapper<AdsObject>(AdsObject.class);
+	private final RowMapper<AdsObject> adsObjMapper;
 	private static final RowMapper<GeoTargetObject> geoTargetObjectMapper = new BeanPropertyRowMapper<GeoTargetObject>(GeoTargetObject.class);
 	private Map<String, Object> results = null;
 	private Map<Integer,Map<AdEngine,AdEngineID>> PromotionAdEngineID = new HashMap<Integer,Map<AdEngine,AdEngineID>>();
@@ -30,6 +32,31 @@ public class GetAllPromotionDataSP extends StoredProcedure
 	public GetAllPromotionDataSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
+		adsObjMapper = new RowMapper<AdsObject>() {
+
+			@Override
+			public AdsObject mapRow(ResultSet rs, int index) throws SQLException
+			{
+				final Integer promotionAdsPK = rs.getInt("PromotionAdsPK");
+				final Integer promotionFK = rs.getInt("PromotionFK");
+				final String adTitle = rs.getString("AdTitle");
+				final String adTextLine1 = rs.getString("AdTextLine1");
+				final String adTextLine2 = rs.getString("AdTextLine2");
+				final Long adEngineAdID = rs.getLong("AdEngineAdID");
+				final boolean isDeleted = rs.getBoolean("IsDeleted");
+				final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
+				final java.util.Date deletedDate = rs.getTimestamp("DeletedDate");
+				final int adEngineId = rs.getInt("AdvertisingEngineFK");
+				final AdEngine adEngine = AdEngine.getAdEngine(adEngineId);
+				if (adEngine == null)
+				{
+					throw new SQLException("Could not find AdEngine for code [" + adEngineId + "]");
+				}
+				final AdsObject ad = new AdsObject(promotionAdsPK, promotionFK, adTitle, adTextLine1, adTextLine2, adEngineAdID, isDeleted, createdDate, deletedDate, adEngine);
+				return ad;
+			}
+			
+		};
 		declareParameter(new SqlParameter("PromotionPK", Types.INTEGER));
 		declareParameter(new SqlReturnResultSet("promotion", promotionObjMapper));
 		declareParameter(new SqlReturnResultSet("ads", adsObjMapper));
