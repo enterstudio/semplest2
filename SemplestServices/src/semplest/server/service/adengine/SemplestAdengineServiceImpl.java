@@ -718,11 +718,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				else
 				{
 					++numNegativeKeywordsAdded;
+					//REMOVED ADDITION OF NEGATIVE KEYWORDS TO KEYWORDBID TABLE
+					/*
 					final Long keywordBidID = keywordDataObj.getBidID();
 					logger.info(++counter + ": will try to save in db Google Negative Keyword for GoogleID [" + keywordBidID + "], KeywordProbability [" + negativeKeyword + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + true + "]");
 					final Long microBidAmt = keywordDataObj.getMicroBidAmount();
 					final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();
 					Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null, true);
+					*/
 				}
 			}
 			emailMessageSB.append("\t\t").append("Negative").append("\n");

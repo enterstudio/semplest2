@@ -968,7 +968,7 @@ public class SemplestDB extends BaseDB
 					+ "inner join KeywordBid kb on kb.KeywordBidPK = kbd.KeywordBidFK "
 					+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
 					+ "where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1 and kbd.CreatedDate >= ?) mkbd "
-					+ "on mkbd.KeywordBidFK = kb.KeywordBidPK " + "where kb.PromotionFK = ? and kb.IsActive = 1 and ae.AdvertisingEngine = ?";
+					+ "on mkbd.KeywordBidFK = kb.KeywordBidPK " + "where kb.PromotionFK = ? and kb.IsActive = 1 and ae.AdvertisingEngine = ? and pka.IsNegative = 0";
 
 			try
 			{
