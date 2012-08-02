@@ -888,7 +888,7 @@ public class SemplestDB extends BaseDB
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
 				+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
 				+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
-				+ "where p.PromotionPK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.IsActive = 1";
+				+ "where p.PromotionPK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.IsActive = 1 and pka.IsNegative = 0";
 		try
 		{
 			return jdbcTemplate.query(strSQL, new Object[]
