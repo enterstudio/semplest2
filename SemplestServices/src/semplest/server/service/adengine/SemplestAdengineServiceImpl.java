@@ -2684,20 +2684,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);
 				nonDeletedAdsForPromotionAdIds.add(ad);
 			}
-		}
-		if (nonDeletedAdsForPromotionAdIds.isEmpty())
-		{
-			final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "], so nothing to delete.";
-			logger.error(errMsg);
-			throw new Exception(errMsg);
-		}
-		final int numAdsToDelete = nonDeletedAdsForPromotionAdIds.size();
-		logger.info("Will try to delete " + numAdsToDelete + " Ads");
-		List<Long> adIds = getAdIds(nonDeletedAdsForPromotionAdIds);
+		}		
 		for (final AdEngine adEngine : adEngines)
 		{
 			if (AdEngine.Google == adEngine)
 			{
+				final List<AdsObject> googleAds = getFilteredAds(nonDeletedAdsForPromotionAdIds, adEngine);
+				final int numAdsToDelete = googleAds.size();
+				logger.info("Will try to delete " + numAdsToDelete + " Google Ads:\n" + SemplestUtils.getEasilyReadableString(googleAds));
+				final List<Long> adIds = getAdIds(googleAds);
 				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
@@ -2724,12 +2719,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else if (AdEngine.MSN == adEngine)
 			{
+				final List<AdsObject> msnAds = getFilteredAds(nonDeletedAdsForPromotionAdIds, adEngine);
+				final int numAdsToDelete = msnAds.size();
+				logger.info("Will try to delete " + numAdsToDelete + " MSN Ads:\n" + SemplestUtils.getEasilyReadableString(msnAds));
 				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 				final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
 				final Long accountId = adEngineData.getAccountID();
 				final Long adGroupId = adEngineData.getAdGroupID();
-				for (final AdsObject ad : nonDeletedAdsForPromotionAdIds)
+				for (final AdsObject ad : msnAds)
 				{
 					final Long msnAdID = ad.getAdEngineAdID();
 					msn.deleteAdById(accountId, adGroupId, msnAdID);
