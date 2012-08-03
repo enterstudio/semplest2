@@ -3689,11 +3689,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		*/
 		try
 		{
-			if (geoTargetVsTypeMap == null || geoTargetVsTypeMap.isEmpty())
-			{
-				logger.info("No GeoTarget data to deal with");
-				return true;
-			}
 			removeAllGeoLocations(accountId, campaignId);
 			addGeoLocations(accountId, campaignId, geoTargetVsTypeMap);			
 		}
@@ -3810,6 +3805,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		final String operationDescription = "Add Geo Locations for AccountID [" + accountId + "], CampaignID [" + campaignId + "], " + geoTargetVsTypeMap.size() + " Geo Locations";
 		logger.info("Will try to " + operationDescription);
+		if (geoTargetVsTypeMap.isEmpty())
+		{
+			logger.info("No GeoTarget data to add");
+			return;
+		}
 		final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
 		final CampaignCriterionServiceInterface campaignCriterionService;
 		try
