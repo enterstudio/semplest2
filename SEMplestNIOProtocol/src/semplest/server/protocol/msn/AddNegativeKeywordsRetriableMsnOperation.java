@@ -2,6 +2,7 @@ package semplest.server.protocol.msn;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +25,9 @@ public class AddNegativeKeywordsRetriableMsnOperation extends AbstractRetriableM
 	private final ICampaignManagementService campaignManagement;
 	private final SetNegativeKeywordsToCampaignsRequest request;
 	private final Map<Integer, String> filteredOutKeywordPkToCommentMap = new HashMap<Integer, String>();
-	private final Map<CampaignNegativeKeywords, Integer> keywordToPkMap;
+	private final Map<String, Integer> keywordToPkMap;
 	
-	public AddNegativeKeywordsRetriableMsnOperation(final ICampaignManagementService campaignManagement, final SetNegativeKeywordsToCampaignsRequest request, final Map<CampaignNegativeKeywords, Integer> keywordToPkMap, final Integer maxRetries)
+	public AddNegativeKeywordsRetriableMsnOperation(final ICampaignManagementService campaignManagement, final SetNegativeKeywordsToCampaignsRequest request, final Map<String, Integer> keywordToPkMap, final Integer maxRetries)
 	{
 		super(maxRetries);
 		this.campaignManagement = campaignManagement;
@@ -47,7 +48,18 @@ public class AddNegativeKeywordsRetriableMsnOperation extends AbstractRetriableM
 	@Override
 	protected SetNegativeKeywordsToCampaignsResponse porformCustomOperation() throws AdApiFaultDetail, EditorialApiFaultDetail, RemoteException
 	{
-		logger.info("Will try to add " + request.getCampaignNegativeKeywords().length + " Negative Keywords");
+		Integer numNegativeKeywords = 0;
+		final CampaignNegativeKeywords[] campaignNegativeKeywords = request.getCampaignNegativeKeywords();
+		final List<CampaignNegativeKeywords> campaignNegativeKeywordsList = Arrays.asList(campaignNegativeKeywords);
+		for (final CampaignNegativeKeywords campaignNegativeKeyword : campaignNegativeKeywordsList)
+		{
+			final String[] negativeKeywords = campaignNegativeKeyword.getNegativeKeywords();
+			if (negativeKeywords != null)
+			{
+				numNegativeKeywords += negativeKeywords.length;
+			}
+		}
+		logger.info("Will try to add " + numNegativeKeywords + " Negative Keywords");
 		return campaignManagement.setNegativeKeywordsToCampaigns(request);
 	}
 	
@@ -59,15 +71,20 @@ public class AddNegativeKeywordsRetriableMsnOperation extends AbstractRetriableM
 		for (int i = 0; i < keywords.length; ++i)
 		{
 			final CampaignNegativeKeywords currentKeyword = keywords[i];
-			if (!indexToCommentMap.containsKey(i))
+			final String[] negativeKeywords = currentKeyword.getNegativeKeywords();
+			for (int j = 0; j < negativeKeywords.length; ++j)
 			{
-				filteredKeywords.add(currentKeyword);
-			}
-			else
-			{
-				final String comment = indexToCommentMap.get(i);
-				final Integer keyworkPk = keywordToPkMap.get(currentKeyword);
-				filteredOutKeywordPkToCommentMap.put(keyworkPk, comment);
+				final String currentNegativeKeyword = negativeKeywords[j];
+				if (!indexToCommentMap.containsKey(j))
+				{
+					filteredKeywords.add(currentKeyword);
+				}
+				else
+				{
+					final String comment = indexToCommentMap.get(j);
+					final Integer keywordPk = keywordToPkMap.get(currentNegativeKeyword);
+					filteredOutKeywordPkToCommentMap.put(keywordPk, comment);
+				}
 			}
 		}
 		final CampaignNegativeKeywords[] filteredKeywordArray = filteredKeywords.toArray(new CampaignNegativeKeywords[filteredKeywords.size()]);

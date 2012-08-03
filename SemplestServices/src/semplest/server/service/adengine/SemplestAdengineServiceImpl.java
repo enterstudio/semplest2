@@ -138,9 +138,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
-			final List<Integer> keywordIds = Arrays.asList(160604);
+			final List<Integer> keywordIds = Arrays.asList(160604, 161089);
 			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN);
 			adEng.DeleteNegativeKeywords(228, keywordIds, adEngines);
+			//final KeywordIdRemoveOppositePair pair1 = new KeywordIdRemoveOppositePair(160604, false);
+			//final KeywordIdRemoveOppositePair pair2 = new KeywordIdRemoveOppositePair(161089, false);
+			//adEng.AddNegativeKeywords(228, Arrays.asList(pair1, pair2), adEngines);
 			
 			//final KeywordIdRemoveOppositePair pair = new KeywordIdRemoveOppositePair(160604, false); 
 			//adEng.AddNegativeKeywords(228, Arrays.asList(pair), Arrays.asList(AdEngine.MSN, AdEngine.Google));
@@ -547,11 +550,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.info("Out of " + existingNegativeKeywordsInSemplest.size() + " Negative Keywords that exist, we'll remove " + existingNegativeKeywordsInSemplestToRemove.size() + " Negative Keywords, which should result in remaining " + existingNegativeKeywordsInSemplestThatShouldRemain.size() + " Negative Keywords\nExisting Negative Keywords:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplest) + "\nNegative Keywords To Remove:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove) + "\nNegative Keywords That Should Remain:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestThatShouldRemain));
 				final Map<String, Integer> negativeKeywordToPkMap = getKywordToPkMap(existingNegativeKeywordsInSemplestThatShouldRemain);
 				final Map<Integer, String> filteredPkToCommentMap = msn.setNegativeKeywords(accountId, campaignId, negativeKeywordToPkMap);
-				if (!filteredPkToCommentMap.isEmpty())
-				{
-					logger.info(filteredPkToCommentMap.size() + " negative keywords were rejected by MSN.  Map of KeywordPK <-> Reject Comment from MSN:\n" + SemplestUtils.getEasilyReadableString(filteredPkToCommentMap));
-					SemplestDB.removeKeywordFromAdEngine(filteredPkToCommentMap, promotionID, adEngine);
-				}
 			}
 			else
 			{
@@ -559,6 +557,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
 			}
+		}
+		for (final AdEngine adEngine : adEngines)
+		{
+			final Map<Integer, String> filteredPkToCommentMap =  new HashMap<Integer, String>();
+			for (final Integer keywordId : keywordIds)
+			{
+				filteredPkToCommentMap.put(keywordId, "Deleted by user");
+			}
+			SemplestDB.removeKeywordFromAdEngine(filteredPkToCommentMap, promotionID, adEngine);
 		}
 		if (!errorMap.isEmpty())
 		{

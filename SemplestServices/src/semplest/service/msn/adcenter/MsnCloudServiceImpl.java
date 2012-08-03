@@ -2246,37 +2246,27 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			final Map<String, Integer> negKeywordToPkMap = new HashMap<String, Integer>();
+			final List<String> negativeKeywordList = new ArrayList<String>();
 			if (!negativeKeywordToPkMap.isEmpty())
-			{
+			{				
 				final Set<Entry<String, Integer>> entrySet = negativeKeywordToPkMap.entrySet();
 				for (final Entry<String, Integer> entry : entrySet)
 				{
 					final String negativeKeyword = entry.getKey();
 					final Integer pk = entry.getValue();
-					final String[] negativeKeywordsArray = new String[]{negativeKeyword};
-					final CampaignNegativeKeywords campaignNegativeKeywords = new CampaignNegativeKeywords(campaignId, negativeKeywordsArray);
-					final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[]{campaignNegativeKeywords};
-					final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
-					final Map<CampaignNegativeKeywords, Integer> negKeywordToPkMap = new HashMap<CampaignNegativeKeywords, Integer>();
-					negKeywordToPkMap.put(campaignNegativeKeywords, pk);
-					final AddNegativeKeywordsRetriableMsnOperation operation = new AddNegativeKeywordsRetriableMsnOperation(campaignManagement, request, negKeywordToPkMap, SemplestUtils.DEFAULT_RETRY_COUNT);
-					operation.performOperation();
-					final Map<Integer, String> currentFilteredPkToCommentMap = operation.getFilteredOutKeywordPkToCommentMap();
-					filteredPkToCommentMap.putAll(currentFilteredPkToCommentMap);
+					negativeKeywordList.add(negativeKeyword);	
+					negKeywordToPkMap.put(negativeKeyword, pk);
 				}
 			}
-			else
-			{
-				final String[] negativeKeywordsArray = new String[]{};
-				final CampaignNegativeKeywords campaignNegativeKeywords = new CampaignNegativeKeywords(campaignId, negativeKeywordsArray);
-				final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[]{campaignNegativeKeywords};				
-				final Map<CampaignNegativeKeywords, Integer> negKeywordToPkMap = new HashMap<CampaignNegativeKeywords, Integer>();
-				final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
-				final AddNegativeKeywordsRetriableMsnOperation operation = new AddNegativeKeywordsRetriableMsnOperation(campaignManagement, request, negKeywordToPkMap, SemplestUtils.DEFAULT_RETRY_COUNT);
-				operation.performOperation();
-				final Map<Integer, String> currentFilteredPkToCommentMap = operation.getFilteredOutKeywordPkToCommentMap();
-				filteredPkToCommentMap.putAll(currentFilteredPkToCommentMap);
-			}			
+			final String[] negativeKeywordsArray = negativeKeywordList.toArray(new String[negativeKeywordList.size()]);
+			final CampaignNegativeKeywords campaignNegativeKeywords = new CampaignNegativeKeywords(campaignId, negativeKeywordsArray);
+			final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[]{campaignNegativeKeywords};				
+			final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
+			final AddNegativeKeywordsRetriableMsnOperation operation = new AddNegativeKeywordsRetriableMsnOperation(campaignManagement, request, negKeywordToPkMap, SemplestUtils.DEFAULT_RETRY_COUNT);
+			operation.performOperation();
+			final Map<Integer, String> currentFilteredPkToCommentMap = operation.getFilteredOutKeywordPkToCommentMap();
+			filteredPkToCommentMap.putAll(currentFilteredPkToCommentMap);			
 			return filteredPkToCommentMap;
 		}
 		catch (AdApiFaultDetail e)
