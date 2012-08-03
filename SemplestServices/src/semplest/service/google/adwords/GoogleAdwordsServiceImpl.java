@@ -4199,8 +4199,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final List<CampaignCriterionOperation> operationList = new ArrayList<CampaignCriterionOperation>();
 		if (!stateGeoTargets.isEmpty())
 		{
+			logger.info("Not validating state geo targets");
+			/*
 			final List<CampaignCriterionOperation> geoTargetOperations = getStateGeoTargetOperations(validationCampaignId, stateGeoTargets, Operator.ADD);
 			operationList.addAll(geoTargetOperations);
+			*/
 		}
 		if (!geoPointGeoTargets.isEmpty())
 		{
