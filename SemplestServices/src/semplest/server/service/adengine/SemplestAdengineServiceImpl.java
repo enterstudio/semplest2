@@ -139,7 +139,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			
-			adEng.UpdateAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			//final KeywordIdRemoveOppositePair pair = new KeywordIdRemoveOppositePair(160604, false); 
+			//adEng.AddNegativeKeywords(228, Arrays.asList(pair), Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			//adEng.DeleteNegativeKeywords(228, Arrays.asList(160604), Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			//adEng.UpdateAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
 			//adEng.AddAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
 /*			
 			final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
