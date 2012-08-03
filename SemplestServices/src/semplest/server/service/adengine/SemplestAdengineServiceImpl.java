@@ -138,6 +138,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
+			final List<Integer> keywordIds = Arrays.asList(160604);
+			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN);
+			adEng.DeleteNegativeKeywords(228, keywordIds, adEngines);
 			
 			//final KeywordIdRemoveOppositePair pair = new KeywordIdRemoveOppositePair(160604, false); 
 			//adEng.AddNegativeKeywords(228, Arrays.asList(pair), Arrays.asList(AdEngine.MSN, AdEngine.Google));
@@ -532,9 +535,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else if (AdEngine.MSN == adEngine)
 			{
-				final String errMsg = "MSN doesn't support deleting negative keywords directly.  You need to simply call the AddNegativeKeywords with the keywords that should reamins (MSN will delete the rest).";
-				logger.error(errMsg);
-				errorMap.put(adEngine, errMsg);
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+				final Long accountId = adEngineData.getAccountID();
+				final Long campaignId = adEngineData.getCampaignID();
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				final List<KeywordProbabilityObject> existingKeywordsInSemplest = SemplestDB.getKeywordProbObj(promotionID, false, true);
+				final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplest = getKeywordProbabilities(existingKeywordsInSemplest, true);
+				final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplestToRemove = getKeywordProbabilitiesForKeywordIds(existingNegativeKeywordsInSemplest, keywordIds);
+				logger.info("Out of " + keywordIds.size() + " Keyword Ids [" + keywordIds + "] that we're supposed to delete, found these " + existingNegativeKeywordsInSemplestToRemove.size() + " Keywords within Semplest\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove));
+				final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplestThatShouldRemain = getKeywordProbabilities(existingNegativeKeywordsInSemplest, existingNegativeKeywordsInSemplestToRemove);
+				logger.info("Out of " + existingNegativeKeywordsInSemplest.size() + " Negative Keywords that exist, we'll remove " + existingNegativeKeywordsInSemplestToRemove.size() + " Negative Keywords, which should result in remaining " + existingNegativeKeywordsInSemplestThatShouldRemain.size() + " Negative Keywords\nExisting Negative Keywords:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplest) + "\nNegative Keywords To Remove:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove) + "\nNegative Keywords That Should Remain:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestThatShouldRemain));
+				final Map<String, Integer> negativeKeywordToPkMap = getKywordToPkMap(existingNegativeKeywordsInSemplestThatShouldRemain);
+				final Map<Integer, String> filteredPkToCommentMap = msn.setNegativeKeywords(accountId, campaignId, negativeKeywordToPkMap);
+				if (!filteredPkToCommentMap.isEmpty())
+				{
+					logger.info(filteredPkToCommentMap.size() + " negative keywords were rejected by MSN.  Map of KeywordPK <-> Reject Comment from MSN:\n" + SemplestUtils.getEasilyReadableString(filteredPkToCommentMap));
+					SemplestDB.removeKeywordFromAdEngine(filteredPkToCommentMap, promotionID, adEngine);
+				}
 			}
 			else
 			{
@@ -550,6 +567,33 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new Exception(errMsg);
 		}
 		return true;
+	}
+	
+	public static List<KeywordProbabilityObject> getKeywordProbabilities(final List<KeywordProbabilityObject> keywords, final List<KeywordProbabilityObject> keywordsToRemove)
+	{
+		final List<KeywordProbabilityObject> result = new ArrayList<KeywordProbabilityObject>();
+		for (final KeywordProbabilityObject keyword : keywords)
+		{
+			if (!keywordsToRemove.contains(keyword))
+			{
+				result.add(keyword);
+			}
+		}
+		return result;
+	}
+	
+	public static List<KeywordProbabilityObject> getKeywordsForText(final List<KeywordProbabilityObject> keywordProbabilities, final List<String> keywordStrings)
+	{
+		final List<KeywordProbabilityObject> result = new ArrayList<KeywordProbabilityObject>();
+		for (final KeywordProbabilityObject probability : keywordProbabilities)
+		{
+			final String text = probability.getKeyword();
+			if (keywordStrings.contains(text))
+			{
+				result.add(probability);
+			}
+		}
+		return result;
 	}
 
 	public String DeleteKeywords(String json) throws Exception

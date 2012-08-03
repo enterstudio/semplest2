@@ -1418,7 +1418,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignCriterionOperation[] negativeKeywordOperations = operations.toArray(new CampaignCriterionOperation[operations.size()]);
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 			final CampaignCriterionMutateRetriableGoogleOperation retriableGoogleOperation = new CampaignCriterionMutateRetriableGoogleOperation(campaignCriterionService, negativeKeywordOperations, SemplestUtils.DEFAULT_RETRY_COUNT);
-			final CampaignCriterionReturnValue result = retriableGoogleOperation.performOperation();
+			final CampaignCriterionReturnValue result = retriableGoogleOperation.performOperation();			
 			if (result != null && result.getValue() != null)
 			{
 				final CampaignCriterion[] campaignCriterions = result.getValue();

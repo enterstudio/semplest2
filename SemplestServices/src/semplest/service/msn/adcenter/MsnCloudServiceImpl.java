@@ -70,6 +70,7 @@ import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
@@ -171,15 +172,25 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			final Long adGroupID = 709890649L;
 			final Long campaignID = 110207618L;
 			/*
+			final Map<String, Integer> negativeKeywordToPkMap = new HashMap<String, Integer>();
+			negativeKeywordToPkMap.put("tintinabulatin", 160604);
+			msn.setNegativeKeywords(accountIdLong, campaignID, negativeKeywordToPkMap);
+			*/
+			/*
 			 * final UpdateAdRequest updRequest = new UpdateAdRequest(1525522391L, "Some new headline4", "new desc 14", " new desc 24",
 			 * "www.Fareed.com", "http://www.Fareed.com", 700); final List<UpdateAdRequest> updateRequests = Arrays.asList(updRequest); final
 			 * UpdateAdsRequestObj updateRequest = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests); msn.updateAllAdById(updateRequest);
 			 */
+			
+			/*
 			final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = new HashMap<GeoTargetObject, GeoTargetType>();
 			final GeoTargetObject g1 = new GeoTargetObject();
 			g1.setState("NJ");
 			geoTargetVsTypeMap.put(g1, GeoTargetType.STATE);
 			msn.updateGeoTargets(accountIdLong, campaignID, geoTargetVsTypeMap);
+			*/
+			
+			
 
 			/*
 			 * DateTime firstDay = new DateTime(2011,1,1,0,0,0,0); DateTime lastDay = new DateTime(2012,8,30,0,0,0,0); ReportObject[] ret =
@@ -2235,22 +2246,37 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		try
 		{
 			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			final Set<Entry<String, Integer>> entrySet = negativeKeywordToPkMap.entrySet();
-			for (final Entry<String, Integer> entry : entrySet)
+			if (!negativeKeywordToPkMap.isEmpty())
 			{
-				final String negativeKeyword = entry.getKey();
-				final Integer pk = entry.getValue();
-				final String[] negativeKeywordsArray = new String[] { negativeKeyword };
+				final Set<Entry<String, Integer>> entrySet = negativeKeywordToPkMap.entrySet();
+				for (final Entry<String, Integer> entry : entrySet)
+				{
+					final String negativeKeyword = entry.getKey();
+					final Integer pk = entry.getValue();
+					final String[] negativeKeywordsArray = new String[]{negativeKeyword};
+					final CampaignNegativeKeywords campaignNegativeKeywords = new CampaignNegativeKeywords(campaignId, negativeKeywordsArray);
+					final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[]{campaignNegativeKeywords};
+					final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
+					final Map<CampaignNegativeKeywords, Integer> negKeywordToPkMap = new HashMap<CampaignNegativeKeywords, Integer>();
+					negKeywordToPkMap.put(campaignNegativeKeywords, pk);
+					final AddNegativeKeywordsRetriableMsnOperation operation = new AddNegativeKeywordsRetriableMsnOperation(campaignManagement, request, negKeywordToPkMap, SemplestUtils.DEFAULT_RETRY_COUNT);
+					operation.performOperation();
+					final Map<Integer, String> currentFilteredPkToCommentMap = operation.getFilteredOutKeywordPkToCommentMap();
+					filteredPkToCommentMap.putAll(currentFilteredPkToCommentMap);
+				}
+			}
+			else
+			{
+				final String[] negativeKeywordsArray = new String[]{};
 				final CampaignNegativeKeywords campaignNegativeKeywords = new CampaignNegativeKeywords(campaignId, negativeKeywordsArray);
-				final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[] { campaignNegativeKeywords };
-				final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
+				final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[]{campaignNegativeKeywords};				
 				final Map<CampaignNegativeKeywords, Integer> negKeywordToPkMap = new HashMap<CampaignNegativeKeywords, Integer>();
-				negKeywordToPkMap.put(campaignNegativeKeywords, pk);
+				final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
 				final AddNegativeKeywordsRetriableMsnOperation operation = new AddNegativeKeywordsRetriableMsnOperation(campaignManagement, request, negKeywordToPkMap, SemplestUtils.DEFAULT_RETRY_COUNT);
 				operation.performOperation();
 				final Map<Integer, String> currentFilteredPkToCommentMap = operation.getFilteredOutKeywordPkToCommentMap();
 				filteredPkToCommentMap.putAll(currentFilteredPkToCommentMap);
-			}
+			}			
 			return filteredPkToCommentMap;
 		}
 		catch (AdApiFaultDetail e)
@@ -2454,11 +2480,51 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		}
 		return gson.toJson(ret);
 	}
+	
+	
+	public List<String> getNegativeKeywordByCampaignId(Long accountId, Long campaignID) throws MsnCloudException
+	{
+		final String operationDescription = "Get Negative Keywords By Campaign ID for AccountID [" + accountId + "], CampaignID [" + campaignID + "]";
+		logger.info("Will try to " + operationDescription);
+		try
+		{
+			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			final long[] campaignIds = new long[]{campaignID};
+			final GetNegativeKeywordsByCampaignIdsRequest request = new GetNegativeKeywordsByCampaignIdsRequest(accountId, campaignIds);
+			final GetNegativeKeywordsByCampaignIdsResponse response = campaignManagement.getNegativeKeywordsByCampaignIds(request);
+			final CampaignNegativeKeywords[] negativeKeywords = response.getCampaignNegativeKeywords();
+			final List<String> negativeKeywordList = new ArrayList<String>();
+			for (final CampaignNegativeKeywords negativeKeyword : negativeKeywords)
+			{
+				final String[] negativeKeywordArray = negativeKeyword.getNegativeKeywords();
+				final List<String> currentNegativeKeywordList = Arrays.asList(negativeKeywordArray);
+				negativeKeywordList.addAll(currentNegativeKeywordList);
+			}
+			return negativeKeywordList;
+		}
+		catch (AdApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (Exception e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription, e);
+		}
+	}
+
 
 	@Override
 	public Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws MsnCloudException
 	{
-		final String operationDescription = "Create Keywords By AdGroup ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "]";
+		final String operationDescription = "Get Keywords By AdGroup ID for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "]";
 		logger.info("Will try to " + operationDescription);
 		try
 		{
@@ -2501,7 +2567,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		updateKeywordBidById(accountId, adGroupId, keywordId, matchType, bid);
 		return gson.toJson(0);
 	}
-
+	
 	@Override
 	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, MatchType matchType, Bid bid) throws MsnCloudException
 	{
