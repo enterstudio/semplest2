@@ -29,9 +29,11 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
+import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.SemplestBiddingHistory;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
@@ -44,6 +46,7 @@ import semplest.server.service.springjdbc.DefaultBidObject;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
+import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.google.adwords.LocationInfo;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
@@ -578,7 +581,7 @@ public class BidObject
 		// create a hash map for faster access
 		Map<Long,BidElement> kwIDBidElementMap = new HashMap<Long,BidElement>();
 		for(BidElement b : bidElementList){
-			if(b.getIsActive()){
+			if(b.getIsActive()){ //this check is redundant!
 				kwIDBidElementMap.put(b.getKeywordAdEngineID(), b.clone());
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + kwIDBidElementMap.get(b.getKeywordAdEngineID()));
 			}
@@ -1258,7 +1261,7 @@ public class BidObject
 			AdEngine searchEngine = AdEngine.Google;
 			
 			
-			Integer promotionID = new Integer(230);
+			Integer promotionID = new Integer(205);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
@@ -1269,6 +1272,20 @@ public class BidObject
 			
 			
 
+			
+			
+
+			
+			
+			final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
+			final List<KeywordProbabilityObject> keywordList = getKeywordForAdEngineSP.execute(promotionID.intValue(), true, true);
+			for(KeywordProbabilityObject kwP : keywordList){
+				System.out.println(kwP.getKeyword()+": "+kwP.getSemplestProbability());
+			}
+			
+			
+			
+			
 
 
 
