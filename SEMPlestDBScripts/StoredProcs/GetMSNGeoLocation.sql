@@ -38,7 +38,7 @@ BEGIN TRY
 	BEGIN
 		--Find a state
 		select @LocationID = msn.LocationID from MSNGeoLocation msn where msn.IsState = 1 and msn.MSNName = 'US-' + @State
-		select msn.Name, msn.MSNName, msn.latitude, msn.longitude from MSNGeoLocation msn where IsCity = 1 and msn.ParentSubGeographyLocationID = @LocationID  
+		select msn.Name, msn.MSNName, msn.latitude, msn.longitude from MSNGeoLocation msn where msn.IsCity = 1 and msn.ParentSubGeographyLocationID = @LocationID  
 	END
 	ELSE
 	BEGIN
@@ -46,7 +46,7 @@ BEGIN TRY
 		SET @pt = geography::STGeomFromText(@str, 4326);
 		
 		SELECT msn.Name, msn.MSNName,msn.latitude, msn.longitude from MSNGeoLocation msn
-		WHERE msn.GeogCol1.STDistance(@pt)<=(@radius * 1609.344)
+		WHERE msn.GeogCol1.STDistance(@pt)<=(@radius * 1609.344) and msn.IsCity = 1
 
 	END			 
 	
