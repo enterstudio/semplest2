@@ -1063,10 +1063,10 @@ namespace Semplest.Core.Models.Repositories
                             {
                                 //means if the keyword existied and was positive it needs to be removed and added as a negative. 
                                 //if the keyword is already negative then do nothing because we've already added it
-                                kiop.KeywordId = pka.KeywordFK;
+                                kiop.keywordId = pka.KeywordFK;
                                 if (!pka.IsNegative)
                                 {
-                                    kiop.RemoveOpposite = true;
+                                    kiop.removeOpposite = true;
                                     addKiops.Add(kiop);
                                 }
                             }
@@ -1075,8 +1075,8 @@ namespace Semplest.Core.Models.Repositories
                                 var kw = dbcontext.Keywords.SingleOrDefault(key => key.Keyword1 == negativeKeyword);
                                 if (kw != null)
                                 {
-                                    kiop.KeywordId = kw.KeywordPK;
-                                    kiop.RemoveOpposite = false;
+                                    kiop.keywordId = kw.KeywordPK;
+                                    kiop.removeOpposite = false;
                                     addKiops.Add(kiop);
                                 }
                                 else//this keyword doesn't exist in the database so when we call the stored proc get the id so it can be sent to the api
@@ -1092,8 +1092,8 @@ namespace Semplest.Core.Models.Repositories
                         {
                             var kiopDelete = new KeywordIdRemoveOppositePair
                             {
-                                KeywordId = k.Keyword.KeywordPK,
-                                RemoveOpposite = false
+                                keywordId = k.Keyword.KeywordPK,
+                                removeOpposite = false
                             };
                             addDeletedKiops.Add(kiopDelete);
                         }
@@ -1113,14 +1113,14 @@ namespace Semplest.Core.Models.Repositories
 
                         if (!string.IsNullOrEmpty(op.Value.ToString()))
                         {
-                            var kop = new KeywordIdRemoveOppositePair { KeywordId = int.Parse(op.Value.ToString()), RemoveOpposite = bool.Parse(op2.Value.ToString()) };
+                            var kop = new KeywordIdRemoveOppositePair { keywordId = int.Parse(op.Value.ToString()), removeOpposite = bool.Parse(op2.Value.ToString()) };
                             addKiops.Add(kop);
                         }
                     }
                     foreach (KeywordIdRemoveOppositePair dk in addDeletedKiops)
                     {
                         ((IObjectContextAdapter)dbcontext).ObjectContext.DeleteObject(
-                                                  promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk.KeywordId));
+                                                  promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk.keywordId));
                     }
                     dbcontext.SaveChanges();
                     _savedCampaign = true;

@@ -689,8 +689,8 @@ namespace Semplest.SharedResources.Services
 
         public class KeywordIdRemoveOppositePair
         {
-            public int KeywordId { get; set; }
-            public bool RemoveOpposite { get; set; }
+            public int keywordId { get; set; }
+            public bool removeOpposite { get; set; }
         }
 
         public class CustomerObject
