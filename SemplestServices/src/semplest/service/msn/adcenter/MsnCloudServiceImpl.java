@@ -3231,25 +3231,25 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 
 			// add latest geo targets
 			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();
-			final List<MetroAreaTargetBid> bids = new ArrayList<MetroAreaTargetBid>();						
+			final List<CityTargetBid> bids = new ArrayList<CityTargetBid>();						
 			for (final MSNGeotargetObject msnGeoTarget : msnGeoTargets)
 			{
 				final String msnName = msnGeoTarget.getMSNName();
-				final MetroAreaTargetBid bid = new MetroAreaTargetBid(IncrementalBidPercentage.ZeroPercent, msnName);
+				final CityTargetBid bid = new CityTargetBid(msnName, IncrementalBidPercentage.ZeroPercent);
 				bids.add(bid);
 			}			
 			final Target target = new Target();
 			final LocationTarget location = new LocationTarget();
-			logger.info("Prepared " + bids.size() + " MetroArea Target Bids");
+			logger.info("Prepared " + bids.size() + " City Target Bids");
 			if (bids.isEmpty())
 			{
 				logger.info("No Targets were generated, so doing nothing");
 				return true;
 			}
-			final MetroAreaTarget metroAreaTarget = new MetroAreaTarget();
-			final MetroAreaTargetBid[] metroAreaTargetBidArray = bids.toArray(new MetroAreaTargetBid[bids.size()]);
-			metroAreaTarget.setBids(metroAreaTargetBidArray);
-			location.setMetroAreaTarget(metroAreaTarget);			
+			final CityTarget cityTarget = new CityTarget();
+			final CityTargetBid[] cityTargetBidArray = bids.toArray(new CityTargetBid[bids.size()]);
+			cityTarget.setBids(cityTargetBidArray);
+			location.setCityTarget(cityTarget);			
 			target.setLocation(location);
 			final Target[] targetArray = new Target[]{target};
 			addRequest.setTargets(targetArray);
