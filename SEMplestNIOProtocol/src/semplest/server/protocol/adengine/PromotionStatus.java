@@ -2,19 +2,26 @@ package semplest.server.protocol.adengine;
 
 public enum PromotionStatus
 {
-	PENDING (1, "Pending"),
-	LIVE    (2, "Live"),
-	PAUSED  (3, "Paused"),
-	ENDED   (4, "Live"),
-	DELETED (5, "Deleted");
+	PENDING (1, "Pending", false),
+	LIVE    (2, "Live", true),
+	PAUSED  (3, "Paused", true),
+	ENDED   (4, "Ended", false),
+	DELETED (5, "Deleted", false);
 	
 	private final Integer pk;
 	private final String name;
+	private final Boolean isActionableInAdEngine;
 	
-	PromotionStatus(final Integer pk, final String name)
+	PromotionStatus(final Integer pk, final String name, final Boolean isActionableInAdEngine)
 	{
 		this.pk = pk;
 		this.name = name;
+		this.isActionableInAdEngine = isActionableInAdEngine;
+	}
+	
+	public Boolean isActionableInAdEngine()
+	{
+		return isActionableInAdEngine;
 	}
 
 	public Integer getPk()

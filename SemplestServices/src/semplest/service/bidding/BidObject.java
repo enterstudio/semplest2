@@ -1279,6 +1279,7 @@ public class BidObject
 			
 			final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 			final List<KeywordProbabilityObject> keywordList = getKeywordForAdEngineSP.execute(promotionID.intValue(), true, true);
+			SemplestUtils.filterOutDeletedKeywords(keywordList);
 			for(KeywordProbabilityObject kwP : keywordList){
 				System.out.println(kwP.getKeyword()+": "+kwP.getSemplestProbability());
 			}

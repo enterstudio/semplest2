@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,6 +27,7 @@ import semplest.server.protocol.RegistrationLinkDecryptedInfo;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.GeoTargetType;
+import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleViolation;
@@ -142,6 +144,18 @@ public final class SemplestUtils
 	public static final String DATE_TIME = "DATE_TIME";
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
+	
+	public static void filterOutDeletedKeywords(final List<KeywordProbabilityObject> keywords)
+	{
+		for (final Iterator<KeywordProbabilityObject> i = keywords.iterator(); i.hasNext();)
+		{
+			final KeywordProbabilityObject currentKeyword = i.next();
+			if (currentKeyword.getIsDeleted() == true)
+			{
+				i.remove();
+			}
+		}
+	}
 	
 	public static String getStackTraceString(final Throwable t)
 	{

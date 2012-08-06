@@ -19,9 +19,49 @@ import semplest.server.protocol.CustomerType;
 import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.EmailType;
 import semplest.server.protocol.RegistrationLinkDecryptedInfo;
+import semplest.server.protocol.adengine.KeywordProbabilityObject;
 
 public class TestSemplestUtils
 {
+	@Test
+	public void testFilterOutDeletedKeywords() throws Exception
+	{ 
+		final KeywordProbabilityObject keywordNonDeleted1 = new KeywordProbabilityObject();
+		keywordNonDeleted1.setIsActive(true);
+		keywordNonDeleted1.setIsDeleted(false);
+		keywordNonDeleted1.setIsNegative(false);
+		keywordNonDeleted1.setIsTargetGoogle(true);
+		keywordNonDeleted1.setIsTargetMSN(true);
+		keywordNonDeleted1.setKeyword("asdasdsad");
+		keywordNonDeleted1.setKeywordPK(123);
+		keywordNonDeleted1.setSemplestProbability(0.5);
+		final KeywordProbabilityObject keywordNonDeleted2 = new KeywordProbabilityObject();
+		keywordNonDeleted2.setIsActive(true);
+		keywordNonDeleted2.setIsDeleted(false);
+		keywordNonDeleted2.setIsNegative(true);
+		keywordNonDeleted2.setIsTargetGoogle(true);
+		keywordNonDeleted2.setIsTargetMSN(true);
+		keywordNonDeleted2.setKeyword("table");
+		keywordNonDeleted2.setKeywordPK(124);
+		keywordNonDeleted2.setSemplestProbability(0.75);
+		final KeywordProbabilityObject keywordDeleted = new KeywordProbabilityObject();
+		keywordDeleted.setIsActive(true);
+		keywordDeleted.setIsDeleted(true);
+		keywordDeleted.setIsNegative(true);
+		keywordDeleted.setIsTargetGoogle(true);
+		keywordDeleted.setIsTargetMSN(true);
+		keywordDeleted.setKeyword("chair");
+		keywordDeleted.setKeywordPK(125);
+		keywordDeleted.setSemplestProbability(0.75);
+		final List<KeywordProbabilityObject> keywords = new ArrayList<KeywordProbabilityObject>();
+		keywords.add(keywordNonDeleted1);
+		keywords.add(keywordDeleted);
+		keywords.add(keywordNonDeleted2);
+		final List<KeywordProbabilityObject> expectedResultKeywords = Arrays.asList(keywordNonDeleted1, keywordNonDeleted2);
+		SemplestUtils.filterOutDeletedKeywords(keywords);
+		Assert.assertEquals(expectedResultKeywords, keywords);
+	}
+
 	@Test
 	public void testGetCustomerType_Child() throws Exception
 	{

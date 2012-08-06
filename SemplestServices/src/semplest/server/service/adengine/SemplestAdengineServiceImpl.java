@@ -361,6 +361,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					storeAdGroupData(advertisingEngine, campaignID, adGroupData);
 					// Keywords
 					final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, advertisingEngine == AdEngine.Google, advertisingEngine == AdEngine.MSN);
+					SemplestUtils.filterOutDeletedKeywords(keywordList);
 					emailMessageSB.append("\t").append("Keywords").append("\n");
 					final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 					emailMessageSB.append("\t\t").append("Match Type: ").append(semplestMatchType).append("\n");
@@ -523,33 +524,49 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (AdEngine.Google == adEngine)
 			{
-				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
-				final String accountId = "" + adEngineData.getAccountID();
-				final Long campaignId = adEngineData.getCampaignID();
-				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
-				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
-				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
-				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
-				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, true, false);
-				final List<String> keywords = getKeywords(keywordProbabilities, keywordIds);
-				logger.info("Generated " + keywords.size() + " Keyword strings out of " + keywordProbabilities.size() + " KeywordProbabilities that were found in database");
-				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
-				googleAdwordsService.deleteNegativeKeywords(accountId, campaignId, keywords, keywordMatchType);
+				final PromotionStatus promotionStatusForGoogle = SemplestDB.getPromotionStatus(promotionID, adEngine);
+				if (promotionStatusForGoogle.isActionableInAdEngine())
+				{				
+					final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+					final String accountId = "" + adEngineData.getAccountID();
+					final Long campaignId = adEngineData.getCampaignID();
+					final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
+					final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
+					final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
+					final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
+					final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, true, false);
+					final List<String> keywords = getKeywords(keywordProbabilities, keywordIds);
+					logger.info("Generated " + keywords.size() + " Keyword strings out of " + keywordProbabilities.size() + " KeywordProbabilities that were found in database");
+					final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
+					googleAdwordsService.deleteNegativeKeywords(accountId, campaignId, keywords, keywordMatchType);
+				}
+				else
+				{
+					logger.info("Taking no action because Promotion's Status [" + promotionStatusForGoogle + "] is not actionable in Google");	
+				}
 			}
 			else if (AdEngine.MSN == adEngine)
 			{
-				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
-				final Long accountId = adEngineData.getAccountID();
-				final Long campaignId = adEngineData.getCampaignID();
-				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-				final List<KeywordProbabilityObject> existingKeywordsInSemplest = SemplestDB.getKeywordProbObj(promotionID, false, true);
-				final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplest = getKeywordProbabilities(existingKeywordsInSemplest, true);
-				final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplestToRemove = getKeywordProbabilitiesForKeywordIds(existingNegativeKeywordsInSemplest, keywordIds);
-				logger.info("Out of " + keywordIds.size() + " Keyword Ids [" + keywordIds + "] that we're supposed to delete, found these " + existingNegativeKeywordsInSemplestToRemove.size() + " Keywords within Semplest\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove));
-				final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplestThatShouldRemain = getKeywordProbabilities(existingNegativeKeywordsInSemplest, existingNegativeKeywordsInSemplestToRemove);
-				logger.info("Out of " + existingNegativeKeywordsInSemplest.size() + " Negative Keywords that exist, we'll remove " + existingNegativeKeywordsInSemplestToRemove.size() + " Negative Keywords, which should result in remaining " + existingNegativeKeywordsInSemplestThatShouldRemain.size() + " Negative Keywords\nExisting Negative Keywords:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplest) + "\nNegative Keywords To Remove:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove) + "\nNegative Keywords That Should Remain:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestThatShouldRemain));
-				final Map<String, Integer> negativeKeywordToPkMap = getKywordToPkMap(existingNegativeKeywordsInSemplestThatShouldRemain);
-				final Map<Integer, String> filteredPkToCommentMap = msn.setNegativeKeywords(accountId, campaignId, negativeKeywordToPkMap);
+				final PromotionStatus promotionStatusForMSN = SemplestDB.getPromotionStatus(promotionID, adEngine);
+				if (promotionStatusForMSN.isActionableInAdEngine())
+				{		
+					final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+					final Long accountId = adEngineData.getAccountID();
+					final Long campaignId = adEngineData.getCampaignID();
+					final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+					final List<KeywordProbabilityObject> existingKeywordsInSemplest = SemplestDB.getKeywordProbObj(promotionID, false, true);
+					final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplest = getKeywordProbabilities(existingKeywordsInSemplest, true);
+					final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplestToRemove = getKeywordProbabilitiesForKeywordIds(existingNegativeKeywordsInSemplest, keywordIds);
+					logger.info("Out of " + keywordIds.size() + " Keyword Ids [" + keywordIds + "] that we're supposed to delete, found these " + existingNegativeKeywordsInSemplestToRemove.size() + " Keywords within Semplest\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove));
+					final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplestThatShouldRemain = getKeywordProbabilities(existingNegativeKeywordsInSemplest, existingNegativeKeywordsInSemplestToRemove);
+					logger.info("Out of " + existingNegativeKeywordsInSemplest.size() + " Negative Keywords that exist, we'll remove " + existingNegativeKeywordsInSemplestToRemove.size() + " Negative Keywords, which should result in remaining " + existingNegativeKeywordsInSemplestThatShouldRemain.size() + " Negative Keywords\nExisting Negative Keywords:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplest) + "\nNegative Keywords To Remove:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove) + "\nNegative Keywords That Should Remain:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestThatShouldRemain));
+					final Map<String, Integer> negativeKeywordToPkMap = getKywordToPkMap(existingNegativeKeywordsInSemplestThatShouldRemain);
+					final Map<Integer, String> filteredPkToCommentMap = msn.setNegativeKeywords(accountId, campaignId, negativeKeywordToPkMap);
+				}
+				else
+				{
+					logger.info("Taking no action because Promotion's Status [" + promotionStatusForMSN + "] is not actionable in MSN");	
+				}
 			}
 			else
 			{
@@ -658,45 +675,61 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (AdEngine.Google == adEngine)
 			{
-				final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
-				final String accountId = "" + adEngineData.getAccountID();
-				final Long adGroupID = adEngineData.getAdGroupID();
-				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, true, false);
-				final List<String> keywords = getKeywords(keywordProbabilities, keywordIds);
-				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
-				googleAdwordsService.deleteKeyWords(accountId, adGroupID, keywords);
+				final PromotionStatus promotionStatusForGoogle = SemplestDB.getPromotionStatus(promotionID, adEngine);
+				if (promotionStatusForGoogle.isActionableInAdEngine())
+				{
+					final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
+					final String accountId = "" + adEngineData.getAccountID();
+					final Long adGroupID = adEngineData.getAdGroupID();
+					final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, true, false);
+					final List<String> keywords = getKeywords(keywordProbabilities, keywordIds);
+					final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
+					googleAdwordsService.deleteKeyWords(accountId, adGroupID, keywords);
+				}
+				else
+				{
+					logger.info("Taking no action because Promotion's Status [" + promotionStatusForGoogle + "] is not actionable in Google");
+				}
 			}
 			else if (AdEngine.MSN == adEngine)
 			{
-				final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
-				final Long accountId = adEngineData.getAccountID();
-				final Long adGroupId = adEngineData.getAdGroupID();
-				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, false, true);
-				final List<KeywordProbabilityObject> keywordProbabilitiesForKeywordIds = getKeywordProbabilitiesForKeywordIds(keywordProbabilities, keywordIds);
-				logger.info("Out of the following " + keywordProbabilities.size() + " KeywordProbabilities, found " + keywordProbabilitiesForKeywordIds.size() + " for KeywordIds [" + keywordIds + "]");
-				final List<BidElement> bids = SemplestDB.getLatestBids(promotionID, adEngine);
-				final List<Long> msnKeywordIds = new ArrayList<Long>();
-				for (final KeywordProbabilityObject keywordProbability : keywordProbabilitiesForKeywordIds)
+				final PromotionStatus promotionStatusForMSN = SemplestDB.getPromotionStatus(promotionID, adEngine);
+				if (promotionStatusForMSN.isActionableInAdEngine())
 				{
-					final String kpText = keywordProbability.getKeyword();
-					for (final BidElement bid : bids)
+					final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
+					final Long accountId = adEngineData.getAccountID();
+					final Long adGroupId = adEngineData.getAdGroupID();
+					final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+					final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, false, true);
+					final List<KeywordProbabilityObject> keywordProbabilitiesForKeywordIds = getKeywordProbabilitiesForKeywordIds(keywordProbabilities, keywordIds);
+					logger.info("Out of the following " + keywordProbabilities.size() + " KeywordProbabilities, found " + keywordProbabilitiesForKeywordIds.size() + " for KeywordIds [" + keywordIds + "]");
+					final List<BidElement> bids = SemplestDB.getLatestBids(promotionID, adEngine);
+					final List<Long> msnKeywordIds = new ArrayList<Long>();
+					for (final KeywordProbabilityObject keywordProbability : keywordProbabilitiesForKeywordIds)
 					{
-						final String keyword = bid.getKeyword();
-						if (kpText.equals(keyword))
+						final String kpText = keywordProbability.getKeyword();
+						for (final BidElement bid : bids)
 						{
-							final Long msnKeywordId = bid.getKeywordAdEngineID();
-							msnKeywordIds.add(msnKeywordId);
+							final String keyword = bid.getKeyword();
+							if (kpText.equals(keyword))
+							{
+								final Long msnKeywordId = bid.getKeywordAdEngineID();
+								msnKeywordIds.add(msnKeywordId);
+							}
 						}
 					}
+					logger.info("Will try to delete MSN keywords for MSN IDs [" + msnKeywordIds + "]");
+					final long[] msnKeywordIdArray = new long[msnKeywordIds.size()];
+					for (int i = 0; i < msnKeywordIdArray.length; ++i)
+					{
+						msnKeywordIdArray[i] = msnKeywordIds.get(i);
+					}
+					msn.deleteKeywordsById(accountId, adGroupId, msnKeywordIdArray);
 				}
-				logger.info("Will try to delete MSN keywords for MSN IDs [" + msnKeywordIds + "]");
-				final long[] msnKeywordIdArray = new long[msnKeywordIds.size()];
-				for (int i = 0; i < msnKeywordIdArray.length; ++i)
+				else
 				{
-					msnKeywordIdArray[i] = msnKeywordIds.get(i);
+					logger.info("Taking no action because Promotion's Status [" + promotionStatusForMSN + "] is not actionable in MSN");
 				}
-				msn.deleteKeywordsById(accountId, adGroupId, msnKeywordIdArray);
 			}
 			else
 			{
@@ -2052,6 +2085,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
+		SemplestUtils.filterOutDeletedKeywords(keywordProbabilitiesAll);
 		final Map<KeywordProbabilityObject, Boolean> keywordToRemoveOppositeMap = getKeywordProbabilityToRemoveOppositeMap(keywordProbabilitiesAll, keywordIdRemoveOppositePairs);
 		if (keywordToRemoveOppositeMap.size() != keywordIdRemoveOppositePairs.size())
 		{
@@ -2291,6 +2325,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
+		SemplestUtils.filterOutDeletedKeywords(keywordProbabilitiesAll);
 		final List<KeywordProbabilityObject> keywordProbabilitiesForIds = getFilteredKeywordProbabilities(keywordProbabilitiesAll, keywordIds);
 		if (keywordProbabilitiesForIds.size() != keywordIds.size())
 		{
@@ -2668,7 +2703,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final List<AdsObject> ads = getPromoDataSP.getAds();
 		final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
 		for (final Integer promotionAdID : promotionAdIds)

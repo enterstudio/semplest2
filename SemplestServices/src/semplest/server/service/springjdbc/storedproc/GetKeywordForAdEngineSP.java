@@ -39,7 +39,7 @@ public class GetKeywordForAdEngineSP extends StoredProcedure
 		}
 		else
 		{
-			return (ArrayList<KeywordProbabilityObject>) results.get("keyword");
+			return (List<KeywordProbabilityObject>) results.get("keyword");
 		}
 	}
 

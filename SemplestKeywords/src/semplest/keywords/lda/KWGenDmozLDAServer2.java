@@ -49,6 +49,7 @@ import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
+import semplest.util.SemplestUtils;
 import cc.mallet.types.InstanceList;
 
 public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
@@ -706,9 +707,9 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		String url = promotionData.getLandingPageURL();
 		String description = promotionData.getPromotionDescription();
 		String productProm = promotionData.getPromotionName();
-		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
+		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();		
 		final List<KeywordProbabilityObject> keywordList = getKeywordForAdEngineSP.execute(promotionID.intValue(), true, true);
-
+		SemplestUtils.filterOutDeletedKeywords(keywordList);
 		
 		//Check Search Engines and decide number of kw per Search Engine
 		ArrayList<SearchEngine> srchE =  new ArrayList<SearchEngine>();
