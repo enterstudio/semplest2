@@ -411,7 +411,7 @@ namespace Semplest.Core.Models.Repositories
                     // set negative keywords
                     if (promo.PromotionKeywordAssociations != null)
                         model.AdModelProp.NegativeKeywords =
-                            promo.PromotionKeywordAssociations.Where(m => m.IsNegative).Select(m => m.Keyword.Keyword1).
+                            promo.PromotionKeywordAssociations.Where(m => m.IsNegative && !m.IsDeleted).Select(m => m.Keyword.Keyword1).
                                 ToList();
                 }
 
@@ -1111,10 +1111,7 @@ namespace Semplest.Core.Models.Repositories
                         }
                     }
                     foreach (int dk in addDeletedKiops)
-                    {
-                        ((IObjectContextAdapter)dbcontext).ObjectContext.DeleteObject(
-                                                  promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk));
-                    }
+                        promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk).IsDeleted=true;
                     dbcontext.SaveChanges();
                     _savedCampaign = true;
                     var sw = new ServiceClientWrapper();
