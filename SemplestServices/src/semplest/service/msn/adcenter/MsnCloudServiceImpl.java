@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,6 +66,7 @@ import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.AddKeywordsRetriableMsnOperation;
 import semplest.server.protocol.msn.AddNegativeKeywordsRetriableMsnOperation;
+import semplest.server.protocol.msn.MSNGeotargetObject;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnCloudException;
@@ -3141,19 +3144,45 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		final Long campaignId = Long.valueOf(campaignIdString);
 		final String geoTargetVsTypeMapString = data.get("geoTargetVsTypeMap");
 		final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = gson.fromJson(geoTargetVsTypeMapString, SemplestUtils.TYPE_MAP_OF_GEO_TARGET_OBJECT_TO_GEO_TARGET_TYPE);
-		final Boolean ret = updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
+		final Set<MSNGeotargetObject> msnGeoTargets = getMsnGeoTargets(geoTargetVsTypeMap);				
+		final Boolean ret = updateGeoTargets(accountId, campaignId, msnGeoTargets);
 		return gson.toJson(ret);
+	}
+	
+	public static Set<MSNGeotargetObject> getMsnGeoTargets(final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws Exception
+	{
+		final Set<MSNGeotargetObject> msnGeoTargets = new HashSet<MSNGeotargetObject>();
+		final Set<Entry<GeoTargetObject, GeoTargetType>> entrySet = geoTargetVsTypeMap.entrySet();
+		for (final Entry<GeoTargetObject, GeoTargetType> entry : entrySet)
+		{
+			final GeoTargetObject geoTarget = entry.getKey();
+			final GeoTargetType type = entry.getValue();
+			if (type == GeoTargetType.STATE)
+			{
+				final String state = geoTarget.getState();
+				final List<MSNGeotargetObject> currentLocations = SemplestDB.getMsnLocation(true, state, null, null, null);
+				msnGeoTargets.addAll(currentLocations);
+			}
+			if (type == GeoTargetType.GEO_POINT)
+			{
+				final Double latitude = geoTarget.getLatitude();
+				final Double longitude = geoTarget.getLongitude();
+				final Double radius = geoTarget.getRadius();
+				final List<MSNGeotargetObject> currentLocations = SemplestDB.getMsnLocation(false, null, longitude, latitude, radius);
+				msnGeoTargets.addAll(currentLocations);
+			}
+		}
+		return msnGeoTargets;
 	}
 
 	@Override
-	public Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException
+	public Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Set<MSNGeotargetObject> msnGeoTargets) throws MsnCloudException
 	{
-		final String operationDescription = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], GeoTarget<->Type map [" + geoTargetVsTypeMap + "]";
-		final String operationDescriptionPretty = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], GeoTarget<->Type map\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap);
+		final String operationDescription = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], MsnGeoTargets [" + msnGeoTargets + "]";
+		final String operationDescriptionPretty = "Update Geo Targets for AccountID [" + accountId + "], CampaignID [" + campaignId + "], MsnGeoTargets\n" + SemplestUtils.getEasilyReadableString(msnGeoTargets);
 		logger.info("Will try to " + operationDescriptionPretty);
 		try
 		{
-
 			final Account account = getAccountById(accountId);
 			final String accountName = account.getName();
 			logger.info("MSN Account Name: " + accountName);
@@ -3202,65 +3231,27 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 
 			// add latest geo targets
 			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();
-			final List<StateTargetBid> stateBids = new ArrayList<StateTargetBid>();
-			final List<RadiusTargetBid> radiusBids = new ArrayList<RadiusTargetBid>();
-			final Set<Entry<GeoTargetObject, GeoTargetType>> entrySet = geoTargetVsTypeMap.entrySet();
-			for (final Entry<GeoTargetObject, GeoTargetType> entry : entrySet)
+			final List<MetroAreaTargetBid> bids = new ArrayList<MetroAreaTargetBid>();						
+			for (final MSNGeotargetObject msnGeoTarget : msnGeoTargets)
 			{
-				final GeoTargetType type = entry.getValue();
-				final GeoTargetObject getTarget = entry.getKey();
-				if (GeoTargetType.STATE == type)
-				{
-					final StateTargetBid stateTargetBid = new StateTargetBid();
-					stateTargetBid.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
-					final String state = getTarget.getState();
-					final String usState = "US-" + state;
-					stateTargetBid.setState(usState);
-					stateBids.add(stateTargetBid);
-				}
-				else if (GeoTargetType.GEO_POINT == type)
-				{
-					final RadiusTargetBid radiusTargetBid = new RadiusTargetBid();
-					radiusTargetBid.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
-					final double latitudeDegrees = getTarget.getLatitude();
-					final double longitudeDegrees = getTarget.getLongitude();
-					final double radius = getTarget.getRadius();
-					radiusTargetBid.setLatitudeDegrees(latitudeDegrees);
-					radiusTargetBid.setLongitudeDegrees(longitudeDegrees);
-					final int radiusInt = (int) radius;
-					radiusTargetBid.setRadius(radiusInt);
-					radiusBids.add(radiusTargetBid);
-				}
-				else
-				{
-					throw new MsnCloudException("Problem doing " + operationDescription + " beucase encountered GeoTargetType [" + type + "] that is not either [" + GeoTargetType.STATE + "] or [" + GeoTargetType.GEO_POINT + "]");
-				}
-			}
+				final String msnName = msnGeoTarget.getMSNName();
+				final MetroAreaTargetBid bid = new MetroAreaTargetBid(IncrementalBidPercentage.ZeroPercent, msnName);
+				bids.add(bid);
+			}			
 			final Target target = new Target();
 			final LocationTarget location = new LocationTarget();
-
-			logger.info("Prepared " + stateBids.size() + " State Target Bids and " + radiusBids.size() + " Radius Target Bids");
-			if (stateBids.isEmpty() && radiusBids.isEmpty())
+			logger.info("Prepared " + bids.size() + " MetroArea Target Bids");
+			if (bids.isEmpty())
 			{
-				logger.info("No State or Radius Rargets were generated, so doing nothing");
+				logger.info("No Targets were generated, so doing nothing");
 				return true;
 			}
-			if (!stateBids.isEmpty())
-			{
-				final StateTarget stateTarget = new StateTarget();
-				final StateTargetBid[] stateTargetBids = stateBids.toArray(new StateTargetBid[stateBids.size()]);
-				stateTarget.setBids(stateTargetBids);
-				location.setStateTarget(stateTarget);
-			}
-			if (!radiusBids.isEmpty())
-			{
-				final RadiusTarget radiusTarget = new RadiusTarget();
-				final RadiusTargetBid[] radiusTargetBids = radiusBids.toArray(new RadiusTargetBid[radiusBids.size()]);
-				radiusTarget.setBids(radiusTargetBids);
-				location.setRadiusTarget(radiusTarget);
-			}
+			final MetroAreaTarget metroAreaTarget = new MetroAreaTarget();
+			final MetroAreaTargetBid[] metroAreaTargetBidArray = bids.toArray(new MetroAreaTargetBid[bids.size()]);
+			metroAreaTarget.setBids(metroAreaTargetBidArray);
+			location.setMetroAreaTarget(metroAreaTarget);			
 			target.setLocation(location);
-			final Target[] targetArray = new Target[] { target };
+			final Target[] targetArray = new Target[]{target};
 			addRequest.setTargets(targetArray);
 			final AddTargetsToLibraryResponse response = campaignManagement.addTargetsToLibrary(addRequest);
 			final long[] targetIds = response.getTargetIds();

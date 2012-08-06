@@ -9,8 +9,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
+import semplest.server.protocol.msn.MSNGeotargetObject;
 import semplest.server.service.springjdbc.BaseDB;
-import semplest.server.service.springjdbc.MSNGeotargetObject;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TrafficDataObj;
 

@@ -53,6 +53,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
 import semplest.server.protocol.bidding.BiddingParameters;
 import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
 import semplest.server.protocol.google.UpdateAdRequest;
+import semplest.server.protocol.msn.MSNGeotargetObject;
 import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
 import semplest.server.service.springjdbc.helper.AllBiddableRSExtractor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;

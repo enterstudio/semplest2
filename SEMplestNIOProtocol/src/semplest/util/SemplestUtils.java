@@ -9,10 +9,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -31,6 +34,7 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleViolation;
+import semplest.server.protocol.msn.MSNGeotargetObject;
 
 import com.google.api.adwords.v201109.cm.ApiError;
 import com.google.api.adwords.v201109.cm.ApiException;
@@ -144,7 +148,7 @@ public final class SemplestUtils
 	public static final String DATE_TIME = "DATE_TIME";
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
-	
+		
 	public static void filterOutDeletedKeywords(final List<KeywordProbabilityObject> keywords)
 	{
 		for (final Iterator<KeywordProbabilityObject> i = keywords.iterator(); i.hasNext();)
@@ -1300,7 +1304,7 @@ public final class SemplestUtils
 		}
 	}
 	
-	public static String getEasilyReadableString(final List<?> list)
+	public static String getEasilyReadableString(final Collection<?> list)
 	{
 		if (list == null)
 		{

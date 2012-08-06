@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -19,6 +20,7 @@ import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.msn.MSNGeotargetObject;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnCloudException;
@@ -1290,14 +1292,15 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		// TODO Auto-generated method stub
 		
 	}
+	
 	@Override
-	public Boolean updateGeoTargets(Long accountId, Long campaignId, Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException
+	public Map<Integer, String> setNegativeKeywords(Long accountId, Long campaignId, Map<String, Integer> negativeKeywordToPkMap) throws MsnCloudException
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public Map<Integer, String> setNegativeKeywords(Long accountId, Long campaignId, Map<String, Integer> negativeKeywordToPkMap) throws MsnCloudException
+	public Boolean updateGeoTargets(Long accountId, Long campaignId, Set<MSNGeotargetObject> msnGeoTargets) throws MsnCloudException
 	{
 		// TODO Auto-generated method stub
 		return null;

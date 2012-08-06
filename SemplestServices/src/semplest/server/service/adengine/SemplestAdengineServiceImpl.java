@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
+import semplest.server.protocol.msn.MSNGeotargetObject;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.mail.SemplestMailClient;
@@ -1058,7 +1060,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			adGrpData.setAdGroupID(adGroupID);
 			adGrpData.setAds(nonDeletedAds);
-			msn.updateGeoTargets(msnAccountId, campaignID, geoTargetVsTypeMap);
+			final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
+			msn.updateGeoTargets(msnAccountId, campaignID, msnGeoTargets);
 			logger.info("Added MSN GeoTargets:\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap));			
 		}
 		else
@@ -1500,7 +1503,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return geoTargetVsTypeMap;
 	}
-
+	
 	@Override
 	public Boolean UpdateGeoTargeting(Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
@@ -1528,8 +1531,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
 				final Long accountId = promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
-				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);	
-				msn.updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
+				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);
+				final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
+				msn.updateGeoTargets(accountId, campaignId, msnGeoTargets);
 			}
 			else
 			{
@@ -2065,7 +2069,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.debug("call AddNegativeKeywords(String json): [" + json + "]");
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs");
+		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs"); 
 		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString, SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);

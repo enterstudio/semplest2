@@ -2,6 +2,7 @@ package semplest.services.client.interfaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.joda.time.DateTime;
@@ -13,8 +14,10 @@ import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.GeoTargetType;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.msn.MSNGeotargetObject;
 import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
+
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
@@ -58,7 +61,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize
 	// GeoTargeting Methods
 	// ==================================
 	
-	Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap) throws MsnCloudException;
+	Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Set<MSNGeotargetObject> msnGeoTargets) throws MsnCloudException;
 	void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws Exception;
 	
 	// ==================================
