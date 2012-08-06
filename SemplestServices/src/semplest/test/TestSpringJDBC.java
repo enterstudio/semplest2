@@ -9,8 +9,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
-import semplest.server.protocol.bidding.BiddingParameters;
 import semplest.server.service.springjdbc.BaseDB;
+import semplest.server.service.springjdbc.MSNGeotargetObject;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TrafficDataObj;
 
@@ -32,9 +32,27 @@ public class TestSpringJDBC extends BaseDB
 			 */
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
 			// BiddingParameters p = SemplestDB.getBiddingParameters();
+			/*
+			List<BidElement> bids = new ArrayList<BidElement>();
+			BidElement b = new BidElement();
+			b.setKeyword("coffee machine");
+			b.setMatchType("Phrase");
+			bids.add(b);
+			b = new BidElement();
+			b.setKeyword("espresso coffee3");
+			b.setMatchType("Phrase");
+			bids.add(b);
+			SemplestDB.setBidInactive(4, "Google", bids);
+			*/
+			List<MSNGeotargetObject> res = SemplestDB.getMsnLocation(true,"NY", null,null,null);
+			// GetAllPromotionDataSP sp = new GetAllPromotionDataSP();
+			// sp.execute(235);
+			//List<String> test = SemplestDB.getPromotionCategory(1);
+			for (MSNGeotargetObject s : res)
+			{
+				System.out.println(s.getName() + ":" + s.getMSNName());
+			}
 			
-			String[] ss = SemplestDB.getGeotargetStates( 2 );
-			for( String s: ss ) System.out.println( s );
 			
 			// System.out.println(p.getSemplestBiddingBudgetMultFactor() + ":" + p.getSemplestBiddingInitialBidBoostFactor() + ";" + p.getSemplestBiddingMarginFactor() + ";" + p.getSemplestBiddingPercentileValue());
 			/*

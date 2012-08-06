@@ -65,6 +65,7 @@ import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 import semplest.server.service.springjdbc.storedproc.GetBiddableAdGroupCriteriaSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.server.service.springjdbc.storedproc.GetLatestTrafficEstimatorSP;
+import semplest.server.service.springjdbc.storedproc.GetMSNGeoLocationSP;
 import semplest.server.service.springjdbc.storedproc.SetPromotionBiddingSP;
 import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
 import semplest.util.SemplestUtils;
@@ -1686,6 +1687,24 @@ public class SemplestDB extends BaseDB
 		{
 			logger.error("logError: " + e1.getMessage(), e1);
 		}
+	}
+	
+	//Temporary used for MSNGeolocation
+	public static void addMSNGeolocation(boolean IsCity,boolean IsState, boolean IsMetro,String Name, String MSNName,double longitude,double latitude,int LocationID,Integer ParentCountryLocationID,
+			Integer ParentMetroAreaLocationID,Integer ParentSubGeographyLocationID,String ParentSubGeographyName)
+	{
+		String strSQL = "insert into MSNGeoLocation(IsCity,IsState, IsMetro, Name, MSNName,longitude,latitude,LocationID,ParentCountryLocationID,ParentMetroAreaLocationID,ParentSubGeographyLocationID,ParentSubGeographyName) " +
+				"VALUES (?,?,?,?,?,?,?,?,?,?, ? ,?)";
+		
+		jdbcTemplate.update(strSQL, new Object[]
+				{ IsCity,IsState, IsMetro, Name, MSNName,longitude,latitude,LocationID,ParentCountryLocationID,ParentMetroAreaLocationID,ParentSubGeographyLocationID,ParentSubGeographyName });
+
+	}
+	
+	public static List<MSNGeotargetObject> getMsnLocation(boolean IsState, String State, Double Longitude, Double Latitude, Double Radius ) throws Exception
+	{
+		GetMSNGeoLocationSP getMSNGeoLocationSP = new GetMSNGeoLocationSP();
+		return getMSNGeoLocationSP.execute(IsState, State, Longitude, Latitude, Radius);
 	}
 
 }
