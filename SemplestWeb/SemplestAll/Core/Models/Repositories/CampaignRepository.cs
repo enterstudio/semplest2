@@ -1050,7 +1050,7 @@ namespace Semplest.Core.Models.Repositories
                 {
                     var addKiops = new List<KeywordIdRemoveOppositePair>();
                     var addNewKiops = new List<string>();
-                    var addDeletedKiops = new List<KeywordIdRemoveOppositePair>();
+                    var addDeletedKiops = new List<int>();
                     var qpka = promo.PromotionKeywordAssociations.ToList();
                     //check negative keywords that have been added to the gui
                     if (model.AdModelProp.NegativeKeywords != null)
@@ -1089,14 +1089,7 @@ namespace Semplest.Core.Models.Repositories
                     foreach (PromotionKeywordAssociation k in qpka.Where(key => key.IsNegative == true).ToList())
                     {
                         if (!model.AdModelProp.NegativeKeywords.Contains(k.Keyword.Keyword1))
-                        {
-                            var kiopDelete = new KeywordIdRemoveOppositePair
-                            {
-                                keywordId = k.Keyword.KeywordPK,
-                                removeOpposite = false
-                            };
-                            addDeletedKiops.Add(kiopDelete);
-                        }
+                            addDeletedKiops.Add(k.Keyword.KeywordPK);
                     }
 
                     List<int> deletedKeywords = new List<int>();
@@ -1117,10 +1110,10 @@ namespace Semplest.Core.Models.Repositories
                             addKiops.Add(kop);
                         }
                     }
-                    foreach (KeywordIdRemoveOppositePair dk in addDeletedKiops)
+                    foreach (int dk in addDeletedKiops)
                     {
                         ((IObjectContextAdapter)dbcontext).ObjectContext.DeleteObject(
-                                                  promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk.keywordId));
+                                                  promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk));
                     }
                     dbcontext.SaveChanges();
                     _savedCampaign = true;
@@ -1129,9 +1122,9 @@ namespace Semplest.Core.Models.Repositories
                     adEngines.AddRange(
                         promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
                     if (addDeletedKiops.Any())
-                        sw.scheduleNegativeKeywords(promo.PromotionPK, addDeletedKiops, adEngines, false);
+                        sw.DeleteNegativeKeywords(promo.PromotionPK, addDeletedKiops, adEngines);
                     if (addKiops.Any())
-                        sw.scheduleNegativeKeywords(promo.PromotionPK, addKiops, adEngines, true);
+                        sw.AddNegativeKeywords(promo.PromotionPK, addKiops, adEngines);
                     if (deletedKeywords.Any())
                         sw.DeleteKeywords(promo.PromotionPK, deletedKeywords, adEngines);
                 }
@@ -1197,14 +1190,17 @@ namespace Semplest.Core.Models.Repositories
                 foreach (int keywordId in keywordIds)
                     dbcontext.PromotionKeywordAssociations.Where(key => key.KeywordFK == keywordId).First(
                         key => key.PromotionFK == promoId).IsDeleted = true;
-                var sw = new ServiceClientWrapper();
                 dbcontext.SaveChanges();
                 _savedCampaign = true;
                 var adEngines = new List<string>();
                 var promo = dbcontext.Promotions.Single(row => row.PromotionPK == promoId);
-                adEngines.AddRange(
-                        promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                sw.DeleteKeywords(promoId, keywordIds, adEngines);
+                if (promo.IsLaunched)
+                {
+                    var sw = new ServiceClientWrapper();
+                    adEngines.AddRange(
+                            promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                    sw.DeleteKeywords(promoId, keywordIds, adEngines);
+                }
             }
         }
 

@@ -216,9 +216,9 @@ namespace Semplest.SharedResources.Services
             return runBooleanMethod(ADENGINESERVICE, "DeleteKeywords", JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleNegativeKeywords(int promotionID,
+        public bool AddNegativeKeywords(int promotionID,
                                              List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs,
-                                             List<String> adEngines, bool isAdd)
+                                             List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("promotionID", promotionID.ToString());
@@ -226,13 +226,24 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("keywordIdRemoveOppositePairs", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            if (isAdd)
                 return runBooleanMethod(ADENGINESERVICE, "AddNegativeKeywords",
                                         JsonConvert.SerializeObject(jsonHash));
-            else
+        }
+
+        public bool DeleteNegativeKeywords(int promotionID,
+                                            List<int> keywordIds,
+                                            List<String> adEngines)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("promotionID", promotionID.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(keywordIds, Formatting.Indented);
+            jsonHash.Add("keywordIds", jsonAdds);
+            jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
                 return runBooleanMethod(ADENGINESERVICE, "DeleteNegativeKeywords",
                                         JsonConvert.SerializeObject(jsonHash));
         }
+
 
         public bool scheduleRefreshSiteLinks(int promotionID, List<String> adEngines)
         {
