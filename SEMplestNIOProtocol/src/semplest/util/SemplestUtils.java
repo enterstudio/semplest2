@@ -1,5 +1,8 @@
 package semplest.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -139,6 +142,15 @@ public final class SemplestUtils
 	public static final String DATE_TIME = "DATE_TIME";
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
+	
+	public static String getStackTraceString(final Throwable t)
+	{
+		final Writer writer = new StringWriter();
+		final PrintWriter pw = new PrintWriter(writer);
+		t.printStackTrace(pw);
+		final String stackTrace = writer.toString();
+		return stackTrace;
+	}
 	
 	public static Integer getDiffInDays(final java.util.Date date1, java.util.Date date2)
 	{

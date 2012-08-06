@@ -205,18 +205,34 @@ public class AccountActivationEmailSender
 	public static AccountActivationEmailSender getDefaultAccountActivationEmailSender() throws Exception
 	{
 		final String defaultEmailContactUsEmail = (String)SemplestConfiguration.configData.get("DefaultEmailContactUs");
-		final String esbWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
+		final String esbWebServerURL = getEsbWebServiceURL();
 		final String reminderEmailUrlPrefix = (String) SemplestConfiguration.configData.get("ReminderEmailUrlPrefix");			
+		final RunMode runMode = getRunMode();
+		final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+		final AESBouncyCastle aes = AESBouncyCastle.getInstance(semplestEncryptionKey);		
+		final AccountActivationEmailSender emailSender = new AccountActivationEmailSender(defaultEmailContactUsEmail, esbWebServerURL, reminderEmailUrlPrefix, runMode, aes);
+		return emailSender;
+	}
+	
+	public static String getDevelopmentEmail()
+	{
+		return (String)SemplestConfiguration.configData.get("DevelopmentEmail");
+	}
+	
+	public static String getEsbWebServiceURL()
+	{
+		return (String)SemplestConfiguration.configData.get("ESBWebServerURL");
+	}
+	
+	public static RunMode getRunMode() throws Exception
+	{
 		final String runModeString = (String) SemplestConfiguration.configData.get("RunMode");
 		final RunMode runMode = RunMode.fromName(runModeString);
 		if (runMode == null)
 		{
 			throw new Exception("RunMode [" + runModeString + "] not a valid RunMode.  Valid RunModes are [" + RunMode.getValidRunModes() + "]");
 		}
-		final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
-		final AESBouncyCastle aes = AESBouncyCastle.getInstance(semplestEncryptionKey);		
-		final AccountActivationEmailSender emailSender = new AccountActivationEmailSender(defaultEmailContactUsEmail, esbWebServerURL, reminderEmailUrlPrefix, runMode, aes);
-		return emailSender;
+		return runMode;
 	}
 	
 	public static void main(final String[] args) throws Exception
@@ -237,11 +253,25 @@ public class AccountActivationEmailSender
 			final AccountActivationEmailSender emailSender = getDefaultAccountActivationEmailSender();
 			emailSender.sendAccountActivationEmail(24); // for testing only
 		}
-		catch (Exception e)
+		catch (Throwable t)
 		{
-			final String errMsg = "Problem during execution";
-			log.error(errMsg, e);
-			throw new Exception(errMsg, e);
+			final String errMsg = "Error sending account activation emails.";
+			log.error(errMsg, t);	
+			final RunMode runMode = getRunMode();
+			final String subject = (runMode == RunMode.PRODUCTION ? "" : runMode.getName() + " -- ") + errMsg;			
+			final String stackTrace = SemplestUtils.getStackTraceString(t);
+			final String emailBody = subject + "\n\n" + stackTrace;
+			try
+			{
+				final String esbWebServerURL = getEsbWebServiceURL();				
+				final String developmentEmail = getDevelopmentEmail();
+				SemplestMailClient.sendMailFromService(esbWebServerURL, subject, developmentEmail, developmentEmail, emailBody, ProtocolEnum.EmailType.PlanText.getEmailValue());
+			}
+			catch (Exception e2)
+			{
+				log.error("Problem sending email with subject [" + subject + "] and content [" + emailBody + "].  Logging, but otherwise continuing processing.", e2);
+			}
+			throw new Exception(errMsg, t);
 		}
 	}
 }

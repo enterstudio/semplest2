@@ -2,7 +2,6 @@ package semplest.server.job;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -13,7 +12,6 @@ import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.Credential;
 import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.ProtocolEnum;
-import semplest.server.protocol.RegistrationLinkDecryptedInfo;
 import semplest.server.protocol.RunMode;
 import semplest.server.protocol.User;
 import semplest.server.service.SemplestConfiguration;
@@ -123,18 +121,34 @@ public class ExpiredCredentialsEmailSender
 			SemplestDB.updateUserLastEmailReminderDate(userID, now);
 		}
 	}
-		
-	public static ExpiredCredentialsEmailSender getDefaultExpiredEmailSender() throws Exception
+	
+	public static String getDevelopmentEmail()
 	{
-		final String defaultEmailContactUsEmail = (String)SemplestConfiguration.configData.get("DefaultEmailContactUs");
-		final String esbWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
-		final String reminderEmailUrlPrefix = (String) SemplestConfiguration.configData.get("ReminderEmailUrlPrefix");			
+		return (String)SemplestConfiguration.configData.get("DevelopmentEmail");
+	}
+	
+	public static String getEsbWebServiceURL()
+	{
+		return (String)SemplestConfiguration.configData.get("ESBWebServerURL");
+	}
+	
+	public static RunMode getRunMode() throws Exception
+	{
 		final String runModeString = (String) SemplestConfiguration.configData.get("RunMode");
 		final RunMode runMode = RunMode.fromName(runModeString);
 		if (runMode == null)
 		{
 			throw new Exception("RunMode [" + runModeString + "] not a valid RunMode.  Valid RunModes are [" + RunMode.getValidRunModes() + "]");
 		}
+		return runMode;
+	}
+		
+	public static ExpiredCredentialsEmailSender getDefaultExpiredEmailSender() throws Exception
+	{
+		final String defaultEmailContactUsEmail = (String)SemplestConfiguration.configData.get("DefaultEmailContactUs");
+		final String esbWebServerURL = getEsbWebServiceURL();
+		final String reminderEmailUrlPrefix = (String) SemplestConfiguration.configData.get("ReminderEmailUrlPrefix");					
+		final RunMode runMode =  getRunMode();
 		final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
 		final AESBouncyCastle aes = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
 		final java.util.Date asOfDate = new java.util.Date();
@@ -148,14 +162,14 @@ public class ExpiredCredentialsEmailSender
 	public static void main(final String[] args) throws Exception
 	{
 		try
-		{
+		{						
 			log.info("Starting process for sending reminder emails to customers who have not finished registering");
 			PropertyConfigurator.configure("C:/SemplestAdengineService/properties/log4j_server.properties");
 			BasicConfigurator.configure();	
 			final ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
-			SemplestConfiguration configDB = new SemplestConfiguration(object);
-			Thread configThread = new Thread(configDB);
+			final SemplestConfiguration configDB = new SemplestConfiguration(object);
+			final Thread configThread = new Thread(configDB);
 			configThread.start();
 			synchronized (object)
 			{
@@ -164,11 +178,25 @@ public class ExpiredCredentialsEmailSender
 			final ExpiredCredentialsEmailSender emailSender = getDefaultExpiredEmailSender();
 			emailSender.engage(null); // will do all eligible users
 		}
-		catch (Exception e)
+		catch (Throwable t)
 		{
-			final String errMsg = "Problem during execution";
-			log.error(errMsg, e);
-			throw new Exception(errMsg, e);
+			final String errMsg = "Error sending email reminders about expired credentials.";
+			log.error(errMsg, t);	
+			final RunMode runMode = getRunMode();
+			final String subject = (runMode == RunMode.PRODUCTION ? "" : runMode.getName() + " -- ") + errMsg;			
+			final String stackTrace = SemplestUtils.getStackTraceString(t);
+			final String emailBody = subject + "\n\n" + stackTrace;
+			try
+			{
+				final String esbWebServerURL = getEsbWebServiceURL();				
+				final String developmentEmail = getDevelopmentEmail();
+				SemplestMailClient.sendMailFromService(esbWebServerURL, subject, developmentEmail, developmentEmail, emailBody, ProtocolEnum.EmailType.PlanText.getEmailValue());
+			}
+			catch (Exception e2)
+			{
+				log.error("Problem sending email with subject [" + subject + "] and content [" + emailBody + "].  Logging, but otherwise continuing processing.", e2);
+			}
+			throw new Exception(errMsg, t);
 		}
 	}
 }
