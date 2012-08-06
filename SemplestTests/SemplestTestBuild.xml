@@ -104,6 +104,7 @@
 		<path id="keywords.path">
 			<pathelement location="${classes}"/>
 				<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
+				<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar"/>
 		</path>
 		<mkdir dir="${semplest.keywords.dir}/temp"/>
 		<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
