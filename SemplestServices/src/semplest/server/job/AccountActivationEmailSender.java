@@ -97,12 +97,13 @@ public class AccountActivationEmailSender
 		final String username = credential.getUsername();
 		final String password = credential.getPassword();
 		final java.util.Date now = new java.util.Date();
-		final String link = SemplestUtils.generateEncryptedLink(aes, reminderEmailUrlPrefix, userID, now, username, password);		
+		final String link = SemplestUtils.generateEncryptedHtmlLink(aes, reminderEmailUrlPrefix, userID, now, username, password);	
+		final String mailToLink = "<a href=\"mailto:" + defaultEmailContactUsEmail + "?subject=Please help me (User Name: " + username + ")\">" + defaultEmailContactUsEmail + "</a>";
 		final String refinedEmailBody = rawEmailBody.replaceAll("\\[NonParentCustomer\\]", fullName)											
 													.replaceAll("\\[INSERT LINK\\]", link)
 													.replaceAll("\\[NonParentCustomerUserID\\]", username)
 													.replaceAll("\\[NonParentCustomerPassword\\]", password)
-													.replaceAll("\\[help@semplest.com\\]", defaultEmailContactUsEmail);
+													.replaceAll("\\[help@semplest.com\\]", mailToLink);
 		return refinedEmailBody;
 	}
 	

@@ -240,11 +240,24 @@ public final class SemplestUtils
 		}
 	}
 	
+	public static String generateEncryptedHtmlLink(final AESBouncyCastle aes, final String reminderEmailUrlPrefix, final Integer userID, final java.util.Date dateTime, final String username, final String password)
+	{
+		final String rawLink = generateEncryptedLink(aes, reminderEmailUrlPrefix, userID, dateTime, username, password);
+		final String htmlLink = getHtmlLink(rawLink);
+		return htmlLink;
+	}
+	
 	public static String generateEncryptedLink(final AESBouncyCastle aes, final String reminderEmailUrlPrefix, final Integer userID, final java.util.Date dateTime, final String username, final String password)
 	{
 		final String encryptedToken = generateEncryptedToken(aes, userID, dateTime, username, password);
 		final String encryptedUrl = reminderEmailUrlPrefix + encryptedToken;
 		return encryptedUrl;
+	}
+	
+	public static String getHtmlLink(final String rawLink)
+	{
+		final String htmlEncryptedUrl = "<a href=\"" + rawLink + "\">" + rawLink + "</a>";
+		return htmlEncryptedUrl;
 	}
 	
 	public static String generateEncryptedToken(final AESBouncyCastle aes, final Integer userID, final java.util.Date dateTime, final String username, final String password)
