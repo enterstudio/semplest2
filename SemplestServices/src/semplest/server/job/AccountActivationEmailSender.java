@@ -133,13 +133,14 @@ public class AccountActivationEmailSender
 			throw new Exception("Could not refine the email body for account activation email for User [" + user + "] becuase could not find it's Customer info");
 		}
 		final String customerName = customer.getName();
-		final String link = SemplestUtils.generateEncryptedLink(aes, reminderEmailUrlPrefix, userID, now, username, password);		
+		final String link = SemplestUtils.generateEncryptedHtmlLink(aes, reminderEmailUrlPrefix, userID, now, username, password);
+		final String mailToLink = "<a href=\"mailto:" + defaultEmailContactUsEmail + "?subject=Please help me (User Name: " + username + ")\">" + defaultEmailContactUsEmail + "</a>";
 		final String refinedEmailBody = rawEmailBody.replaceAll("\\[VendorName\\]", fullName)
 													.replaceAll("\\[CustomerName\\]", "" + customerName)												
 													.replaceAll("\\[INSERT LINK\\]", link)
 													.replaceAll("\\[xxxxxx\\]", username)
 													.replaceAll("\\[xxxxx\\]", password)
-													.replaceAll("\\[help@semplest.com\\]", defaultEmailContactUsEmail);
+													.replaceAll("\\[help@semplest.com\\]", mailToLink);
 		return refinedEmailBody;
 	}
 	
@@ -169,7 +170,7 @@ public class AccountActivationEmailSender
 			throw new Exception("Could not refine the email body for account activation email for User [" + user + "] becuase could not it's Customer info");
 		}
 		final String customerName = customer.getName();
-		final String link = SemplestUtils.generateEncryptedLink(aes, reminderEmailUrlPrefix, userID, now, username, password);		
+		final String link = SemplestUtils.generateEncryptedHtmlLink(aes, reminderEmailUrlPrefix, userID, now, username, password);		
 		final String refinedEmailBody = rawEmailBody.replaceAll("\\[VendorName\\]", fullName)
 													.replaceAll("\\[CustomerName\\]", "" + customerName)												
 													.replaceAll("\\[INSERT LINK\\]", link)
