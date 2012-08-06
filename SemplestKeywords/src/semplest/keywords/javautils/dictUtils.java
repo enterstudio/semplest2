@@ -72,7 +72,6 @@ public class dictUtils
       !cw.contains( word );
   }
   public static boolean commonWord(String word){
-    boolean aux = cw.contains(word);
     return cw.contains(word);
   }
   // is the stem in the dictionary ?

@@ -531,7 +531,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			String kwstem = "";
 			boolean flag = true;
 			for(int n=0;n<subWrds.length;n++){
-				String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).replaceAll("\\s+", "");
+				String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).trim();
 				if(!wordMap.containsKey(subWstem) || kwstem.contains(subWstem)){
 					flag=false;
 					break;
@@ -660,7 +660,8 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	    boolean flag = false;
 	    for( String w: raws.split("\\s+")){
 	    	if(!dict.commonWord(w.toLowerCase())){
-	    		String newword = dict.getStemWord( w.toLowerCase() );
+	    		//String newword = dict.getStemWord( w.toLowerCase() );
+	    		String newword = dict.getRoot( w.toLowerCase() );
 		    	if(newword != null){
 		    		os = os + newword + " ";
 		    		flag = true;
@@ -678,7 +679,8 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	    String os = "";
 	    for( String w: raws.split("\\s+")){
 	    	if(!dict.commonWord(w.toLowerCase())){
-		    	String aux = dict.getStemWord( w.toLowerCase() );
+	    		//String aux = dict.getRoot( w.toLowerCase() );
+		    	String aux = dict.getRoot( w.toLowerCase() );
 		    	if(aux != null)
 		    		os = os + aux + " ";
 		    	else 
@@ -768,7 +770,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	    kwOut = this.sortKeywords(kwOut, kwOut.size());
 		return kwOut.toArray(new KeywordProbabilityObject[kwOut.size()]);
 	}
-	
+	/*
 	public static void main(String[] args) throws Exception {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		Object object = new Object();
@@ -793,13 +795,13 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		}
 		ps.close();
 	}
+	*/
 	
-	/*
 	public static void main(String[] args) throws Exception {
 		
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
-		 *
+		 */
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		Object object = new Object();
 		SemplestConfiguration configDB = new SemplestConfiguration(object);
@@ -811,7 +813,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		}
 		/*
 		 * Init Keyword Data
-		 *
+		 */
 		logger.info("Initialized Keyword generator...");
 		
 		//KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
@@ -825,7 +827,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			Long start = System.currentTimeMillis();
 			ArrayList<String> categOpt = kwGen.getCategories(null, null , "science fiction", null, null);
 			logging.println(System.currentTimeMillis()-start);
-		}*
+		}*/
 		
 		
 		while (!userInfo1.equals("exit")){
@@ -918,7 +920,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			}
 		}
 	}
-	*/
+
 	
 	
 	
