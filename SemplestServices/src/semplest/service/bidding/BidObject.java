@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -278,6 +280,49 @@ public class BidObject
 		return initValues;
 	}
 	
+	
+	public Boolean setBidsExplore(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
+	{
+		/* ******************************************************************************************* */
+
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsInitial called for ad engine " + searchEngine);
+
+
+		/* ******************************************************************************************* */
+		// 1. Database call: get campaign specific IDs
+		
+		getCampaignIDsFromDatabase(promotionID, searchEngine);
+		
+		
+		
+		/* ******************************************************************************************* */
+		// 2. Database call: get present bid info
+		
+		// get present bid status from database
+		List<BidElement> bidElementList = getBidDataFromDatabase(promotionID, searchEngine);
+
+		// create a hash map for faster access
+		Map<Long,BidElement> kwIDBidElementMap = new HashMap<Long,BidElement>();
+		for(BidElement b : bidElementList){
+			kwIDBidElementMap.put(b.getKeywordAdEngineID(), b.clone());
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + kwIDBidElementMap.get(b.getKeywordAdEngineID()));
+		}
+		
+		
+		
+		/* ******************************************************************************************* */
+		// 3. Report data via API call
+		
+		int daysInThePast = 30;
+		//List<ReportObject> reportObjListYesterday = getReportDataFromSE(promotionID, searchEngine, daysInThePast);
+		
+		
+		
+		
+		
+		return true;
+	}
+	
 
 	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
 	{
@@ -347,11 +392,13 @@ public class BidObject
 		/* ******************************************************************************************* */
 		// 8. Compute new default bid if position is below 4 and update database and SE
 		
+		/*
 		if(avgPosition>4.0){
 			computeDefaultBidBasedOnPosition(promotionID, searchEngine, avgPosition);
 			updateDefaultBidInDatabase(promotionID, searchEngine);
 			updateDefaultBidWithSE(promotionID, searchEngine, defaultMicroBid.longValue()*1e-6);
 		}
+		*/
 		
 		
 
@@ -503,7 +550,7 @@ public class BidObject
 		}
 		
 		for(long kwID : impressionMap.keySet()){
-			if(impressionMap.get(kwID)>=imprThreshold){// && 100.0*clickMap.get(kwID).doubleValue()/impressionMap.get(kwID) < ctrThreshold){
+			if(impressionMap.get(kwID)>=imprThreshold && 100.0*clickMap.get(kwID).doubleValue()/impressionMap.get(kwID) < ctrThreshold){
 				pauseMap.put(kwID, false);
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"  + " Decided to pause keyword: "+kwIDBidElementMap.get(kwID).getKeyword());
 
@@ -587,8 +634,6 @@ public class BidObject
 			}
 		}
 
-
-		
 		
 		/* ******************************************************************************************* */
 		// 3. MSN call to get average statistics
@@ -597,18 +642,24 @@ public class BidObject
 		List<AdEngineBidHistoryData>  historyDataList = getBidHistoryData(promotionID, searchEngine, kwIDBidElementMap);
 		
 		
+		/* ******************************************************************************************* */
+		// 4.Get ranking of keywords based on probability
+		Map<Long, Integer> kwIdRankMap = getkwIdRankMap(promotionID, searchEngine, kwIDBidElementMap);
 		
 		
 		/* ******************************************************************************************* */
-		// 4. Sort the words based on CPC
+		// 5. Update CPC-Vol info in history data based on ranking
+		updateHistoryBasedOnRanking(promotionID, searchEngine, historyDataList, kwIDBidElementMap, kwIdRankMap);
+		
+		
+		/* ******************************************************************************************* */
+		// 5. Sort the words based on CPC
 		
 		Collections.sort(historyDataList); // the comparator uses CPC values for compareTo
 		
 		
-		
-		
 		/* ******************************************************************************************* */
-		// 5. Compute bids
+		// 6. Compute bids
 		
 		// the following method call updates the wordIDBidMap with appropriate bids
 		// sets bids for all unused keywords at the max CPC seen so far
@@ -619,7 +670,7 @@ public class BidObject
 		
 		
 		/* ******************************************************************************************* */
-		// 6. Database call: store bid data
+		// 7. Database call: store bid data
 		
 		storeBidDataToDatabase(promotionID, searchEngine, kwIDBidElementMap);
 		
@@ -627,7 +678,7 @@ public class BidObject
 		
 		
 		/* ******************************************************************************************* */
-		// 7. Database call: update default bid 
+		// 8. Database call: update default bid 
 		
 		updateDefaultBidInDatabase(promotionID, searchEngine);
 
@@ -635,7 +686,7 @@ public class BidObject
 		
 		
 		/* ******************************************************************************************* */
-		// 8. SE API call: Update matchType, bid for keywords
+		// 9. SE API call: Update matchType, bid for keywords
 		
 		updateBidswithSE(promotionID, searchEngine, kwIDBidElementMap);
 		
@@ -643,7 +694,7 @@ public class BidObject
 		
 		
 		/* ******************************************************************************************* */
-		// 9. SE API call: Update default bid for campaign
+		// 10. SE API call: Update default bid for campaign
 		
 		updateDefaultBidWithSE(promotionID, searchEngine, computedDefaultBid);
 
@@ -651,7 +702,7 @@ public class BidObject
 
 
 		/* ******************************************************************************************* */
-		// 10. Write to database: Initital bidding is done
+		// 11. Write to database: Initital bidding is done
 		
 		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
 		
@@ -669,6 +720,95 @@ public class BidObject
 	
 	
 
+
+	private void updateHistoryBasedOnRanking(Integer promotionID, AdEngine searchEngine, List<AdEngineBidHistoryData> historyDataList,
+			Map<Long, BidElement> kwIDBidElementMap, Map<Long, Integer> kwIdRankMap) {
+
+		Map<String, Long> wordIDMap = new HashMap<String, Long>(); // the matchtype doesn't matter here
+		for(long kwID : kwIDBidElementMap.keySet()){
+			wordIDMap.put(kwIDBidElementMap.get(kwID).getKeyword(), kwID);
+		}
+		
+		for(AdEngineBidHistoryData h : historyDataList){
+			String s = h.getKeyword();
+			int rank = kwIdRankMap.get(wordIDMap.get(s));
+			double factor = Math.exp(- ((double) rank) / 781.0932); // remember the factor 1.25
+			if(h.getAvgBid()!=null){
+				h.setAvgBid(h.getAvgBid()*factor);
+			}
+			if(h.getAvgCPC()!=null){
+				h.setAvgCPC(h.getAvgCPC()/factor);
+			}
+			if(h.getSearchVol()!=null){
+				h.setSearchVol(new Integer((new Double(h.getSearchVol().doubleValue()*factor)).intValue()));
+			}
+		}
+		
+	}
+
+	private Map<Long, Integer> getkwIdRankMap(Integer promotionID, AdEngine searchEngine, Map<Long, BidElement> kwIDBidElementMap) throws Exception {
+
+
+		List<KeywordProbabilityObject> keywordList = null; 
+		try {
+			GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
+			keywordList = getKeywordForAdEngineSP.execute(promotionID.intValue(), true, true);
+		} catch (Exception e) {
+			logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get probability info from database. " + e.getMessage(), e);
+			throw new Exception( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get probability info from database. " + e.getMessage(), e);
+
+		} // try-catch
+		
+		
+		Map<String,Double> kwProbMap = new HashMap<String, Double>();
+		
+		for(KeywordProbabilityObject kw : keywordList ){
+			kwProbMap.put(kw.getKeyword(), kw.getSemplestProbability());
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Keyword: "+kw.getKeyword()+", Probability: "+kw.getSemplestProbability());
+		}
+		
+		Map<Long,Double> kwIdProbMap = new HashMap<Long, Double>();
+		for(long kwID : kwIDBidElementMap.keySet()){
+			if(!kwProbMap.containsKey(kwIDBidElementMap.get(kwID).getKeyword())){
+				kwIdProbMap.put(kwID, 0.0);
+			} else {
+				kwIdProbMap.put(kwID, kwProbMap.get(kwIDBidElementMap.get(kwID).getKeyword()));
+			}
+		}
+		
+		Set<Entry<Long, Double>> entrySet = kwIdProbMap.entrySet();
+		List<Entry<Long, Double>> entryList = new LinkedList<Entry<Long, Double>>(entrySet);
+		
+		Comparator<Entry<Long, Double>> entryComparator = new Comparator<Entry<Long, Double>>() {
+			public int compare(Entry<Long, Double> e1, Entry<Long, Double> e2) {
+				return e2.getValue().compareTo(e1.getValue()); // reverse sorting
+			}
+		};
+		java.util.Collections.sort(entryList, entryComparator);
+		
+
+
+		Map<Long, Integer> kwIdRankMap = new HashMap<Long, Integer>();
+		int count = 1;
+		int rank = 1;
+		double prevProb = 1.2;
+		for(Entry<Long, Double> e : entryList){
+			if(e.getValue() > 1e-10 && (prevProb-e.getValue())/prevProb > 1e-6){
+				rank=count;
+				prevProb=e.getValue();
+			}
+			if(e.getValue() <1e-10){
+				rank = 100000;
+			}
+			kwIdRankMap.put(e.getKey(),new Integer(rank));
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + " Rank: "+rank+", Keyword: "
+					+kwIDBidElementMap.get(e.getKey()).getKeyword()+", Probability: "+e.getValue());
+			count++;
+		}
+		
+		
+		return kwIdRankMap;
+	}
 
 	private void updateDefaultBidWithSE(Integer promotionID, AdEngine searchEngine, Double computedDefaultBid) throws Exception {
 		
@@ -905,7 +1045,7 @@ public class BidObject
 			if(searchEngine.equals(AdEngine.Google)){
 				bidValue*=bidMultiplierForGoogle;
 			}
-			bidValue =Math.min(maxBidDouble, bidValue);
+			bidValue = Math.max(Math.min(maxBidDouble, bidValue),0.05);
 			
 			
 			amountSpent+=statData.getAvgCPC() * (bidValue/statData.getAvgBid()) * statData.getClicks()/daysInMonth * googleVolMultiplier* multiplierGeolocation; // check
@@ -921,14 +1061,16 @@ public class BidObject
 			if(bidValue>maxBidValue){
 				maxBidValue = bidValue;
 			}
+			/*
 			if(amountSpent>=dailyBudget){
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Expected cost "+ amountSpent +"exceeds daily budget "+ dailyBudget +". Hence breaking.");
 				break;
-			} 	
+			} 
+			*/	
 		}
 		
 		Collections.sort(bidsList);
-		computedDefaultBid = bidsList.get(bidsList.size()/2);
+		computedDefaultBid = bidsList.get(bidsList.size()*1/5);  // 20 percentile point
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Now going to set default bid " + computedDefaultBid + " for all other keywords.");
 		for(long l : kwIDBidElementMap.keySet()){
 			if(!wordIDBidMap.containsKey(l)){
@@ -1265,10 +1407,18 @@ public class BidObject
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
-			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
-			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
+			
+			
+			bidObject.resetCampaign(promotionID, searchEngine);
+			bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
+			bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
+			
+			
+			//bidObject.setBidsExplore(promotionID, searchEngine, budgetData);
+
+			
+			
 			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
-			//bidObject.resetCampaign(promotionID, searchEngine);
 			
 			
 
@@ -1276,13 +1426,14 @@ public class BidObject
 			
 
 			
-			
+			/*
 			final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 			final List<KeywordProbabilityObject> keywordList = getKeywordForAdEngineSP.execute(promotionID.intValue(), true, true);
 			SemplestUtils.filterOutDeletedKeywords(keywordList);
 			for(KeywordProbabilityObject kwP : keywordList){
 				System.out.println(kwP.getKeyword()+": "+kwP.getSemplestProbability());
 			}
+			*/
 			
 			
 			
