@@ -68,21 +68,24 @@ namespace SemplestModel
             get
             {
                 var stateCodes = new Semplest().StateCodes.OrderBy(t => t.StateAbbr).ToList();
-                stateCodes.Insert(0, new StateCode(){ StateAbbrPK = -2, StateAbbr="--"});
+                stateCodes.Insert(0, new StateCode() { StateAbbrPK = -2, StateAbbr = "--" });
                 return stateCodes;
             }
         }
+
         public bool Delete { get; set; }
+        public bool IsCountry { get; set; }
+        public bool IsState { get; set; }
         internal sealed class GeoTargetingMetaData
         {
             public string City { get; set; }
             [TwoFieldRequiredAttribute("City", "StateCodeFK", ErrorMessage = "State Is Required..")]
             public int? StateCodeFK { get; set; }
-            [Range(0, 100)]
-            [TwoFieldRequiredAttribute("Address", "ProximityRadius", ErrorMessage = "Proximity Is Required..")]
             public decimal? ProximityRadius { get; set; }
         }
     }
+
+    
     public partial class SiteLink
     {
         public bool Delete { get; set; }

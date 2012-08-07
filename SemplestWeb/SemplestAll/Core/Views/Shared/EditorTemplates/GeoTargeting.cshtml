@@ -2,24 +2,25 @@
 @using Semplest.SharedResources.Helpers
 @model SemplestModel.GeoTargeting
 <div class="address">
-    <table>
+    <table border ="1">
         <tr>
             <td>
                 <label style="min-width: 65px">
-                    Street</label>
+                    Street</label> @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
             </td>
-            <td>
+
+            <td >
                 @Html.TextBoxFor(t => t.Address, new { @class = "street textboxAd" })
             </td>
             <td rowspan="5">
+            <label style="visibility:hidden; color:red;" id="mapmessage" >Please specify more information or this Ad will be submitted for the entire USA</label>
                 <div class="mapcontainer">
+                
                     <div class="map">
                     </div>
                 </div>
             </td>
-            <td>
-                @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
-            </td>
+
         </tr>
         <tr>
             <td>
@@ -58,9 +59,13 @@
                 @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity" })<label style="padding-left: 10px">
                     in miles</label>
                 @Html.ValidationMessageFor(t => t.ProximityRadius)
+                <label id ="proximitymessage" style="visibility:hidden;margin-left: 84px;color:red;">Required</label>
+
                 @Html.TextBoxFor(t => t.Latitude, new { @class = "hidden" })
                 @Html.TextBoxFor(t => t.Longitude, new { @class = "hidden" })
                 @Html.HiddenFor(t => t.GeoTargetingPK)
+                @Html.HiddenFor(t => t.IsCountry)
+                @Html.HiddenFor(t => t.IsState)
             </td>
         </tr>
         <tr>
@@ -71,11 +76,11 @@
                     @Html.LinkToRemoveNestedForm("Delete Address", "div.address", "input.mark-for-delete")</span>
             </td>
         </tr>
-        <tr>
+        <!--<tr>
             <td colspan="3">
                 @Html.ValidationSummary(true)
             </td>
-        </tr>
+        </tr>-->
     </table>
 </div>
 <script>

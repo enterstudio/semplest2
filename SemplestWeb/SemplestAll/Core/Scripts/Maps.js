@@ -21,7 +21,7 @@ function showOptionsURL(type, address, city, state, zip) {
         location.zip = this.$.find("input[id='" + zip + "']")[0].value;
     }
     var thumbMaps = 'true';
-    var maxResults = 1;
+    var maxResults = 2;
     outFormat = 'json';
     advancedOptions += '&outFormat=' + outFormat;
     advancedOptions += '&inFormat=json';
@@ -91,23 +91,61 @@ function renderOptions(response) {
             zoomval = 13;
         var lng = location.latLng.lng;
         var lat = location.latLng.lat;
-        if (lng > -98)
-            map.setView(new L.LatLng(lat, lng), zoomval).addLayer(cloudmade);
-        else
-            map.setView(new L.LatLng(lat, lng), 3).addLayer(cloudmade);
+        $("#IsState").val("False");
+        $("#mapmessage").css("visibility", "hidden");
+        $("#proximitymessage").css("visibility", "hidden");
+        $("#getCategories").removeAttr("disabled");
+        $("#AdModelProp_Addresses_" + localIndex + "__IsCountry").val("False");
+        $("#AdModelProp_Addresses_" + localIndex + "__IsState").val("False");
+        this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = "";
+        this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']")[0].value = "";
+        if (locations.length > 1 || locations[0].geocodeQuality == 'COUNTRY') {
+            lng = -99.141968;
+            lat = 39.527596;
+            $("#mapmessage").css("visibility", "visible");
+            $("#AdModelProp_Addresses_" + localIndex + "__IsCountry").val("True");
+            zoomval = 3;
+        }
+        else if ($("#AdModelProp_Addresses_" + localIndex + "__StateCodeFK").val() != "--" &&
+                    ($("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val().trim() == '' || $("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val().trim() == '0') &&
+                    $("#AdModelProp_Addresses_" + localIndex + "__City").val().trim() == '' &&
+                    $("#AdModelProp_Addresses_" + localIndex + "__Zip").val().trim() == '' &&
+                    $("#AdModelProp_Addresses_" + localIndex + "__Address").val().trim() == '') {
+            $("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val("");
+            $("#AdModelProp_Addresses_" + localIndex + "__IsState").val("True");
+            zoomval = 3;
+        }
+        else if ($("#AdModelProp_Addresses_" + localIndex + "__StateCodeFK").val() != "--" &&
+                    ($("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val().trim() > '0') &&
+                    $("#AdModelProp_Addresses_" + localIndex + "__City").val().trim() == '' &&
+                    $("#AdModelProp_Addresses_" + localIndex + "__Zip").val().trim() == '' &&
+                    $("#AdModelProp_Addresses_" + localIndex + "__Address").val().trim() == '') {
+            $("#getCategories").attr("disabled", "disabled");
+            $("#mapmessage").css("visibility", "visible");
+        }
+       else if ($("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val().trim() == '' || $("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val().trim() == '0') {
+            $("#proximitymessage").css("visibility", "visible");
+            $("#getCategories").attr("disabled", "disabled");
+            zoomval = 3;
+        }
+        else {
+            this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = location.latLng.lat;
+            this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']")[0].value = location.latLng.lng;
+        }
+        map.setView(new L.LatLng(lat, lng), zoomval).addLayer(cloudmade);
 
-        markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+
+        markerLocation = new L.LatLng(lat, lng);
         marker = new L.Marker(markerLocation);
         map.addLayer(marker);
         if (proxVal > 0) {
             var cirProx = proxVal * 1609.344;
-            circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+            circleLocation = new L.LatLng(lat, lng);
             circleOptions = { color: '#f03', opacity: 0.7 };
             circle = new L.Circle(circleLocation, cirProx, circleOptions);
             map.addLayer(circle);
         }
-        this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = location.latLng.lat;
-        this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']")[0].value = location.latLng.lng;
+
         if (list != null) {
             var nextIndex = list.pop();
             if (nextIndex != null)

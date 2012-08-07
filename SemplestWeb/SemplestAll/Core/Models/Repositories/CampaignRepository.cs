@@ -130,15 +130,18 @@ namespace Semplest.Core.Models.Repositories
             var geoList = new List<GeoTargetObject>();
             foreach (var geo in model.AdModelProp.Addresses)
             {
-                var geoTObj = new GeoTargetObject();
-                geoTObj.address = geo.Address;
-                geoTObj.city = geo.City;
-                if (geo.StateCodeFK != null) geoTObj.state = GetStateNameFromDb((int)geo.StateCodeFK);
-                geoTObj.zip = geo.Zip;
-                geoTObj.radius = (double)(geo.ProximityRadius ?? 0);
-                geoTObj.latitude = (double)(geo.Latitude ?? 0);
-                geoTObj.longitude = (double)(geo.Longitude ?? 0);
-                geoList.Add(geoTObj);
+                if (!geo.IsState)
+                {
+                    var geoTObj = new GeoTargetObject();
+                    geoTObj.address = geo.Address;
+                    geoTObj.city = geo.City;
+                    if (geo.StateCodeFK != null) geoTObj.state = GetStateNameFromDb((int)geo.StateCodeFK);
+                    geoTObj.zip = geo.Zip;
+                    geoTObj.radius = (double)(geo.ProximityRadius ?? 0);
+                    geoTObj.latitude = (double)(geo.Latitude ?? 0);
+                    geoTObj.longitude = (double)(geo.Longitude ?? 0);
+                    geoList.Add(geoTObj);
+                }
             }
             return geoList;
         }
@@ -669,11 +672,9 @@ namespace Semplest.Core.Models.Repositories
                         context.DeleteObject(
                             promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK));
                     }
-                    else if (geo.GeoTargetingPK == 0)
+                    else if (geo.GeoTargetingPK == 0 && !geo.IsCountry)
                     {
                         shouldUpdateGeoTargeting = true;
-                        if (geo.StateCodeFK < 0)
-                            geo.StateCodeFK = null;
                         var geotarget = new GeoTargeting
                                             {
                                                 Address = geo.Address,
