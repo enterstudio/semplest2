@@ -5,6 +5,7 @@ package semplest.keywords.lda;
  * probability independent of number of words 
  */
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -280,10 +281,11 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		    
 		    HashMap<String, Double> wordMap= this.createWordMap(data1, trainList, description);
 		    logger.info("previous wordmap size: "+ wordMap.size());
+		    Double defaultProb = this.getDefaultProbability(wordMap);
 		    
 	
 		    //Generate a maximum of 5000 keywords nGrams[0] bigrams + nGrams[1] trigrams and the rest split between 4 grams and 5 grams
-		    ArrayList<KeywordProbabilityObject> kwNOTSorted= this.getKwMultiCombined(optCateg, description, nGrams, wordMap, 5, srchE);
+		    ArrayList<KeywordProbabilityObject> kwNOTSorted= this.getKwMultiCombined(optCateg, description, nGrams, wordMap, defaultProb, 5, srchE);
 		    
 		    ArrayList<KeywordProbabilityObject> keywords = this.sortKeywords(kwNOTSorted, numKw);
 		    
@@ -374,12 +376,12 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	}
 	
 	private ArrayList<KeywordProbabilityObject> getKwMultiCombined(ArrayList<String> optCateg, String searchTerms, Integer[] nGrams, 
-			HashMap<String, Double> wordMap, int nGramsmax, ArrayList<SearchEngine> srchE) throws Exception{
+			HashMap<String, Double> wordMap, Double defaultProb, int nGramsmax, ArrayList<SearchEngine> srchE) throws Exception{
 		
 		ArrayList<KeywordProbabilityObject> bigrams = new ArrayList<KeywordProbabilityObject>();
 		ArrayList<KeywordProbabilityObject> trigrams = new ArrayList<KeywordProbabilityObject>();
 		ArrayList<KeywordProbabilityObject> fourgrams = new ArrayList<KeywordProbabilityObject>();
-		ArrayList<KeywordProbabilityObject> googleSug = getGoogleSug(searchTerms, srchE, wordMap, 1000);
+		ArrayList<KeywordProbabilityObject> googleSug = getGoogleSug(searchTerms, srchE, wordMap, defaultProb, 1000);
 		int iter=0;
 		boolean flag = false;
 		//go up to three levens on the tree to get enought bigrams and trigrams
@@ -398,9 +400,9 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 				this.getCatChildsAndData(newCategories, newOptCateg);;
 			}
 			logger.info("Expanding categories");
-			bigrams = getKwMulti(searchTerms, newOptCateg, nGrams[0], wordMap, 2, srchE);
-			trigrams = getKwMulti(searchTerms, newOptCateg, nGrams[1], wordMap, 3, srchE);
-			fourgrams = getKwMulti(searchTerms, newOptCateg, nGrams[2], wordMap, 4, srchE);
+			bigrams = getKwMulti(searchTerms, newOptCateg, nGrams[0], wordMap, defaultProb, 2, srchE);
+			trigrams = getKwMulti(searchTerms, newOptCateg, nGrams[1], wordMap, defaultProb, 3, srchE);
+			fourgrams = getKwMulti(searchTerms, newOptCateg, nGrams[2], wordMap, defaultProb, 4, srchE);
 			flag = (bigrams.size()>10 || trigrams.size()>10);
 			iter++;
 		}
@@ -416,7 +418,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	}
 	
 	private ArrayList<KeywordProbabilityObject> getGoogleSug(String searchTerms, ArrayList<SearchEngine> srchE , 
-			 HashMap<String, Double> wordMap, int numberResults) throws Exception{
+			 HashMap<String, Double> wordMap, Double defaultProb,  int numberResults) throws Exception{
 
 		ArrayList<KeywordProbabilityObject> kwProb = new ArrayList<KeywordProbabilityObject>();
 		
@@ -456,7 +458,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			kwrds.add(kw.getKeyword());
 		}
 		
-		HashMap<String, Double> kwProbMap =  getKwProbability(kwrds, wordMap, "\\s+");
+		HashMap<String, Double> kwProbMap =  getKwProbability(kwrds, wordMap, "\\s+", defaultProb);
 		
 		return kwProbMap2KwProbList( kwProbMap, srchE, numberResults);
 	}
@@ -485,7 +487,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	}
 	
 	private ArrayList<KeywordProbabilityObject> getKwMulti(String searchTerms,ArrayList<String> optCateg, 
-			int numkw, HashMap<String, Double> wordMap, int nGrams, ArrayList<SearchEngine> srchE) throws Exception{
+			int numkw, HashMap<String, Double> wordMap, Double defaultProb, int nGrams, ArrayList<SearchEngine> srchE) throws Exception{
 		//Generates keywords with nGrams words
 
 		MultiWordCollect[] nGramsA=data.biGrams;
@@ -514,7 +516,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			if(descripWords!=null) mWords.addAll(descripWords);
 			if(auxArray!=null) mWords.addAll(auxArray);
 			if (mWords != null){
-				multWMap.putAll(getKwProbability(mWords, wordMap, "\\+"));
+				multWMap.putAll(getKwProbability(mWords, wordMap, "\\+", defaultProb));
 			}
 		}
 		
@@ -522,30 +524,38 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	}
 	
 	
-	private   HashMap<String, Double> getKwProbability(ArrayList<String> wordList, HashMap<String, Double> wordMap, String regSplit){
-		
+	private   HashMap<String, Double> getKwProbability(ArrayList<String> wordList, HashMap<String, Double> wordMap, String regSplit, Double defaultProb){
+		//Delete this for 60% probability
+		defaultProb = 0.0;
 		HashMap<String, Double> multWMap = new HashMap<String, Double>();
 		for(String mWrd:wordList){
 			String[] subWrds=mWrd.split(regSplit);
 			Double wProb=1.0;
 			String kwrd="";
 			String kwstem = "";
+			int relevantKw = 0;
 			boolean flag = true;
 			for(int n=0;n<subWrds.length;n++){
 				String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).trim();
-				if(!wordMap.containsKey(subWstem) || kwstem.contains(subWstem)){
-					flag=false;
-					break;
+				if(!data.dict.commonWord(subWrds[n])){
+					if(!kwstem.contains(subWstem)){
+						if(wordMap.containsKey(subWstem)){
+							wProb=wProb*wordMap.get(subWstem);
+						}else{
+							wProb=wProb*defaultProb;
+						}
+						kwstem = kwstem+subWstem+" ";
+						relevantKw++;
+					}else { 
+						flag = false;
+						break ;
+					}
 				}
 				kwrd=kwrd+subWrds[n]+" ";
-				kwstem = kwstem+subWstem+" ";
+				
 			}
-			if(flag!=false && !multWMap.containsKey(kwrd)){
-					for(int n=0;n<subWrds.length;n++){
-						String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).replaceAll("\\s+", "");
-						wProb=wProb*wordMap.get(subWstem);
-					}
-					multWMap.put(kwrd, Math.exp(Math.log(wProb)/subWrds.length));			
+			if(flag!=false && !multWMap.containsKey(kwrd) && relevantKw>1 && wProb!=0){
+					multWMap.put(kwrd, Math.exp(Math.log(wProb)/relevantKw));			
 			}
 			
 		}
@@ -679,14 +689,14 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		//Returns the stemmed version of a word
 	    String os = "";
 	    for( String w: raws.split("\\s+")){
-	    	if(!dict.commonWord(w.toLowerCase())){
+	    	//if(!dict.commonWord(w.toLowerCase())){
 	    		//String aux = dict.getRoot( w.toLowerCase() );
 		    	String aux = dict.getRoot( w.toLowerCase() );
 		    	if(aux != null)
 		    		os = os + aux + " ";
 		    	else 
 		    		os = os + w + " "; 
-	    	}
+	    	//}
 	    }
 	    return os;
 	}
@@ -750,6 +760,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	    //and obtain word probability
 	    HashMap<String, Double> wordMap= this.createWordMap(data1, trainList, description);
 	    logger.info("previous wordmap size: "+ wordMap.size());
+	    Double defaultProb = this.getDefaultProbability(wordMap);
 		
 	    //Calulate Keyword Probability
 	    ArrayList<String> keywords = new ArrayList<String>();
@@ -757,7 +768,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	    	keywords.add(kw.getKeyword().trim());
 	    }
 	    
-	    HashMap<String,Double> kwProbMap = this.getKwProbability(keywords, wordMap, "\\s+");	    
+	    HashMap<String,Double> kwProbMap = this.getKwProbability(keywords, wordMap, "\\s+", defaultProb);	    
 	    ArrayList<KeywordProbabilityObject> kwOut = new ArrayList<KeywordProbabilityObject>(kwProbMap.size());
 	    for(String kw : kwProbMap.keySet()){
 	    	for(int j=0 ; j< keywordList.size(); j++){
@@ -770,6 +781,21 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	    }
 	    kwOut = this.sortKeywords(kwOut, kwOut.size());
 		return kwOut.toArray(new KeywordProbabilityObject[kwOut.size()]);
+	}
+	
+	private Double getDefaultProbability(HashMap<String, Double> wordMap) throws FileNotFoundException{
+		ValueComparator bvc = new ValueComparator(wordMap);
+	  	TreeMap<String,Double> sortedMap = new TreeMap<String,Double>(bvc);
+	  	sortedMap.putAll(wordMap);
+	  	String[] words = sortedMap.keySet().toArray(new String[sortedMap.size()]);
+	  	
+	  	// print word Map
+	  	PrintStream pr = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/wordMap.wm"));
+	  	for(String word : words){
+	  		pr.println(word+", " + wordMap.get(word));
+	  	}
+	  	
+	  	return wordMap.get(words[(int)(words.length*0.6)]);
 	}
 	/*
 	public static void main(String[] args) throws Exception {
