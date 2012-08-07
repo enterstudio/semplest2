@@ -33,6 +33,8 @@ import semplest.server.protocol.CustomOperation;
 import semplest.server.protocol.CustomerHierarchy;
 import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.EmailType;
+import semplest.server.protocol.Job;
+import semplest.server.protocol.JobName;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
@@ -109,6 +111,7 @@ public class SemplestDB extends BaseDB
 
 	public static final RowMapper<User> USER_ROW_MAPPER;
 	public static final RowMapper<CustomerHierarchy> CUSTOMER_HIERARCHY_ROW_MAPPER;
+	public static final RowMapper<Job> JOB_ROW_MAPPER;
 
 	static
 	{
@@ -147,6 +150,46 @@ public class SemplestDB extends BaseDB
 				return hierarchy;
 			}
 		};
+		
+		JOB_ROW_MAPPER = new RowMapper<Job>()
+		{
+			@Override
+			public Job mapRow(final ResultSet rs, final int index) throws SQLException
+			{
+				final Integer pk = rs.getInt("JobPK");
+				final String jobNameString = rs.getString("Name");
+				final JobName jobName = JobName.valueOf(jobNameString);
+				final java.util.Date lastSuccessfulRunTime = rs.getTimestamp("LastSuccessfulRunTime");
+				final Job job = new Job(pk, jobName, lastSuccessfulRunTime);
+				return job;
+			}	
+		};
+	}
+	
+	public static void updateJobLastSuccessfulRunTime(final JobName jobName) throws Exception
+	{
+		final String jobNameString = jobName.name();
+		final java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
+		final int rowCount = jdbcTemplate.update("update Job set LastSuccessfulRunTime = ? where Name = ?", new Object[]{now, jobNameString});
+		if (rowCount != 1)
+		{
+			throw new Exception("Rowcount gotten from database when trying to update LastSuccessfulRunTime to current time for Job by Name [" + jobName + "] is " + rowCount + ", but should be 1");
+		}
+	}
+	
+	public static Job getJob(final JobName jobName) throws Exception
+	{
+		final List<Job> jobs = jdbcTemplate.query("select JobPK, Name, LastSuccessfulRunTime from Job where Name = ?", JOB_ROW_MAPPER, jobName);
+		if (jobs == null || jobs.isEmpty())
+		{
+			return null;
+		}
+		if (jobs.size() > 1)
+		{
+			throw new Exception("Found " + jobs.size() + " Jobs for Name [" + jobName + "], but there should be only 1");
+		}
+		final Job job = jobs.get(0);
+		return job;
 	}
 
 	public static <T> T executeRetryOnDeadlock(final CustomOperation<T> customOperation, final int maxNumRetries) throws Exception

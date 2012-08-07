@@ -11,6 +11,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.Credential;
 import semplest.server.protocol.EmailTemplate;
+import semplest.server.protocol.Job;
+import semplest.server.protocol.JobName;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.RunMode;
 import semplest.server.protocol.User;
@@ -91,6 +93,14 @@ public class ExpiredCredentialsEmailSender
 		engage(Arrays.asList(user));
 	}
 	
+	public void engageBatch() throws Exception
+	{
+		final Job job = SemplestDB.getJob(JobName.EXPIRED_CREDENTIALS_EMAIL_SENDER);
+		log.info("State of the job before running the current iteration: " + job);
+		engage(null);
+		SemplestDB.updateJobLastSuccessfulRunTime(JobName.EXPIRED_CREDENTIALS_EMAIL_SENDER);
+	}
+	
 	public void engage(final List<User> users) throws Exception
 	{
 		log.info("Will try to send registration reminder emails for Users [" + users + "] <== if null, then will be done for all eligible users");
@@ -160,6 +170,12 @@ public class ExpiredCredentialsEmailSender
 		return emailSender;
 	}
 	
+	/**
+	 * !!!!!!!!!!!! NOTE !!!!!!!!!!!!
+	 * 
+	 * This main method is not just for testing, but is actually used in production for running this job.  So don't change it willy-nilly.  Otherwise, you'll cause production errors if your changes
+	 * are accidentally committed and released.
+	 */
 	public static void main(final String[] args) throws Exception
 	{
 		try
@@ -177,7 +193,7 @@ public class ExpiredCredentialsEmailSender
 				object.wait();
 			}
 			final ExpiredCredentialsEmailSender emailSender = getDefaultExpiredEmailSender();
-			emailSender.engage(null); // will do all eligible users
+			emailSender.engageBatch(); // will do all eligible users
 		}
 		catch (Throwable t)
 		{
