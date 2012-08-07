@@ -610,9 +610,9 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		SystemTestFunc.PrintLineSeperator();	
 		List<GoogleViolation> ret = null;
 				
-		SystemTestFunc.PrintMethodCall("validateGoogleRefreshSiteLinks(" + siteLinks + ")");
+		SystemTestFunc.PrintMethodCall("validateGoogleRefreshSiteLinks(" + SystemTestDataModel.sitelinks + ")");
 		try{			
-			ret = adEngineService.validateGoogleRefreshSiteLinks(siteLinks);
+			ret = adEngineService.validateGoogleRefreshSiteLinks(SystemTestDataModel.sitelinks);
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
@@ -1059,8 +1059,8 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 				System.out.println("Sitelinks:");
 				for(com.google.api.adwords.v201109_1.cm.Sitelink sl : sle.getSitelinks()){
 					System.out.println(" - " + sl.getDisplayText() + ", " + sl.getDestinationUrl());
-					if((sl.getDisplayText().equals(SystemTestDataModel.siteLink1.linkText))
-							&& (sl.getDestinationUrl().equals(SystemTestDataModel.siteLink1.linkUrl))){
+					if((sl.getDisplayText().equals(SystemTestDataModel.siteLink1.getLinkText()))
+							&& (sl.getDestinationUrl().equals(SystemTestDataModel.siteLink1.getLinkURL()))){
 						match++;
 					}
 				}
@@ -1070,7 +1070,7 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 				}
 				if(match != 1){
 					SystemTestFunc.ErrorHandler("SiteLinks are not refreshed correctly on google. " +
-							"A SiteLink " + SystemTestDataModel.siteLink1.linkText + " is not found on google.");
+							"A SiteLink " + SystemTestDataModel.siteLink1.getLinkText() + " is not found on google.");
 				}
 			}
 		}

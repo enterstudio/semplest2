@@ -24,6 +24,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.BaseDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
@@ -119,11 +120,11 @@ public class SystemTestFunc extends BaseDB{
 				{SystemTestDataModel.semplestPromotionId, SystemTestDataModel.address, SystemTestDataModel.city, SystemTestDataModel.stateCode, SystemTestDataModel.zipCode, SystemTestDataModel.longitude, SystemTestDataModel.latitude, SystemTestDataModel.radius});
 		
 		//SiteLinks
-		for(SystemTestDataModel.SiteLink sl : SystemTestDataModel.sitelinks){
+		for(GoogleSiteLink sl : SystemTestDataModel.sitelinks){
 			sql = "INSERT INTO SiteLinks(PromotionFK,LinkText,LinkURL) " +
 					"VALUES(?,?,?)";
 			jdbcTemplate.update(sql, new Object[]
-					{SystemTestDataModel.semplestPromotionId, sl.linkText, sl.linkUrl});
+					{SystemTestDataModel.semplestPromotionId, sl.getLinkText(), sl.getLinkURL()});
 		}		
 				
 		System.out.println(" - Created Promotion " + SystemTestDataModel.semplestPromotionId + " for the system test.");

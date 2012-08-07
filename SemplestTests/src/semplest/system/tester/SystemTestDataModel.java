@@ -10,6 +10,7 @@ import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.EmailType;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.google.GoogleAddAdRequest;
+import semplest.server.protocol.google.GoogleSiteLink;
 
 public class SystemTestDataModel {
 
@@ -72,9 +73,9 @@ public class SystemTestDataModel {
 	public static final Double radius = 10.00;	
 	
 	//SiteLinks
-	public static final SiteLink siteLink1 = data.new SiteLink("SEMplest");
-	public static final SiteLink siteLink2 = data.new SiteLink("semplest");
-	public static final List<SiteLink> sitelinks = Arrays.asList(siteLink1, siteLink2);
+	public static final GoogleSiteLink siteLink1 = new GoogleSiteLink("SEMplest", "http://www.semplest.com");
+	public static final GoogleSiteLink siteLink2 = new GoogleSiteLink("semplest", "http://www.semplest.com");
+	public static final List<GoogleSiteLink> sitelinks = Arrays.asList(siteLink1, siteLink2);
 	
 	//Other AdEngine Variables
 	public static final Double adEngine_ChangeInBudget = 10.00;
@@ -123,16 +124,6 @@ public class SystemTestDataModel {
 		}		
 	}
 	
-	public class SiteLink{
-		public String linkText;
-		public String linkUrl;
-		public SiteLink(String linkText) {
-			super();
-			this.linkText = linkText;
-			this.linkUrl = "http://www.semplest.com";
-		}		
-	}
-
 	public static String printTestData() {
 		return "SystemTestDataModel [semplestCustomerId=" + semplestCustomerId
 				+ ", semplestProductGroupId=" + semplestProductGroupId
