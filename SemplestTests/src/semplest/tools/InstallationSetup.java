@@ -79,6 +79,7 @@ public class InstallationSetup {
 			if(hostName.equals(config.get(SERVER_BOX.DEV).serviceServer)){
 				//DEV Box Services
 				is.setServices(SERVER_BOX.DEV);
+				is.setChaseOrbitalLineHandler();
 			}
 			
 			if(hostName.equals(config.get(SERVER_BOX.DEV).keywordServer)){
@@ -98,6 +99,7 @@ public class InstallationSetup {
 			if(hostName.equals(config.get(SERVER_BOX.TEST).serviceServer)){
 				//TEST Box Services
 				is.setServices(SERVER_BOX.TEST);
+				is.setChaseOrbitalLineHandler();
 			}			
 			
 			if(hostName.equals(config.get(SERVER_BOX.TEST).keywordServer)){
@@ -117,6 +119,7 @@ public class InstallationSetup {
 			if(hostName.equals(config.get(SERVER_BOX.EXP).serviceServer)){				
 				//Exp Services
 				is.setServices(SERVER_BOX.EXP);
+				is.setChaseOrbitalLineHandler();
 			}
 			
 			if(hostName.equals(config.get(SERVER_BOX.EXP).keywordServer)){
@@ -136,6 +139,7 @@ public class InstallationSetup {
 			if(hostName.equals(config.get(SERVER_BOX.UAT).serviceServer)){				
 				//UAT Box Services
 				is.setServices(SERVER_BOX.UAT);
+				is.setChaseOrbitalLineHandler();
 			}
 			
 			if(hostName.equals(config.get(SERVER_BOX.UAT).keywordServer)){				
@@ -252,6 +256,27 @@ public class InstallationSetup {
 			//do nothing
 		}
 		catch(IOException e){
+			//do nothing
+		}
+	}
+	
+	public void setChaseOrbitalLineHandler(){
+		try{
+			String path = "C:\\SemplestChaseOrbitalGatewayService\\config\\linehandler.properties";
+			
+			Properties properties = new Properties();
+			FileInputStream in = new FileInputStream(path);
+			properties.load(in);
+			in.close();		
+			
+			properties.setProperty("engine.hostname", "orbitalvar1.paymentech.net");
+			properties.setProperty("engine.hostname.failover", "orbitalvar2.paymentech.net");
+			
+			FileOutputStream out = new FileOutputStream(path);
+			String comment = "Updated by InstallationSetup. " + new Date();
+			properties.store(out, comment);
+		}
+		catch(Exception e){
 			//do nothing
 		}
 	}
