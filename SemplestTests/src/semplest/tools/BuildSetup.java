@@ -76,6 +76,9 @@ public class BuildSetup {
 		
 		setProps(path1, ProdJdbc, serverIndex);
 		setProps(path2, ProdJdbc, serverIndex);
+		
+		String pathLineHandler = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/dist/config/linehandler.properties";
+		setChaseOrbitalLineHandler(pathLineHandler);
 	}
 	
 	public void setProps(String path, String jdbc, String serverIndex){
@@ -120,6 +123,25 @@ public class BuildSetup {
 			//do nothing
 		}
 		catch(IOException e){
+			//do nothing
+		}
+	}
+	
+	public void setChaseOrbitalLineHandler(String path){
+		try{
+			Properties properties = new Properties();
+			FileInputStream in = new FileInputStream(path);
+			properties.load(in);
+			in.close();		
+			
+			properties.setProperty("engine.hostname", "orbital1.paymentech.net");
+			properties.setProperty("engine.hostname.failover", "orbital2.paymentech.net");
+			
+			FileOutputStream out = new FileOutputStream(path);
+			String comment = "Updated by BuildSetup. " + new Date();
+			properties.store(out, comment);
+		}
+		catch(Exception e){
 			//do nothing
 		}
 	}
