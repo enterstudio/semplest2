@@ -1465,7 +1465,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			logger.info("Will look through " + adGroupCriterions.length + " AdGroupCriterions for the Ids of the Keywords which we're trying to delete");
 			final Map<String, Long> keywordToIdMap = getKeywordToIdMap(keywords, adGroupCriterions);
-			logger.info("Out of " + keywords.size() + " keywords that we're trying to delete, found " + keywordToIdMap.size() + " in Google");
+			logger.info("Out of " + keywords.size() + " keywords that we're trying to delete, found " + keywordToIdMap.size() + " in Google\n" + SemplestUtils.getEasilyReadableString(keywordToIdMap));
 			if (keywordToIdMap.isEmpty())
 			{
 				logger.info("Found no keywords in google do delete as per the request for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Keywords [" + keywords + "]");
@@ -3796,7 +3796,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
 		    operation.setOperand(campaignCriterion);
 		    operation.setOperator(operator);
-		    operations.add(operation);		    
+		    operations.add(operation);
 		}
 		return operations;
 	}

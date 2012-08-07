@@ -1503,7 +1503,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return geoTargetVsTypeMap;
 	}
-	
+
 	@Override
 	public Boolean UpdateGeoTargeting(Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
@@ -1531,7 +1531,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
 				final Long accountId = promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
-				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);
+				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);	
 				final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
 				msn.updateGeoTargets(accountId, campaignId, msnGeoTargets);
 			}
@@ -2069,7 +2069,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.debug("call AddNegativeKeywords(String json): [" + json + "]");
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs"); 
+		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs");
 		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString, SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
@@ -2180,7 +2180,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				else
 				{
-					msn.setNegativeKeywords(accountID, campaignID, negativeKeywordToPkMap);
+					final List<KeywordProbabilityObject> existingKeywordsInSemplest = SemplestDB.getKeywordProbObj(promotionID, false, true);
+					final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplest = getKeywordProbabilities(existingKeywordsInSemplest, true);
+					final Map<String, Integer> negativeKeywordToPkMapAll = getKywordToPkMap(existingNegativeKeywordsInSemplest);
+					final Map<Integer, String> filteredPkToCommentMap = msn.setNegativeKeywords(accountID, campaignID, negativeKeywordToPkMapAll);
+					msn.setNegativeKeywords(accountID, campaignID, negativeKeywordToPkMapAll);
 				}
 			}
 			else
