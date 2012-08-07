@@ -788,12 +788,12 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	  	TreeMap<String,Double> sortedMap = new TreeMap<String,Double>(bvc);
 	  	sortedMap.putAll(wordMap);
 	  	String[] words = sortedMap.keySet().toArray(new String[sortedMap.size()]);
-	  	
+	  	/*
 	  	// print word Map
 	  	PrintStream pr = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/wordMap.wm"));
 	  	for(String word : words){
 	  		pr.println(word+", " + wordMap.get(word));
-	  	}
+	  	}*/
 	  	
 	  	return wordMap.get(words[(int)(words.length*0.6)]);
 	}
