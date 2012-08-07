@@ -148,6 +148,36 @@ public final class SemplestUtils
 	public static final String DATE_TIME = "DATE_TIME";
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
+	
+	public static <T> List<T> getSubset(final List<T> c, final Integer maxSize)
+	{
+		final List<T> results = new ArrayList<T>();
+		Integer counter = 0;
+		for (final T item : c)
+		{	
+			++counter;
+			if (counter <= maxSize)
+			{
+				results.add(item);
+			}			
+		}
+		return results;
+	}
+	
+	public static <T> Set<T> getSubset(final Set<T> c, final Integer maxSize)
+	{
+		final Set<T> results = new HashSet<T>();
+		Integer counter = 0;
+		for (final T item : c)
+		{	
+			++counter;
+			if (counter <= maxSize)
+			{
+				results.add(item);
+			}			
+		}
+		return results;
+	}
 		
 	public static void filterOutDeletedKeywords(final List<KeywordProbabilityObject> keywords)
 	{

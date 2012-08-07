@@ -7,6 +7,16 @@ public class MSNGeotargetObject
 	private Double latitude;
 	private Double longitude;
 	
+	public MSNGeotargetObject() {}
+	
+	public MSNGeotargetObject(String name, String mSNName, Double latitude, Double longitude)
+	{
+		Name = name;
+		MSNName = mSNName;
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+	
 	public String getMSNName()
 	{
 		return MSNName;
