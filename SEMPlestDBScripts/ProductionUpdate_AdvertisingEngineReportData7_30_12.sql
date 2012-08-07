@@ -691,3 +691,26 @@ BEGIN CATCH
 	RAISERROR (@ErrMessage, @ErrorSeverity, @ErrorState);
 END CATCH;
 GO
+
+--- CREATE COLUMN: IsMasterProfile
+---
+ALTER TABLE dbo.NickNameProfileAssociation ADD IsMasterProfile bit NOT NULL DEFAULT 0
+GO
+
+---
+--- CREATE COLUMN: InvoiceTransactionFK
+---
+ALTER TABLE dbo.PromotionPayment ADD InvoiceTransactionFK int
+GO
+---
+--- CREATE COLUMN: BudgetToAddAmount
+---
+ALTER TABLE dbo.PromotionPayment ADD BudgetToAddAmount money
+GO
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_InvoiceTransaction_PromotionPayment_3
+---
+ALTER TABLE dbo.PromotionPayment ADD 
+	CONSTRAINT REL_InvoiceTransaction_PromotionPayment_3 FOREIGN KEY (InvoiceTransactionFK)
+		REFERENCES dbo.InvoiceTransaction(InvoiceTransactionPK)
+GO
