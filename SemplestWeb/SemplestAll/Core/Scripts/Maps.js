@@ -92,8 +92,10 @@ function renderOptions(response) {
         var lng = location.latLng.lng;
         var lat = location.latLng.lat;
         $("#IsState").val("False");
-        $("#mapmessage").css("visibility", "hidden");
-        $("#proximitymessage").css("visibility", "hidden");
+        $("#AdModelProp_Addresses_" + localIndex + "__MapMessage").text("Please specify more information or this Ad will be submitted for the entire USA");
+        $("#AdModelProp_Addresses_" + localIndex + "__ProximityMessage").text("Required");
+        $("#AdModelProp_Addresses_" + localIndex + "__MapMessage").css("visibility", "hidden");
+        $("#AdModelProp_Addresses_" + localIndex + "__ProximityMessage").css("visibility", "hidden");
         $("#getCategories").removeAttr("disabled");
         $("#AdModelProp_Addresses_" + localIndex + "__IsCountry").val("False");
         $("#AdModelProp_Addresses_" + localIndex + "__IsState").val("False");
@@ -102,7 +104,7 @@ function renderOptions(response) {
         if (locations.length > 1 || locations[0].geocodeQuality == 'COUNTRY') {
             lng = -99.141968;
             lat = 39.527596;
-            $("#mapmessage").css("visibility", "visible");
+            $("#AdModelProp_Addresses_" + localIndex + "__MapMessage").css("visibility", "visible");
             $("#AdModelProp_Addresses_" + localIndex + "__IsCountry").val("True");
             zoomval = 3;
         }
@@ -121,12 +123,12 @@ function renderOptions(response) {
                     $("#AdModelProp_Addresses_" + localIndex + "__Zip").val().trim() == '' &&
                     $("#AdModelProp_Addresses_" + localIndex + "__Address").val().trim() == '') {
             $("#getCategories").attr("disabled", "disabled");
-            $("#mapmessage").css("visibility", "visible");
+            $("#AdModelProp_Addresses_" + localIndex + "__MapMessage").css("visibility", "visible");
         }
        else if ($("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val().trim() == '' || $("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val().trim() == '0') {
-            $("#proximitymessage").css("visibility", "visible");
-            $("#getCategories").attr("disabled", "disabled");
-            zoomval = 3;
+           $("#AdModelProp_Addresses_" + localIndex + "__ProximityMessage").css("visibility", "visible");
+           $("#getCategories").attr("disabled", "disabled");
+           zoomval = 3;
         }
         else {
             this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = location.latLng.lat;

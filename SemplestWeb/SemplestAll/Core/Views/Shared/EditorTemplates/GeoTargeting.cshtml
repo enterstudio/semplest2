@@ -2,7 +2,7 @@
 @using Semplest.SharedResources.Helpers
 @model SemplestModel.GeoTargeting
 <div class="address">
-    <table border ="1">
+    <table>
         <tr>
             <td>
                 <label style="min-width: 65px">
@@ -13,7 +13,8 @@
                 @Html.TextBoxFor(t => t.Address, new { @class = "street textboxAd" })
             </td>
             <td rowspan="5">
-            <label style="visibility:hidden; color:red;" id="mapmessage" >Please specify more information or this Ad will be submitted for the entire USA</label>
+            @Html.LabelFor(t => t.MapMessage, new { style = "visibility:hidden; color:red;" }, true)
+            
                 <div class="mapcontainer">
                 
                     <div class="map">
@@ -59,7 +60,7 @@
                 @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity" })<label style="padding-left: 10px">
                     in miles</label>
                 @Html.ValidationMessageFor(t => t.ProximityRadius)
-                <label id ="proximitymessage" style="visibility:hidden;margin-left: 84px;color:red;">Required</label>
+                @Html.LabelFor(t => t.ProximityMessage, new { style = "visibility:hidden; margin-left: 84px;color:red;" }, true)
 
                 @Html.TextBoxFor(t => t.Latitude, new { @class = "hidden" })
                 @Html.TextBoxFor(t => t.Longitude, new { @class = "hidden" })

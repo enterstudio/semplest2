@@ -76,6 +76,8 @@ namespace SemplestModel
         public bool Delete { get; set; }
         public bool IsCountry { get; set; }
         public bool IsState { get; set; }
+        public string MapMessage { get; set; }
+        public string ProximityMessage { get; set; }
         internal sealed class GeoTargetingMetaData
         {
             public string City { get; set; }
