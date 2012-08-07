@@ -32,7 +32,7 @@ BEGIN TRY
 	from Promotion p 
 	inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK
 	inner join Keyword k on k.KeywordPK = pka.KeywordFK
-	where p.PromotionPK = @PromotionPK and (pka.IsTargetGoogle = @IsTargetGoogle or pka.IsTargetMSN = @IsTargetMSN) and pka.IsDeleted = 0 and pka.IsActive = 1
+	where p.PromotionPK = @PromotionPK and (pka.IsTargetGoogle = @IsTargetGoogle or pka.IsTargetMSN = @IsTargetMSN) and pka.IsActive = 1
 	
 END TRY
 BEGIN CATCH
