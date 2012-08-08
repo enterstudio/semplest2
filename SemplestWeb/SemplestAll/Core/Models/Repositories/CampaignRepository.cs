@@ -1159,10 +1159,12 @@ namespace Semplest.Core.Models.Repositories
 
         public string GetStateNameFromCode(int stateCode)
         {
-            string stateName;
+            string stateName = string.Empty;
             using (var db = new SemplestModel.Semplest())
             {
-                stateName = db.StateCodes.First(m => m.StateAbbrPK == stateCode).StateAbbr;
+                var state = db.StateCodes.SingleOrDefault(m => m.StateAbbrPK == stateCode);
+                if(state != null)
+                    stateName = state.StateAbbr;
             }
             return stateName;
         }
