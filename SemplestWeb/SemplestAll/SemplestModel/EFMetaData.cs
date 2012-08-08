@@ -83,6 +83,7 @@ namespace SemplestModel
             public string City { get; set; }
             [TwoFieldRequiredAttribute("City", "StateCodeFK", ErrorMessage = "State Is Required..")]
             public int? StateCodeFK { get; set; }
+            [Range(1, 100)]
             public decimal? ProximityRadius { get; set; }
         }
     }
