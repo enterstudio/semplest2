@@ -789,3 +789,20 @@ ALTER TABLE dbo.PromotionPayment ADD
 	CONSTRAINT REL_InvoiceTransaction_PromotionPayment_3 FOREIGN KEY (InvoiceTransactionFK)
 		REFERENCES dbo.InvoiceTransaction(InvoiceTransactionPK)
 GO
+
+---
+--- CREATE TABLE: dbo.Job
+---
+CREATE TABLE dbo.Job
+(
+	JobPK int NOT NULL IDENTITY,
+	Name varchar(250) NOT NULL,
+	LastSuccessfulRunTime datetime2,
+	PRIMARY KEY CLUSTERED (JobPK)
+)
+GO
+---
+--- CREATE COLUMN: IsDeleted
+---
+ALTER TABLE dbo.AdvertisingEngineAds ADD IsDeleted bit NOT NULL DEFAULT 0
+GO
