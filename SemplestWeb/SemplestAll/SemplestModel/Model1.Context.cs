@@ -158,5 +158,26 @@ namespace SemplestModel
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SetNegativeKeyword_Result>("SetNegativeKeyword", keywordParameter, promotionIDParameter, negativeKeywordID, exists);
         }
+    
+        public virtual int GetMSNGeoLocation(Nullable<int> promotionID, string valueList, string valueDelimiter, string listDelimiter, ObjectParameter totalSize)
+        {
+            var promotionIDParameter = promotionID.HasValue ?
+                new ObjectParameter("PromotionID", promotionID) :
+                new ObjectParameter("PromotionID", typeof(int));
+    
+            var valueListParameter = valueList != null ?
+                new ObjectParameter("ValueList", valueList) :
+                new ObjectParameter("ValueList", typeof(string));
+    
+            var valueDelimiterParameter = valueDelimiter != null ?
+                new ObjectParameter("ValueDelimiter", valueDelimiter) :
+                new ObjectParameter("ValueDelimiter", typeof(string));
+    
+            var listDelimiterParameter = listDelimiter != null ?
+                new ObjectParameter("ListDelimiter", listDelimiter) :
+                new ObjectParameter("ListDelimiter", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetMSNGeoLocation", promotionIDParameter, valueListParameter, valueDelimiterParameter, listDelimiterParameter, totalSize);
+        }
     }
 }

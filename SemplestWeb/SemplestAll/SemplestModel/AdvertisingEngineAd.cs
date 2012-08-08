@@ -17,6 +17,7 @@ namespace SemplestModel
         public long AdvertisingEngineAdPK { get; set; }
         public int PromotionAdsFK { get; set; }
         public int AdvertisingEngineFK { get; set; }
+        public bool IsDeleted { get; set; }
     
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
         public virtual PromotionAd PromotionAd { get; set; }

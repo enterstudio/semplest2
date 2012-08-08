@@ -124,6 +124,22 @@ namespace Semplest.Core.Models.Repositories
                                                                                                       : null;
                                                                                        }).ToList();
         }
+        private string SerializeToCommaDlimitedString(List<GeoTargeting> addresses, string valueDelimiter, string listDelimiter)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (var geo in addresses)
+            {
+                sb.Append(geo.Latitude != null ? string.Empty : GetStateNameFromDb((int)geo.StateCodeFK));
+                sb.Append(valueDelimiter);
+                sb.Append(geo.Latitude != null ? geo.Latitude.Value.ToString() : string.Empty);
+                sb.Append(valueDelimiter);
+                sb.Append(geo.Longitude != null ? geo.Longitude.Value.ToString() : string.Empty);
+                sb.Append(valueDelimiter);
+                sb.Append(geo.ProximityRadius != null ? geo.ProximityRadius.Value.ToString() : string.Empty);
+                sb.Append(listDelimiter);
+            }
+            return sb.ToString();
+        }
 
         private List<GeoTargetObject> SerializeToGeoTargetObjectArray(CampaignSetupModel model)
         {
@@ -290,6 +306,12 @@ namespace Semplest.Core.Models.Repositories
                         gv = ValidateGeotargeting(gtos);
                         if (gv.Length > 0)
                             throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                        var op = new System.Data.Objects.ObjectParameter("totalSize", typeof(int));
+                        string valueDelimiter = ",";
+                        string listDelimiter = ";";
+                        dbcontext.GetMSNGeoLocation(null, SerializeToCommaDlimitedString(model.AdModelProp.Addresses, valueDelimiter, listDelimiter), valueDelimiter, listDelimiter, op);
+                        if ((int)op.Value > 250)
+                            throw new Exception("please fix your geotargeting");
                     }
                 }
                 promo.LandingPageURL = model.AdModelProp.LandingUrl.Trim();

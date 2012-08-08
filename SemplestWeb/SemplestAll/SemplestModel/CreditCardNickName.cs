@@ -14,16 +14,10 @@ namespace SemplestModel
     
     public partial class CreditCardNickName
     {
-        public CreditCardNickName()
-        {
-            this.CreditCardProfiles = new HashSet<CreditCardProfile>();
-        }
-    
         public int CreditCardNickNamePK { get; set; }
         public int CustomerFK { get; set; }
         public string CreditCardNickName1 { get; set; }
     
         public virtual Customer Customer { get; set; }
-        public virtual ICollection<CreditCardProfile> CreditCardProfiles { get; set; }
     }
 }

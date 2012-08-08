@@ -70,7 +70,6 @@
       [KeywordInitialBidData].[KeywordBidFK] AS [KeywordBidFK]
       FROM [dbo].[KeywordInitialBidData] AS [KeywordInitialBidData]</DefiningQuery>
           </EntitySet>
-          <EntitySet Name="NickNameProfileAssociation" EntityType="SemplestModel.Store.NickNameProfileAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Phone" EntityType="SemplestModel.Store.Phone" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PhoneType" EntityType="SemplestModel.Store.PhoneType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ProductGroup" EntityType="SemplestModel.Store.ProductGroup" store:Type="Tables" Schema="dbo" />
@@ -323,17 +322,9 @@
             <End Role="BudgetCycle" EntitySet="BudgetCycle" />
             <End Role="Promotion" EntitySet="Promotion" />
           </AssociationSet>
-          <AssociationSet Name="REL_CreditCardNickName_NickNameProfileAssociation_2" Association="SemplestModel.Store.REL_CreditCardNickName_NickNameProfileAssociation_2">
-            <End Role="CreditCardNickName" EntitySet="CreditCardNickName" />
-            <End Role="NickNameProfileAssociation" EntitySet="NickNameProfileAssociation" />
-          </AssociationSet>
           <AssociationSet Name="REL_CreditCardProfile_CreditCardTransaction_2" Association="SemplestModel.Store.REL_CreditCardProfile_CreditCardTransaction_2">
             <End Role="CreditCardProfile" EntitySet="CreditCardProfile" />
             <End Role="CreditCardTransaction" EntitySet="CreditCardTransaction" />
-          </AssociationSet>
-          <AssociationSet Name="REL_CreditCardProfile_NickNameProfileAssociation_1" Association="SemplestModel.Store.REL_CreditCardProfile_NickNameProfileAssociation_1">
-            <End Role="CreditCardProfile" EntitySet="CreditCardProfile" />
-            <End Role="NickNameProfileAssociation" EntitySet="NickNameProfileAssociation" />
           </AssociationSet>
           <AssociationSet Name="REL_CreditCardTransaction_PromotionPayment_2" Association="SemplestModel.Store.REL_CreditCardTransaction_PromotionPayment_2">
             <End Role="CreditCardTransaction" EntitySet="CreditCardTransaction" />
@@ -601,6 +592,7 @@
           <Property Name="AdvertisingEngineAdPK" Type="bigint" Nullable="false" />
           <Property Name="PromotionAdsFK" Type="int" Nullable="false" />
           <Property Name="AdvertisingEngineFK" Type="int" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="AdvertisingEngineAPICharge">
           <Key>
@@ -1082,14 +1074,6 @@
           <Property Name="IsEligibleForShowing" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
           <Property Name="KeywordBidFK" Type="int" />
-        </EntityType>
-        <EntityType Name="NickNameProfileAssociation">
-          <Key>
-            <PropertyRef Name="CreditCardProfileFK" />
-            <PropertyRef Name="CreditCardNickNameFK" />
-          </Key>
-          <Property Name="CreditCardProfileFK" Type="int" Nullable="false" />
-          <Property Name="CreditCardNickNameFK" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Phone">
           <Key>
@@ -1979,18 +1963,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="REL_CreditCardNickName_NickNameProfileAssociation_2">
-          <End Role="CreditCardNickName" Type="SemplestModel.Store.CreditCardNickName" Multiplicity="1" />
-          <End Role="NickNameProfileAssociation" Type="SemplestModel.Store.NickNameProfileAssociation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="CreditCardNickName">
-              <PropertyRef Name="CreditCardNickNamePK" />
-            </Principal>
-            <Dependent Role="NickNameProfileAssociation">
-              <PropertyRef Name="CreditCardNickNameFK" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="REL_CreditCardProfile_CreditCardTransaction_2">
           <End Role="CreditCardProfile" Type="SemplestModel.Store.CreditCardProfile" Multiplicity="0..1" />
           <End Role="CreditCardTransaction" Type="SemplestModel.Store.CreditCardTransaction" Multiplicity="*" />
@@ -1999,18 +1971,6 @@
               <PropertyRef Name="CreditCardProfilePK" />
             </Principal>
             <Dependent Role="CreditCardTransaction">
-              <PropertyRef Name="CreditCardProfileFK" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="REL_CreditCardProfile_NickNameProfileAssociation_1">
-          <End Role="CreditCardProfile" Type="SemplestModel.Store.CreditCardProfile" Multiplicity="1" />
-          <End Role="NickNameProfileAssociation" Type="SemplestModel.Store.NickNameProfileAssociation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="CreditCardProfile">
-              <PropertyRef Name="CreditCardProfilePK" />
-            </Principal>
-            <Dependent Role="NickNameProfileAssociation">
               <PropertyRef Name="CreditCardProfileFK" />
             </Dependent>
           </ReferentialConstraint>
@@ -2798,6 +2758,13 @@
           <Parameter Name="StartDate" Type="datetime" Mode="In" />
           <Parameter Name="EndDate" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetMSNGeoLocation" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PromotionID" Type="int" Mode="In" />
+          <Parameter Name="ValueList" Type="varchar(max)" Mode="In" />
+          <Parameter Name="ValueDelimiter" Type="varchar" Mode="In" />
+          <Parameter Name="ListDelimiter" Type="varchar" Mode="In" />
+          <Parameter Name="totalSize" Type="int" Mode="InOut" />
+        </Function>
         <Function Name="GetNextJobToRun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="GetNextScheduleTime" ReturnType="datetime" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="StartDateTime" Type="datetime" Mode="In" />
@@ -3256,10 +3223,6 @@
             <End Role="User" EntitySet="Users" />
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociations" />
           </AssociationSet>
-          <AssociationSet Name="NickNameProfileAssociation" Association="SemplestModel.NickNameProfileAssociation">
-            <End Role="CreditCardNickName" EntitySet="CreditCardNickNames" />
-            <End Role="CreditCardProfile" EntitySet="CreditCardProfiles" />
-          </AssociationSet>
           <FunctionImport Name="GetMondayChart" EntitySet="vwPromotionCharts" ReturnType="Collection(SemplestModel.vwPromotionChart)">
             <Parameter Name="StartDate" Mode="In" Type="DateTime" />
             <Parameter Name="EndDate" Mode="In" Type="DateTime" />
@@ -3295,6 +3258,13 @@
             <End Role="KeywordBid" EntitySet="KeywordBids" />
             <End Role="KeywordBidData" EntitySet="KeywordBidDatas" />
           </AssociationSet>
+          <FunctionImport Name="GetMSNGeoLocation">
+            <Parameter Name="PromotionID" Mode="In" Type="Int32" />
+            <Parameter Name="ValueList" Mode="In" Type="String" />
+            <Parameter Name="ValueDelimiter" Mode="In" Type="String" />
+            <Parameter Name="ListDelimiter" Mode="In" Type="String" />
+            <Parameter Name="totalSize" Mode="InOut" Type="Int32" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
           <Property Type="Int32" Name="RolesFK" Nullable="true" />
@@ -3366,6 +3336,7 @@
           <Property Type="Int32" Name="AdvertisingEngineFK" Nullable="false" />
           <NavigationProperty Name="AdvertisingEngine" Relationship="SemplestModel.REL_AdvertisingEngine_AdvertisingEngineAds_2" FromRole="AdvertisingEngineAd" ToRole="AdvertisingEngine" />
           <NavigationProperty Name="PromotionAd" Relationship="SemplestModel.REL_PromotionAds_AdvertisingEngineAds_1" FromRole="AdvertisingEngineAd" ToRole="PromotionAd" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
         </EntityType>
         <EntityType Name="AdvertisingEngineAPICharge">
           <Key>
@@ -3467,7 +3438,6 @@
           <Property Type="Int32" Name="CustomerFK" Nullable="false" />
           <Property Type="String" Name="CreditCardNickName1" Nullable="false" MaxLength="35" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Customer" Relationship="SemplestModel.REL_Customer_CreditCardNickName_1" FromRole="CreditCardNickName" ToRole="Customer" />
-          <NavigationProperty Name="CreditCardProfiles" Relationship="SemplestModel.NickNameProfileAssociation" FromRole="CreditCardNickName" ToRole="CreditCardProfile" />
         </EntityType>
         <EntityType Name="CreditCardProfile">
           <Key>
@@ -3482,7 +3452,6 @@
           <NavigationProperty Name="CreditCardTransactions" Relationship="SemplestModel.REL_CreditCardProfile_CreditCardTransaction_2" FromRole="CreditCardProfile" ToRole="CreditCardTransaction" />
           <NavigationProperty Name="Customer" Relationship="SemplestModel.REL_Customer_CreditCardProfile_2" FromRole="CreditCardProfile" ToRole="Customer" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_CreditCardProfile_1" FromRole="CreditCardProfile" ToRole="Promotion" />
-          <NavigationProperty Name="CreditCardNickNames" Relationship="SemplestModel.NickNameProfileAssociation" FromRole="CreditCardProfile" ToRole="CreditCardNickName" />
         </EntityType>
         <EntityType Name="CreditCardTransaction">
           <Key>
@@ -5185,10 +5154,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="NickNameProfileAssociation">
-          <End Type="SemplestModel.CreditCardNickName" Role="CreditCardNickName" Multiplicity="*" />
-          <End Type="SemplestModel.CreditCardProfile" Role="CreditCardProfile" Multiplicity="*" />
-        </Association>
         <ComplexType Name="SetNegativeKeyword_Result">
           <Property Type="Int32" Name="KeywordPK" Nullable="false" />
         </ComplexType>
@@ -5604,6 +5569,7 @@
           <EntitySetMapping Name="AdvertisingEngineAds">
             <EntityTypeMapping TypeName="SemplestModel.AdvertisingEngineAd">
               <MappingFragment StoreEntitySet="AdvertisingEngineAds">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="AdvertisingEngineFK" ColumnName="AdvertisingEngineFK" />
                 <ScalarProperty Name="PromotionAdsFK" ColumnName="PromotionAdsFK" />
                 <ScalarProperty Name="AdvertisingEngineAdPK" ColumnName="AdvertisingEngineAdPK" />
@@ -6393,14 +6359,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="NickNameProfileAssociation" TypeName="SemplestModel.NickNameProfileAssociation" StoreEntitySet="NickNameProfileAssociation">
-            <EndProperty Name="CreditCardProfile">
-              <ScalarProperty Name="CreditCardProfilePK" ColumnName="CreditCardProfileFK" />
-            </EndProperty>
-            <EndProperty Name="CreditCardNickName">
-              <ScalarProperty Name="CreditCardNickNamePK" ColumnName="CreditCardNickNameFK" />
-            </EndProperty>
-          </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="GetMondayChart" FunctionName="SemplestModel.Store.GetMondayChart" />
           <FunctionImportMapping FunctionImportName="SetNegativeKeyword" FunctionName="SemplestModel.Store.SetNegativeKeyword">
             <ResultMapping>
@@ -6647,6 +6605,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetMSNGeoLocation" FunctionName="SemplestModel.Store.GetMSNGeoLocation" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -6668,7 +6627,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="21">
+      <Diagram Name="SemplestModel" ZoomLevel="75">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="28" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="60.625" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="32.125" Height="3.134095052083353" />
@@ -6743,15 +6702,15 @@
         <AssociationConnector Association="SemplestModel.Address_Rel" >
           <ConnectorPoint PointX="6.75" PointY="30.941793619791667" />
           <ConnectorPoint PointX="6.75" PointY="31.875" />
-          <ConnectorPoint PointX="7.75" PointY="31.875" />
-          <ConnectorPoint PointX="7.75" PointY="40.25" />
+          <ConnectorPoint PointX="7.71875" PointY="31.875" />
+          <ConnectorPoint PointX="7.71875" PointY="40.25" />
           <ConnectorPoint PointX="7.458333333333333" PointY="40.25" />
           <ConnectorPoint PointX="7.291666666666667" PointY="40.25" />
           <ConnectorPoint PointX="7" PointY="40.25" />
-          <ConnectorPoint PointX="7" PointY="59.5624995" />
-          <ConnectorPoint PointX="7.916666666666667" PointY="59.5624995" />
-          <ConnectorPoint PointX="8.0833333333333339" PointY="59.5624995" />
-          <ConnectorPoint PointX="8.25" PointY="59.5624995" />
+          <ConnectorPoint PointX="7" PointY="59.326795688802079" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="59.326795688802079" />
+          <ConnectorPoint PointX="8.0833333333333339" PointY="59.326795688802079" />
+          <ConnectorPoint PointX="8.25" PointY="59.326795688802079" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Address_StateCode" >
           <ConnectorPoint PointX="5.25" PointY="29.518992513020862" />
@@ -6768,8 +6727,8 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_AdvertisingEngineAccount_2" >
           <ConnectorPoint PointX="7.375" PointY="35.259095052083353" />
-          <ConnectorPoint PointX="7.375" PointY="54.65625" />
-          <ConnectorPoint PointX="8.25" PointY="54.65625" />
+          <ConnectorPoint PointX="7.375" PointY="54.585935" />
+          <ConnectorPoint PointX="8.25" PointY="54.585935" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_AdvertisingEngineAds_2" >
           <ConnectorPoint PointX="7.5" PointY="33.664492222005222" />
@@ -7525,15 +7484,6 @@
           <ConnectorPoint PointX="10.177083333333334" PointY="76.78125" />
           <ConnectorPoint PointX="11.65625" PointY="76.78125" />
           <ConnectorPoint PointX="11.65625" PointY="75.980286458333353" />
-        </AssociationConnector>
-        <AssociationConnector Association="SemplestModel.NickNameProfileAssociation" >
-          <ConnectorPoint PointX="6.75" PointY="41.490143229166677" />
-          <ConnectorPoint PointX="6.916666666666667" PointY="41.490143229166677" />
-          <ConnectorPoint PointX="7.083333333333333" PointY="41.490143229166677" />
-          <ConnectorPoint PointX="7.291666666666667" PointY="41.490143229166677" />
-          <ConnectorPoint PointX="7.458333333333333" PointY="41.490143229166677" />
-          <ConnectorPoint PointX="7.84375" PointY="41.490143229166677" />
-          <ConnectorPoint PointX="7.84375" PointY="48.375" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_EmailType_EmailTemplate_2" >
           <ConnectorPoint PointX="4.25" PointY="1.547841796875" />

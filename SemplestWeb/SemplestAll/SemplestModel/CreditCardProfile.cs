@@ -17,7 +17,6 @@ namespace SemplestModel
         public CreditCardProfile()
         {
             this.CreditCardTransactions = new HashSet<CreditCardTransaction>();
-            this.CreditCardNickNames = new HashSet<CreditCardNickName>();
         }
     
         public int CreditCardProfilePK { get; set; }
@@ -30,6 +29,5 @@ namespace SemplestModel
         public virtual ICollection<CreditCardTransaction> CreditCardTransactions { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual Promotion Promotion { get; set; }
-        public virtual ICollection<CreditCardNickName> CreditCardNickNames { get; set; }
     }
 }
