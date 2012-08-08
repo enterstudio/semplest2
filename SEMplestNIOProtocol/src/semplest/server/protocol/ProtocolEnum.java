@@ -181,7 +181,10 @@ public class ProtocolEnum
 	
 	public static enum SemplestCompetitionType
 	{
-		Comp,NonComp,NotSelected,NoInfo;
+		//Comp,NonComp,NotSelected,NoInfo;
+		NotSelected,UnderExperiment,Rejected,Accepted, // these are the ones finally in use
+		Comp,NonComp,NoInfo; // these are due to legacy reason
+
 		public static boolean existsCompetitionType(String competitionType)
 		{
 			if (competitionType != null)
