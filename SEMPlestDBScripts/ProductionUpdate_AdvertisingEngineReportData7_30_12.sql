@@ -382,8 +382,6 @@ IF XACT_STATE() != 0 OR @@TRANCOUNT > 0
 END CATCH;
 GO
 
-USE [semplestTest]
-GO
 
 /****** Object:  View [dbo].[vwCreditCardTransactionDetail]    Script Date: 08/01/2012 13:01:09 ******/
 SET ANSI_NULLS ON
@@ -581,8 +579,7 @@ GO
 
 
 
-USE [semplestTest]
-GO
+
 /****** Object:  StoredProcedure [dbo].[GetKeywordForAdEngine]    Script Date: 08/06/2012 14:19:41 ******/
 SET ANSI_NULLS ON
 GO
@@ -638,49 +635,127 @@ GO
 -- | Author  - Mitch                                                                                                |
 -- | Written - 4/20/2012																							|
 -- | Parms   - 																							|
--- | Purpose - 						|
+-- | Purpose - 		
+-- EXAMPLE When PromoyionID is null
+--DECLARE @totalSize int
+--exec GetMSNGeoLocation @PromotionID = NULL, @ValueList = 'MA,,,;,41.5069100000,-71.3016090000,100.00', @ValueDelimiter = ',', @ListDelimiter = ';',@totalSize = @totalSize
+			
 -- +----------------------------------------------------------------------------------------------------------------+
 
 CREATE PROCEDURE dbo.GetMSNGeoLocation
 (
-	@IsState            bit,
-	@State varchar(2) = null,
-	@Longitude decimal(8,4) = null,
-	@Latitude decimal(8,4)= null,
-	@Radius Decimal(10,2) = null
+	@PromotionID int = null,
+	@ValueList varchar(max) = null,
+	@ValueDelimiter varchar(3) = null,
+	@ListDelimiter varchar(3) = null, 
+	@totalSize int output
 )
 AS
 BEGIN TRY
-	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250), @LocationID int, @pt geography, @str varchar(100);
+SET NOCOUNT ON;
+declare @geoTargets Table(StateCode varchar(2),Latitude Decimal(18,10), Longitude Decimal(18,10),Radius Decimal(18,2) )
+declare @cities table(city varchar(200), metroID int)
+declare @citiesTEMP table(city varchar(200), metroID int)
+declare @states table(states varchar(10))
+declare @metro table(metro varchar(100), metroID int)
+declare @citiesInStates table(city varchar(200))
 
-	--validate data
-	IF (@IsState = 1 and @State is null)
-	BEGIN
-		SELECT @ErrMsg = 'Need to provide a State'; 
-		RAISERROR (@ErrMsg, 16, 1);
-	END;
-	if (@IsState = 0  and (@Longitude is null or @Latitude is null or @Radius is null) )
-	BEGIN
-		SELECT @ErrMsg = 'Need to provide a Longitude, Latitude and Radius'; 
-		RAISERROR (@ErrMsg, 16, 1);
-	END;
+declare @metroSummary table(ID int, number int)
+declare @citymetroSummary table(ID int, number int)
+declare @LocationID Table (ID int);
+DECLARE @pt geography, @str varchar(100),@Latitude Decimal(18,10), @Longitude Decimal(18,10),@Radius Decimal(18,2), @stateCount int, @metroCount int, @cityCount int
+
+
+DECLARE @CostBasisTypeIDtbl TABLE (CostBasisTypeID int, BasisValue bit)
+ --PUT THE CostBasis AND VALUE INTO  table 
+ if (@PromotionID is null)	 
+ BEGIN
+	insert into @geoTargets(StateCode ,Latitude,Longitude,Radius)
+	select s.Column1 [StateCode], CAST (Isnull(s.Column2, -1) as DECIMAL(18,10)) [Latitude], CAST (Isnull(s.Column3, -1) as DECIMAL(18,10)) [Longitude], CAST (Isnull(s.Column4, -1) as DECIMAL(18,2)) [Radius] from dbo.Split(@ValueList,@ListDelimiter) r 
+	CROSS APPLY dbo.SplitIntoColumns(r.DATA,@ValueDelimiter) s
 	
-	if (@IsState = 1)
-	BEGIN
-		--Find a state
-		select @LocationID = msn.LocationID from MSNGeoLocation msn where msn.IsState = 1 and msn.MSNName = 'US-' + @State
-		select msn.Name, msn.MSNName, msn.latitude, msn.longitude from MSNGeoLocation msn where msn.IsCity = 1 and msn.ParentSubGeographyLocationID = @LocationID  
-	END
-	ELSE
-	BEGIN
+	
+END
+ELSE
+BEGIN
+	insert into @geoTargets(StateCode,Latitude,Longitude,Radius)
+	select st.StateAbbr [State], gt.Latitude, gt.Longitude,gt.ProximityRadius from Promotion p 
+		inner join GeoTargeting gt on gt.PromotionFK = p.PromotionPK
+		left join StateCode st on st.StateAbbrPK = gt.StateCodeFK
+		where p.PromotionPK = @PromotionID
+END		
+--select * from @geoTargets
+--select * from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1)
+insert into @states(states) 
+select 'US-' + gt.StateCode from @geoTargets gt	
+where (gt.Radius is null or gt.Radius = -1)
+
+insert into @LocationID(ID)
+select msn.LocationID from MSNGeoLocation msn 
+inner join @states s on s.states = msn.MSNName and msn.IsState = 1
+
+if exists (select * from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1))
+BEGIN
+	DECLARE db_cursor CURSOR FOR  
+	select gt.Latitude, gt.Longitude,gt.Radius from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1)
+  
+--Get all the cities in radius
+	OPEN db_cursor   
+	FETCH NEXT FROM db_cursor INTO @Latitude,@Longitude,@Radius   
+
+	WHILE @@FETCH_STATUS = 0   
+	 BEGIN    
 		set @str = 'POINT(' + Cast(@Longitude as Varchar) + ' ' + Cast(@Latitude as Varchar) + ')';
 		SET @pt = geography::STGeomFromText(@str, 4326);
 		
-		SELECT msn.Name, msn.MSNName,msn.latitude, msn.longitude from MSNGeoLocation msn
-		WHERE msn.GeogCol1.STDistance(@pt)<=(@radius * 1609.344) and msn.IsCity = 1
+		Insert into @citiesTEMP(city, metroID)
+		SELECT msn.MSNName, msn.ParentMetroAreaLocationID from MSNGeoLocation msn
+		WHERE msn.GeogCol1.STDistance(@pt)<=(@radius * 1609.344) and msn.IsCity = 1 
 
-	END			 
+       FETCH NEXT FROM db_cursor INTO  @Latitude,@Longitude,@Radius    
+	END   
+
+	CLOSE db_cursor   
+	DEALLOCATE db_cursor 
+END		
+--get remaining cities
+insert into @cities(city,metroID)
+select distinct c.city, c.metroID from @citiesTEMP c
+left join @citiesInStates cis on c.city = cis.city
+where c.city is not null
+
+insert into @citymetroSummary(ID,number)
+select c.metroID, COUNT(*) from @cities c
+group by c.metroID
+
+insert into @metroSummary(ID,number)
+select msn.ParentMetroAreaLocationID, COUNT(*) from MSNGeoLocation msn
+where msn.IsCity = 1 and msn.ParentMetroAreaLocationID in (select DISTINCT cms.ID from @citymetroSummary cms) 
+group by msn.ParentMetroAreaLocationID
+
+insert into @metro(metro,metroID)
+select DISTINCT msn.MSNName, msn.LocationID from MSNGeoLocation msn inner join  
+(select ms.ID from @citymetroSummary cs
+inner join @metroSummary ms on cs.ID = ms.ID and cs.number = ms.number) m 
+on msn.LocationID = m.ID
+
+--get all unque cities for all geotargets
+delete @cities
+from @cities c
+inner join @metro m on m.metroID = c.metroID
+
+select @stateCount = count(s.states) from @states s
+select @metroCount = count(m.metro) from @metro m
+select @cityCount = count(c.city) from @cities c
+set @totalSize = ISNULL(@stateCount, 0) + ISNULL(@metroCount, 0) + ISNULL(@cityCount, 0)
+
+select s.states [msnName] from @states s
+select m.metro [msnName] from @metro m
+select c.city [msnName] from @cities c
+
+
+return @totalSize
+
 	
 END TRY
 BEGIN CATCH
