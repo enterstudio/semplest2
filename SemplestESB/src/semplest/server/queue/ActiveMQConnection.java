@@ -28,8 +28,6 @@ public class ActiveMQConnection
 	private CachingConnectionFactory cacheCF = null;
 	// private MessageProducer producer = null;
 	// private MessageConsumer consumer = null;
-	
-	private String maxInactivityDuration = "600000";  //the max inactivity timeout for MQ
 
 	private HashMap<String, MessageProducer> producerListByQueue = new HashMap<String, MessageProducer>();
 	private HashMap<String, MessageConsumer> consumerListByQueue = new HashMap<String, MessageConsumer>();
@@ -41,7 +39,7 @@ public class ActiveMQConnection
 	public ActiveMQConnection(String host, String port) throws JMSException
 	{
 		// Context ctx = new InitialContext();
-		cf = new ActiveMQConnectionFactory("tcp://" + host + ":" + port + "?wireFormat.maxInactivityDuration="+ maxInactivityDuration +")");
+		cf = new ActiveMQConnectionFactory("tcp://" + host + ":" + port);
 
 		cacheCF = new CachingConnectionFactory();
 		cacheCF.setTargetConnectionFactory(cf);
@@ -51,7 +49,7 @@ public class ActiveMQConnection
 		// + "?wireFormat=openwire&wireFormat.tightEncodingEnabled=true");
 		cn = cacheCF.createQueueConnection();
 		cn.start();
-		logger.debug("Started MQ connection..host = " + host + " port=" + port + " maxInactivityDuration=" + maxInactivityDuration);
+		logger.debug("Started MQ connection..host = " + host + " port=" + port);
 		session = cn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
 		logger.debug("create MQ session...");
 	}
