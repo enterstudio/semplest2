@@ -51,7 +51,7 @@ public class GetMSNGeoLocationSP extends StoredProcedure
 		
 		if (results.get("states") != null)
 		{
-			List<MSNGeotargetHelperObj>  stateRes = ((ArrayList<MSNGeotargetHelperObj>) results.get("states"));
+			List<MSNGeotargetHelperObj>  stateRes = ((List<MSNGeotargetHelperObj>) results.get("states"));
 			for (MSNGeotargetHelperObj aState : stateRes)
 			{
 				res.addState(aState.getMsnName());
@@ -60,7 +60,7 @@ public class GetMSNGeoLocationSP extends StoredProcedure
 		}
 		if (results.get("metro") != null)
 		{
-			List<MSNGeotargetHelperObj>  metroRes = ((ArrayList<MSNGeotargetHelperObj>) results.get("metro"));
+			List<MSNGeotargetHelperObj>  metroRes = ((List<MSNGeotargetHelperObj>) results.get("metro"));
 			for (MSNGeotargetHelperObj aMetro : metroRes)
 			{
 				res.addMetro(aMetro.getMsnName());
@@ -68,7 +68,7 @@ public class GetMSNGeoLocationSP extends StoredProcedure
 		}
 		if (results.get("cities") != null)
 		{
-			List<MSNGeotargetHelperObj>  cityRes = ((ArrayList<MSNGeotargetHelperObj>) results.get("cities"));
+			List<MSNGeotargetHelperObj>  cityRes = ((List<MSNGeotargetHelperObj>) results.get("cities"));
 			for (MSNGeotargetHelperObj aCity : cityRes)
 			{
 				res.addCity(aCity.getMsnName());

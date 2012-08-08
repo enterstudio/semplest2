@@ -1015,6 +1015,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		PromotionObj promotionData = getPromoDataSP.getPromotionData();
 		final String displayURL = promotionData.getDisplayURL();
 		final String url = promotionData.getLandingPageURL();
+		final Integer promotionId = promotionData.getPromotionPK();
 		final List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
 		final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoObjList);
 		final List<AdsObject> nonDeletedAds = getNonDeletedAds(adList);
@@ -1060,9 +1061,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			adGrpData.setAdGroupID(adGroupID);
 			adGrpData.setAds(nonDeletedAds);
-			final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
-			msn.updateGeoTargets(msnAccountId, campaignID, msnGeoTargets);
-			logger.info("Added MSN GeoTargets:\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap));			
+			//final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
+			msn.updateGeoTargets(promotionId, msnAccountId, campaignID);
+			logger.info("Added MSN GeoTargets for PromotionID [" + promotionId + "], MsnAccountID [" + msnAccountId + "], CampaignID [" + campaignID + "]");			
 		}
 		else
 		{
@@ -1532,8 +1533,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long accountId = promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
 				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);	
-				final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
-				msn.updateGeoTargets(accountId, campaignId, msnGeoTargets);
+				//final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
+				msn.updateGeoTargets(promotionID, accountId, campaignId);
 			}
 			else
 			{

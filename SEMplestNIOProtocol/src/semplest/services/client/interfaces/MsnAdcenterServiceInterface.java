@@ -61,7 +61,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize
 	// GeoTargeting Methods
 	// ==================================
 	
-	Boolean updateGeoTargets(final Long accountId, final Long campaignId, final Set<MSNGeotargetObject> msnGeoTargets) throws MsnCloudException;
+	Boolean updateGeoTargets(final Integer promotionId, final Long accountId, final Long campaignId) throws MsnCloudException;
 	void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws Exception;
 	
 	// ==================================

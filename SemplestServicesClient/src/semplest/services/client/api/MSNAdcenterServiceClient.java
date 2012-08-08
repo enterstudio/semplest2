@@ -1300,10 +1300,11 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return null;
 	}
 	@Override
-	public Boolean updateGeoTargets(Long accountId, Long campaignId, Set<MSNGeotargetObject> msnGeoTargets) throws MsnCloudException
+	public Boolean updateGeoTargets(Integer promotionId, Long accountId, Long campaignId) throws MsnCloudException
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 }

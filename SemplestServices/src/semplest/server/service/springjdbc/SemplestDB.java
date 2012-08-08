@@ -1748,7 +1748,7 @@ public class SemplestDB extends BaseDB
 	
 	public static MSNGeotargetObject getMsnLocation( Integer PromotionID, String ValueList, String ValueDelimiter, String ListDelimiter ) throws Exception
 	{
-		GetMSNGeoLocationSP getMSNGeoLocationSP = new GetMSNGeoLocationSP();
+		final GetMSNGeoLocationSP getMSNGeoLocationSP = new GetMSNGeoLocationSP();
 		return getMSNGeoLocationSP.execute( PromotionID, ValueList, ValueDelimiter, ListDelimiter);
 	}
 
