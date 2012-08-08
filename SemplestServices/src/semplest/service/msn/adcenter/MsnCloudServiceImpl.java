@@ -699,7 +699,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		q.setLanguage("English");
 		q.setTimePeriodRollup("Daily");
 		q.setStartTimePeriod(gDMY(-30));
-		q.setEndTimePeriod(gDMY(0));
+		q.setEndTimePeriod(gDMY(-1));
 		GetHistoricalSearchCountByDeviceResponse r;
 		try
 		{
