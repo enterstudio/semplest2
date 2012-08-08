@@ -138,6 +138,12 @@ namespace Semplest.Core.Controllers
                         Json(
                             "Services not available<~>Sorry, the Ad Engine Services are currently not available. Please try again in a few minutes. If this problem continues, please contact SEMplest.");
                 }
+                else if (ex.Message.ToLower().Contains("geotarget limit"))
+                {
+                       return
+                        Json(
+                            "Too many cities<~>Your target selections are over the limit.");
+                }
                 else
                 {
                     Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);

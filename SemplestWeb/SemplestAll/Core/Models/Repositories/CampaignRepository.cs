@@ -311,7 +311,7 @@ namespace Semplest.Core.Models.Repositories
                         string listDelimiter = ";";
                         dbcontext.GetMSNGeoLocation(null, SerializeToCommaDlimitedString(model.AdModelProp.Addresses, valueDelimiter, listDelimiter), valueDelimiter, listDelimiter, op);
                         if ((int)op.Value > 250)
-                            throw new Exception("please fix your geotargeting");
+                            throw new Exception("geotarget limit");
                     }
                 }
                 promo.LandingPageURL = model.AdModelProp.LandingUrl.Trim();
