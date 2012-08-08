@@ -1746,10 +1746,10 @@ public class SemplestDB extends BaseDB
 
 	}
 	
-	public static List<MSNGeotargetObject> getMsnLocation(boolean IsState, String State, Double Longitude, Double Latitude, Double Radius ) throws Exception
+	public static MSNGeotargetObject getMsnLocation( Integer PromotionID, String ValueList, String ValueDelimiter, String ListDelimiter ) throws Exception
 	{
 		GetMSNGeoLocationSP getMSNGeoLocationSP = new GetMSNGeoLocationSP();
-		return getMSNGeoLocationSP.execute(IsState, State, Longitude, Latitude, Radius);
+		return getMSNGeoLocationSP.execute( PromotionID, ValueList, ValueDelimiter, ListDelimiter);
 	}
 
 }

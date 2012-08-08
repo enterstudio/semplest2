@@ -3,6 +3,7 @@ package semplest.test;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
@@ -44,14 +45,38 @@ public class TestSpringJDBC extends BaseDB
 			bids.add(b);
 			SemplestDB.setBidInactive(4, "Google", bids);
 			*/
-			List<MSNGeotargetObject> res = SemplestDB.getMsnLocation(true,"NY", null,null,null);
+			MSNGeotargetObject res = SemplestDB.getMsnLocation(248,null, null,null);
 			// GetAllPromotionDataSP sp = new GetAllPromotionDataSP();
 			// sp.execute(235);
 			//List<String> test = SemplestDB.getPromotionCategory(1);
-			for (MSNGeotargetObject s : res)
+			
+			System.out.println("Num=" + res.getTotalSize());
+			List<String> s = res.getStates();
+			List<String> m = res.getMetro();
+			List<String> c = res.getCity();
+			if (s != null)
 			{
-				System.out.println(s.getName() + ":" + s.getMSNName());
+			for (String str : s)
+			{
+				System.out.println("State=" + str);
 			}
+			}
+			if (m!= null)
+			{
+			for (String str : m)
+			{
+				System.out.println("metro=" + str);
+			}
+			}
+			if (c!= null)
+			{
+			for (String str : c)
+			{
+				System.out.println("City=" + str);
+			}
+			}
+			
+			
 			
 			
 			// System.out.println(p.getSemplestBiddingBudgetMultFactor() + ":" + p.getSemplestBiddingInitialBidBoostFactor() + ";" + p.getSemplestBiddingMarginFactor() + ";" + p.getSemplestBiddingPercentileValue());
