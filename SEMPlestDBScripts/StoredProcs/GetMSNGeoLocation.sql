@@ -30,6 +30,7 @@ declare @citiesTEMP table(city varchar(200), metroID int)
 declare @states table(states varchar(10))
 declare @metro table(metro varchar(100), metroID int)
 declare @citiesInStates table(city varchar(200))
+declare @GeoPts table (pt Geography, Radius Decimal(18,2))
 
 declare @metroSummary table(ID int, number int)
 declare @citymetroSummary table(ID int, number int)
@@ -58,7 +59,7 @@ END
 --select * from @geoTargets
 --select * from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1)
 insert into @states(states) 
-select 'US-' + gt.StateCode from @geoTargets gt	
+select DISTINCT 'US-' + gt.StateCode from @geoTargets gt	
 where (gt.Radius is null or gt.Radius = -1)
 
 insert into @LocationID(ID)
@@ -67,28 +68,17 @@ inner join @states s on s.states = msn.MSNName and msn.IsState = 1
 
 if exists (select * from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1))
 BEGIN
-	DECLARE db_cursor CURSOR FOR  
-	select gt.Latitude, gt.Longitude,gt.Radius from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1)
-  
---Get all the cities in radius
-	OPEN db_cursor   
-	FETCH NEXT FROM db_cursor INTO @Latitude,@Longitude,@Radius   
+	insert into @GeoPts(pt,Radius)
+	select geography::STGeomFromText('POINT(' + Cast(gt.Longitude as Varchar) + ' ' + Cast(gt.Latitude as Varchar) + ')', 4326), gt.Radius 
+	from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1) 
+	
+	Insert into @citiesTEMP(city, metroID)
+	select s.MSNName,s.ParentMetroAreaLocationID from @GeoPts gp
+	cross apply (
+	SELECT msn.MSNName, msn.ParentMetroAreaLocationID from MSNGeoLocation msn
+		WHERE msn.GeogCol1.STDistance(gp.pt)<=(gp.Radius * 1609.344) and msn.IsCity = 1) s
+END
 
-	WHILE @@FETCH_STATUS = 0   
-	 BEGIN    
-		set @str = 'POINT(' + Cast(@Longitude as Varchar) + ' ' + Cast(@Latitude as Varchar) + ')';
-		SET @pt = geography::STGeomFromText(@str, 4326);
-		
-		Insert into @citiesTEMP(city, metroID)
-		SELECT msn.MSNName, msn.ParentMetroAreaLocationID from MSNGeoLocation msn
-		WHERE msn.GeogCol1.STDistance(@pt)<=(@radius * 1609.344) and msn.IsCity = 1 
-
-       FETCH NEXT FROM db_cursor INTO  @Latitude,@Longitude,@Radius    
-	END   
-
-	CLOSE db_cursor   
-	DEALLOCATE db_cursor 
-END		
 --get remaining cities
 insert into @cities(city,metroID)
 select distinct c.city, c.metroID from @citiesTEMP c
