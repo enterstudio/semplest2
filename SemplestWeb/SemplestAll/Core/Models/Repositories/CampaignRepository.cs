@@ -734,7 +734,7 @@ namespace Semplest.Core.Models.Repositories
                                 gt.Longitude = geo1.Longitude;
                                 gt.ProximityRadius = geo1.ProximityRadius;
                                 gt.Zip = geo1.Zip;
-                                gt.StateCode = geo1.StateCode;
+                                gt.StateCodeFK = geo1.StateCodeFK;
                             }
                         }
                     }
