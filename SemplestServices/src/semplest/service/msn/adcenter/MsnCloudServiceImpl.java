@@ -3249,19 +3249,28 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			}
 
 			// add latest geo targets
+			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();
+			final Target target = new Target();
+			final LocationTarget location = new LocationTarget();			
 			final MSNGeotargetObject msnGeoTargetGroup = SemplestDB.getMsnLocation(promotionId, null, null, null);
 			final List<String> states = msnGeoTargetGroup.getStates();
 			final List<String> metros = msnGeoTargetGroup.getMetro();
 			final List<String> cities = msnGeoTargetGroup.getCity();			
-			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();
-			final Target target = new Target();
-			final LocationTarget location = new LocationTarget();
-			final CityTarget cityTarget = getCityTarget(cities);
-			final MetroAreaTarget metroAreaTarget = getMetroAreaTarget(metros);
-			final StateTarget stateTarget = getStateTarget(states);
-			location.setCityTarget(cityTarget);
-			location.setMetroAreaTarget(metroAreaTarget);		
-			location.setStateTarget(stateTarget);					
+			if (states != null && !states.isEmpty())
+			{
+				final StateTarget stateTarget = getStateTarget(states);
+				location.setStateTarget(stateTarget);
+			}			
+			if (metros != null && !metros.isEmpty())
+			{
+				final MetroAreaTarget metroAreaTarget = getMetroAreaTarget(metros);
+				location.setMetroAreaTarget(metroAreaTarget);
+			}
+			if (cities != null && !cities.isEmpty())
+			{
+				final CityTarget cityTarget = getCityTarget(cities);
+				location.setCityTarget(cityTarget);
+			}
 			target.setLocation(location);
 			final Target[] targetArray = new Target[]{target};
 			addRequest.setTargets(targetArray);
