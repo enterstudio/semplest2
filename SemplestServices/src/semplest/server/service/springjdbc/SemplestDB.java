@@ -179,7 +179,8 @@ public class SemplestDB extends BaseDB
 	
 	public static Job getJob(final JobName jobName) throws Exception
 	{
-		final List<Job> jobs = jdbcTemplate.query("select JobPK, Name, LastSuccessfulRunTime from Job where Name = ?", JOB_ROW_MAPPER, jobName);
+		final String jobNameString = jobName.name();
+		final List<Job> jobs = jdbcTemplate.query("select JobPK, Name, LastSuccessfulRunTime from Job where Name = ?", JOB_ROW_MAPPER, jobNameString);
 		if (jobs == null || jobs.isEmpty())
 		{
 			return null;

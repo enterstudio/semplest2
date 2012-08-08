@@ -170,6 +170,23 @@ public class ExpiredCredentialsEmailSender
 		return emailSender;
 	}
 	
+	public static String lastRunAsExpected() throws Exception
+	{
+		final Job job = SemplestDB.getJob(JobName.EXPIRED_CREDENTIALS_EMAIL_SENDER);
+		final java.util.Date lastRunTime = job.getLastRunTime();
+		final java.util.Date now = new java.util.Date();
+		final long lastRunTimeMillis = lastRunTime.getTime();
+		final long nowMillis = now.getTime();
+		final long timeDiffMillis = nowMillis - lastRunTimeMillis;
+		final long hoursDiff = timeDiffMillis / SemplestUtils.HOUR;
+		if (hoursDiff > 24)
+		{
+			final String errMsg = JobName.EXPIRED_CREDENTIALS_EMAIL_SENDER + ": last successfully ran " + hoursDiff + " hours ago, which is more then the expected max limit of 24.  Something went wrong with the previous run.";
+			return errMsg;
+		}
+		return null;
+	}
+	
 	/**
 	 * !!!!!!!!!!!! NOTE !!!!!!!!!!!!
 	 * 
