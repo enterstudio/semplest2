@@ -198,7 +198,7 @@ namespace Semplest.Core.Controllers
 
         public ActionResult GetFilterData(string promotionFk, string advertisingEngineFk, DateTime? startDate, DateTime? endDate)
         {
-            var reportData = new List<PromotionModel> { new PromotionModel { PromotionId = "Impressions", PromotionName = "Number Impressions" }, new PromotionModel { PromotionId = "Clicks", PromotionName = "Number Clicks" }, new PromotionModel { PromotionId = "AverageCPC", PromotionName = "Average CPC" }, new PromotionModel { PromotionId = "AveragePosition", PromotionName = "Average Position" } };
+            var reportData = new List<PromotionModel> { new PromotionModel { PromotionId = "Impressions", PromotionName = "Impressions" }, new PromotionModel { PromotionId = "Clicks", PromotionName = "Clicks" }, new PromotionModel { PromotionId = "AverageCPC", PromotionName = "Average CPC" }, new PromotionModel { PromotionId = "AveragePosition", PromotionName = "Average Position" } };
             return Json(reportData, JsonRequestBehavior.AllowGet);
         }
     }
