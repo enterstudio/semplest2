@@ -806,3 +806,5 @@ GO
 ---
 ALTER TABLE dbo.AdvertisingEngineAds ADD IsDeleted bit NOT NULL DEFAULT 0
 GO
+
+insert into Job (Name, LastSuccessfulRunTime) values ('EXPIRED_CREDENTIALS_EMAIL_SENDER', null)
