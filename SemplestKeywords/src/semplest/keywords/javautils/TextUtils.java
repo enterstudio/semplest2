@@ -180,6 +180,7 @@ public class TextUtils {
     }
     return outs;
   }
+  
 
   // Return links from a url as a string of space separated urls
   public static String HTMLLinkString( String url ){
@@ -231,6 +232,9 @@ public class TextUtils {
       strings.addAll( getText( i.nextNode(), filter.toUpperCase() ));
     return strings;
   }
+  
+
+  
 
   // Return text from a web-page inside tag "filter"
   public static String HTMLText (String url, String filter)
