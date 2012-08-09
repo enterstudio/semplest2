@@ -1,3 +1,5 @@
+update Configuration set SemplestAdEngineReportLookbackDays = 21
+
 alter table promotion drop column BudgetToAddDate
 alter table promotion drop column BudgetToAddToNextCycle
 
