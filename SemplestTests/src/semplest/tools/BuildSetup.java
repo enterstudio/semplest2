@@ -33,8 +33,8 @@ public class BuildSetup {
 		
 		String function = args[0];
 		if(function.equalsIgnoreCase("build")){
-			String serverIndex = args[1];
-			setup.setProductionBuild(serverIndex);
+			String semplestService = args[1];
+			setup.setServiceBuild(semplestService);
 		}		
 		else if(function.equalsIgnoreCase("tool")){
 			String toolName = args[1];
@@ -58,38 +58,64 @@ public class BuildSetup {
 		String path1 = "/var/lib/hudson/jobs/SEMplestSystemTest/workspace/SemplestServices/src/system.properties";
 		String path2 = "/var/lib/hudson/jobs/SEMplestSystemTest/workspace/SemplestTests/src/system.properties";
 		
-		setProps(path1, TestJdbc, null);
-		setProps(path2, TestJdbc, null);
+		setPropsJdbc(path1, TestJdbc);
+		setPropsJdbc(path2, TestJdbc);
 	}
 	
 	public void setSystemMonitor(){
 		String path1 = "/var/lib/hudson/jobs/SEMplestSystemMonitor/workspace/SemplestServices/src/system.properties";
 		String path2 = "/var/lib/hudson/jobs/SEMplestSystemMonitor/workspace/SemplestTests/src/system.properties";
 				
-		setProps(path1, ExpJdbc, null);
-		setProps(path2, ExpJdbc, null);
+		setPropsJdbc(path1, ExpJdbc);
+		setPropsJdbc(path2, ExpJdbc);
 	}
 	
-	public void setProductionBuild(String serverIndex){
-		String path1 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/src/system.properties";
-		String path2 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/dist/bin/system.properties";
+	public void setServiceBuild(String semplestService){
 		
-		setProps(path1, ProdJdbc, serverIndex);
-		setProps(path2, ProdJdbc, serverIndex);
+		//Set service offered and service name in the properties file
+		String propertiesFilePath = null;
+		//String path2 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/dist/bin/system.properties";
+		String service = null;
+		String serviceName = null;		
 		
+		if(semplestService.equalsIgnoreCase("adengine")){
+			propertiesFilePath = "/var/lib/hudson/jobs/AdengineServiceBuild/workspace/SemplestServices/src/system.properties";
+			service = "semplest.server.service.adengine.SemplestAdengineService";
+			serviceName = "SemplestAdengineService";			
+		}
+		if(semplestService.equalsIgnoreCase("bidding")){
+			propertiesFilePath = "/var/lib/hudson/jobs/BidGeneratorServiceBuild/workspace/SemplestServices/src/system.properties";
+			service = "semplest.service.bidding.BidGeneratorService";
+			serviceName = "SemplestBidGeneratorService";			
+		}
+		if(semplestService.equalsIgnoreCase("keyword")){
+			propertiesFilePath = "/var/lib/hudson/jobs/KeywordGeneratorServiceBuild/workspace/SemplestServices/src/system.properties";
+			service = "semplest.service.keywords.lda.KeywordGeneratorService";
+			serviceName = "SemplestKeywordGeneratorService";			
+		}
+		if(semplestService.equalsIgnoreCase("mail")){
+			propertiesFilePath = "/var/lib/hudson/jobs/MailServiceBuild/workspace/SemplestServices/src/system.properties";
+			service = "semplest.server.service.mail.SemplestMailService";
+			serviceName = "SemplestMailService";			
+		}
+		if(semplestService.equalsIgnoreCase("scheduler")){
+			propertiesFilePath = "/var/lib/hudson/jobs/SchedulerServiceBuild/workspace/SemplestServices/src/system.properties";
+			service = "semplest.service.scheduler.SemplestSchedulerService";
+			serviceName = "SemplestSchedulerService";			
+		}		
+		
+		setPropsService(propertiesFilePath, service, serviceName);
+		//setPropsService(path2, service, serviceName);		
+		
+		//Set LineHandler for Chase Orbital
 		String pathLineHandler1 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/dist/config/linehandler.properties";
 		String pathLineHandler2 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/config/linehandler.properties";
-		setChaseOrbitalLineHandler(pathLineHandler1);
-		setChaseOrbitalLineHandler(pathLineHandler2);
+		//setChaseOrbitalLineHandler(pathLineHandler1);
+		//setChaseOrbitalLineHandler(pathLineHandler2);
 	}
 	
-	public void setProps(String path, String jdbc, String serverIndex){
-		try{
-			String appendIndex = "";
-			if(serverIndex != null){
-				appendIndex = "_" + serverIndex;
-			}
-			
+	public void setPropsJdbc(String path, String jdbc){
+		try{			
 			Properties properties = new Properties();
 			FileInputStream in = new FileInputStream(path);
 			properties.load(in);
@@ -98,16 +124,14 @@ public class BuildSetup {
 			FileWriter out = new FileWriter(path);
 			BufferedWriter writer = new BufferedWriter(out);
 			
-			Date now = new Date();
-			String serviceName = properties.getProperty("YAJSW.servicename").trim().split("_")[0];
-			
+			Date now = new Date();			
 			
 			writer.write("#Date: " + now.toString());
 			writer.newLine();
 			
 			writer.append("semplest.service" + " = " + properties.getProperty("semplest.service"));
 			writer.newLine();
-			writer.append("YAJSW.servicename" + " = " + serviceName + appendIndex);  //update service name
+			writer.append("YAJSW.servicename" + " = " + properties.getProperty("YAJSW.servicename"));
 			writer.newLine();
 			writer.append("jdbc.driverClassName" + " = " + properties.getProperty("jdbc.driverClassName"));
 			writer.newLine();
@@ -125,6 +149,25 @@ public class BuildSetup {
 			//do nothing
 		}
 		catch(IOException e){
+			//do nothing
+		}
+	}
+	
+	public void setPropsService(String path, String service, String serviceName){
+		try{			
+			Properties properties = new Properties();
+			FileInputStream in = new FileInputStream(path);
+			properties.load(in);
+			in.close();		
+			
+			properties.setProperty("semplest.service", service);
+			properties.setProperty("YAJSW.servicename", serviceName);
+			
+			FileOutputStream out = new FileOutputStream(path);
+			String comment = "Updated by BuildSetup. " + new Date();
+			properties.store(out, comment);
+		}
+		catch(Exception e){
 			//do nothing
 		}
 	}
