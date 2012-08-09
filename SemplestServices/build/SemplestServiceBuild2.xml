@@ -51,6 +51,7 @@
 	        </linecontains>
 	      </filterchain>
 	    </loadproperties>	
+	<property name="service.name" value="${YAJSW.servicename}"/>
   
   <property name="semplest.protocol.dir" value="${basedir}/../SEMplestProtocol" />
   <property name="semplest.protocol.lib" value="${basedir}/../SEMplestProtocol/lib" />
@@ -346,8 +347,7 @@
 	<target name="build-installer" depends="compileProtocol,depJars,compile,deps" description="Create distribution executable">
 		 <!-- Run installer build with install-definition -->
 		
-		<echo message="Running IzPack to build the installer(s)..."/>  		
-		<property name="service.name" value="${YAJSW.servicename}"/>
+		<echo message="Running IzPack to build the installer(s)..."/>  				
 			
 		<if>
 		 <equals arg1="${build.index}" arg2="x" />
@@ -368,7 +368,7 @@
 		 	<for list="${build.index}" param="index">  			 		
 		 	  <sequential>  
 		 	    <echo>Building Installer # @{index}</echo>  
-		 	  	<var name="temp.text" value="${service.name}_@{index}" />
+		 	  	<var name="temp.text" value="${YAJSW.servicename}_@{index}" />
 		 		<var name="service.name" value="${temp.text}" />		 		
 		 		<echo file="${dist}/path.txt" message="c:/${service.name}" />
 		 	  	<izpack input="${install.xml}"
