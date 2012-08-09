@@ -141,7 +141,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			adEng.initializeService(null);
 			final List<Integer> keywordIds = Arrays.asList(160604, 161089);
 			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN);
-			adEng.DeleteNegativeKeywords(228, keywordIds, adEngines);
+			
+			//adEng.DeleteNegativeKeywords(228, keywordIds, adEngines);
 			// final KeywordIdRemoveOppositePair pair1 = new KeywordIdRemoveOppositePair(160604, false);
 			// final KeywordIdRemoveOppositePair pair2 = new KeywordIdRemoveOppositePair(161089, false);
 			// adEng.AddNegativeKeywords(228, Arrays.asList(pair1, pair2), adEngines);
@@ -2869,9 +2870,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else
 			{
-				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for refreshing sitelinks (at least not yet)";
-				logger.error(errMsg);
-				errorMap.put(adEngine, errMsg);
+				final String warnMsg = "AdEngine specified [" + adEngine + "] is not valid for refreshing sitelinks (at least not yet)";
+				logger.warn(warnMsg);
 			}
 		}
 		if (!errorMap.isEmpty())
