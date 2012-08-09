@@ -168,6 +168,14 @@
   	 		dest="${dist}/KeyFiles"
   	 	    includes="**/*.*"
   	 	/>
+	      	
+      	<!-- Copy the scripts folder -->
+		<echo message="Copying scripts folder..."/>	 	  	 	
+  	 	<mkdir dir="${dist}/scripts"/>
+  	 	<copydir src="${semplest.protocol.dir}/scripts"
+  	 		dest="${dist}/scripts"
+  	 	    includes="**/*.*"
+  	 	/>
 		
 	  	<!-- Create a Jar for SemplestServicesClient, and put it to SemplestServices/lib -->
 		<echo message="Creating Jar for SemplestServicesClient..."/>
