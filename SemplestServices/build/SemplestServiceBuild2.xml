@@ -364,11 +364,11 @@
 		 </then>
 			
 		 <else>
-		 	<echo>Building Serveral Installers: ${build.index}.</echo>		 	
+		 	<echo>Building Serveral Installers: ${build.index}</echo>		 	
 		 	<for list="${build.index}" param="index">  			 		
 		 	  <sequential>  
 		 	    <echo>Building Installer # @{index}</echo>  
-		 	  	<var name="temp.text" value="${service.name}_${build.index}" />
+		 	  	<var name="temp.text" value="${service.name}_@{index}" />
 		 		<var name="service.name" value="${temp.text}" />		 		
 		 		<echo file="${dist}/path.txt" message="c:/${service.name}" />
 		 	  	<izpack input="${install.xml}"
