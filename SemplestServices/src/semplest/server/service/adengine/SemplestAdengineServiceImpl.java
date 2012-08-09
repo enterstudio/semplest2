@@ -134,8 +134,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * 
 			 * }
 			 */
-			
-			
+
 			BasicConfigurator.configure();
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
@@ -143,70 +142,52 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final List<Integer> keywordIds = Arrays.asList(160604, 161089);
 			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN);
 			adEng.DeleteNegativeKeywords(228, keywordIds, adEngines);
-			//final KeywordIdRemoveOppositePair pair1 = new KeywordIdRemoveOppositePair(160604, false);
-			//final KeywordIdRemoveOppositePair pair2 = new KeywordIdRemoveOppositePair(161089, false);
-			//adEng.AddNegativeKeywords(228, Arrays.asList(pair1, pair2), adEngines);
-			
-			//final KeywordIdRemoveOppositePair pair = new KeywordIdRemoveOppositePair(160604, false); 
-			//adEng.AddNegativeKeywords(228, Arrays.asList(pair), Arrays.asList(AdEngine.MSN, AdEngine.Google));
-			//adEng.DeleteNegativeKeywords(228, Arrays.asList(160604), Arrays.asList(AdEngine.MSN, AdEngine.Google));
-			//adEng.UpdateAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
-			//adEng.AddAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
-/*			
-			final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
-			final AESBouncyCastle bouncyCastle = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
-			final Integer userID = 24;
-			final Credential credential = SemplestDB.getCredential(userID);
-			final java.util.Date dateTime = new java.util.Date();
-			final String username = credential.getUsername();
-			final String password = credential.getPassword();
-			final String encryptedToken = SemplestUtils.generateEncryptedToken(bouncyCastle, userID, dateTime, username, password);
-			final List<String> validationErrors = adEng.validateAccountActivationToken(encryptedToken);
-			logger.info("Validation errors:\n" + SemplestUtils.getEasilyReadableString(validationErrors));
-*/
-			// Schedule for next day at the same time
-			
-			//adEng.ExecuteBidProcess(136, Arrays.asList(AdEngine.MSN));
-			//adEng.AddPromotionToAdEngine(16, 55, 121212, Arrays.asList(AdEngine.MSN, AdEngine.Google));
-			
+			// final KeywordIdRemoveOppositePair pair1 = new KeywordIdRemoveOppositePair(160604, false);
+			// final KeywordIdRemoveOppositePair pair2 = new KeywordIdRemoveOppositePair(161089, false);
+			// adEng.AddNegativeKeywords(228, Arrays.asList(pair1, pair2), adEngines);
+
+			// final KeywordIdRemoveOppositePair pair = new KeywordIdRemoveOppositePair(160604, false);
+			// adEng.AddNegativeKeywords(228, Arrays.asList(pair), Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			// adEng.DeleteNegativeKeywords(228, Arrays.asList(160604), Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			// adEng.UpdateAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			// adEng.AddAds(228, Arrays.asList(714), Arrays.asList(AdEngine.MSN, AdEngine.Google));
 			/*
-			Date now = new Date();
-			cal.setTime(now);
-			// get yesterday
-			cal.add(Calendar.DAY_OF_MONTH, -1);
-			Date yesterday = cal.getTime();
-			cal.add(Calendar.DAY_OF_MONTH, -5);
-			//final String accountIdString = "2397832336";
-			final GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			final String startDateString = YYYYMMDD.format(cal.getTime());
-			final String endDateString = YYYYMMDD.format(yesterday);			
-			GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			final Integer promotionID = 128;
-			Boolean ret = getPromoDataSP.execute(promotionID);
-			final Map<AdEngine, AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
-			final AdEngineID adEngineData = adEngineMap.get(AdEngine.Google);
-			final Long accountId = adEngineData.getAccountID();
-			final String accountIdString = "" + accountId;
-			Long campaignID = adEngineData.getCampaignID();
-			ReportObject[] getReportData = google.getReportForAccount(accountIdString, startDateString, endDateString);
-			logger.info("Account [" + accountIdString + "], StartDate [" + startDateString + "], EndDate [" + endDateString + "], CampaignID [" + campaignID + "], Report Data size [" + getReportData.length + "]");
-			ReportObject[] filterReportDatabyCampaignID = filterReportData(getReportData, campaignID);
-			logger.info("Filtered Data size: " + filterReportDatabyCampaignID.length);
-			for (final ReportObject report : filterReportDatabyCampaignID)
-			{
-				logger.info(report);
-			}
-			*/
+			 * final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey"); final AESBouncyCastle
+			 * bouncyCastle = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey); final Integer userID = 24; final Credential credential =
+			 * SemplestDB.getCredential(userID); final java.util.Date dateTime = new java.util.Date(); final String username =
+			 * credential.getUsername(); final String password = credential.getPassword(); final String encryptedToken =
+			 * SemplestUtils.generateEncryptedToken(bouncyCastle, userID, dateTime, username, password); final List<String> validationErrors =
+			 * adEng.validateAccountActivationToken(encryptedToken); logger.info("Validation errors:\n" +
+			 * SemplestUtils.getEasilyReadableString(validationErrors));
+			 */
+			// Schedule for next day at the same time
+
+			// adEng.ExecuteBidProcess(136, Arrays.asList(AdEngine.MSN));
+			// adEng.AddPromotionToAdEngine(16, 55, 121212, Arrays.asList(AdEngine.MSN, AdEngine.Google));
 
 			/*
-			final Integer promotionID = 128;
-			final List<AdEngine> adEngines = Arrays.asList(AdEngine.Google);
-			String scheduleName = "Manual_OnGoingBidding_Promo_" + promotionID;
-			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
-			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines);
-			listOfTasks.add(executeOngoinBiddingTask);
-			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);		
-			*/
+			 * Date now = new Date(); cal.setTime(now); // get yesterday cal.add(Calendar.DAY_OF_MONTH, -1); Date yesterday = cal.getTime();
+			 * cal.add(Calendar.DAY_OF_MONTH, -5); //final String accountIdString = "2397832336"; final GoogleAdwordsServiceImpl google = new
+			 * GoogleAdwordsServiceImpl(); final String startDateString = YYYYMMDD.format(cal.getTime()); final String endDateString =
+			 * YYYYMMDD.format(yesterday); GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP(); final Integer promotionID = 128;
+			 * Boolean ret = getPromoDataSP.execute(promotionID); final Map<AdEngine, AdEngineID> adEngineMap =
+			 * getPromoDataSP.getPromotionAdEngineID(promotionID); final AdEngineID adEngineData = adEngineMap.get(AdEngine.Google); final Long
+			 * accountId = adEngineData.getAccountID(); final String accountIdString = "" + accountId; Long campaignID = adEngineData.getCampaignID();
+			 * ReportObject[] getReportData = google.getReportForAccount(accountIdString, startDateString, endDateString); logger.info("Account [" +
+			 * accountIdString + "], StartDate [" + startDateString + "], EndDate [" + endDateString + "], CampaignID [" + campaignID +
+			 * "], Report Data size [" + getReportData.length + "]"); ReportObject[] filterReportDatabyCampaignID = filterReportData(getReportData,
+			 * campaignID); logger.info("Filtered Data size: " + filterReportDatabyCampaignID.length); for (final ReportObject report :
+			 * filterReportDatabyCampaignID) { logger.info(report); }
+			 */
+
+			/*
+			 * final Integer promotionID = 128; final List<AdEngine> adEngines = Arrays.asList(AdEngine.Google); String scheduleName =
+			 * "Manual_OnGoingBidding_Promo_" + promotionID; ArrayList<SemplestSchedulerTaskObject> listOfTasks = new
+			 * ArrayList<SemplestSchedulerTaskObject>(); SemplestSchedulerTaskObject executeOngoinBiddingTask =
+			 * CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines); listOfTasks.add(executeOngoinBiddingTask);
+			 * CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null,
+			 * ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
+			 */
 			/*
 			 * final Integer customerID = 12; final Integer productGroupID = 76; final Integer PromotionID = 62; final List<AdEngine> adEngineList =
 			 * Arrays.asList(AdEngine.MSN); adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
@@ -312,7 +293,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines, startBudgetInCycle);
 			final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 			final Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngines, bidClient);
-			String companyName = null;			
+			String companyName = null;
 			for (final AdEngine advertisingEngine : adEngines)
 			{
 				emailMessageSB.append(advertisingEngine).append("\n");
@@ -330,7 +311,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				if (AdEngineAccoutRow.getAccountID() == null)
 				{
 					final AdEngineAccountIdGroup idGroup = createAdEngineAccount(advertisingEngine, companyName);
-					accountID = idGroup.getAccountId();					
+					accountID = idGroup.getAccountId();
 					final String accountNumber = idGroup.getAccountNumber();
 					emailMessageSB.append("\t").append("Created AdEngine Account ID: ").append(accountID).append("\n");
 					emailMessageSB.append("\t").append("Created AdEngine Account Number: ").append(accountNumber).append("\n");
@@ -392,7 +373,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Long minsDuration = timeDuration / SemplestUtils.MINUTE;
 			final String emailSubject = "Promotion [" + PromotionID + "] created for AdEngines [" + adEngines + "], and took " + minsDuration + " mins to create!";
 			final String emailBody = emailSubject + "\n\n" + emailMessageSB.toString();
-			sendEmail(emailSubject, emailBody);			
+			sendEmail(emailSubject, emailBody);
 			logger.info("---------------------------------------------------------------------------");
 			logger.info("---------- Promotion [" + PromotionID + "] finished with SUCCESS ----------");
 			logger.info("---------------------------------------------------------------------------");
@@ -402,7 +383,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			final String emailSubject = "Error while trying to create Promotion [" + PromotionID + "] for AdEngines [" + adEngines + "]";
 			final String emailBody = emailSubject + "\n\n" + emailMessageSB.toString() + "\n\n" + "Error details\n\t" + e.getMessage();
-			sendEmail(emailSubject, emailBody);			
+			sendEmail(emailSubject, emailBody);
 			logger.info("-------------------------------------------------------------------------");
 			logger.info("------- Promotion [" + PromotionID + "] finished with ***ERROR*** -------");
 			logger.info("-------------------------------------------------------------------------");
@@ -528,7 +509,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final PromotionStatus promotionStatusForGoogle = SemplestDB.getPromotionStatus(promotionID, adEngine);
 				if (promotionStatusForGoogle.isActionableInAdEngine())
-				{				
+				{
 					final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
 					final String accountId = "" + adEngineData.getAccountID();
 					final Long campaignId = adEngineData.getCampaignID();
@@ -544,14 +525,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				else
 				{
-					logger.info("Taking no action because Promotion's Status [" + promotionStatusForGoogle + "] is not actionable in Google");	
+					logger.info("Taking no action because Promotion's Status [" + promotionStatusForGoogle + "] is not actionable in Google");
 				}
 			}
 			else if (AdEngine.MSN == adEngine)
 			{
 				final PromotionStatus promotionStatusForMSN = SemplestDB.getPromotionStatus(promotionID, adEngine);
 				if (promotionStatusForMSN.isActionableInAdEngine())
-				{		
+				{
 					final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
 					final Long accountId = adEngineData.getAccountID();
 					final Long campaignId = adEngineData.getCampaignID();
@@ -559,15 +540,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final List<KeywordProbabilityObject> existingKeywordsInSemplest = SemplestDB.getKeywordProbObj(promotionID, false, true);
 					final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplest = getKeywordProbabilities(existingKeywordsInSemplest, true);
 					final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplestToRemove = getKeywordProbabilitiesForKeywordIds(existingNegativeKeywordsInSemplest, keywordIds);
-					logger.info("Out of " + keywordIds.size() + " Keyword Ids [" + keywordIds + "] that we're supposed to delete, found these " + existingNegativeKeywordsInSemplestToRemove.size() + " Keywords within Semplest\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove));
+					logger.info("Out of " + keywordIds.size() + " Keyword Ids [" + keywordIds + "] that we're supposed to delete, found these " + existingNegativeKeywordsInSemplestToRemove.size() + " Keywords within Semplest\n"
+							+ SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove));
 					final List<KeywordProbabilityObject> existingNegativeKeywordsInSemplestThatShouldRemain = getKeywordProbabilities(existingNegativeKeywordsInSemplest, existingNegativeKeywordsInSemplestToRemove);
-					logger.info("Out of " + existingNegativeKeywordsInSemplest.size() + " Negative Keywords that exist, we'll remove " + existingNegativeKeywordsInSemplestToRemove.size() + " Negative Keywords, which should result in remaining " + existingNegativeKeywordsInSemplestThatShouldRemain.size() + " Negative Keywords\nExisting Negative Keywords:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplest) + "\nNegative Keywords To Remove:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove) + "\nNegative Keywords That Should Remain:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestThatShouldRemain));
+					logger.info("Out of " + existingNegativeKeywordsInSemplest.size() + " Negative Keywords that exist, we'll remove " + existingNegativeKeywordsInSemplestToRemove.size() + " Negative Keywords, which should result in remaining "
+							+ existingNegativeKeywordsInSemplestThatShouldRemain.size() + " Negative Keywords\nExisting Negative Keywords:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplest) + "\nNegative Keywords To Remove:\n"
+							+ SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestToRemove) + "\nNegative Keywords That Should Remain:\n" + SemplestUtils.getEasilyReadableString(existingNegativeKeywordsInSemplestThatShouldRemain));
 					final Map<String, Integer> negativeKeywordToPkMap = getKywordToPkMap(existingNegativeKeywordsInSemplestThatShouldRemain);
 					final Map<Integer, String> filteredPkToCommentMap = msn.setNegativeKeywords(accountId, campaignId, negativeKeywordToPkMap);
 				}
 				else
 				{
-					logger.info("Taking no action because Promotion's Status [" + promotionStatusForMSN + "] is not actionable in MSN");	
+					logger.info("Taking no action because Promotion's Status [" + promotionStatusForMSN + "] is not actionable in MSN");
 				}
 			}
 			else
@@ -579,7 +563,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		for (final AdEngine adEngine : adEngines)
 		{
-			final Map<Integer, String> filteredPkToCommentMap =  new HashMap<Integer, String>();
+			final Map<Integer, String> filteredPkToCommentMap = new HashMap<Integer, String>();
 			for (final Integer keywordId : keywordIds)
 			{
 				filteredPkToCommentMap.put(keywordId, "Deleted by user");
@@ -594,7 +578,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return true;
 	}
-	
+
 	public static List<KeywordProbabilityObject> getKeywordProbabilities(final List<KeywordProbabilityObject> keywords, final List<KeywordProbabilityObject> keywordsToRemove)
 	{
 		final List<KeywordProbabilityObject> result = new ArrayList<KeywordProbabilityObject>();
@@ -607,7 +591,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return result;
 	}
-	
+
 	public static List<KeywordProbabilityObject> getKeywordsForText(final List<KeywordProbabilityObject> keywordProbabilities, final List<String> keywordStrings)
 	{
 		final List<KeywordProbabilityObject> result = new ArrayList<KeywordProbabilityObject>();
@@ -795,13 +779,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			int counter = 0;
 			final List<KeywordProbabilityObject> regularKeywordProbabilities = getKeywordProbabilities(keywordList, false);
 			final List<KeywordProbabilityObject> negativeKeywordProbabilities = getKeywordProbabilities(keywordList, true);
-			
+
 			// Add Negative Keywords
 			final Integer numNegativeKeywordsTotal = negativeKeywordProbabilities.size();
 			Integer numNegativeKeywordsAdded = 0;
 			Integer numNegativeKeywordsRejected = 0;
 			for (KeywordProbabilityObject negativeKeyword : negativeKeywordProbabilities)
-			{			
+			{
 				final KeywordDataObject keywordDataObj = google.addNegativeKeyWordToAdGroup(accountID, campaignID, negativeKeyword, keywordMatchType, promotionID);
 				if (keywordDataObj == null)
 				{
@@ -810,25 +794,26 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				else
 				{
 					++numNegativeKeywordsAdded;
-					//REMOVED ADDITION OF NEGATIVE KEYWORDS TO KEYWORDBID TABLE
+					// REMOVED ADDITION OF NEGATIVE KEYWORDS TO KEYWORDBID TABLE
 					/*
-					final Long keywordBidID = keywordDataObj.getBidID();
-					logger.info(++counter + ": will try to save in db Google Negative Keyword for GoogleID [" + keywordBidID + "], KeywordProbability [" + negativeKeyword + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + true + "]");
-					final Long microBidAmt = keywordDataObj.getMicroBidAmount();
-					final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();
-					Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null, true);
-					*/
+					 * final Long keywordBidID = keywordDataObj.getBidID(); logger.info(++counter +
+					 * ": will try to save in db Google Negative Keyword for GoogleID [" + keywordBidID + "], KeywordProbability [" + negativeKeyword
+					 * + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + true + "]"); final Long
+					 * microBidAmt = keywordDataObj.getMicroBidAmount(); final int microBidIntValue = microBidAmt == null ? 0 :
+					 * microBidAmt.intValue(); Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(),
+					 * keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null, true);
+					 */
 				}
 			}
 			emailMessageSB.append("\t\t").append("Negative").append("\n");
 			emailMessageSB.append("\t\t\t").append("Total: ").append(numNegativeKeywordsTotal).append("\n");
 			emailMessageSB.append("\t\t\t").append("Added: ").append(numNegativeKeywordsAdded).append("\n");
 			emailMessageSB.append("\t\t\t").append("Rejected: ").append(numNegativeKeywordsRejected).append("\n");
-			
+
 			// Add Positive Keywords
 			final Integer numPositiveKeywordsTotal = regularKeywordProbabilities.size();
 			emailMessageSB.append("\t\t").append("Positive").append("\n");
-			emailMessageSB.append("\t\t\t").append("Total: ").append(numPositiveKeywordsTotal).append("\n");		
+			emailMessageSB.append("\t\t\t").append("Total: ").append(numPositiveKeywordsTotal).append("\n");
 			final List<GoogleAddKeywordRequest> positiveKeywordRequests = getAddKeywordRequests(regularKeywordProbabilities, keywordMatchType, 0L);
 			final List<List<GoogleAddKeywordRequest>> positiveKeywordRequestBatches = SemplestUtils.getBatches(positiveKeywordRequests, 500);
 			final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
@@ -898,7 +883,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.info("Will try to add " + negativeKeywordProbabilities.size() + " Negative Keywords to MSN");
 				final Map<String, Integer> negativeKeywordToPkMap = getKywordToPkMap(negativeKeywordProbabilities);
 				final Map<Integer, String> filteredPkToCommentMap = msn.setNegativeKeywords(accId, campaignID, negativeKeywordToPkMap);
-				numNegativeKeywordsRejected = filteredPkToCommentMap.size(); 
+				numNegativeKeywordsRejected = filteredPkToCommentMap.size();
 				if (!filteredPkToCommentMap.isEmpty())
 				{
 					logger.info(filteredPkToCommentMap.size() + " negative keywords were rejected by MSN.  Map of KeywordPK <-> Reject Comment from MSN:\n" + SemplestUtils.getEasilyReadableString(filteredPkToCommentMap));
@@ -915,7 +900,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final int batchSize = 1000;
 			final List<Map<com.microsoft.adcenter.v8.Keyword, Integer>> keywordBatches = SemplestUtils.getBatches(regularKeywordsToPkMap, batchSize);
 			final Integer numPositiveKeywordsTotal = regularKeywordsToPkMap.size();
-			logger.info("Out of " + numPositiveKeywordsTotal + " MSN keywords, created " + keywordBatches.size() + " batches of max " + batchSize);	
+			logger.info("Out of " + numPositiveKeywordsTotal + " MSN keywords, created " + keywordBatches.size() + " batches of max " + batchSize);
 			Integer numPositiveKeywordsAdded = 0;
 			Integer numPositiveKeywordsRejected = 0;
 			for (final Map<com.microsoft.adcenter.v8.Keyword, Integer> batch : keywordBatches)
@@ -937,9 +922,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
 					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null, true);
 				}
-			}			
+			}
 			emailMessageSB.append("\t\t").append("Positive").append("\n");
-			emailMessageSB.append("\t\t\t").append("Total: ").append(numPositiveKeywordsTotal).append("\n");	
+			emailMessageSB.append("\t\t\t").append("Total: ").append(numPositiveKeywordsTotal).append("\n");
 			emailMessageSB.append("\t\t\t").append("Added: ").append(numPositiveKeywordsAdded).append("\n");
 			emailMessageSB.append("\t\t\t").append("Rejected: ").append(numPositiveKeywordsRejected).append("\n");
 		}
@@ -1038,7 +1023,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Map<GoogleAddAdRequest, Long> requestToGoogleAdIdMap = google.addTextAds(request);
 			logger.info("Added " + requestToGoogleAdIdMap.size() + " Google ads in bulk:\n" + SemplestUtils.getEasilyReadableString(requestToGoogleAdIdMap));
 			backfillAdEngineAdID(nonDeletedAds, requestToGoogleAdIdMap);
-			adGrpData.setAds(nonDeletedAds);						
+			adGrpData.setAds(nonDeletedAds);
 			google.updateGeoTargets(accountID, campaignID, geoTargetVsTypeMap);
 			logger.info("Added Google GeoTargets:\n" + SemplestUtils.getEasilyReadableString(geoTargetVsTypeMap));
 		}
@@ -1061,9 +1046,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			adGrpData.setAdGroupID(adGroupID);
 			adGrpData.setAds(nonDeletedAds);
-			//final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
+			// final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);
 			msn.updateGeoTargets(promotionId, msnAccountId, campaignID);
-			logger.info("Added MSN GeoTargets for PromotionID [" + promotionId + "], MsnAccountID [" + msnAccountId + "], CampaignID [" + campaignID + "]");			
+			logger.info("Added MSN GeoTargets for PromotionID [" + promotionId + "], MsnAccountID [" + msnAccountId + "], CampaignID [" + campaignID + "]");
 		}
 		else
 		{
@@ -1237,8 +1222,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final java.util.Date daysBefore = cal.getTime();
 		final String reportStartDate = YYYYMMDD.format(daysBefore);
 		final String reportEndDate = YYYYMMDD.format(now);
-		emailContent.append("Start Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(daysBefore)).append("\n")
-        		    .append("End Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(now)).append("\n\n");
+		emailContent.append("Start Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(daysBefore)).append("\n").append("End Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(now)).append("\n\n");
 		try
 		{
 			for (AdEngine adEngine : adEngineList)
@@ -1255,16 +1239,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					semplstStr.setSemplestString(accountIdString);
 					GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 					try
-					{						
+					{
 						logger.info("Will try to get Bid Performance Report from Google using AccountID [" + accountIdString + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");
 						ReportObject[] reportData = google.getReportForAccount(accountIdString, reportStartDate, reportEndDate);
 						logger.info("Got Google report of size " + (reportData == null ? 0 : reportData.length));
 						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
-						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
+						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length;
 						logger.info("Got Google report (filtered for CampaignID [" + campaignID + "]) of size " + filteredDataSize);
-						emailContent.append("\tAccount ID: ").append(accountIdString).append("\n")
-									.append("\tCampaign ID: ").append(campaignID).append("\n")						        
-									.append("\t# Items Total: ").append(filteredDataSize).append("\n");
+						emailContent.append("\tAccount ID: ").append(accountIdString).append("\n").append("\tCampaign ID: ").append(campaignID).append("\n").append("\t# Items Total: ").append(filteredDataSize).append("\n");
 						if (filteredDataSize > 0)
 						{
 							final Integer numInserted = SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
@@ -1281,28 +1263,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					}
 					// update the API charges
 					/*
-					try
-					{
-						Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(accountId, promoObj.getPromotionStartDate(), new Date());
-						if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
-						{
-							Double newCost = null;
-							try
-							{
-								UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
-								newCost = updateApiSP.execute(accountId, adEngine, cumulativeUnitsUsedFromStart);
-							}
-							catch (Exception e)
-							{
-								logger.info("Problem doing UpdateAdEngineAPICharge (Stored proc).  Logging, but otherwise continuing");
-							}
-							logger.info("Added additional API Cost of " + newCost + " to Google Account " + accountId);
-						}
-					}
-					catch (Exception e)
-					{
-						logger.error("Error updating API charges for Google Account " + accountIdString + ":" + e.getMessage(), e);
-					}*/
+					 * try { Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(accountId, promoObj.getPromotionStartDate(), new
+					 * Date()); if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0) { Double newCost = null; try {
+					 * UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP(); newCost = updateApiSP.execute(accountId, adEngine,
+					 * cumulativeUnitsUsedFromStart); } catch (Exception e) {
+					 * logger.info("Problem doing UpdateAdEngineAPICharge (Stored proc).  Logging, but otherwise continuing"); }
+					 * logger.info("Added additional API Cost of " + newCost + " to Google Account " + accountId); } } catch (Exception e) {
+					 * logger.error("Error updating API charges for Google Account " + accountIdString + ":" + e.getMessage(), e); }
+					 */
 				}
 				else if (adEngine == AdEngine.MSN)
 				{
@@ -1316,14 +1284,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						final DateTime todayJodaTime = new DateTime(now.getTime());
 						final DateTime todayJodaTimeMinus5Days = new DateTime(daysBefore.getTime());
 						final ReportObject[] reportData = msn.getKeywordReport(accountId, campaignID, todayJodaTimeMinus5Days, todayJodaTime);
-						logger.info("Will try to get Bid Performance Report from MSN using AccountID [" + accountId + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");						
+						logger.info("Will try to get Bid Performance Report from MSN using AccountID [" + accountId + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");
 						logger.info("Got MSN report of size " + (reportData == null ? 0 : reportData.length));
 						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
-						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
+						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length;
 						logger.info("Got MSN report (filtered for CampaignID [" + campaignID + "]) of size " + filteredDataSize);
-						emailContent.append("\tAccount ID: ").append(accountId).append("\n")
-									.append("\tCampaign ID: ").append(campaignID).append("\n")						        
-									.append("\t# Items Total: ").append(filteredDataSize).append("\n");
+						emailContent.append("\tAccount ID: ").append(accountId).append("\n").append("\tCampaign ID: ").append(campaignID).append("\n").append("\t# Items Total: ").append(filteredDataSize).append("\n");
 						if (filteredDataSize > 0)
 						{
 							final Integer numInserted = SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
@@ -1347,7 +1313,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					emailContent.append("\t").append(warnMsg).append("\n\n");
 				}
 			}
-			
+
 			// CALL A SP TO UPDATE THE REMAINING CYCLE BUDGET
 			UpdateRemainingBudgetInCycleSP updateBudgetSP = new UpdateRemainingBudgetInCycleSP();
 			Integer res = updateBudgetSP.execute(PromotionID, promoObj.getPromotionStartDate(), new Date());
@@ -1384,7 +1350,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		sendEmail(emailSubjectString, emailContentString);
 		return true;
 	}
-	
+
 	public static void sendEmail(final String subject, final String content)
 	{
 		try
@@ -1479,12 +1445,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new Exception(errMsg, e);
 		}
 	}
-	
+
 	public static Map<GeoTargetObject, GeoTargetType> getGeoTargetVsTypeMap(final List<GeoTargetObject> geoTargets) throws Exception
 	{
 		final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = new HashMap<GeoTargetObject, GeoTargetType>();
 		for (final GeoTargetObject geoTarget : geoTargets)
-		{			
+		{
 			final Double latitude = geoTarget.getLatitude();
 			final Double longtitude = geoTarget.getLongitude();
 			final Double radius = geoTarget.getRadius();
@@ -1497,7 +1463,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				geoTargetVsTypeMap.put(geoTarget, GeoTargetType.STATE);
 			}
-			else 
+			else
 			{
 				geoTargetVsTypeMap.put(geoTarget, GeoTargetType.GEO_POINT);
 			}
@@ -1522,7 +1488,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String accountId = "" + promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);				
+				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);
 				googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
 			}
 			else if (AdEngine.MSN == adEngine)
@@ -1532,8 +1498,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
 				final Long accountId = promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
-				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);	
-				//final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);				
+				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);
+				// final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);
 				msn.updateGeoTargets(promotionID, accountId, campaignId);
 			}
 			else
@@ -1960,7 +1926,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new Exception(errMsg);
 		}
 	}
-	
+
 	public static List<AdsObject> getFilteredAds(final List<AdsObject> ads, final AdEngine adEngine)
 	{
 		final List<AdsObject> adsFound = new ArrayList<AdsObject>();
@@ -2166,7 +2132,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					msnPositiveKeywordIdsToRemoveArray[i] = msnPositiveKeywordIdsToRemove.get(i);
 				}
-				logger.info("Will try to:\nDelete " + msnPositiveKeywordIdsToRemove.size() + " MSN keywords for MSN IDs [" + msnPositiveKeywordIdsToRemove + "]\nAdd " + negativeKeywordToPkMap.size() + " Negative Keywords: [" + negativeKeywordToPkMap + "]");				
+				logger.info("Will try to:\nDelete " + msnPositiveKeywordIdsToRemove.size() + " MSN keywords for MSN IDs [" + msnPositiveKeywordIdsToRemove + "]\nAdd " + negativeKeywordToPkMap.size() + " Negative Keywords: [" + negativeKeywordToPkMap + "]");
 				if (msnPositiveKeywordIdsToRemoveArray.length != 0)
 				{
 					msn.deleteKeywordsById(accountID, adGroupID, msnPositiveKeywordIdsToRemoveArray);
@@ -2177,7 +2143,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				if (negativeKeywordToPkMap.isEmpty())
 				{
-					logger.info("No negative keywords to add");	
+					logger.info("No negative keywords to add");
 				}
 				else
 				{
@@ -2718,16 +2684,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
 			final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);
-			// TODO: once AdvertisingEngineAds table has constraint such that
-			// PromotionFK is unique in the table, remove the sorting code and
-			// only deal with 1 item (not List)
-			Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
-			if (!nonDeletedAdsForPromotionAdID.isEmpty())
-			{
-				final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);
-				nonDeletedAdsForPromotionAdIds.add(ad);
-			}
-		}		
+			nonDeletedAdsForPromotionAdIds.addAll(nonDeletedAdsForPromotionAdID);
+		}
 		for (final AdEngine adEngine : adEngines)
 		{
 			if (AdEngine.Google == adEngine)
@@ -2858,7 +2816,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public List<GoogleViolation> validateGoogleRefreshSiteLinks(final List<GoogleSiteLink> siteLinks) throws Exception
 	{
-		logger.info("Will try to Validate SiteLinks:\n" + SemplestUtils.getEasilyReadableString(siteLinks));		
+		logger.info("Will try to Validate SiteLinks:\n" + SemplestUtils.getEasilyReadableString(siteLinks));
 		final String googleValidationAccount = String.valueOf(AdwordsValidationAccountID);
 		final GoogleRefreshSiteLinksRequest request = new GoogleRefreshSiteLinksRequest(googleValidationAccount, AdwordsValidationCampaignID, siteLinks);
 		logger.info("Generated the following request to validate the update of Google SiteLinks: " + request.toStringPretty());
@@ -3012,7 +2970,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final String displayURL = SemplestUtils.getTrimmedNonNullString(promotion.getDisplayURL());
 		final String url = SemplestUtils.getTrimmedNonNullString(promotion.getLandingPageURL());
-		final List<AdsObject> ads = getPromoDataSP.getAds();		
+		final List<AdsObject> ads = getPromoDataSP.getAds();
 		for (final AdEngine adEngine : adEngines)
 		{
 			if (AdEngine.Google == adEngine)
@@ -3272,7 +3230,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ChangePromotionStartDate(promotionID, newStartDate, adEngines);
 		return gson.toJson(true);
 	}
-	
+
 	public String validateAccountActivation(final String json) throws Exception
 	{
 		logger.info("JSON: [" + json + "]");
@@ -3281,16 +3239,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> validationErrors = validateAccountActivationToken(ecryptedToken);
 		return gson.toJson(validationErrors);
 	}
-	
+
 	/**
-	 	Validation checks:
-	 	
-	 	1) Does the User exists for the passed-in userID? If No, then validation fails.
-	 	2) Does this User have non-null username and password in our system?  If any of these are null, then validation fails because the user's account data in our systems are not valid, and validation fails.
-	 	3) Are the passed-in username and password both same as the username and password in our systems? If no, then validation fails.
-		4) Is the passed-in datetime not more than 4 days (configurable) before now? If it's older than 4 days before now, then validation fails.
-		
-		Validation passes if all above conditions pass.
+	 * Validation checks:
+	 * 
+	 * 1) Does the User exists for the passed-in userID? If No, then validation fails. 2) Does this User have non-null username and password in our
+	 * system? If any of these are null, then validation fails because the user's account data in our systems are not valid, and validation fails. 3)
+	 * Are the passed-in username and password both same as the username and password in our systems? If no, then validation fails. 4) Is the
+	 * passed-in datetime not more than 4 days (configurable) before now? If it's older than 4 days before now, then validation fails.
+	 * 
+	 * Validation passes if all above conditions pass.
 	 */
 	@Override
 	public List<String> validateAccountActivationToken(final String ecryptedToken) throws Exception
@@ -3315,7 +3273,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Integer diffInDays = SemplestUtils.getDiffInDays(dateTime, now);
 		final Integer numDaysBack = (Integer) SemplestConfiguration.configData.get("RegistrationReminderEmailDaysBack");
 		final Integer numDaysBackLinkAdditionalDays = (Integer) SemplestConfiguration.configData.get("RegistrationReminderLinkAdditionalDays");
-		final Integer numDaysValid = numDaysBack + numDaysBackLinkAdditionalDays;		
+		final Integer numDaysValid = numDaysBack + numDaysBackLinkAdditionalDays;
 		if (diffInDays > numDaysValid)
 		{
 			validationErrors.add("DateTime is " + diffInDays + " days in the past, which is higher than the allowed limit of " + numDaysValid);
@@ -3356,7 +3314,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return validationErrors;
 	}
-	
+
 	public String sendAccountActivationEmail(String json) throws Exception
 	{
 		logger.debug("JSON: [" + json + "]");
@@ -3366,13 +3324,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Boolean result = sendAccountActivationEmail(userID);
 		return gson.toJson(result);
 	}
-	
+
 	@Override
 	public Boolean sendAccountActivationEmail(Integer userID) throws Exception
 	{
 		logger.info("Will try to send account activation email for UserID [" + userID + "]");
 		final User user;
-		try 
+		try
 		{
 			user = SemplestDB.getUser(userID);
 			if (user == null)
@@ -3383,8 +3341,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				logger.info("Found User [" + user + "]");
 				final AccountActivationEmailSender emailSender = AccountActivationEmailSender.getDefaultAccountActivationEmailSender();
-				emailSender.sendAccountActivationEmail(userID);	
-			}			
+				emailSender.sendAccountActivationEmail(userID);
+			}
 		}
 		catch (Exception e)
 		{
@@ -3394,7 +3352,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return true;
 	}
-	
+
 	public String sendRegistrationReminderEmail(String json) throws Exception
 	{
 		logger.debug("JSON: [" + json + "]");
@@ -3404,16 +3362,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Boolean result = sendRegistrationReminderEmail(userID);
 		return gson.toJson(result);
 	}
-	
+
 	@Override
 	public Boolean sendRegistrationReminderEmail(final Integer userID) throws Exception
 	{
 		logger.info("Will try to send registration reminder email for UserID [" + userID + "]");
 		final User user;
-		try 
+		try
 		{
 			final java.util.Date asOfDate = new java.util.Date();
-			final Integer daysBack = (Integer)SemplestConfiguration.configData.get("RegistrationReminderEmailDaysBack"); 
+			final Integer daysBack = (Integer) SemplestConfiguration.configData.get("RegistrationReminderEmailDaysBack");
 			user = SemplestDB.getUserForRegistrationReminder(asOfDate, daysBack, userID);
 			if (user == null)
 			{
@@ -3424,8 +3382,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				logger.info("Found User info [" + user + "]");
 				final ExpiredCredentialsEmailSender emailSender = ExpiredCredentialsEmailSender.getDefaultExpiredEmailSender();
-				emailSender.engageForUser(userID);	
-			}			
+				emailSender.engageForUser(userID);
+			}
 		}
 		catch (Exception e)
 		{
@@ -3521,8 +3479,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
-			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;			
-			final java.util.Date startDate =  promotion.getPromotionStartDate();			
+			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
+			final java.util.Date startDate = promotion.getPromotionStartDate();
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, startDate, null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, productGroupID, null);
 			return taskScheduleSuccessful;
 		}
@@ -3793,7 +3751,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return res;
 	}
 
-	public String checkStatus(String json) throws Exception{
+	public String checkStatus(String json) throws Exception
+	{
 		return checkStatus(null, null);
 	}
 
@@ -3802,7 +3761,5 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		return ServiceStatus.Up.getServiceStatusValue();
 	}
-
-	
 
 }
