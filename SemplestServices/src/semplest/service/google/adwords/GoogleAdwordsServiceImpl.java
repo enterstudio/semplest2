@@ -3840,7 +3840,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		logger.info(operationList.size() + " Geo Criterions generated");
 		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
-		final CampaignCriterionReturnValue result = campaignCriterionService.mutate(operations);
+		final CampaignCriterionMutateRetriableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableGoogleOperation(campaignCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+		final CampaignCriterionReturnValue result = retriableOperation.performOperation();
 		if (result == null)
 		{
 			throw new Exception("Call to Google to update Geo Targets returned nothing, this is not expected");
