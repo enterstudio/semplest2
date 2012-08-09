@@ -118,22 +118,3 @@
         }
     </style>
 </div>
-<script type="text/javascript">
-    $(document).ready(function () {
-        var originalValue = $('#AdModelProp_LandingUrl').val();
-        if (originalValue.length == 0) {
-            $('#AdModelProp_LandingUrl').val('http://');
-        }
-        if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
-            $('#AdModelProp_LandingUrl').attr("readonly", true);
-            $('#AdModelProp_DisplayUrl').attr("readonly", true);
-        }
-    });
-    $('#getCategories').click(function () {
-        enabledIsLaunched();
-        var urlStr = $('#LogoUrlStr').val() + 'reviewing your input.jpg';
-        $('#displayBox').attr('src', urlStr);
-        formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
-        $('#AdModelProp_IsNew').val('False');
-    });
-</script>

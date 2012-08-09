@@ -688,7 +688,7 @@ namespace Semplest.Core.Models.Repositories
                 var modelIds = new List<int>();
                 foreach (GeoTargeting geo in model.AdModelProp.Addresses)
                 {
-                    if (geo.Delete && !geo.HasBeenSaved)
+                    if (geo.Delete)
                     {
                         var gt = promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK);
                         if (gt != null)
@@ -697,7 +697,7 @@ namespace Semplest.Core.Models.Repositories
                             shouldUpdateGeoTargeting = true;
                         }
                     }
-                    else if (geo.GeoTargetingPK == 0 && !geo.IsCountry && !geo.HasBeenSaved)
+                    else if (geo.GeoTargetingPK == 0 && !geo.IsCountry )
                     {
                         shouldUpdateGeoTargeting = true;
                         var geotarget = new GeoTargeting
@@ -844,7 +844,7 @@ namespace Semplest.Core.Models.Repositories
             bool shouldscheduleAds = false;
             foreach (PromotionAd pad in model.AdModelProp.Ads)
             {
-                if (pad.Delete && pad.PromotionAdsPK != 0 && !pad.HasBeenSaved)
+                if (pad.Delete && pad.PromotionAdsPK != 0)
                 {
                     var singlePromo = promo.PromotionAds.Single(id => id.PromotionAdsPK == pad.PromotionAdsPK);
                     if (singlePromo != null)
@@ -853,7 +853,7 @@ namespace Semplest.Core.Models.Repositories
                         shouldscheduleAds = true;
                     }
                 }
-                else if (!pad.Delete && pad.PromotionAdsPK == 0 && !pad.HasBeenSaved)
+                else if (!pad.Delete && pad.PromotionAdsPK == 0 )
                 {
                     shouldscheduleAds = true;
                     addAds.Add(pad);

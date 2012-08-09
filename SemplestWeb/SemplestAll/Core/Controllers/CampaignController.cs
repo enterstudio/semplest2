@@ -382,6 +382,16 @@ namespace Semplest.Core.Controllers
         }
 
 
+        public ActionResult CreateAds()
+        {
+            int userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            var sessModel = (CampaignSetupModel)Session["CampaignSetupModel"];
+            var promoid = _campaignRepository.GetPromotionId(userid,sessModel.ProductGroup.ProductGroupName, sessModel.ProductGroup.ProductPromotionName);
+            var campaignModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promoid);
+            Session["CampaignSetupModel"] = campaignModel;
+            return PartialView("EditorTemplates/AdModel", campaignModel.AdModelProp);
+        }
+
         //[HttpPost]
         //[ActionName("CampaignSetup")]
         //[AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]

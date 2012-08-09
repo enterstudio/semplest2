@@ -5,8 +5,22 @@ var formClean;
 
 
 $(document).ready(function () {
+    //tabStrip.tabGroup.children('li:contains("Create Ads")').find('a.k-link').data('contentUrl', $('#CreateAdsUrl').val());
 
     formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
+
+
+
+
+    var originalValue = $('#AdModelProp_LandingUrl').val();
+    if (originalValue.length == 0) {
+        $('#AdModelProp_LandingUrl').val('http://');
+    }
+    if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
+        $('#AdModelProp_LandingUrl').attr("readonly", true);
+        $('#AdModelProp_DisplayUrl').attr("readonly", true);
+    }
+
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
     $('.street').live("keypress", function (e) {
@@ -526,7 +540,9 @@ function OnSuccess(id) {
     var tab;
     //alert(id);
     if (id == "Categories") {
-        $('input[name *= "HasBeenSaved"]').val('True');
+        tabStrip.tabGroup.children('li:contains("Create Ads")').find('a.k-link').data('contentUrl', $('#CreateAdsUrl').val());
+        tabStrip.reload(tabStrip.tabGroup.children('li:contains("Create Ads")'));
+        //$('input[name *= "HasBeenSaved"]').val('True');
         if ($('#IsLaunched').val() == 'False') {
             if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
                 tabStrip.append({
@@ -596,6 +612,14 @@ function OnSuccess(id) {
     }
     //$("#tabstrip").children('.k-content').height(650);
 }
+
+$('#getCategories').click(function () {
+    enabledIsLaunched();
+    var urlStr = $('#LogoUrlStr').val() + 'reviewing your input.jpg';
+    $('#displayBox').attr('src', urlStr);
+    formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
+    $('#AdModelProp_IsNew').val('False');
+});
 
 function removeCurrentTab() {
     var tab = tabStrip.select();

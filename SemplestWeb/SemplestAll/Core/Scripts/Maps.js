@@ -99,8 +99,8 @@ function renderOptions(response) {
         $("#getCategories").removeAttr("disabled");
         $("#AdModelProp_Addresses_" + localIndex + "__IsCountry").val("False");
         $("#AdModelProp_Addresses_" + localIndex + "__IsState").val("False");
-        this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = "";
-        this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']")[0].value = "";
+        $("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']").val('');
+        $("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']").val('');
         if (locations.length > 1 || locations[0].geocodeQuality == 'COUNTRY') {
             lng = -99.141968;
             lat = 39.527596;
@@ -130,9 +130,9 @@ function renderOptions(response) {
            $("#getCategories").attr("disabled", "disabled");
            zoomval = 3;
         }
-        else {
-            this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = location.latLng.lat;
-            this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']")[0].value = location.latLng.lng;
+       else {
+           $("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']").val(location.latLng.lat);
+           $("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']").val(location.latLng.lng);
         }
         map.setView(new L.LatLng(lat, lng), zoomval).addLayer(cloudmade);
 
