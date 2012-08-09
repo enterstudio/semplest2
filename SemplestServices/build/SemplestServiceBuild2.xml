@@ -50,8 +50,7 @@
 	          <contains value="semplest.service"/>
 	        </linecontains>
 	      </filterchain>
-	    </loadproperties>	
-	<property name="service.name" value="${YAJSW.servicename}"/>
+	    </loadproperties>		
   
   <property name="semplest.protocol.dir" value="${basedir}/../SEMplestProtocol" />
   <property name="semplest.protocol.lib" value="${basedir}/../SEMplestProtocol/lib" />
@@ -74,11 +73,16 @@
 	  classname="com.izforge.izpack.ant.IzPackTask"/>
 
   <!-- Load the ant-contrib tasks -->
-  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
-    <classpath>
-      <pathelement location="${ant.contrib.dir}/ant-contrib-1.0b3.jar"/>
-    </classpath>
-  </taskdef>
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+	    <classpath>
+	      <pathelement location="${ant.contrib.dir}/ant-contrib-1.0b3.jar"/>
+	    </classpath>
+	  </taskdef>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	    <classpath>
+	      <pathelement location="${ant.contrib.dir}/ant-contrib-1.0b3.jar"/>
+	    </classpath>
+	  </taskdef>
   
   <!-- Grab parts of version string -->
   <propertyregex property="major.number" input="${buildVersion}" regexp="(\d+)\.(\d+)\.(\d+)" select="\1" casesensitive="false" />
@@ -364,28 +368,26 @@
 		 </then>
 			
 		 <else>
-		 	<echo>Building Serveral Installers: ${build.index}</echo>		 	
-		 	<for list="${build.index}" param="index">  			 		
-		 	  <sequential>  
-		 	    <echo>Building Installer # @{index}</echo>  
-		 	  	<var name="temp.text" value="${YAJSW.servicename}_@{index}" />
-		 		<var name="service.name" value="${temp.text}" />		 		
-		 		<echo file="${dist}/path.txt" message="c:/${service.name}" />
+		 	<echo>Building Serveral Installers: ${build.index}</echo>				 	
+		  	<for list="${build.index}" param="i">  			 		
+		 	 <sequential>  
+		 	  	<echo>Building Installer - @{index}</echo>  		 	  	
+		 		<echo file="${dist}/path.txt" message="c:/${YAJSW.servicename}_@{i}" />		 	  	
 		 	  	<izpack input="${install.xml}"
- 	  		            output="${output.dir}/${product.short.name}-${service.name}-${product.version}-install.jar"
+ 	  		            output="${output.dir}/${product.short.name}-${YAJSW.servicename}_@{i}-${product.version}-install.jar"
  	  		            installerType="standard"
  	  		            inheritAll="true"
  	  		            basedir="${dist}"
  	  		            compression="deflate"
  	  		            compressionlevel="9"/>
+ 	  		             
  	  		    <echo message="Done."/>  
-		 	  </sequential>  
-		 	</for> 
+		 	  </sequential> 
+		 	</for>
 		 	
 		 </else>
 		</if>    
 	    
-	</target>
-	  
+	</target>	  
 
 </project>
