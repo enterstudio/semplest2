@@ -23,46 +23,90 @@ AS
 	-- interfering with SELECT statements.
 BEGIN TRY
 	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250)
+	DECLARE @ErrMsg VARCHAR(250),@numberDups int
 	
-	
-	declare @kwa_withoutDups TABLE(
+	declare @kwa_copy TABLE(
 	[Keyword] [varchar](250) NOT NULL,
 	[IsActive] [bit] NOT NULL,
 	[IsDeleted] [bit] NOT NULL,
 	[IsNegative] [bit] NOT NULL,
-	[SemplestProbability] [float] NULL,
+	[IsTargetMSN] [bit] NOT NULL,
+	[IsTargetGoogle] [bit] NOT NULL,
+	[SemplestProbability] Float
+	)
+	
+	declare @kwa_withDups TABLE(
+	[Keyword] [varchar](250) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
+	[IsNegative] [bit] NOT NULL,
 	[IsTargetMSN] [bit] NOT NULL,
 	[IsTargetGoogle] [bit] NOT NULL
 	)
 	
-	insert into @kwa_withoutDups(IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN,Keyword,SemplestProbability)
-	select k.IsActive,k.IsDeleted,k.IsNegative,k.IsTargetGoogle,k.IsTargetMSN,k.Keyword,0 from @kwa k
+	insert into @kwa_withDups(IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN,Keyword)
+	select k.IsActive,k.IsDeleted,k.IsNegative,k.IsTargetGoogle,k.IsTargetMSN,k.Keyword from @kwa k
 		group by k.IsActive,k.IsDeleted,k.IsNegative,k.IsTargetGoogle,k.IsTargetMSN,k.Keyword
+		having COUNT(*) > 1
+		
+		
+	select @numberDups = COUNT(*) from @kwa_withDups	
 	
-	INSERT INTO Keyword (KeyWord)(
-	select keyword
-					from 
-					(
-						select k.KeywordPk, kwa.keyword 
-						from @kwa_withoutDups kwa  
-						LEFT OUTER JOIN keyword k ON kwa.keyword = k.keyword where KeywordPk is null) 
-						m )
-	
-	begin Transaction
+	if (@numberDups > 0)
+	BEGIN
+		insert into @kwa_copy(Keyword,IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN)
+		select k.Keyword,k.IsActive,k.IsDeleted,k.IsNegative,k.IsTargetGoogle,k.IsTargetMSN from @kwa k
+		
+		delete @kwa_copy from @kwa_copy k
+		inner join @kwa_withDups kd on k.Keyword = kd.Keyword and k.IsTargetMSN = kd.IsTargetMSN and k.IsTargetGoogle = kd.IsTargetGoogle
+		and k.IsNegative = kd.IsNegative and k.IsDeleted = kd.IsDeleted and k.IsActive = kd.IsActive
+		
+		begin Transaction
+			INSERT INTO Keyword (KeyWord)(
+			select keyword
+			from 
+				(select k.KeywordPk, kwa.keyword 
+					from @kwa_copy kwa  
+					LEFT OUTER JOIN keyword k ON kwa.keyword = k.keyword where KeywordPk is null) 
+				m )
+		delete from PromotionKeywordAssociation where PromotionFK = @PromotionId
 						
-	delete from PromotionKeywordAssociation where PromotionFK = @PromotionId
-						
-	INSERT INTO  PromotionKeywordAssociation (KeywordFK,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle)(
-	select KeywordPk,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle
+		INSERT INTO  PromotionKeywordAssociation (KeywordFK,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle)(
+		select KeywordPk,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle
 					from 
 					(
 						select k.KeywordPk, @PromotionId as PromotionFK,getdate() as CreatedDate,kwa.IsActive,kwa.IsDeleted,kwa.IsNegative,kwa.SemplestProbability,kwa.IsTargetMSN,kwa.IsTargetGoogle
-						from @kwa_withoutDups kwa  
+						from @kwa_copy kwa  
 						INNER JOIN keyword k ON kwa.keyword = k.keyword)  n)
 						
-	commit transaction											
-	SELECT @@ROWCOUNT
+		commit transaction
+	END
+	ELSE
+	BEGIN
+	
+		begin Transaction
+		INSERT INTO Keyword (KeyWord)(
+		select keyword
+			from 
+				(select k.KeywordPk, kwa.keyword 
+					from @kwa kwa  
+					LEFT OUTER JOIN keyword k ON kwa.keyword = k.keyword where KeywordPk is null) 
+				m )
+				
+		delete from PromotionKeywordAssociation where PromotionFK = @PromotionId
+						
+		INSERT INTO  PromotionKeywordAssociation (KeywordFK,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle)(
+		select KeywordPk,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle
+					from 
+					(
+						select k.KeywordPk, @PromotionId as PromotionFK,getdate() as CreatedDate,kwa.IsActive,kwa.IsDeleted,kwa.IsNegative,kwa.SemplestProbability,kwa.IsTargetMSN,kwa.IsTargetGoogle
+						from @kwa kwa  
+						INNER JOIN keyword k ON kwa.keyword = k.keyword)  n)
+						
+		commit transaction	
+	END											
+	SELECT kd.Keyword,kd.IsActive,kd.IsDeleted, kd.IsNegative, kd.IsTargetGoogle, kd.IsTargetMSN from @kwa_withDups kd
+		
 END TRY
 BEGIN CATCH
 IF XACT_STATE() != 0 OR @@TRANCOUNT > 0
