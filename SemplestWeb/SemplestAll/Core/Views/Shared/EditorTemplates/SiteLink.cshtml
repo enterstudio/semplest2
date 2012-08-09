@@ -16,5 +16,6 @@
         @Html.LinkToRemoveNestedForm("Delete", "div.sitelinks", "input.mark-for-delete")
         @Html.HiddenFor(t => t.SiteLInkPK)
         @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+        @Html.HiddenFor(t => t.SiteLinksSaved)
     </div>
 

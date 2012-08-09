@@ -78,6 +78,7 @@ namespace SemplestModel
         public bool IsState { get; set; }
         public string MapMessage { get; set; }
         public string ProximityMessage { get; set; }
+        public bool HasBeenSaved { get; set; }
         internal sealed class GeoTargetingMetaData
         {
             public string City { get; set; }
@@ -92,6 +93,7 @@ namespace SemplestModel
     public partial class SiteLink
     {
         public bool Delete { get; set; }
+        public bool SiteLinksSaved { get; set; }
     }
 
     [MetadataType(typeof(SEMCustomerDetailMetaData))]
@@ -118,6 +120,8 @@ namespace SemplestModel
         public bool Delete { get; set; }
 
         public int SerailNo { get; set; }
+
+        public bool HasBeenSaved { get; set; }
     }
 
     public class SEMCustomerDetailMetaData

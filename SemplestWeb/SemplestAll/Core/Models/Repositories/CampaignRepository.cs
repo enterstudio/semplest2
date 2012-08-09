@@ -688,13 +688,16 @@ namespace Semplest.Core.Models.Repositories
                 var modelIds = new List<int>();
                 foreach (GeoTargeting geo in model.AdModelProp.Addresses)
                 {
-                    if (geo.Delete)
+                    if (geo.Delete && !geo.HasBeenSaved)
                     {
-                        shouldUpdateGeoTargeting = true;
-                        context.DeleteObject(
-                            promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK));
+                        var gt = promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK);
+                        if (gt != null)
+                        {
+                            context.DeleteObject(gt);
+                            shouldUpdateGeoTargeting = true;
+                        }
                     }
-                    else if (geo.GeoTargetingPK == 0 && !geo.IsCountry)
+                    else if (geo.GeoTargetingPK == 0 && !geo.IsCountry && !geo.HasBeenSaved)
                     {
                         shouldUpdateGeoTargeting = true;
                         var geotarget = new GeoTargeting
@@ -793,14 +796,18 @@ namespace Semplest.Core.Models.Repositories
             if (model.SiteLinks != null)
                 foreach (var sitelink in model.SiteLinks)
                 {
-                    if(sitelink.Delete)
+                    if (sitelink.Delete && !sitelink.SiteLinksSaved)
                     {
-                        context.DeleteObject(promo.SiteLinks.FirstOrDefault(x => x.SiteLInkPK == sitelink.SiteLInkPK));
-                        shouldRefreshSiteLinks = true;
+                        var sl = promo.SiteLinks.SingleOrDefault(x => x.SiteLInkPK == sitelink.SiteLInkPK);
+                        if (sl != null)
+                        {
+                            context.DeleteObject(sl);
+                            shouldRefreshSiteLinks = true;
+                        }
                     }
                     //TODO remove when the validation is added
                     //if (!string.IsNullOrEmpty(sitelink.LinkText) && !string.IsNullOrEmpty((sitelink.LinkURL)))
-                    else if(sitelink.SiteLInkPK==0)
+                    else if (sitelink.SiteLInkPK == 0 && !sitelink.SiteLinksSaved)
                     {
                         shouldRefreshSiteLinks = true;
                         var slink = new SiteLink
@@ -837,13 +844,16 @@ namespace Semplest.Core.Models.Repositories
             bool shouldscheduleAds = false;
             foreach (PromotionAd pad in model.AdModelProp.Ads)
             {
-                if (pad.Delete && pad.PromotionAdsPK != 0)
+                if (pad.Delete && pad.PromotionAdsPK != 0 && !pad.HasBeenSaved)
                 {
-                    shouldscheduleAds = true;
                     var singlePromo = promo.PromotionAds.Single(id => id.PromotionAdsPK == pad.PromotionAdsPK);
-                    deleteAds.Add(pad.PromotionAdsPK);
+                    if (singlePromo != null)
+                    {
+                        deleteAds.Add(pad.PromotionAdsPK);
+                        shouldscheduleAds = true;
+                    }
                 }
-                else if (!pad.Delete && pad.PromotionAdsPK == 0)
+                else if (!pad.Delete && pad.PromotionAdsPK == 0 && !pad.HasBeenSaved)
                 {
                     shouldscheduleAds = true;
                     addAds.Add(pad);

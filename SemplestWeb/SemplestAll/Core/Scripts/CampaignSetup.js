@@ -526,6 +526,7 @@ function OnSuccess(id) {
     var tab;
     //alert(id);
     if (id == "Categories") {
+        $('input[name *= "HasBeenSaved"]').val('True');
         if ($('#IsLaunched').val() == 'False') {
             if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
                 tabStrip.append({
@@ -556,6 +557,7 @@ function OnSuccess(id) {
         }
     }
     else if (id == "AdditionalLinks") {
+        $('input[name *= "SiteLinksSaved"]').val('True');
         if ($('input[id*="SiteLinks_"]').length < 1) {
             removeCurrentTab();
         }
