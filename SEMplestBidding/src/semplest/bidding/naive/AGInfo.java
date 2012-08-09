@@ -10,6 +10,9 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.protocol.google.AdGroupCriterionMutateRetriableGoogleOperation;
+import semplest.util.SemplestUtils;
+
 
 
 // Bids naiely for an ad-group
@@ -78,9 +81,11 @@ public class AGInfo {
     op.setOperand( bac );
     op.setOperator( Operator.SET );
 
-    AdGroupCriterion[] res = acs.mutate(
-        new AdGroupCriterionOperation[]{op}).getValue(); 
-    BiddableAdGroupCriterion b = filterEntries( res )[0];
+    final AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[]{op};
+    final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(acs, operations, SemplestUtils.DEFAULT_RETRY_COUNT); 
+    final AdGroupCriterionReturnValue results = retriableOperation.performOperation();
+    final AdGroupCriterion[] res = results.getValue(); 
+    final BiddableAdGroupCriterion b = filterEntries( res )[0];
   }
   //---------------------------------------------------------------------------
   // statics  --------
