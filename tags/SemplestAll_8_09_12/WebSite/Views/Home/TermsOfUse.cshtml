@@ -1,0 +1,12 @@
+﻿@model SharedResources.Models.StaticModel
+           @section Nav{
+                            <!--<a id="various1" href="#inline1" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>-->
+                            <a href ="/SemplestCore" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>
+                    	<ul class="flt_Rt">                   
+							<li>@Html.ActionLink("Home", "index", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("About", "SEMAbout", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("Team", "team", "Home", new { area = "" }, null)</li>
+                            <li class="last" style="padding-right: 9px;" ><a href="/contact" >Contact</a></li>
+				        </ul>	
+}
+    @Html.Raw(Model.Text)

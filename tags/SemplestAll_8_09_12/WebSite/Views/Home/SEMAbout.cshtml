@@ -1,0 +1,32 @@
+﻿@section Nav{
+                            <!--<a id="various1" href="#inline1" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>-->
+                            <a href ="/SemplestCore" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>
+                    	<ul class="flt_Rt">                   
+							<li>@Html.ActionLink("Home", "index", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("About", "SEMAbout", "Home", new { area = "" }, new { @class = "active" })</li>
+                            <li>@Html.ActionLink("Team", "team", "Home", new { area = "" }, null)</li>
+                            <li class="last" style="padding-right: 9px;" ><a href="/contact" >Contact</a></li>
+				        </ul>	
+}
+					
+
+    		<!-- SET: MAIN CONTENT -->
+	    		<div id="bar">About</div>
+				<div class="space20about">				
+					<div class="row">
+						<div class="aboutCol">							
+				            <div class="aboutpad">
+				            	SEMplest was conceived in 2009 by a marketer with a need to generate traffic to 18,000 local retailers. He recognized the need for a tool that eliminates the fear of SEM, frees up resources by automating the process and eliminates tedious entry requirements by simultaneously launching ad campaigns on Google, Bing and Yahoo.
+								<div class="row20">SEMplest's automated tool dramatically reduces overhead costs associated with data entry, keyword selection and management, and bid optimization.</div>
+								<div class="row20">There are no hidden costs, fees or other unwelcome surprises. We deliver results effectively and efficiently. </div>
+							</div>				            
+				            <div class="row20"><a href="/contact"><img src="images/button_letusshow.jpg" border="0" alt="Let us show you how"></a></div>
+						</div>
+						<div class="aboutRight">
+							<img src="images/about_rocket.jpg" border="0" alt="Your campaign on Google, Bing and yahoo!">
+						</div>
+					</div>				
+				</div>					
+				<img class="shuffle" src="" alt="">				
+				<div class="row20"></div>
+    		<!-- END: MAIN CONTENT -->

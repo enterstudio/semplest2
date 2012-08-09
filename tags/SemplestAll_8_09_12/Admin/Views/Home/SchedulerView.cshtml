@@ -1,0 +1,114 @@
+﻿@model Semplest.Admin.Models.SchedulerViewModelCollection
+
+@{
+    ViewBag.Title = "SchedulerView";
+}
+<script type="text/javascript">
+
+    $(function () {
+        $(':radio').click(function (event) {
+            //alert($('input[name=Status]:checked', '#statusForm').val());
+            $('#statusForm').submit();
+            //$.ajax({ type: "GET", url: "/Home/SchedulerView", data: { status: this.name, controllerName: 'home', vAction: 'schedulerview'} });
+
+        });
+    });
+
+</script>
+<h2>SchedulerView</h2>
+@using (Html.BeginForm("SchedulerView", "Home", FormMethod.Post, new { id = "statusForm" }))
+{
+    <label>
+        @Html.RadioButtonFor(e => e.Status, "All", new { id = "All" })
+        All</label>
+    <label>
+        @Html.RadioButtonFor(e => e.Status, "IsEnabled", new { id = "IsEnabled" })
+        IsEnabled</label>
+    <label>
+        @Html.RadioButtonFor(e => e.Status, "IsDisabled", new { id = "IsDisabled" })
+    IsDisabled</label>
+
+}
+<table border =1><tr><th>CustomerName</th>
+                     <th>ExecutionStartTime</th>
+                     <th>Frequency</th>
+                     <th>IsComplete</th>
+                     <th>IsEnabled</th>
+                     <th>IsInactive</th>
+                     <th>IsSuccessful</th>
+                     <th>PromotionName</th>
+                     <th>ScheduleJobPK</th>
+                     <th>ScheduleName</th>
+                     <th>SchedulePK</th></tr>
+  @foreach (Semplest.Admin.Models.SchedulerViewModel svm in Model.SVM)
+  {
+  <tr>
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.CustomerName)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.ExecutionStartTime)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.Frequency)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.IsComplete)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.IsEnabled)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.IsInactive)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.IsSuccessful)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.PromotionName)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.ScheduleJobPK)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.ScheduleName)
+    </div>
+    </td>
+
+    <td>
+    <div class="display-field">
+        @Html.DisplayFor(model => svm.SchedulePK)
+    </div>
+    </td>
+
+  </tr>
+  }
+  </table>   

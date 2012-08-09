@@ -1,0 +1,105 @@
+﻿@using Semplest.Core.Helpers
+@using Semplest.SharedResources.Helpers
+@model SemplestModel.GeoTargeting
+<div class="address">
+    <table>
+        <tr>
+            <td>
+                <label style="min-width: 65px">
+                    Street</label> @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+            </td>
+
+            <td >
+                @Html.TextBoxFor(t => t.Address, new { @class = "street textboxAd" })
+            </td>
+            <td rowspan="5">
+            @Html.LabelFor(t => t.MapMessage, new { style = "visibility:hidden; color:red;" }, true)
+            
+                <div class="mapcontainer">
+                
+                    <div class="map">
+                    </div>
+                </div>
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <label style="min-width: 65px">
+                    City</label>
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.City, new { @class = "street" })
+                @Html.ValidationMessageFor(t => t.City)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label style="min-width: 65px">
+                    State</label>
+            </td>
+            <td>
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr", @Model.StateCodeFK), new { @class = "k-dropdownlist state" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label style="min-width: 65px">
+                    Zip</label>
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.Zip, new { @class = "zip" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label style="min-width: 65px">
+                    Proximity</label>
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity" })<label style="padding-left: 10px">
+                    in miles</label>
+                @Html.ValidationMessageFor(t => t.ProximityRadius)
+                @Html.LabelFor(t => t.ProximityMessage, new { style = "visibility:hidden; margin-left: 84px;color:red;" }, true)
+
+                @Html.TextBoxFor(t => t.Latitude, new { @class = "hidden" })
+                @Html.TextBoxFor(t => t.Longitude, new { @class = "hidden" })
+                @Html.HiddenFor(t => t.GeoTargetingPK)
+                @Html.HiddenFor(t => t.IsCountry)
+                @Html.HiddenFor(t => t.IsState)
+                @Html.HiddenFor(t => t.HasBeenSaved)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+            </td>
+            <td>
+                <span style="margin-left: 84px">
+                    @Html.LinkToRemoveNestedForm("Delete Address", "div.address", "input.mark-for-delete")</span>
+            </td>
+        </tr>
+        <!--<tr>
+            <td colspan="3">
+                @Html.ValidationSummary(true)
+            </td>
+        </tr>-->
+    </table>
+</div>
+<script>
+
+    $("#@Html.ClientIdFor(t => t.ProximityRadius)").change(function () {
+        doOptions();
+    });
+    $("#@Html.ClientIdFor(t => t.City)").change(function () {
+        doOptions();
+    });
+    $("#@Html.ClientIdFor(t => t.StateCodeFK)").change(function () {
+        doOptions();
+    });
+    $("#@Html.ClientIdFor(t => t.Zip)").change(function () {
+        doOptions();
+    });
+    $("#@Html.ClientIdFor(t => t.Address)").change(function () {
+        doOptions();
+    });
+</script>

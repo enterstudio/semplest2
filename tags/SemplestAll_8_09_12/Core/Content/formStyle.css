@@ -1,0 +1,60 @@
+﻿.table
+{
+    margin: 0px auto;
+    padding: 00px;
+}
+
+.table h3
+{
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.table ul
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.table li
+{
+    margin: 10px 0 0 0;
+}
+
+label
+{
+    display: inline-block;
+    text-align: left;
+    margin-right: 5px;
+    width: auto;
+}
+
+.required
+{
+    font-weight: bold;
+}
+br {
+    line-height: 2em;
+}
+.accept, .status
+{
+    padding-left: 90px;
+}
+
+.valid
+{
+    color: green;
+}
+
+.invalid
+{
+    color: red;
+}
+span.k-tooltip
+{
+    margin-left: 6px;
+}
+
+.grey-text {
+    color: #BFBFBF;
+}

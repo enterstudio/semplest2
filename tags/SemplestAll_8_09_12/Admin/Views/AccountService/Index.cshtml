@@ -1,0 +1,289 @@
+﻿@model Semplest.Admin.Models.AccountServiceWithEmployeeModel
+@{
+    ViewBag.Title = "Index";
+}
+@section Title{
+Account Service
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+<style>
+    a
+    {
+        color: gray;
+        margin-left: 15px;
+    }
+</style>
+@{
+    
+    string rep;
+    string sales;
+    if (Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Rep") != null)
+    {
+        rep = Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Rep").FirstName + " " + Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Rep").LastName.ToString();
+    }
+
+    else
+    {
+        rep = "Not Assigned";
+    }
+
+
+
+    if (Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales") != null)
+    {
+        sales = Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales").FirstName + " " + Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales").LastName.ToString();
+    }
+    else
+    {
+        sales = "Not Assigned";
+    }
+ 
+}
+@using (Html.BeginForm("Index"))
+{
+    
+    <div id="productGroupModel">
+        <div class="configuration">
+            <h3 style="font-size: 16px">@Model.AccountServiceModel.Customer - Account ID @Model.AccountServiceModel.AccountNumber
+                <button style="margin-left: 170px;" class="k-button">
+                    Setup</button></h3>
+            <table>
+                <tr>
+                    <td>
+                        <ul class="options">
+                            <li>
+                                <h3>
+                                    Contact<br />
+                                    @Model.AccountServiceModel.FirstName&nbsp;@Model.AccountServiceModel.LastName
+                                    <br />
+                                    @Model.AccountServiceModel.Address1<br />
+                                    @Model.AccountServiceModel.City,@Model.AccountServiceModel.State&nbsp;@Model.AccountServiceModel.Zip<br />
+                                    @Model.AccountServiceModel.Email<br />
+                                </h3>
+                            </li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul class="options" style="margin-left: 100px;">
+                            <li>
+                                <label class="required">
+                                    Rep Name
+                                </label>
+                                <input type="text" name="repname" disabled="true"  value="@rep"/>
+                            </li>
+                            <li>
+                                <label class="required">
+                                    Salesperson
+                                </label>
+                                <input type="text" name="salesperson" disabled="true" value="@sales" /></li>
+                            <li>
+                                <label class="required">
+                                    Parent
+                                </label>
+                                <input type="text" name="parent" disabled="true" value="@Model.ParentName"/></li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <ul class="options">
+                <li>
+                    <table>
+                        <tr>
+                            <td>
+                                <fieldset style="width: 560px">
+                                    <legend>Account Actions</legend>
+                                    <div style="margin: 5px">
+                                        @if (Model.AccountServiceModel.isActive)
+                                        {@Html.ActionLink("Disable", "", "", new { @class = "disableuser" }) }
+                                        else
+                                        { @Html.ActionLink("Enable", "", "", new { @class = "enableuser" })}
+                                        @Html.RouteLink("Update Account", new { Controller = "CustomerAccount", action = "Edit", id = Model.AccountServiceModel.AccountNumber })
+                                        @Html.ActionLink("Delete Account","","", new { @class = "deleteaccount" })
+                                        <a href="#">Impersonate</a> <a href="#">Issue Refund</a>
+                                        @if (Model.ParentName.ToLower() == "This is a parent".ToLower())
+                                        {
+                                            @Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })
+                                        }
+                                    </div>
+                                </fieldset>
+                            </td>
+                            <td>
+                                <fieldset style="margin-left: 20px">
+                                    <legend>Live Advertising</legend>
+                                    <div style="margin: 10px">
+                                        @Html.ActionLink("Restart", null, null, new { @class = "restartPromotions" })
+                                        @Html.ActionLink("Pause", null, null, new { @class = "pauseuser" })
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+                <li>
+                    <br />
+                    <h3>
+                        Billing Information</h3>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+<div id="DisableUserWindow" style="display: none">
+    <form name="hiddenDisabledName" id="hiddenDisabled" action="../DisableUser" method="post">
+    <div class="questionE">
+    </div>
+    <div style="text-align: center">
+        <input type="button" id="btnOkDisableUser" value="OK" class="k-button" />
+        <input type="button" id="btnCancelDisableUser" value="Cancel" class="k-button" />
+    </div>
+    <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+    </form>
+</div>
+<div id="EnableUserWindow" style="display: none">
+    <form name="hiddenEnableName" id="hiddenEnable" action="../EnableUser" method="post">
+    <div class="questionR">
+    </div>
+    <div style="text-align: center">
+        <input type="button" id="btnOkEnableUser" value="OK" class="k-button" />
+        <input type="button" id="btnCancelEnableUser" value="Cancel" class="k-button" />
+    </div>
+    <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+    </form>
+</div>
+<div id="PausePromotionsWindow" style="display: none">
+    <form name="hiddenPausePromotions" id="hiddenPausePromotions" action="../PausePromotions"
+    method="post">
+    <div class="questionPause">
+    </div>
+    <div style="text-align: center">
+        <input type="button" id="btnOkPausePromotions" value="OK" class="k-button" />
+        <input type="button" id="btnCancelPausePromotions" value="Cancel" class="k-button" />
+    </div>
+    <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+    </form>
+</div>
+<div id="RestartPromotionsWindow" style="display: none">
+    <form name="hiddenRestartPromotions" id="hiddenRestartPromotions" action="../RestartPromotions"
+          method="post">
+        <div class="questionRestart">
+        </div>
+        <div style="text-align: center">
+            <input type="button" id="btnOkRestartPromotions" value="OK" class="k-button" />
+            <input type="button" id="btnCancelRestartPromotions" value="Cancel" class="k-button" />
+        </div>
+        <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+    </form>
+</div>
+  <div id="deleteWindow">
+    </div>
+<script type="text/javascript">    $(".disableuser").click(function (event) {
+        $('#userId').val(event.target.id);
+        $('.questionE').html("<br/>Are you sure you want to disable this account?<br/><br/>");
+        var endPromotionWindow = $('#DisableUserWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Disable User"
+        }).data("kendoWindow");
+        $('#DisableUserWindow').show();
+        endPromotionWindow.center();
+        endPromotionWindow.open();
+        event.preventDefault();
+    });
+    $("#btnOkDisableUser").click(function (event) {
+        $("#hiddenDisabled").submit();
+        event.preventDefault();
+    });
+
+    $("#btnCancelDisableUser").click(function (event) {
+        var endPromotionWindow = $('#DisableUserWindow').data("kendoWindow");
+        $('#DisableUserWindow').hide();
+        endPromotionWindow.close();
+    });
+    $(".enableuser").click(function (event) {
+        $('#id').val(event.target.id);
+        $('.questionR').html("<br/>Are you sure you want to enable this account?<br/><br/>");
+        var resumePromotionWindow = $('#EnableUserWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Enable Account"
+        }).data("kendoWindow");
+        $('#EnableUserWindow').show();
+        resumePromotionWindow.center();
+        resumePromotionWindow.open();
+        event.preventDefault();
+    });
+
+    $("#btnOkEnableUser").click(function (event) {
+
+        $("#hiddenEnable").submit();
+        event.preventDefault();
+    });
+
+    $("#btnCancelEnableUser").click(function (event) {
+        var resumePromotionWindow = $('#EnableUserWindow').data("kendoWindow");
+        $('#EnableUserWindow').hide();
+        resumePromotionWindow.close();
+    });
+
+
+    $(".pauseuser").click(function (event) {
+        $('.questionPause').html("<br/>You are about to pause @Model.AccountServiceModel.PromotionPauseCount.ToString() promotions are you sure?<br/><br/>");
+        var endPromotionWindow = $('#PausePromotionsWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Pause Promotions"
+        }).data("kendoWindow");
+        $('#PausePromotionsWindow').show();
+        endPromotionWindow.center();
+        endPromotionWindow.open();
+        event.preventDefault();
+    });
+    $("#btnOkPausePromotions").click(function (event) {
+        $("#hiddenPausePromotions").submit();
+        event.preventDefault();
+    });
+
+    $("#btnCancelPausePromotions").click(function (event) {
+        var endPromotionWindow = $('#PausePromotionsWindow').data("kendoWindow");
+        $('#PausePromotionsWindow').hide();
+        endPromotionWindow.close();
+    });
+
+
+    $(".restartPromotions").click(function (event) {
+        $('.questionRestart').html("<br/>You are about to restart @Model.AccountServiceModel.PromotionRestartCount.ToString() promotions are you sure?<br/><br/>");
+        var endPromotionWindow = $('#RestartPromotionsWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Restart Promotions"
+        }).data("kendoWindow");
+        $('#RestartPromotionsWindow').show();
+        endPromotionWindow.center();
+        endPromotionWindow.open();
+        event.preventDefault();
+    });
+    $("#btnOkRestartPromotions").click(function (event) {
+        $("#hiddenRestartPromotions").submit();
+        event.preventDefault();
+    });
+
+    $("#btnCancelRestartPromotions").click(function (event) {
+        var endPromotionWindow = $('#RestartPromotionsWindow').data("kendoWindow");
+        $('#RestartPromotionsWindow').hide();
+        endPromotionWindow.close();
+    });
+    $('.deleteaccount').click(function () {
+        var deleteWindow = $('#deleteWindow').kendoWindow({
+            modal: true,
+            content: '@Url.Action("Delete","CustomerAccount", new { @id = @Model.AccountServiceModel.AccountNumber })'
+        }).data('kendoWindow');
+        deleteWindow.center();
+        deleteWindow.open();
+    });
+</script>
+​

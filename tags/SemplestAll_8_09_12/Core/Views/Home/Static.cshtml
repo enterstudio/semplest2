@@ -1,0 +1,30 @@
+﻿@model SharedResources.Models.StaticModel
+@section Title{
+    @Model.Title
+}
+<style scoped>
+    #about {
+        padding: 10px;
+    }
+    #about ul li 
+    {
+        display:block
+    }
+    #about p {
+        display: block;
+        padding-bottom: 5px;
+        line-height: 20px;
+        text-align: justify;
+    }
+    #about ol
+    {
+        margin-left:20px;
+    }
+    #about br 
+    {
+        display: block;
+    }
+</style>
+<div id="about">
+    @Html.Raw(Model.Text)
+</div>
