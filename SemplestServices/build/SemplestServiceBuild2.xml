@@ -51,6 +51,7 @@
 	        </linecontains>
 	      </filterchain>
 	    </loadproperties>		
+	<property name="service.name" value="${YAJSW.servicename}" />
   
   <property name="semplest.protocol.dir" value="${basedir}/../SEMplestProtocol" />
   <property name="semplest.protocol.lib" value="${basedir}/../SEMplestProtocol/lib" />
@@ -372,9 +373,14 @@
 		  	<for list="${build.index}" param="i">  			 		
 		 	 <sequential>  
 		 	  	<echo>Building Installer - @{index}</echo>  		 	  	
-		 		<echo file="${dist}/path.txt" message="c:/${YAJSW.servicename}_@{i}" />		 	  	
+		 		<echo file="${dist}/path.txt" message="c:/${service.name}_@{i}" />		 
+		 	 	<propertyfile
+		 	 	    file="${dist}/bin/system.properties"
+		 	 	    comment="Update YAJSW.servicename. by Hudson Build Process">
+		 	 	  <entry  key="YAJSW.servicename" value="${service.name}_@{i}"/>		 	 	  
+		 	 	</propertyfile>
 		 	  	<izpack input="${install.xml}"
- 	  		            output="${output.dir}/${product.short.name}-${YAJSW.servicename}_@{i}-${product.version}-install.jar"
+ 	  		            output="${output.dir}/${product.short.name}-${service.name}_@{i}-${product.version}-install.jar"
  	  		            installerType="standard"
  	  		            inheritAll="true"
  	  		            basedir="${dist}"
