@@ -3626,52 +3626,73 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			selector.setPredicates(new Predicate[]{cp});
 			final CampaignCriterionPage page = campaignCriterionService.get(selector);
 			final CampaignCriterion[] campaignCriterion = page.getEntries();
-			final List<Long> existingProximityIds = new ArrayList<Long>();	    
+			final List<Long> existingProximityIds = new ArrayList<Long>();
+			final List<Long> existingLocationIds = new ArrayList<Long>();
 			for (int i = 0; i < campaignCriterion.length; ++i)
 			{
 				final CampaignCriterion campaignCriteria = campaignCriterion[i];
-				final Criterion criterion = campaignCriteria.getCriterion();			
+				final Criterion criterion = campaignCriteria.getCriterion();				
+				if (criterion.getType() == CriterionType.LOCATION)
+				{
+					existingLocationIds.add(criterion.getId());
+				}
 				if (criterion.getType() == CriterionType.PROXIMITY)
 				{
 					existingProximityIds.add(criterion.getId());
 				}
 			}
 			logger.info("Found " + existingProximityIds.size() + " Proximity IDs within Google Adwords: [" + existingProximityIds + "]");
-			if (existingProximityIds.isEmpty())
+			logger.info("Found " + existingLocationIds.size() + " Location IDs within Google Adwords: [" + existingProximityIds + "]");
+			final CampaignCriterionServiceInterface ccs = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);		
+			if (!existingProximityIds.isEmpty())
 			{
-				return;
+				applyOperationToItems(campaignId, ccs, existingProximityIds, CriterionType.PROXIMITY, Operator.REMOVE);
 			}
-			final List<CampaignCriterionOperation> removeProximityOperations = new ArrayList<CampaignCriterionOperation>();
-			for (final Long proximityId : existingProximityIds)
+			if (!existingLocationIds.isEmpty())
 			{
-				final Criterion removeProximityCriterion = new Criterion();
-				removeProximityCriterion.setId(proximityId);
-				removeProximityCriterion.setType(CriterionType.PROXIMITY);
-				final CampaignCriterion removeProximityCampaignCriterion = new CampaignCriterion();
-				removeProximityCampaignCriterion.setCampaignId(campaignId);
-				removeProximityCampaignCriterion.setCriterion(removeProximityCriterion);
-				final CampaignCriterionOperation removeProximityOperation = new CampaignCriterionOperation();
-				removeProximityOperation.setOperand(removeProximityCampaignCriterion);
-				removeProximityOperation.setOperator(Operator.REMOVE);
-				removeProximityOperations.add(removeProximityOperation);
+				applyOperationToItems(campaignId, ccs, existingLocationIds, CriterionType.LOCATION, Operator.REMOVE);
 			}
-			final CampaignCriterionOperation[] removeProximityOperationsArray = removeProximityOperations.toArray(new CampaignCriterionOperation[removeProximityOperations.size()]);
-			final CampaignCriterionServiceInterface ccs = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
-			final CampaignCriterionMutateRetriableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableGoogleOperation(ccs, removeProximityOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT); 		
-			final CampaignCriterion[] resultCampaignCriterionArray = retriableOperation.performOperation().getValue();
-			final List<Long> resultCriterionIds = new ArrayList<Long>();
-			for (int i = 0; i < resultCampaignCriterionArray.length; ++i)
-			{
-				final CampaignCriterion resultCampaignCriterion = resultCampaignCriterionArray[i];
-				final Long resultCriterionId = resultCampaignCriterion.getCriterion().getId();
-				resultCriterionIds.add(resultCriterionId);
-			}
-			logger.info("Criterion IDs returned from Google Adwords call to remove all Proximities: [" + resultCriterionIds + "]");
 		}
 		catch (Exception e)
 		{
 			throw new Exception("Problem with " + operationDescription, e);
 		}
+	}
+	
+	public static void applyOperationToItems(final Long campaignId, final CampaignCriterionServiceInterface ccs, final List<Long> ids, final CriterionType type, final Operator operator) throws Exception
+	{
+		logger.info("Will try to apply operation to items for CampaignID [" + campaignId + "], Ids [" + ids + "], Type [" + type + "], Operator [" + operator + "]");
+		final CampaignCriterionOperation[] removeProximityOperationsArray = getCampaignCriterionOperations(campaignId, ids, type, operator);
+		final CampaignCriterionMutateRetriableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableGoogleOperation(ccs, removeProximityOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT); 		
+		final CampaignCriterion[] resultCampaignCriterionArray = retriableOperation.performOperation().getValue();
+		final List<Long> resultCriterionIds = new ArrayList<Long>();
+		for (int i = 0; i < resultCampaignCriterionArray.length; ++i)
+		{
+			final CampaignCriterion resultCampaignCriterion = resultCampaignCriterionArray[i];
+			final Long resultCriterionId = resultCampaignCriterion.getCriterion().getId();
+			resultCriterionIds.add(resultCriterionId);
+		}
+		logger.info("Criterion IDs returned from Google Adwords call to remove all Proximities: [" + resultCriterionIds + "]");
+	}
+	
+	public static CampaignCriterionOperation[] getCampaignCriterionOperations(final Long campaignId, final List<Long> ids, final CriterionType type, final Operator operator)
+	{
+		final List<CampaignCriterionOperation> operations = new ArrayList<CampaignCriterionOperation>();
+		for (final Long id : ids)
+		{
+			final Criterion criterion = new Criterion();
+			criterion.setId(id);
+			criterion.setType(type);
+			final CampaignCriterion campaignCriterion = new CampaignCriterion();
+			campaignCriterion.setCampaignId(campaignId);
+			campaignCriterion.setCriterion(criterion);
+			final CampaignCriterionOperation operation = new CampaignCriterionOperation();
+			operation.setOperand(campaignCriterion);
+			operation.setOperator(operator);
+			operations.add(operation);
+		}
+		final CampaignCriterionOperation[] operationsArray = operations.toArray(new CampaignCriterionOperation[operations.size()]);
+		return operationsArray;
 	}
 
 	@Override
