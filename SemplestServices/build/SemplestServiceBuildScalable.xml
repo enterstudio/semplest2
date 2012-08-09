@@ -172,7 +172,7 @@
       	<!-- Copy the scripts folder -->
 		<echo message="Copying scripts folder..."/>	 	  	 	
   	 	<mkdir dir="${dist}/scripts"/>
-  	 	<copydir src="${semplest.protocol.dir}/scripts"
+  	 	<copydir src="${basedir}/scripts"
   	 		dest="${dist}/scripts"
   	 	    includes="**/*.*"
   	 	/>
