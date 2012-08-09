@@ -52,6 +52,7 @@
 	      </filterchain>
 	    </loadproperties>		
 	<property name="service.name" value="${YAJSW.servicename}" />
+	<property name="jdbc.production" value="jdbc:jtds:sqlserver://10.118.218.132/semplest" />
   
   <property name="semplest.protocol.dir" value="${basedir}/../SEMplestProtocol" />
   <property name="semplest.protocol.lib" value="${basedir}/../SEMplestProtocol/lib" />
@@ -376,7 +377,8 @@
 	 	 	<propertyfile
 	 	 	    file="${dist}/bin/system.properties"
 	 	 	    comment="Update YAJSW.servicename. by Hudson Build Process">
-	 	 	  <entry  key="YAJSW.servicename" value="${service.indexname}"/>		 	 	  
+	 	 		<entry  key="YAJSW.servicename" value="${service.indexname}"/>		
+	 	 		<entry  key="jdbc.url" value="${jdbc.production}"/>
 	 	 	</propertyfile>
 	 	 	<!-- build the installer -->
 	 	  	<izpack input="${install.xml}"
