@@ -357,6 +357,7 @@
 		<if>
 		 <equals arg1="${build.index}" arg2="x" />
 		 <then>
+		 	 <!-- Build only 1 installer -->
 		 	<echo>Building one Installer.</echo>
 		 	<izpack input="${install.xml}"
 		            output="${output.dir}/${product.short.name}-${service.name}-${product.version}-install.jar"
@@ -369,24 +370,37 @@
 		 </then>
 			
 		 <else>
+		 	<!-- Build several installers based on the setting of build.index in the properties file -->
 		 	<echo>Building Serveral Installers: ${build.index}</echo>				 	
 		  	<for list="${build.index}" param="i">  			 		
 		 	 <sequential>  
-		 	  	<echo>Building Installer - @{index}</echo>  		 	  	
-		 		<echo file="${dist}/path.txt" message="c:/${service.name}_@{i}" />		 
+		 	  	<echo>Building Installer - @{index}</echo>  	
+		 	 	<if>
+		 	 	<equals arg1="@{index}" arg2="x" />
+		 	 		<then>		 
+		 	 			<property name="service.indexname" value="${service.name}"/>
+		 	 		</then>
+		 	 		<else>
+		 	 			<property name="service.indexname" value="${service.name}_@{i}"/>
+		 	 		</else>
+		 	 	</if>		 	 	
+		 	 	
+		 	 	<!-- update the installation path -->
+		 		<echo file="${dist}/path.txt" message="c:/${service.indexname}" />		
+		 	 	<!-- update the properties file -->
 		 	 	<propertyfile
 		 	 	    file="${dist}/bin/system.properties"
 		 	 	    comment="Update YAJSW.servicename. by Hudson Build Process">
-		 	 	  <entry  key="YAJSW.servicename" value="${service.name}_@{i}"/>		 	 	  
+		 	 	  <entry  key="YAJSW.servicename" value="${service.indexname}"/>		 	 	  
 		 	 	</propertyfile>
+		 	 	<!-- build the installer -->
 		 	  	<izpack input="${install.xml}"
- 	  		            output="${output.dir}/${product.short.name}-${service.name}_@{i}-${product.version}-install.jar"
+ 	  		            output="${output.dir}/${product.short.name}-${service.indexname}-${product.version}-install.jar"
  	  		            installerType="standard"
  	  		            inheritAll="true"
  	  		            basedir="${dist}"
  	  		            compression="deflate"
- 	  		            compressionlevel="9"/>
- 	  		             
+ 	  		            compressionlevel="9"/> 	  		             
  	  		    <echo message="Done."/>  
 		 	  </sequential> 
 		 	</for>
