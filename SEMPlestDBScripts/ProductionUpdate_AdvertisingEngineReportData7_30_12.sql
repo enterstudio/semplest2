@@ -6,13 +6,14 @@ alter table promotion drop column BudgetToAddToNextCycle
 alter table promotionpayment drop constraint DF__Promotion___Budg__314D4EA8
 alter table promotionpayment drop column _BudgetCarryOverAmount_
 alter table promotionpayment add BudgetCarryOverAmount money
-
+go
 -- NEED TO DROP THIS TABLE FIRST AdvertisingEngineReportData
 
 ---
 --- CREATE TABLE: dbo.AdvertisingEngineReportData
 ---
 drop table AdvertisingEngineReportData
+go
 CREATE TABLE dbo.AdvertisingEngineReportData
 (
 	AdvertisingEngineBidDataPK int NOT NULL IDENTITY,
@@ -630,7 +631,7 @@ BEGIN CATCH
 	SELECT @ErrMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE();
 	RAISERROR (@ErrMessage, @ErrorSeverity, @ErrorState);
 END CATCH;
-
+Go
 
 
 IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.GetMSNGeoLocation') AND type in (N'P', N'PC'))
