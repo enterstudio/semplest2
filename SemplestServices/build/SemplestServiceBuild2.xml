@@ -374,9 +374,9 @@
 		 	<echo>Building Serveral Installers: ${build.index}</echo>				 	
 		  	<for list="${build.index}" param="i">  			 		
 		 	 <sequential>  
-		 	  	<echo>Building Installer - @{index}</echo>  	
+		 	  	<echo>Building Installer - @{i}</echo>  	
 		 	 	<if>
-		 	 	<equals arg1="@{index}" arg2="x" />
+		 	 	<equals arg1="@{i}" arg2="x" />
 		 	 		<then>		 
 		 	 			<property name="service.indexname" value="${service.name}"/>
 		 	 		</then>
