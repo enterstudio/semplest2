@@ -133,6 +133,15 @@ public class BidObject
 	
 	final String compeWordStr = ProtocolEnum.SemplestCompetitionType.Comp.name();
 	final String nonCompeWordStr = ProtocolEnum.SemplestCompetitionType.NonComp.name();
+	final String notSelectedWordStr = ProtocolEnum.SemplestCompetitionType.NotSelected.name();
+	final String rejectedWordStr = ProtocolEnum.SemplestCompetitionType.Rejected.name();
+	final String acceptedWordStr = ProtocolEnum.SemplestCompetitionType.Accepted.name();
+	final String underExperimentWordStr = ProtocolEnum.SemplestCompetitionType.UnderExperiment.name();
+	final String noInfoWordStr = ProtocolEnum.SemplestCompetitionType.NoInfo.name();
+	final String resetWordStr = ProtocolEnum.SemplestCompetitionType.Reset.name();
+
+
+
 
 
 
@@ -281,11 +290,11 @@ public class BidObject
 	}
 	
 	
-	public Boolean setBidsExplore(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
+	public Boolean setBidsInitialExplore(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
 	{
 		/* ******************************************************************************************* */
 
-		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsInitial called for ad engine " + searchEngine);
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsInitialExplore called for ad engine " + searchEngine);
 
 
 		/* ******************************************************************************************* */
@@ -304,23 +313,139 @@ public class BidObject
 		// create a hash map for faster access
 		Map<Long,BidElement> kwIDBidElementMap = new HashMap<Long,BidElement>();
 		for(BidElement b : bidElementList){
-			kwIDBidElementMap.put(b.getKeywordAdEngineID(), b.clone());
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + kwIDBidElementMap.get(b.getKeywordAdEngineID()));
+			if(b.getIsActive()){ //this check is redundant!
+				kwIDBidElementMap.put(b.getKeywordAdEngineID(), b.clone());
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + kwIDBidElementMap.get(b.getKeywordAdEngineID()));
+			}
 		}
+
+
+		/* ******************************************************************************************* */
+		// 3.Get ranking of keywords based on probability
+		Map<Long, Integer> kwIdRankMap = getkwIdRankMap(promotionID, searchEngine, kwIDBidElementMap);
+		
+		/* ******************************************************************************************* */
+		// 3a.Pruning to have only top 50 keywords
+		int numOfWordsToKeep = 150;
+		Map<Long,BidElement> kwIDBidElementMapForNotSelected = pruneToKeepTop(promotionID, searchEngine, kwIDBidElementMap, kwIdRankMap, numOfWordsToKeep);
+		
+		
+		/* ******************************************************************************************* */
+		// 3b. Create pauseMap 
+		Map<Long,Boolean> pauseMap = getPauseMapFromBidElements(promotionID, searchEngine, kwIDBidElementMapForNotSelected);
+		
+		
+		/* ******************************************************************************************* */
+		// 4. MSN call to get average statistics
+		
+		// Remember that is data is fetched for a specific targetPosition 
+		List<AdEngineBidHistoryData>  historyDataList = getBidHistoryData(promotionID, searchEngine, kwIDBidElementMap);
+		
+		
+		/* ******************************************************************************************* */
+		// 5. Update CPC-Vol info in history data based on ranking
+		updateHistoryBasedOnRanking(promotionID, searchEngine, historyDataList, kwIDBidElementMap, kwIdRankMap);
+		
+		
+		/* ******************************************************************************************* */
+		// 5. Sort the words based on CPC
+		
+		Collections.sort(historyDataList); // the comparator uses CPC values for compareTo
+		
+		
+		/* ******************************************************************************************* */
+		// 6. Compute bids
+		
+		// the following method call updates the wordIDBidMap with appropriate bids
+		// sets bids for all unused keywords at the max CPC seen so far
+		double computedDefaultBid = computeBidsGreedy(promotionID, searchEngine, historyDataList, kwIDBidElementMap);
+		defaultMicroBid = getMicroBid(computedDefaultBid);
+		
 		
 		
 		
 		/* ******************************************************************************************* */
-		// 3. Report data via API call
+		// 7. Database call: store bid data
 		
-		int daysInThePast = 30;
-		//List<ReportObject> reportObjListYesterday = getReportDataFromSE(promotionID, searchEngine, daysInThePast);
-		
-		
+		storeBidDataToDatabase(promotionID, searchEngine, kwIDBidElementMap);
+		storeBidDataToDatabase(promotionID, searchEngine, kwIDBidElementMapForNotSelected);
 		
 		
 		
-		return true;
+		/* ******************************************************************************************* */
+		// 8. Database call: update default bid 
+		
+		//updateDefaultBidInDatabase(promotionID, searchEngine);
+
+		
+		
+		
+		/* ******************************************************************************************* */
+		// 9. SE API call: Update matchType, bid for keywords
+		
+		updateBidswithSE(promotionID, searchEngine, kwIDBidElementMap);
+		
+		
+		
+		
+		/* ******************************************************************************************* */
+		// 10. SE API call: Update default bid for campaign
+		
+		//updateDefaultBidWithSE(promotionID, searchEngine, computedDefaultBid);
+
+			
+		
+		/* ******************************************************************************************* */
+		// 11. SE API call: Pause the non-selected keywords 
+		pauseKeywordsViaAPI(promotionID, searchEngine, pauseMap);
+
+
+		/* ******************************************************************************************* */
+		// 12. Write to database: Initital bidding is done
+		
+		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
+		
+
+		
+		return new Boolean(true);
+
+	}
+	
+
+
+
+	private Map<Long, Boolean> getPauseMapFromBidElements(Integer promotionID, AdEngine searchEngine, Map<Long, BidElement> kwIDBidElementMapForNotSelected) {
+		
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + " Going to create pause map for not selected keywords ");
+		Map<Long, Boolean> pauseMap = new HashMap<Long, Boolean>();
+		for(long wordID : kwIDBidElementMapForNotSelected.keySet()){
+			pauseMap.put(wordID, false);
+		}
+		
+		return pauseMap;
+	}
+
+	private Map<Long, BidElement> pruneToKeepTop(Integer promotionID, AdEngine searchEngine, Map<Long, BidElement> kwIDBidElementMap, Map<Long, Integer> kwIdRankMap, int numOfWordsToKeep) {
+		
+		Map<Long,BidElement> kwIDBidElementMapForNotSelected = new HashMap<Long,BidElement>();
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Going to prune the keywrord list to keep only top "+ numOfWordsToKeep +" keywords.");
+		Set<Long> setOfNotSelected = new HashSet<Long>();
+		for(long wordID : kwIdRankMap.keySet()){
+			if(kwIdRankMap.get(wordID) > numOfWordsToKeep){
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Decided NOT to bid for keyword " + kwIDBidElementMap.get(wordID).getKeyword() + "with rank " + kwIdRankMap.get(wordID));
+				kwIDBidElementMapForNotSelected.put(wordID, kwIDBidElementMap.get(wordID));
+				kwIDBidElementMapForNotSelected.get(wordID).setCompetitionType(notSelectedWordStr);
+				kwIDBidElementMap.remove(wordID);
+				setOfNotSelected.add(wordID);
+			} else {
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Decided to bid for keyword " + kwIDBidElementMap.get(wordID).getKeyword() + "with rank " + kwIdRankMap.get(wordID));
+			}
+		}
+		
+		for(long wordID : setOfNotSelected){
+			kwIdRankMap.remove(wordID);
+		}
+		return kwIDBidElementMapForNotSelected;
 	}
 	
 
@@ -329,7 +454,7 @@ public class BidObject
 		
 		/* ******************************************************************************************* */
 
-		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsInitial called for ad engine " + searchEngine);
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsUpdate called for ad engine " + searchEngine);
 
 
 		/* ******************************************************************************************* */
@@ -553,7 +678,6 @@ public class BidObject
 			if(impressionMap.get(kwID)>=imprThreshold && 100.0*clickMap.get(kwID).doubleValue()/impressionMap.get(kwID) < ctrThreshold){
 				pauseMap.put(kwID, false);
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"  + " Decided to pause keyword: "+kwIDBidElementMap.get(kwID).getKeyword());
-
 			}
 		}
 		
@@ -635,16 +759,16 @@ public class BidObject
 		}
 
 		
+		
 		/* ******************************************************************************************* */
-		// 3. MSN call to get average statistics
+		// 3.Get ranking of keywords based on probability
+		Map<Long, Integer> kwIdRankMap = getkwIdRankMap(promotionID, searchEngine, kwIDBidElementMap);
+		
+		/* ******************************************************************************************* */
+		// 4. MSN call to get average statistics
 		
 		// Remember that is data is fetched for a specific targetPosition 
 		List<AdEngineBidHistoryData>  historyDataList = getBidHistoryData(promotionID, searchEngine, kwIDBidElementMap);
-		
-		
-		/* ******************************************************************************************* */
-		// 4.Get ranking of keywords based on probability
-		Map<Long, Integer> kwIdRankMap = getkwIdRankMap(promotionID, searchEngine, kwIDBidElementMap);
 		
 		
 		/* ******************************************************************************************* */
@@ -706,11 +830,7 @@ public class BidObject
 		
 		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
 		
-		
-		
-		
 
-		
 		
 		return new Boolean(true);
 
@@ -990,7 +1110,7 @@ public class BidObject
 		double amountSpent = 0.0;
 		final double daysInMonth = 30.0;
 		double maxBidValue = 0.0;
-		double computedDefaultBid = 0.0;
+		double computedDefaultBid = 0.05;
 		
 		String[] gs = SemplestDB.getGeotargetStates( promotionID );
 		double multiplierGeolocation = 1.0;
@@ -1007,10 +1127,10 @@ public class BidObject
 			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bidding parameters from config files."+ e.getMessage(), e);
 		}
 		double bidMultiplierForGoogle = bidParams.getBiddingServiceBidMultiplierForGoogleFromMSNHistory();  // ********************* TBD ************************ //
-		double googleVolMultiplier = 1.0;
-		if(searchEngine.equals(AdEngine.Google)){
+		double googleVolMultiplier = 1.5;   // ************************************************ CHECK IT OUT *************************** //
+ 		if(searchEngine.equals(AdEngine.Google)){
 			googleVolMultiplier=bidParams.getBiddingServiceGoogleVolMultiplierFromMSNHistory().doubleValue();
-		}
+		} 
 
 		
 		List<Double> bidsList = new ArrayList<Double>();
@@ -1033,10 +1153,10 @@ public class BidObject
 			}
 			
 			if(statData.getAvgBid()==null || statData.getAvgCPC()==null || statData.getClicks()==null || statData.getAvgCPC() < 0.01){
-				kwIDBidElementMap.get(wordID).setCompetitionType(nonCompeWordStr);
+				kwIDBidElementMap.get(wordID).setCompetitionType(noInfoWordStr);
 				continue;
 			} else {
-				kwIDBidElementMap.get(wordID).setCompetitionType(compeWordStr);
+				kwIDBidElementMap.get(wordID).setCompetitionType(underExperimentWordStr);
 			}
 			
 			//logger.info(statData.getAvgCPC()+", "+statData.getAvgBid());
@@ -1053,8 +1173,10 @@ public class BidObject
 			wordIDBidMap.put(wordID, bidValue);
 			kwIDBidElementMap.get(wordID).setMicroBidAmount(getMicroBid(bidValue));
 			kwIDBidElementMap.get(wordID).setIsDefaultValue(false);
-			bidsList.add(bidValue);
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid for " + kwIDBidElementMap.get(wordID).getKeyword()+": "+bidValue);
+			if(bidValue > 0.05) {
+				bidsList.add(bidValue);
+			}
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Intermediate bid for " + kwIDBidElementMap.get(wordID).getKeyword()+": "+bidValue);
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Budget used so far $"+amountSpent+" of total daily budget $"+dailyBudget);
 
 			
@@ -1070,12 +1192,27 @@ public class BidObject
 		}
 		
 		Collections.sort(bidsList);
-		computedDefaultBid = bidsList.get(bidsList.size()*1/5);  // 20 percentile point
+		if(bidsList.size()>0){
+			computedDefaultBid = bidsList.get(bidsList.size()*1/5);  // 20 percentile point
+			
+			// set maximum bid for the campaign
+			double medianBid = bidsList.get(bidsList.size()/2);
+			double maxAllowedBid = medianBid*3;
+			for(long wordID : wordIDBidMap.keySet()){
+				double bid = Math.min(wordIDBidMap.get(wordID), maxAllowedBid);
+				wordIDBidMap.put(wordID, bid);
+				kwIDBidElementMap.get(wordID).setMicroBidAmount(getMicroBid(bid));
+				kwIDBidElementMap.get(wordID).setIsDefaultValue(false);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Final bid for " + kwIDBidElementMap.get(wordID).getKeyword()+": "+bid);
+			}
+		}
+		
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Now going to set default bid " + computedDefaultBid + " for all other keywords.");
 		for(long l : kwIDBidElementMap.keySet()){
 			if(!wordIDBidMap.containsKey(l)){
 				kwIDBidElementMap.get(l).setMicroBidAmount(getMicroBid(computedDefaultBid));
 				kwIDBidElementMap.get(l).setIsDefaultValue(true);
+				wordIDBidMap.put(l, computedDefaultBid);
 			}
 		}
 		
@@ -1296,7 +1433,7 @@ public class BidObject
 			bidElem.setIsActive(true);
 			bidElem.setIsDefaultValue(true);
 			bidElem.setMicroBidAmount(defaultMicroBid);
-			//bidElem.setCompetitionType(null);
+			bidElem.setCompetitionType(resetWordStr);
 			kwIDBidElementMap.put(b.getKeywordAdEngineID(), bidElem);
 			
 			//if(!b.getIsDefaultValue()){
@@ -1400,31 +1537,33 @@ public class BidObject
 			BidObject bidObject = new BidObject();
 
 			
-			AdEngine searchEngine = AdEngine.Google;
+			AdEngine searchEngine = AdEngine.MSN;
 			
 			
-			Integer promotionID = new Integer(205);
+			Integer promotionID = new Integer(2);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
 			
 			
-			bidObject.resetCampaign(promotionID, searchEngine);
-			bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
-			bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
+			//bidObject.resetCampaign(promotionID, searchEngine);
+
 			
+			//bidObject.resetCampaign(promotionID, searchEngine);
+			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
+			
+			
+			bidObject.resetCampaign(promotionID, searchEngine);
+			bidObject.setBidsInitialExplore(promotionID, searchEngine, budgetData);
+
+			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
+
 			
 			//bidObject.setBidsExplore(promotionID, searchEngine, budgetData);
 
-			
-			
+
 			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
 			
-			
-
-			
-			
-
 			
 			/*
 			final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
@@ -1434,6 +1573,7 @@ public class BidObject
 				System.out.println(kwP.getKeyword()+": "+kwP.getSemplestProbability());
 			}
 			*/
+			
 			
 			
 			
