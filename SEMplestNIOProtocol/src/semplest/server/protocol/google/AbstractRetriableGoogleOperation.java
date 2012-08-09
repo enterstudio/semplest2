@@ -67,13 +67,16 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOp
 		final String errMsg = "Problem performing operation: " + e.dumpToString();
 		logger.error(errMsg, e);
 		final RateExceededError rateExceededError = getRateExceededError(e);
-		if (rateExceededError == null)
+		if (rateExceededError != null)
 		{
-			throw new Exception(errMsg, e);
+			final Integer retryAfterSeconds = getRetryAfterSeconds(rateExceededError);
+			logger.info("Encountered RateExceededError.  Will sleep for " + retryAfterSeconds + " seconds");
+			Thread.sleep(retryAfterSeconds * SemplestUtils.SECOND);			
 		}
-		final Integer retryAfterSeconds = getRetryAfterSeconds(rateExceededError);
-		logger.info("Encountered RateExceededError.  Will sleep for " + retryAfterSeconds + " seconds");
-		Thread.sleep(retryAfterSeconds * SemplestUtils.SECOND);				
+		else
+		{
+			logger.info("Encountered ApiException.  Will try again (if not yet hit the limit of [" + maxRetries + "] times ).");
+		}
 	}
 	
 	public static RateExceededError getRateExceededError(final ApiException e)
