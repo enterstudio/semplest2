@@ -77,8 +77,10 @@ public class BuildSetup {
 		setProps(path1, ProdJdbc, serverIndex);
 		setProps(path2, ProdJdbc, serverIndex);
 		
-		String pathLineHandler = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/dist/config/linehandler.properties";
-		setChaseOrbitalLineHandler(pathLineHandler);
+		String pathLineHandler1 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/dist/config/linehandler.properties";
+		String pathLineHandler2 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/config/linehandler.properties";
+		setChaseOrbitalLineHandler(pathLineHandler1);
+		setChaseOrbitalLineHandler(pathLineHandler2);
 	}
 	
 	public void setProps(String path, String jdbc, String serverIndex){
@@ -129,13 +131,18 @@ public class BuildSetup {
 	
 	public void setChaseOrbitalLineHandler(String path){
 		try{
+			//read host and failover address from DB
+			HashMap<String,String> chaseOrbitalConf = GeneralDB.getChaseOrbitalConf();			
+			
+			//write the configuration to the properties file
 			Properties properties = new Properties();
 			FileInputStream in = new FileInputStream(path);
 			properties.load(in);
 			in.close();		
 			
-			properties.setProperty("engine.hostname", "orbital1.paymentech.net");
-			properties.setProperty("engine.hostname.failover", "orbital2.paymentech.net");
+			for(String confName : chaseOrbitalConf.keySet()){
+				properties.setProperty(confName, chaseOrbitalConf.get(confName));
+			}
 			
 			FileOutputStream out = new FileOutputStream(path);
 			String comment = "Updated by BuildSetup. " + new Date();
