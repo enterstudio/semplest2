@@ -58,6 +58,8 @@ BEGIN
 END		
 --select * from @geoTargets
 --select * from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1)
+
+--Get the states
 insert into @states(states) 
 select DISTINCT 'US-' + gt.StateCode from @geoTargets gt	
 where (gt.Radius is null or gt.Radius = -1)
@@ -66,6 +68,7 @@ insert into @LocationID(ID)
 select msn.LocationID from MSNGeoLocation msn 
 inner join @states s on s.states = msn.MSNName and msn.IsState = 1
 
+--get the list of cities given pt and radius
 if exists (select * from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1))
 BEGIN
 	insert into @GeoPts(pt,Radius)
@@ -73,7 +76,7 @@ BEGIN
 	from @geoTargets gt where (gt.Radius is not null and gt.Radius <> -1) 
 	
 	Insert into @citiesTEMP(city, metroID)
-	select s.MSNName,s.ParentMetroAreaLocationID from @GeoPts gp
+	select DISTINCT s.MSNName,s.ParentMetroAreaLocationID from @GeoPts gp
 	cross apply (
 	SELECT msn.MSNName, msn.ParentMetroAreaLocationID from MSNGeoLocation msn
 		WHERE msn.GeogCol1.STDistance(gp.pt)<=(gp.Radius * 1609.344) and msn.IsCity = 1) s
