@@ -20,7 +20,7 @@ public class Notification {
 	private static String emailTo = "development@semplest.com";
 	
 	public static void main(String[] args){
-		sendEmail("test", "nan@semplest.com","nan@semplest.com","test");
+		sendEmail("test", "devuser@semplest.com","nan@semplest.com","test");
 	}
 	
 	public static void sendNotification(SERVER server, SERVICE service, String errorMsg){
@@ -37,8 +37,8 @@ public class Notification {
 	
 	private static void sendEmail(String subject, String from, String to, String msg)
 	{			
-		final String username = "nan@semplest.com";
-		final String password = "semplest";
+		final String username = "devuser@semplest.com";
+		final String password = "SEMplest2012";
  
 		Properties props = new Properties();
 
