@@ -79,27 +79,27 @@ public class BuildSetup {
 		String serviceName = null;		
 		
 		if(semplestService.equalsIgnoreCase("adengine")){
-			propertiesFilePath = "/var/lib/hudson/jobs/AdengineServiceBuild/workspace/SemplestServices/src/system.properties";
+			propertiesFilePath = "/var/lib/hudson/jobs/ServiceBuild_Adengine/workspace/SemplestServices/src/system.properties";
 			service = "semplest.server.service.adengine.SemplestAdengineService";
 			serviceName = "SemplestAdengineService";			
 		}
 		if(semplestService.equalsIgnoreCase("bidding")){
-			propertiesFilePath = "/var/lib/hudson/jobs/BidGeneratorServiceBuild/workspace/SemplestServices/src/system.properties";
+			propertiesFilePath = "/var/lib/hudson/jobs/ServiceBuild_BidGenerator/workspace/SemplestServices/src/system.properties";
 			service = "semplest.service.bidding.BidGeneratorService";
 			serviceName = "SemplestBidGeneratorService";			
 		}
 		if(semplestService.equalsIgnoreCase("keyword")){
-			propertiesFilePath = "/var/lib/hudson/jobs/KeywordGeneratorServiceBuild/workspace/SemplestServices/src/system.properties";
+			propertiesFilePath = "/var/lib/hudson/jobs/ServiceBuild_KeywordGenerator/workspace/SemplestServices/src/system.properties";
 			service = "semplest.service.keywords.lda.KeywordGeneratorService";
 			serviceName = "SemplestKeywordGeneratorService";			
 		}
 		if(semplestService.equalsIgnoreCase("mail")){
-			propertiesFilePath = "/var/lib/hudson/jobs/MailServiceBuild/workspace/SemplestServices/src/system.properties";
+			propertiesFilePath = "/var/lib/hudson/jobs/ServiceBuild_Mail/workspace/SemplestServices/src/system.properties";
 			service = "semplest.server.service.mail.SemplestMailService";
 			serviceName = "SemplestMailService";			
 		}
 		if(semplestService.equalsIgnoreCase("scheduler")){
-			propertiesFilePath = "/var/lib/hudson/jobs/SchedulerServiceBuild/workspace/SemplestServices/src/system.properties";
+			propertiesFilePath = "/var/lib/hudson/jobs/ServiceBuild_Scheduler/workspace/SemplestServices/src/system.properties";
 			service = "semplest.service.scheduler.SemplestSchedulerService";
 			serviceName = "SemplestSchedulerService";			
 		}		
