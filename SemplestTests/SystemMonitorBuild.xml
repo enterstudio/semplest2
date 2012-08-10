@@ -1,4 +1,4 @@
-<project name="SemplestTestBuild" default="jar" basedir=".">
+<project name="SystemMonitorBuild" default="jar" basedir=".">
 	
 	<property name="semplest.protocol.dir" value="${basedir}/../SEMplestProtocol" />
 	<property name="semplest.services.dir" value="${basedir}/../SemplestServices" />
@@ -58,63 +58,6 @@
 			 	<attribute name="Main-Class" value="semplest.services.client.api"/>
 			 </manifest>
 		</jar> 
-		
-		<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestTests/lib -->
-		<echo message="Creating Jar for SemplestBidding..."/>
-		<copy todir="${basedir}/lib" filtering="off">
-			<flattenmapper />
-			<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar" />
-		</copy>
-		<path id="bid.path">
-			<pathelement location="${classes}"/>
-				<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar"/>
-		</path>
-		<mkdir dir="${semplest.bidding.dir}/temp"/>
-		<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="bid.path"
-				target="1.6"
-				source="1.6"
-				debug="${java.debug}"   	
-				includes="**/*.java" >
-				<exclude name="**/*.svn"/>
-		</javac>
-		<jar destfile="${basedir}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">				 
-		</jar> 		
-		
-		<!-- compile services -->
-		<path id="services.path">
-			<pathelement location="${classes}"/>
-			<fileset dir="${basedir}/lib" includes="**/*.jar"/>
-			<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar"/>
-		</path>
-		<javac srcdir="${semplest.services.dir}" destdir="${classes}" classpathref="services.path"
-	      target="1.6"
-	      source="1.6"
-	      debug="${java.debug}"   	
-	      includes="**/*.java"
-	      excludes="**/*.svn"
-	    />	
-		
-		<!-- Create a Jar for SemplestKeywords, and put it to SemplestTests/lib -->
-		<echo message="Creating Jar for SemplestKeywords..."/>			
-		
-	 	<copy todir="${basedir}/lib" filtering="off">
-	 		<flattenmapper />
-	 		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
-	 	</copy>
-		<path id="keywords.path">
-			<pathelement location="${classes}"/>
-				<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
-		</path>
-		<mkdir dir="${semplest.keywords.dir}/temp"/>
-		<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
-				target="1.6"
-				source="1.6"
-				debug="${java.debug}"   	
-				includes="**/*.java" >
-				<exclude name="**/*.svn"/>
-		</javac>
-		<jar destfile="${basedir}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">					 
-		</jar>		
 		
 	</target>
 		
