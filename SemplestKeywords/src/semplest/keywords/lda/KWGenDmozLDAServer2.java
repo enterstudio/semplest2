@@ -423,6 +423,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		ArrayList<KeywordProbabilityObject> kwProb = new ArrayList<KeywordProbabilityObject>();
 		
 		ArrayList<String> bigrams = this.generateNgramsFromString(searchTerms, 2, false);
+		if(bigrams.isEmpty()){bigrams.add(searchTerms);}
 		String[] keywords = bigrams.toArray(new String[bigrams.size()]);
 		GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 		
