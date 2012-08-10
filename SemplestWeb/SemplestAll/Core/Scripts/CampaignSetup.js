@@ -355,6 +355,8 @@ function addNestedForm(container, counter, ticks, content) {
     var nextIndex = $(counter).length;
     var pattern = new RegExp(ticks, "gi");
     content = content.replace(pattern, nextIndex);
+    pattern = "UIDVALUE";
+    content = content.replace(pattern, nextIndex+ticks);
     if (container == "#addresses") {
         content = content.replace("doOptions()", "doOptions('AdModelProp_Addresses_" + nextIndex +
 "__City','AdModelProp_Addresses_" + nextIndex + "__StateCodeFK','AdModelProp_Addresses_" + nextIndex +
@@ -540,8 +542,9 @@ function OnSuccess(id) {
     var tab;
     //alert(id);
     if (id == "Categories") {
-        tabStrip.tabGroup.children('li:contains("Create Ads")').find('a.k-link').data('contentUrl', $('#CreateAdsUrl').val());
-        tabStrip.reload(tabStrip.tabGroup.children('li:contains("Create Ads")'));
+        $('input[name *= "HasBeenSaved"]').val('True');
+        //tabStrip.tabGroup.children('li:contains("Create Ads")').find('a.k-link').data('contentUrl', $('#CreateAdsUrl').val());
+        //tabStrip.reload(tabStrip.tabGroup.children('li:contains("Create Ads")'));
         //$('input[name *= "HasBeenSaved"]').val('True');
         if ($('#IsLaunched').val() == 'False') {
             if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {

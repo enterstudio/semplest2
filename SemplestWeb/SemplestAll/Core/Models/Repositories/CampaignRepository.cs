@@ -685,10 +685,9 @@ namespace Semplest.Core.Models.Repositories
             bool shouldUpdateGeoTargeting = false;
             if (model.AdModelProp.Addresses != null)
             {
-                var modelIds = new List<int>();
                 foreach (GeoTargeting geo in model.AdModelProp.Addresses)
                 {
-                    if (geo.Delete)
+                    if (geo.Delete & !geo.HasBeenSaved)
                     {
                         var gt = promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK);
                         if (gt != null)
@@ -697,7 +696,7 @@ namespace Semplest.Core.Models.Repositories
                             shouldUpdateGeoTargeting = true;
                         }
                     }
-                    else if (geo.GeoTargetingPK == 0 && !geo.IsCountry )
+                    else if (geo.GeoTargetingPK == 0 && !geo.IsCountry & !geo.HasBeenSaved)
                     {
                         shouldUpdateGeoTargeting = true;
                         var geotarget = new GeoTargeting
@@ -714,31 +713,39 @@ namespace Semplest.Core.Models.Repositories
                     }
                     else
                     {
-                        GeoTargeting geo1 = geo;
-                        modelIds.Add(geo1.GeoTargetingPK);
-                        var geoOld =
-                            oldModel.AdModelProp.Addresses.FirstOrDefault(x => x.GeoTargetingPK == geo1.GeoTargetingPK);
-                        if (geoOld != null)
+                        GeoTargeting geoOld =
+                            oldModel.AdModelProp.Addresses.SingleOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK);
+                        if (geoOld == null)
                         {
-                            if (geoOld.Address != geo1.Address ||
-                                geoOld.City != geo1.City ||
-                                geoOld.Latitude != geo1.Latitude ||
-                                geoOld.Longitude != geo1.Longitude ||
-                                geoOld.ProximityRadius != geo1.ProximityRadius ||
-                                geoOld.Zip != geo1.Zip ||
-                                geoOld.StateCode.StateAbbrPK != geo1.StateCodeFK ||
-                                geoOld.Promotion.PromotionName != model.ProductGroup.ProductPromotionName)
+                            if (geo.HasBeenSaved && !geo.IsCountry)
                             {
-                                shouldUpdateGeoTargeting = true;
-                                var gt = promo.GeoTargetings.Single(x => x.GeoTargetingPK == geo1.GeoTargetingPK);
-                                gt.Address = geo1.Address;
-                                gt.City = geo1.City;
-                                gt.Latitude = geo1.Latitude;
-                                gt.Longitude = geo1.Longitude;
-                                gt.ProximityRadius = geo1.ProximityRadius;
-                                gt.Zip = geo1.Zip;
-                                gt.StateCodeFK = geo1.StateCodeFK;
+                                geoOld = promo.GeoTargetings.Single(r => r.Address == geo.Address &&
+                                                            r.City == geo.City &&
+                                                            r.Latitude == geo.Latitude &&
+                                                            r.Longitude == geo.Longitude &&
+                                                            r.ProximityRadius == geo.ProximityRadius &&
+                                                            r.Zip == geo.Zip &&
+                                                            r.StateCode.StateAbbrPK == geo.StateCodeFK);
                             }
+                        }
+                        if (geoOld.Address != geo.Address ||
+                            geoOld.City != geo.City ||
+                            geoOld.Latitude != geo.Latitude ||
+                            geoOld.Longitude != geo.Longitude ||
+                            geoOld.ProximityRadius != geo.ProximityRadius ||
+                            geoOld.Zip != geo.Zip ||
+                            geoOld.StateCode.StateAbbrPK != geo.StateCodeFK ||
+                            geoOld.Promotion.PromotionName != model.ProductGroup.ProductPromotionName)
+                        {
+                            shouldUpdateGeoTargeting = true;
+                            var gt = promo.GeoTargetings.Single(x => x.GeoTargetingPK == geo.GeoTargetingPK);
+                            gt.Address = geo.Address;
+                            gt.City = geo.City;
+                            gt.Latitude = geo.Latitude;
+                            gt.Longitude = geo.Longitude;
+                            gt.ProximityRadius = geo.ProximityRadius;
+                            gt.Zip = geo.Zip;
+                            gt.StateCodeFK = geo.StateCodeFK;
                         }
                     }
                 }

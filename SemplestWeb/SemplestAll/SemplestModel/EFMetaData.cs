@@ -78,6 +78,8 @@ namespace SemplestModel
         public bool IsState { get; set; }
         public string MapMessage { get; set; }
         public string ProximityMessage { get; set; }
+        public bool HasBeenSaved { get; set; }
+        public string UID { get; set; }
         internal sealed class GeoTargetingMetaData
         {
             public string City { get; set; }
@@ -119,6 +121,8 @@ namespace SemplestModel
         public bool Delete { get; set; }
 
         public int SerailNo { get; set; }
+
+        public bool HasBeenSaved { get; set; }
 
     }
 
