@@ -173,9 +173,13 @@ public class ExpiredCredentialsEmailSender
 	public static String lastRunAsExpected() throws Exception
 	{
 		final Job job = SemplestDB.getJob(JobName.EXPIRED_CREDENTIALS_EMAIL_SENDER);
-		final java.util.Date lastRunTime = job.getLastRunTime();
+		final java.util.Date lastRunTime = job.getLastRunTime();		
+		if (lastRunTime == null)
+		{
+			return null;
+		}
 		final java.util.Date now = new java.util.Date();
-		final long lastRunTimeMillis = lastRunTime.getTime();
+		final long lastRunTimeMillis = lastRunTime.getTime();		
 		final long nowMillis = now.getTime();
 		final long timeDiffMillis = nowMillis - lastRunTimeMillis;
 		final long hoursDiff = timeDiffMillis / SemplestUtils.HOUR;
