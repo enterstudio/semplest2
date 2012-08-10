@@ -23,9 +23,9 @@ import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_Campaign
 import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import semplest.bidding.estimation.EstimatorData;
-import semplest.bidding.optimization.BidOptimizer;
-import semplest.bidding.optimization.KeyWord;
+//import semplest.bidding.estimation.EstimatorData;
+//import semplest.bidding.optimization.BidOptimizer;
+//import semplest.bidding.optimization.KeyWord;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
@@ -123,9 +123,11 @@ public class BidObject
 	 * not selected by optimizer
 	 */
 
+	/* // removing bidding project 
 	private HashMap<String, EstimatorData> clickDataMap;
 	private HashMap<String, EstimatorData> costDataMap;
 	private HashMap<String, EstimatorData> cpcDataMap;
+	*/
 	
 	final String exactString = ProtocolEnum.SemplestMatchType.Exact.name();
 	final String phraseString = ProtocolEnum.SemplestMatchType.Phrase.name();
@@ -226,9 +228,7 @@ public class BidObject
 		 * competitive but not selected by optimizer
 		 */
 
-		clickDataMap = new HashMap<String, EstimatorData>();
-		costDataMap = new HashMap<String, EstimatorData>();
-		cpcDataMap = new HashMap<String, EstimatorData>();
+
 	}
 
 	//public Map<AdEngine, AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine) throws Exception

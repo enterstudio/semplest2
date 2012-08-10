@@ -86,8 +86,10 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	@Override
 	public Map<AdEngine,AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine, Double totalMonthlyBudget) throws Exception 
 	{
-		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		return bidGeneratorObj.getInitialValues(promotionID, searchEngine, totalMonthlyBudget);
+		//BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
+		//return bidGeneratorObj.getInitialValues(promotionID, searchEngine, totalMonthlyBudget);
+		BidObject bidObj = new BidObject();
+		return bidObj.getInitialValues(promotionID, searchEngine, totalMonthlyBudget);
 	}
 	
 	public String setBidsInitial(String json) throws Exception
