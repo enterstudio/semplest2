@@ -5,7 +5,7 @@ import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 
 public class MonitorObject {
 	
-	public static enum SERVER {DEV, TEST, PROD};
+	public static enum SERVER {DEV, TEST, PROD, UAT};
 	public static enum SERVICE {AdEngine, Bidding, Keyword, Mail, Scheduler};	
 	
 	private HashMap<SERVER, Status> serverServiceStatus = new HashMap<SERVER, Status>();
@@ -74,10 +74,12 @@ public class MonitorObject {
 		serverConfig.get(SERVER.DEV).esbUrl = config.getDevEsbUrl();
 		serverConfig.get(SERVER.TEST).esbUrl = config.getTestEsbUrl();
 		serverConfig.get(SERVER.PROD).esbUrl = config.getProdEsbUrl();
+		serverConfig.get(SERVER.UAT).esbUrl = config.getUatEsbUrl();
 		
 		serverConfig.get(SERVER.DEV).isMonitor = config.isMonitorDev();
 		serverConfig.get(SERVER.TEST).isMonitor = config.isMonitorTest();
 		serverConfig.get(SERVER.PROD).isMonitor = config.isMonitorProd();
+		serverConfig.get(SERVER.UAT).isMonitor = config.isMonitorUat();
 	}
 	
 	//Classes

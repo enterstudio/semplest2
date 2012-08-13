@@ -11,9 +11,11 @@ public class Configuration extends BaseDB {
 	private String DevEsbUrl;		
 	private String TestEsbUrl;		
 	private String ProdEsbUrl;
+	private String UatEsbUrl;
 	private Boolean isMonitorDev;
 	private Boolean isMonitorTest;
 	private Boolean isMonitorProd;	
+	private Boolean isMonitorUat;
 	
 	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		
@@ -38,6 +40,9 @@ public class Configuration extends BaseDB {
 		sql = "SELECT smc.ProductEsbUrl FROM SystemMonitorConfiguration smc";
 		ProdEsbUrl = jdbcTemplate.queryForObject(sql, String.class);
 		
+		sql = "SELECT smc.UatEsbUrl FROM SystemMonitorConfiguration smc";
+		UatEsbUrl = jdbcTemplate.queryForObject(sql, String.class);
+		
 		sql = "SELECT smc.IsMonitorDev FROM SystemMonitorConfiguration smc";
 		isMonitorDev = jdbcTemplate.queryForObject(sql, Boolean.class);
 		
@@ -47,6 +52,8 @@ public class Configuration extends BaseDB {
 		sql = "SELECT smc.IsMonitorProd FROM SystemMonitorConfiguration smc";
 		isMonitorProd = jdbcTemplate.queryForObject(sql, Boolean.class);
 		
+		sql = "SELECT smc.IsMonitorUat FROM SystemMonitorConfiguration smc";
+		isMonitorUat = jdbcTemplate.queryForObject(sql, Boolean.class);		
 	}
 
 	public int getMonitorInterval() {
@@ -64,6 +71,10 @@ public class Configuration extends BaseDB {
 	public String getProdEsbUrl() {
 		return ProdEsbUrl;
 	}
+	
+	public String getUatEsbUrl() {
+		return UatEsbUrl;
+	}
 
 	public boolean isMonitorDev() {
 		return isMonitorDev;
@@ -75,6 +86,10 @@ public class Configuration extends BaseDB {
 
 	public boolean isMonitorProd() {
 		return isMonitorProd;
+	}
+	
+	public boolean isMonitorUat() {
+		return isMonitorUat;
 	}
 
 	public boolean isStop() {
