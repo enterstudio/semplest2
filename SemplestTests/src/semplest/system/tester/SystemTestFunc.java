@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -137,7 +138,7 @@ public class SystemTestFunc extends BaseDB{
 	
 	public static void CleanUpTestData() throws Exception{
 		System.out.println("====================================================================================");
-		System.out.println(">>> Clean Up Test Data >>>");
+		System.out.println(">>> Clean Up History Test Data >>>");
 		System.out.println("====================================================================================");
 		System.out.println();
 		
@@ -420,38 +421,37 @@ public class SystemTestFunc extends BaseDB{
 
 	private static void sendEmail(String subject, String from, String to, String msg)
 	{		
-		String host = "smtp.gmail.com";
-	    String username = "devuser@semplest.com";
-	    String password = "devuser2012";
-	    Properties props = new Properties();
-	    props.put("mail.smtps.auth", "true");
-	    
-	    Session session = Session.getDefaultInstance(props);	
-	    
-	    MimeMessage message = new MimeMessage(session);	   
-	    Transport t = null;
-	    try {
-			message.setFrom(new InternetAddress(from));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-	        message.setSubject(subject);
-	        message.setText(msg);
-	        
-	        t = session.getTransport("smtps");
-			t.connect(host, username, password);
-			t.sendMessage(message, message.getAllRecipients());
-			
-		} catch (AddressException e1) {
-			e1.printStackTrace();
-		} catch (MessagingException e1) {
-			e1.printStackTrace();
-		}        
-	    finally{
-	    	try {
-				t.close();
-			} catch (MessagingException e) {
-				e.printStackTrace();
-			}
-	    }   
+		final String username = "devuser@semplest.com";
+		final String password = "SEMplest2012";
+ 
+		Properties props = new Properties();
+
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", "465");
 		
+		Session session = Session.getInstance(props,
+		  new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		  });
+ 
+		try {
+ 
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(from));
+			message.setRecipients(Message.RecipientType.TO,
+				InternetAddress.parse(to));
+			message.setSubject(subject);
+			message.setText(msg);
+ 
+			Transport.send(message);
+ 
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}		
 	}
 }
