@@ -45,22 +45,22 @@ BEGIN TRY
 			FROM dbo.PromotionAds p 
 			INNER JOIN @AdTVP a ON a.PKEY = p.PromotionAdsPK WHERE a.Operation = 'U'
 			
-		delete from dbo.PromotionAds from dbo.PromotionAds p INNER JOIN  @AdTVP a on a.PKEY = p.PromotionAdsPK where a.Operation= 'D'
+		--delete from dbo.PromotionAds from dbo.PromotionAds p INNER JOIN  @AdTVP a on a.PKEY = p.PromotionAdsPK where a.Operation= 'D'
 
      commit transaction   
 	END
 	
-	SELECT g.GeoTargetingPK PKEY, gt.UID UID from dbo.GeoTargeting g 
+	SELECT g.GeoTargetingPK as PKEY, gt.UID as UID from dbo.GeoTargeting g 
 	INNER JOIN @GEOTVP gt on 
-			g.Address = gt.Address and g.City= gt.City and g.StateCodeFK = gt.StateCodeFK and g.City = gt.City and
-			g.StateCodeFK = gt.StateCodeFK and g.Zip = gt.Zip and g.ProximityRadius = gt.ProximityRadius and
+			g.Address = gt.Address and g.City= gt.City and g.StateCodeFK = gt.StateCodeFK 
+			and g.Zip = gt.Zip and g.ProximityRadius = gt.ProximityRadius and
 			g.Latitude = gt.Latitude and g.Longitude = gt.Longitude 
 	WHERE gt.operation = 'I'
 	UNION
-	SELECT p.PromotionAdsPK PKEY, a.UID UID from dbo.PromotionAds p 
+	SELECT p.PromotionAdsPK as PKEY, a.UID as UID from dbo.PromotionAds p 
 	INNER JOIN @AdTVP a on 
 			p.AdTextLine1 = a.AdTextLine1 and p.AdTextLine2 = a.AdTextLine2 and p.AdTitle = a.AdTitle
-	WHERE a.Operation = 'I'
+	WHERE a.Operation = 'I' and p.IsDeleted=0
 	
 END TRY
 BEGIN CATCH
