@@ -124,6 +124,8 @@ namespace SemplestModel
 
         public bool HasBeenSaved { get; set; }
 
+        public string UID { get; set; }
+
     }
 
     public class SEMCustomerDetailMetaData

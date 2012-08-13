@@ -9,10 +9,17 @@ using Semplest.SharedResources.Services;
 using SemplestModel;
 using Semplest.SharedResources;
 using System.Data.Entity.Infrastructure;
+using SemplestModel.TVP;
 
 
 namespace Semplest.Core.Models.Repositories
 {
+    public class RVal
+    {
+        public int PKEY { get; set; }
+        public string UID { get; set; }
+    }
+
     public class CampaignRepository : ICampaignRepository
     {
         public int Save(string data)
@@ -261,9 +268,10 @@ namespace Semplest.Core.Models.Repositories
                 _savedCampaign = true;
             }
         }
-
-        public void SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel)
+            
+        public string SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel)
         {
+            System.Text.StringBuilder rString = new System.Text.StringBuilder();
             using (var dbcontext = new SemplestModel.Semplest())
             {
                 var queryProd = (from c in dbcontext.ProductGroups
@@ -277,8 +285,9 @@ namespace Semplest.Core.Models.Repositories
                 List<int> updateAds;
                 List<int> deleteAds;
                 GoogleViolation[] gv;
+                PromoAdTableType at;
                 var shouldscheduleAds = AddPromotionAdsToPromotion(promo, model, customerFK, oldModel,
-                                                   out addAds, out updateAds, out deleteAds);
+                                                   out addAds, out updateAds, out deleteAds, out at);
                 if (shouldscheduleAds)
                 {
                     List<GoogleAddAdRequest> verifyAds =
@@ -296,8 +305,8 @@ namespace Semplest.Core.Models.Repositories
                     if (gv.Length > 0)
                         throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                 }
-                var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, customerFK, oldModel,
-           ((IObjectContextAdapter)dbcontext).ObjectContext);
+                GeoTargetTableType gt;
+                var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, customerFK, oldModel, out gt);
                 if (shouldUpdateGeoTargeting)
                 {
                     var gtos = SerializeToGeoTargetObjectArray(model);
@@ -314,10 +323,30 @@ namespace Semplest.Core.Models.Repositories
                             throw new Exception("geotarget limit");
                     }
                 }
-                promo.LandingPageURL = model.AdModelProp.LandingUrl.Trim();
-                promo.DisplayURL = model.AdModelProp.DisplayUrl.Trim();
-                dbcontext.SaveChanges();
+
+
+
+
+
+                var parameter = new SqlParameter("PromotionPK", promo.PromotionPK) { SqlDbType = SqlDbType.Int };
+                var parameter2 = new SqlParameter("LandingUrl", model.AdModelProp.LandingUrl.Trim()) { SqlDbType = SqlDbType.NVarChar };
+                var parameter3 = new SqlParameter("DisplayUrl", model.AdModelProp.DisplayUrl.Trim()) { SqlDbType = SqlDbType.NVarChar };
+                var parameter4 = new SqlParameter("GeoTVP", gt) { SqlDbType = SqlDbType.Structured, TypeName = "GeoTargetTableType" };
+                var parameter5 = new SqlParameter("AdTVP", at) { SqlDbType = SqlDbType.Structured, TypeName = "PromoAdTableType" };
+
+                var parameters = new object[] {parameter, parameter2, parameter3,parameter4,parameter5};
+
+                var results = ((IObjectContextAdapter)dbcontext).ObjectContext.ExecuteStoreQuery<RVal>("exec UpdateGeoTargetingPromoAds @PromotionPK, @LandingUrl, @DisplayUrl, @GeoTVP, @AdTVP", parameters);
                 _savedCampaign = true;
+                foreach (var r in results)
+                {
+                    rString.Append(r.UID);
+                    rString.Append("=");
+                    rString.Append(r.PKEY);
+                    rString.Append(",");
+                }
+                    
+        
 
                 if (promo.IsLaunched)
                 {
@@ -352,6 +381,10 @@ namespace Semplest.Core.Models.Repositories
                         sw.scheduleUpdateGeoTargeting(promo.PromotionPK, adEngines);
                 }
             }
+            if (string.IsNullOrEmpty(rString.ToString()))
+                return String.Empty;
+            else
+                return rString.ToString().Substring(0, rString.ToString().Length - 1);
         }
 
         public Promotion GetPromoitionFromCampaign(int customerFK, CampaignSetupModel model)
@@ -680,74 +713,57 @@ namespace Semplest.Core.Models.Repositories
             return new GeoTargeting();
         }
 
-        public bool AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context)
+        public bool AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, out GeoTargetTableType gtt)
         {
             bool shouldUpdateGeoTargeting = false;
+            gtt = new GeoTargetTableType();
+
+            GeoTargetTableTypeRow gtr;
+
             if (model.AdModelProp.Addresses != null)
             {
                 foreach (GeoTargeting geo in model.AdModelProp.Addresses)
                 {
+                    gtr = gtt.NewRow();
                     if (geo.Delete & !geo.HasBeenSaved)
                     {
                         var gt = promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK);
                         if (gt != null)
                         {
-                            context.DeleteObject(gt);
+                            gtr.PKEY = geo.GeoTargetingPK;
+                            gtr.Operation = "D";
                             shouldUpdateGeoTargeting = true;
                         }
                     }
                     else if (geo.GeoTargetingPK == 0 && !geo.IsCountry & !geo.HasBeenSaved)
                     {
                         shouldUpdateGeoTargeting = true;
-                        var geotarget = new GeoTargeting
-                                            {
-                                                Address = geo.Address,
-                                                City = geo.City,
-                                                StateCodeFK = geo.StateCodeFK,
-                                                Zip = geo.Zip,
-                                                ProximityRadius = geo.ProximityRadius,
-                                                Latitude = geo.Latitude,
-                                                Longitude = geo.Longitude
-                                            };
-                        promo.GeoTargetings.Add(geotarget);
+                        gtr.Address = geo.Address;
+                        gtr.City = geo.City;
+                        gtr.StateCodeFK = geo.StateCodeFK;
+                        gtr.Zip = geo.Zip;
+                        gtr.ProximityRadius = geo.ProximityRadius;
+                        gtr.Latitude = geo.Latitude;
+                        gtr.Longitude = geo.Longitude;
+                        gtr.UID = geo.UID;
+                        gtr.Operation = "I";
                     }
                     else
                     {
                         GeoTargeting geoOld =
                             oldModel.AdModelProp.Addresses.SingleOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK);
-                        if (geoOld == null)
-                        {
-                            if (geo.HasBeenSaved && !geo.IsCountry)
-                            {
-                                geoOld = promo.GeoTargetings.Single(r => r.Address == geo.Address &&
-                                                            r.City == geo.City &&
-                                                            r.Latitude == geo.Latitude &&
-                                                            r.Longitude == geo.Longitude &&
-                                                            r.ProximityRadius == geo.ProximityRadius &&
-                                                            r.Zip == geo.Zip &&
-                                                            r.StateCode.StateAbbrPK == geo.StateCodeFK);
-                            }
-                        }
-                        if (geoOld.Address != geo.Address ||
-                            geoOld.City != geo.City ||
-                            geoOld.Latitude != geo.Latitude ||
-                            geoOld.Longitude != geo.Longitude ||
-                            geoOld.ProximityRadius != geo.ProximityRadius ||
-                            geoOld.Zip != geo.Zip ||
-                            geoOld.StateCode.StateAbbrPK != geo.StateCodeFK ||
-                            geoOld.Promotion.PromotionName != model.ProductGroup.ProductPromotionName)
-                        {
-                            shouldUpdateGeoTargeting = true;
-                            var gt = promo.GeoTargetings.Single(x => x.GeoTargetingPK == geo.GeoTargetingPK);
-                            gt.Address = geo.Address;
-                            gt.City = geo.City;
-                            gt.Latitude = geo.Latitude;
-                            gt.Longitude = geo.Longitude;
-                            gt.ProximityRadius = geo.ProximityRadius;
-                            gt.Zip = geo.Zip;
-                            gt.StateCodeFK = geo.StateCodeFK;
-                        }
+                        shouldUpdateGeoTargeting = true;
+                        gtr.Address = geo.Address;
+                        gtr.City = geo.City;
+                        gtr.Latitude = geo.Latitude;
+                        gtr.Longitude = geo.Longitude;
+                        gtr.ProximityRadius = geo.ProximityRadius;
+                        gtr.Zip = geo.Zip;
+                        gtr.StateCodeFK = geo.StateCodeFK;
+                        gtr.PKEY = geo.GeoTargetingPK;
+                        gtr.Operation = "U";
                     }
+                    gtt.Add(gtr);
                 }
             }
             return shouldUpdateGeoTargeting;
@@ -843,58 +859,50 @@ namespace Semplest.Core.Models.Repositories
         }
 
         private static bool AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk,
-                                                            CampaignSetupModel oldModel, out List<PromotionAd> addAds, out List<int> updateAds, out List<int> deleteAds)
+                                                            CampaignSetupModel oldModel, out List<PromotionAd> addAds, out List<int> updateAds, out List<int> deleteAds, out PromoAdTableType att)
         {
             deleteAds = new List<int>();
             updateAds = new List<int>();
             addAds = new List<PromotionAd>();
             bool shouldscheduleAds = false;
+            att = new PromoAdTableType();
+
+            PromoAdTableTypeRow atr;
             foreach (PromotionAd pad in model.AdModelProp.Ads)
             {
+                atr = att.NewRow();
                 if (pad.Delete && pad.PromotionAdsPK != 0)
                 {
                     var singlePromo = promo.PromotionAds.Single(id => id.PromotionAdsPK == pad.PromotionAdsPK);
                     if (singlePromo != null)
                     {
+                        atr.PKEY = pad.PromotionAdsPK;
+                        atr.Operation = "D";
                         deleteAds.Add(pad.PromotionAdsPK);
                         shouldscheduleAds = true;
                     }
                 }
-                else if (!pad.Delete && pad.PromotionAdsPK == 0 )
+                else if (!pad.Delete && pad.PromotionAdsPK == 0)
                 {
                     shouldscheduleAds = true;
                     addAds.Add(pad);
-                    pad.AdTextLine1 = pad.AdTextLine1;
-                    pad.AdTextLine2 = pad.AdTextLine2;
-                    pad.AdTitle = pad.AdTitle;
-                    var cad = new PromotionAd
-                                  {
-                                      AdTextLine1 = pad.AdTextLine1,
-                                      AdTextLine2 = pad.AdTextLine2,
-                                      AdTitle = pad.AdTitle,
-                                      PromotionAdsPK = pad.PromotionAdsPK,
-                                      CreatedDate = DateTime.Now
-                                  };
-                    promo.PromotionAds.Add(cad);
+                    atr.AdTextLine1 = pad.AdTextLine1;
+                    atr.AdTextLine2 = pad.AdTextLine2;
+                    atr.AdTitle = pad.AdTitle;
+                    atr.UID = pad.UID;
+                    atr.Operation = "I";
                 }
                 else if (!pad.Delete && pad.PromotionAdsPK != 0)
                 {
-                    var padOld = oldModel.AdModelProp.Ads.Single(x => x.PromotionAdsPK == pad.PromotionAdsPK);
-                    if (padOld != null)
-                    {
-                        if (padOld.AdTextLine1 != pad.AdTextLine1 ||
-                            padOld.AdTextLine2 != pad.AdTextLine2 ||
-                            padOld.AdTitle != pad.AdTitle)
-                        {
                             shouldscheduleAds = true;
                             updateAds.Add(pad.PromotionAdsPK);
-                            var pa = promo.PromotionAds.Single(x => x.PromotionAdsPK == pad.PromotionAdsPK);
-                            pa.AdTextLine1 = pad.AdTextLine1;
-                            pa.AdTextLine2 = pad.AdTextLine2;
-                            pa.AdTitle = pad.AdTitle;
-                        }
+                            atr.AdTextLine1 = pad.AdTextLine1;
+                            atr.AdTextLine2 = pad.AdTextLine2;
+                            atr.AdTitle = pad.AdTitle;
+                            atr.PKEY = pad.PromotionAdsPK;
+                            atr.Operation = "U";
                     }
-                }
+                    att.Add(atr);
             }
             return shouldscheduleAds;
         }

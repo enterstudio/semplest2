@@ -2,13 +2,14 @@
 using System.Linq;
 using SemplestModel;
 using Semplest.SharedResources.Services;
+using SemplestModel.TVP;
 
 namespace Semplest.Core.Models.Repositories
 {
     public interface ICampaignRepository
     {
 
-        void SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel);
+        string SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel);
         CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId, bool preview = false);
         bool DoesPromotionExist(string prodGroup, string promotionName, int custFk);
         IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid);
@@ -19,7 +20,6 @@ namespace Semplest.Core.Models.Repositories
         Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal customerDefaultPerCampaignFlatFeeAmount);
 
         void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
-        bool AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context);
         void SaveProductPromotion(int customerFk, CampaignSetupModel model, CampaignSetupModel oldModel);
         void SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
         void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories);

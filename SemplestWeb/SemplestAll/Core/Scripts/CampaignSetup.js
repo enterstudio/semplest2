@@ -536,30 +536,12 @@ function OnBegin() {
     }
 
 
-function OnSuccess(id) {
+    function OnSuccess(id) {
     if ($('#displayBox').attr('src') != $('#LogoUrlStr').val() + 'congratulations.jpg')
         $.unblockUI();
     var tab;
     //alert(id);
-    if (id == "Categories") {
-        $('input[name *= "HasBeenSaved"]').val('True');
-        //tabStrip.tabGroup.children('li:contains("Create Ads")').find('a.k-link').data('contentUrl', $('#CreateAdsUrl').val());
-        //tabStrip.reload(tabStrip.tabGroup.children('li:contains("Create Ads")'));
-        //$('input[name *= "HasBeenSaved"]').val('True');
-        if ($('#IsLaunched').val() == 'False') {
-            if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
-                tabStrip.append({
-                    text: "Categories",
-                    contentUrl: $('#CategoriesUrl').val()
-                }, tabStrip.tabGroup.children("li:last")).select();
-                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
-                tabStrip.select(tab);
-            } else {
-                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
-                tabStrip.select(tab);
-            }
-        }
-    } else if (id == "Create Ads") {
+   if (id == "Create Ads") {
         tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
         tabStrip.select(tab);
     } else if (id == "Billing & Launch") {
@@ -592,7 +574,37 @@ function OnSuccess(id) {
             $('#KeywordCount').html(id.count);
             tabStrip.reload(tabStrip.select());
         }
-        if (id != "" && id.name != "Keywords") {
+        else if (id.name == "Categories") {
+            $('input[name *= "HasBeenSaved"]').val('True');
+
+            if ($('#IsLaunched').val() == 'False') {
+                if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
+                    tabStrip.append({
+                        text: "Categories",
+                        contentUrl: $('#CategoriesUrl').val()
+                    }, tabStrip.tabGroup.children("li:last")).select();
+                    tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+                    tabStrip.select(tab);
+                } else {
+                    tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+                    tabStrip.select(tab);
+                }
+            }
+            var items = id.newKeys.split(",");
+
+            for (var i = 0; i <= items.length; i++) {
+                var nvp = items[i].split("=");
+                //nvp[0]
+                var replaceKey;
+                if ($('input[value|="' + nvp[0] + '"]')[0].id.split("_")[1] == 'Ads') {
+                    replaceKey = "PromotionAdsPK";
+                } else {
+                    replaceKey = "GeoTargetingPK";
+                }
+                $('#' + $('input[value|="' + nvp[0] + '"]')[0].id.replace("UID", replaceKey)).val(nvp[1]);
+            }
+        }
+        if (id != "" && id.name != "Keywords" && id.name != "Categories") {
             var arr = id.split('<~>');
             var stitle, sbody;
             if (arr.length > 1) {

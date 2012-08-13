@@ -275,6 +275,12 @@
     <Compile Include="TransactionHistory.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="TVP\GeoTargetTableType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TVP\PromoAdTableType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="User.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

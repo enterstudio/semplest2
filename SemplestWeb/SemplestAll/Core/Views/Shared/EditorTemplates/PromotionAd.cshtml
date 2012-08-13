@@ -31,6 +31,7 @@
                         
                         @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
                         @Html.HiddenFor(t => t.HasBeenSaved)
+                        @Html.Hidden("UID", "UIDVALUE")
                     </div>
                 </li>
             </ul>

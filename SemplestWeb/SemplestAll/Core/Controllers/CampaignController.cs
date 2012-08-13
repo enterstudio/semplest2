@@ -117,13 +117,13 @@ namespace Semplest.Core.Controllers
                         int customerFK =
                             ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
                         
-                        _campaignRepository.SaveGeoTargetingAds(customerFK, model,
+                        var newIds = _campaignRepository.SaveGeoTargetingAds(customerFK, model,
                                                                            (CampaignSetupModel)
                                                                            Session["CampaignSetupModel"]);
                         // get the categoris from the web service
                         model = _campaignRepository.GetCategories(model);
                         Session.Add("AllCategories", model.AllCategories);
-                        return Json("Categories");
+                        return Json(new { newKeys = newIds, name = "Categories" });
                 }
             }
             catch (Exception ex)
