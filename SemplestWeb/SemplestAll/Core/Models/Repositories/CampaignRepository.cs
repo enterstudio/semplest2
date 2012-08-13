@@ -807,9 +807,6 @@ namespace Semplest.Core.Models.Repositories
                     rString.Append(r.PKEY);
                     rString.Append(",");
                 }
-
-
-                dbcontext.SaveChanges();
                 _savedCampaign = true;
                 try
                 {
@@ -902,8 +899,8 @@ namespace Semplest.Core.Models.Repositories
                         {
                             atr.PKEY = pad.PromotionAdsPK;
                             atr.Operation = "D";
-                            deleteAds.Add(pad.PromotionAdsPK);
                         }
+                        deleteAds.Add(pad.PromotionAdsPK);
                         shouldscheduleAds = true;
                     }
                 }

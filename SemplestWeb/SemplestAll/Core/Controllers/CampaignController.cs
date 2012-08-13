@@ -442,14 +442,17 @@ namespace Semplest.Core.Controllers
                     (Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
                 var customerFK = cred.User.CustomerFK;
                 var newIds = _campaignRepository.SaveSiteLinks(model, customerFK.Value,
-                                                  (CampaignSetupModel) Session["CampaignSetupModel"]);
-                var csm = (CampaignSetupModel)Session["CampaignSetupModel"];
-                foreach (var nvp in newIds.Split(',').Select(items => items.Split('=')))
+                                                               (CampaignSetupModel) Session["CampaignSetupModel"]);
+                var csm = (CampaignSetupModel) Session["CampaignSetupModel"];
+                if (!String.IsNullOrEmpty(newIds))
                 {
+                    foreach (var nvp in newIds.Split(',').Select(items => items.Split('=')))
+                    {
                         model.SiteLinks.Single(t => t.UID == nvp[0]).SiteLInkPK = int.Parse(nvp[1]);
+                    }
                 }
                 csm.SiteLinks = model.SiteLinks;
-                return Json(new { newKeys = newIds, name = "AdditionalLinks" });
+                return Json(new {newKeys = newIds, name = "AdditionalLinks"});
             }
             catch (Exception ex)
             {
