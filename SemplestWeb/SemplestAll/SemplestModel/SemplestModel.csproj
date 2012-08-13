@@ -281,6 +281,9 @@
     <Compile Include="TVP\PromoAdTableType.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TVP\SiteLinksTableType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="User.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

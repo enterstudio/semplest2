@@ -102,6 +102,6 @@ namespace SemplestModel.TVP
                 { base["PKEY"] = value; }
             }
         }
-        public string Operation { get { return (string)base["Operation"]; } set { base["Operation"] = value; } }
+        public string Operation { get { return base["Operation"].ToString(); } set { base["Operation"] = value; } }
     }
 }

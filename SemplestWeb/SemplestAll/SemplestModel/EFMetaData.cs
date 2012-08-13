@@ -95,6 +95,7 @@ namespace SemplestModel
     {
         public bool Delete { get; set; }
         public bool SiteLinksSaved { get; set; }
+        public string UID { get; set; }
     }
 
     [MetadataType(typeof(SEMCustomerDetailMetaData))]

@@ -21,7 +21,7 @@ namespace Semplest.Core.Models.Repositories
 
         void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
         void SaveProductPromotion(int customerFk, CampaignSetupModel model, CampaignSetupModel oldModel);
-        void SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
+        string SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
         void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories);
 
 

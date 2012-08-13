@@ -109,21 +109,36 @@ namespace Semplest.Core.Controllers
                 }
                 else
                 {
-                        model.SiteLinks = (List<SiteLink>) Session["SiteLinks"];
-                        model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
+                    model.SiteLinks = (List<SiteLink>) Session["SiteLinks"];
+                    model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
 
-                        // we need save to database the ProductGroup and Promotion information
-                        //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
-                        int customerFK =
-                            ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
-                        
-                        var newIds = _campaignRepository.SaveGeoTargetingAds(customerFK, model,
-                                                                           (CampaignSetupModel)
-                                                                           Session["CampaignSetupModel"]);
-                        // get the categoris from the web service
-                        model = _campaignRepository.GetCategories(model);
-                        Session.Add("AllCategories", model.AllCategories);
-                        return Json(new { newKeys = newIds, name = "Categories" });
+                    // we need save to database the ProductGroup and Promotion information
+                    //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                    int customerFK =
+                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.
+                            CustomerFK.Value;
+
+                    var newIds = _campaignRepository.SaveGeoTargetingAds(customerFK, model,
+                                                                         (CampaignSetupModel)
+                                                                         Session["CampaignSetupModel"]);
+                    var csm = (CampaignSetupModel) Session["CampaignSetupModel"];
+                    if (!String.IsNullOrEmpty(newIds))
+                    {
+                        foreach (var nvp in newIds.Split(',').Select(items => items.Split('=')))
+                        {
+                            var item = model.AdModelProp.Addresses.SingleOrDefault(t => t.UID == nvp[0]);
+                            if (item != null)
+                                item.GeoTargetingPK = int.Parse(nvp[1]);
+                            else
+                                model.AdModelProp.Ads.Single(t => t.UID == nvp[0]).PromotionAdsPK = int.Parse(nvp[1]);
+                        }
+                    }
+                    csm.AdModelProp.Addresses = model.AdModelProp.Addresses;
+                    csm.AdModelProp.Ads = model.AdModelProp.Ads;
+                    // get the categoris from the web service
+                    model = _campaignRepository.GetCategories(model);
+                    Session.Add("AllCategories", model.AllCategories);
+                    return Json(new {newKeys = newIds, name = "Categories"});
                 }
             }
             catch (Exception ex)
@@ -426,9 +441,15 @@ namespace Semplest.Core.Controllers
                 var cred =
                     (Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
                 var customerFK = cred.User.CustomerFK;
-                _campaignRepository.SaveSiteLinks(model, customerFK.Value,
+                var newIds = _campaignRepository.SaveSiteLinks(model, customerFK.Value,
                                                   (CampaignSetupModel) Session["CampaignSetupModel"]);
-                return Json("AdditionalLinks");
+                var csm = (CampaignSetupModel)Session["CampaignSetupModel"];
+                foreach (var nvp in newIds.Split(',').Select(items => items.Split('=')))
+                {
+                        model.SiteLinks.Single(t => t.UID == nvp[0]).SiteLInkPK = int.Parse(nvp[1]);
+                }
+                csm.SiteLinks = model.SiteLinks;
+                return Json(new { newKeys = newIds, name = "AdditionalLinks" });
             }
             catch (Exception ex)
             {

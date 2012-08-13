@@ -271,7 +271,7 @@ namespace Semplest.Core.Models.Repositories
             
         public string SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel)
         {
-            System.Text.StringBuilder rString = new System.Text.StringBuilder();
+            var rString = new System.Text.StringBuilder();
             using (var dbcontext = new SemplestModel.Semplest())
             {
                 var queryProd = (from c in dbcontext.ProductGroups
@@ -316,26 +316,20 @@ namespace Semplest.Core.Models.Repositories
                         if (gv.Length > 0)
                             throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                         var op = new System.Data.Objects.ObjectParameter("totalSize", typeof(int));
-                        string valueDelimiter = ",";
-                        string listDelimiter = ";";
+                        const string valueDelimiter = ",";
+                        const string listDelimiter = ";";
                         dbcontext.GetMSNGeoLocation(null, SerializeToCommaDlimitedString(model.AdModelProp.Addresses, valueDelimiter, listDelimiter), valueDelimiter, listDelimiter, op);
                         if ((int)op.Value > 250)
                             throw new Exception("geotarget limit");
                     }
                 }
 
-
-
-
-
                 var parameter = new SqlParameter("PromotionPK", promo.PromotionPK) { SqlDbType = SqlDbType.Int };
                 var parameter2 = new SqlParameter("LandingUrl", model.AdModelProp.LandingUrl.Trim()) { SqlDbType = SqlDbType.NVarChar };
                 var parameter3 = new SqlParameter("DisplayUrl", model.AdModelProp.DisplayUrl.Trim()) { SqlDbType = SqlDbType.NVarChar };
                 var parameter4 = new SqlParameter("GeoTVP", gt) { SqlDbType = SqlDbType.Structured, TypeName = "GeoTargetTableType" };
                 var parameter5 = new SqlParameter("AdTVP", at) { SqlDbType = SqlDbType.Structured, TypeName = "PromoAdTableType" };
-
-                var parameters = new object[] {parameter, parameter2, parameter3,parameter4,parameter5};
-
+                var parameters = new object[] {parameter, parameter2, parameter3, parameter4, parameter5};
                 var results = ((IObjectContextAdapter)dbcontext).ObjectContext.ExecuteStoreQuery<RVal>("exec UpdateGeoTargetingPromoAds @PromotionPK, @LandingUrl, @DisplayUrl, @GeoTVP, @AdTVP", parameters);
                 _savedCampaign = true;
                 foreach (var r in results)
@@ -346,8 +340,6 @@ namespace Semplest.Core.Models.Repositories
                     rString.Append(",");
                 }
                     
-        
-
                 if (promo.IsLaunched)
                 {
                     var sw = new ServiceClientWrapper();
@@ -381,10 +373,7 @@ namespace Semplest.Core.Models.Repositories
                         sw.scheduleUpdateGeoTargeting(promo.PromotionPK, adEngines);
                 }
             }
-            if (string.IsNullOrEmpty(rString.ToString()))
-                return String.Empty;
-            else
-                return rString.ToString().Substring(0, rString.ToString().Length - 1);
+            return string.IsNullOrEmpty(rString.ToString()) ? String.Empty : rString.ToString().Substring(0, rString.ToString().Length - 1);
         }
 
         public Promotion GetPromoitionFromCampaign(int customerFK, CampaignSetupModel model)
@@ -752,26 +741,37 @@ namespace Semplest.Core.Models.Repositories
                     {
                         GeoTargeting geoOld =
                             oldModel.AdModelProp.Addresses.SingleOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK);
-                        shouldUpdateGeoTargeting = true;
-                        gtr.Address = geo.Address;
-                        gtr.City = geo.City;
-                        gtr.Latitude = geo.Latitude;
-                        gtr.Longitude = geo.Longitude;
-                        gtr.ProximityRadius = geo.ProximityRadius;
-                        gtr.Zip = geo.Zip;
-                        gtr.StateCodeFK = geo.StateCodeFK;
-                        gtr.PKEY = geo.GeoTargetingPK;
-                        gtr.Operation = "U";
+                        if (geoOld.Address != geo.Address ||
+                            geoOld.City != geo.City ||
+                            geoOld.Latitude != geo.Latitude ||
+                            geoOld.Longitude != geo.Longitude ||
+                            geoOld.ProximityRadius != geo.ProximityRadius ||
+                            geoOld.Zip != geo.Zip ||
+                            geoOld.StateCodeFK != geo.StateCodeFK)
+                        {
+                            shouldUpdateGeoTargeting = true;
+                            gtr.Address = geo.Address;
+                            gtr.City = geo.City;
+                            gtr.Latitude = geo.Latitude;
+                            gtr.Longitude = geo.Longitude;
+                            gtr.ProximityRadius = geo.ProximityRadius;
+                            gtr.Zip = geo.Zip;
+                            gtr.StateCodeFK = geo.StateCodeFK;
+                            gtr.PKEY = geo.GeoTargetingPK;
+                            gtr.Operation = "U";
+                        }
                     }
-                    gtt.Add(gtr);
+                    if (!string.IsNullOrEmpty(gtr.Operation))
+                        gtt.Add(gtr);
                 }
             }
             return shouldUpdateGeoTargeting;
         }
 
-        public void SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel)
+        public string SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel)
         {
             bool shouldRefreshSiteLinks = false;
+            var rString = new System.Text.StringBuilder();
             using (var dbcontext = new SemplestModel.Semplest())
             {
                 var queryProd = (from c in dbcontext.ProductGroups
@@ -792,7 +792,23 @@ namespace Semplest.Core.Models.Repositories
                     if (gv.Length > 0)
                         throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                 }
-                shouldRefreshSiteLinks = AddSiteLinksToPromotion(promo, model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel);
+                SiteLinksTableType st;
+                shouldRefreshSiteLinks = AddSiteLinksToPromotion(promo, model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel, out st);
+
+                var parameter = new SqlParameter("PromotionPK", promo.PromotionPK) { SqlDbType = SqlDbType.Int };
+                var parameter2 = new SqlParameter("SlTVP", st) { SqlDbType = SqlDbType.Structured, TypeName = "SiteLinksTableType" };
+                var parameters = new object[] { parameter, parameter2 };
+                var results = ((IObjectContextAdapter)dbcontext).ObjectContext.ExecuteStoreQuery<RVal>("exec UpdateSiteLinks @PromotionPK, @SlTVP", parameters);
+                _savedCampaign = true;
+                foreach (var r in results)
+                {
+                    rString.Append(r.UID);
+                    rString.Append("=");
+                    rString.Append(r.PKEY);
+                    rString.Append(",");
+                }
+
+
                 dbcontext.SaveChanges();
                 _savedCampaign = true;
                 try
@@ -811,48 +827,54 @@ namespace Semplest.Core.Models.Repositories
                     SharedResources.Helpers.ExceptionHelper.LogException(ex);
                 }
             }
+            return string.IsNullOrEmpty(rString.ToString()) ? String.Empty : rString.ToString().Substring(0, rString.ToString().Length - 1);
         }
 
-        private bool AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, System.Data.Objects.ObjectContext context, CampaignSetupModel oldModel)
+        private bool AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, System.Data.Objects.ObjectContext context, CampaignSetupModel oldModel, out SiteLinksTableType st)
         {
             bool shouldRefreshSiteLinks = false;
+            st = new SiteLinksTableType();
             if (model.SiteLinks != null)
+
                 foreach (var sitelink in model.SiteLinks)
                 {
+                    SiteLinksTableTypeRow str = st.NewRow();
                     if (sitelink.Delete && !sitelink.SiteLinksSaved)
                     {
                         var sl = promo.SiteLinks.SingleOrDefault(x => x.SiteLInkPK == sitelink.SiteLInkPK);
                         if (sl != null)
                         {
+                            str.Operation = "D";
+                            str.PKEY = sl.SiteLInkPK;
                             context.DeleteObject(sl);
                             shouldRefreshSiteLinks = true;
                         }
                     }
-                    //TODO remove when the validation is added
-                    //if (!string.IsNullOrEmpty(sitelink.LinkText) && !string.IsNullOrEmpty((sitelink.LinkURL)))
+                        //TODO remove when the validation is added
+                        //if (!string.IsNullOrEmpty(sitelink.LinkText) && !string.IsNullOrEmpty((sitelink.LinkURL)))
                     else if (sitelink.SiteLInkPK == 0 && !sitelink.SiteLinksSaved)
                     {
                         shouldRefreshSiteLinks = true;
-                        var slink = new SiteLink
-                                        {
-                                            LinkText = sitelink.LinkText,
-                                            LinkURL = sitelink.LinkURL,
-                                            PromotionFK = promo.PromotionPK
-                                        };
-                        promo.SiteLinks.Add(slink);
+                        str.LinkText = sitelink.LinkText;
+                        str.LinkUrl = sitelink.LinkURL;
+                        str.UID = sitelink.UID;
+                        str.Operation = "I";
                     }
                     else
                     {
                         var siteOld = oldModel.SiteLinks.Single(x => x.SiteLInkPK == sitelink.SiteLInkPK);
                         if (siteOld.LinkText != sitelink.LinkText ||
-                                siteOld.LinkURL != sitelink.LinkURL)
-                            {
-                                shouldRefreshSiteLinks = true;
-                                var sl = promo.SiteLinks.Single(x => x.SiteLInkPK== sitelink.SiteLInkPK);
-                                sl.LinkText = sitelink.LinkText;
-                                sl.LinkURL = sitelink.LinkURL;
-                            }
+                            siteOld.LinkURL != sitelink.LinkURL)
+                        {
+                            shouldRefreshSiteLinks = true;
+                            str.LinkText = sitelink.LinkText;
+                            str.LinkUrl = sitelink.LinkURL;
+                            str.PKEY = sitelink.SiteLInkPK;
+                            str.Operation = "U";
+                        }
                     }
+                    if (!string.IsNullOrEmpty(str.Operation))
+                        st.Add(str);
                 }
             return shouldRefreshSiteLinks;
            
@@ -876,9 +898,12 @@ namespace Semplest.Core.Models.Repositories
                     var singlePromo = promo.PromotionAds.Single(id => id.PromotionAdsPK == pad.PromotionAdsPK);
                     if (singlePromo != null)
                     {
-                        atr.PKEY = pad.PromotionAdsPK;
-                        atr.Operation = "D";
-                        deleteAds.Add(pad.PromotionAdsPK);
+                        if (!promo.IsLaunched)
+                        {
+                            atr.PKEY = pad.PromotionAdsPK;
+                            atr.Operation = "D";
+                            deleteAds.Add(pad.PromotionAdsPK);
+                        }
                         shouldscheduleAds = true;
                     }
                 }
@@ -894,14 +919,20 @@ namespace Semplest.Core.Models.Repositories
                 }
                 else if (!pad.Delete && pad.PromotionAdsPK != 0)
                 {
-                            shouldscheduleAds = true;
-                            updateAds.Add(pad.PromotionAdsPK);
-                            atr.AdTextLine1 = pad.AdTextLine1;
-                            atr.AdTextLine2 = pad.AdTextLine2;
-                            atr.AdTitle = pad.AdTitle;
-                            atr.PKEY = pad.PromotionAdsPK;
-                            atr.Operation = "U";
+                    var oldAd = oldModel.AdModelProp.Ads.SingleOrDefault(x => x.PromotionAdsPK == pad.PromotionAdsPK);
+                    if (oldAd.AdTextLine1 != pad.AdTextLine1 ||
+                            oldAd.AdTextLine2 != pad.AdTextLine2 || oldAd.AdTitle != pad.AdTitle)
+                    {
+                        shouldscheduleAds = true;
+                        updateAds.Add(pad.PromotionAdsPK);
+                        atr.AdTextLine1 = pad.AdTextLine1;
+                        atr.AdTextLine2 = pad.AdTextLine2;
+                        atr.AdTitle = pad.AdTitle;
+                        atr.PKEY = pad.PromotionAdsPK;
+                        atr.Operation = "U";
                     }
+                }
+                if (!string.IsNullOrEmpty(atr.Operation))
                     att.Add(atr);
             }
             return shouldscheduleAds;

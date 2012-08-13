@@ -557,18 +557,10 @@ function OnBegin() {
             tabStrip.select(tab);
         }
     }
-    else if (id == "AdditionalLinks") {
-        $('input[name *= "SiteLinksSaved"]').val('True');
-        if ($('input[id*="SiteLinks_"]').length < 1) {
-            removeCurrentTab();
-        }
-    }
     else if (id == "NegativeKeywords") {
         if ($("#NegativeKeywordsText").val().trim().length < 1) {
             removeCurrentTab();
         }
-    } else if (id == "Keywords") {
-
     } else {
         if (id.name == "Keywords") {
             $('#KeywordCount').html(id.count);
@@ -590,21 +582,16 @@ function OnBegin() {
                     tabStrip.select(tab);
                 }
             }
-            var items = id.newKeys.split(",");
-
-            for (var i = 0; i <= items.length; i++) {
-                var nvp = items[i].split("=");
-                //nvp[0]
-                var replaceKey;
-                if ($('input[value|="' + nvp[0] + '"]')[0].id.split("_")[1] == 'Ads') {
-                    replaceKey = "PromotionAdsPK";
-                } else {
-                    replaceKey = "GeoTargetingPK";
-                }
-                $('#' + $('input[value|="' + nvp[0] + '"]')[0].id.replace("UID", replaceKey)).val(nvp[1]);
-            }
+            parseNewIds(id.newKeys);
         }
-        if (id != "" && id.name != "Keywords" && id.name != "Categories") {
+        else if (id.name == "AdditionalLinks") {
+            $('input[name *= "SiteLinksSaved"]').val('True');
+            if ($('input[id*="SiteLinks_"]').length < 1) {
+                removeCurrentTab();
+            }
+            parseNewIds(id.newKeys);
+        }
+        if (id != "" && id.name != "Keywords" && id.name != "Categories" && id.name != "AdditionalLinks") {
             var arr = id.split('<~>');
             var stitle, sbody;
             if (arr.length > 1) {
@@ -626,6 +613,25 @@ function OnBegin() {
         }
     }
     //$("#tabstrip").children('.k-content').height(650);
+}
+
+function parseNewIds(newKeys) {
+    if (newKeys != "") {
+        var items = newKeys.split(",");
+        for (var i = 0; i < items.length; i++) {
+            var nvp = items[i].split("=");
+            //nvp[0]
+            var replaceKey;
+            if ($('input[value|="' + nvp[0] + '"]')[0].id.split("_")[1] == 'Ads') {
+                replaceKey = "PromotionAdsPK";
+            } else if ($('input[value|="' + nvp[0] + '"]')[0].id.split("_")[1] == 'Addresses') {
+                replaceKey = "GeoTargetingPK";
+            } else {
+                replaceKey = "SiteLInkPK";
+            }
+            $('#' + $('input[value|="' + nvp[0] + '"]')[0].id.replace("UID", replaceKey)).val(nvp[1]);
+        }
+    }
 }
 
 $('#getCategories').click(function () {
