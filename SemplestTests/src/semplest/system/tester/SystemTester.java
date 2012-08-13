@@ -8,8 +8,9 @@ public class SystemTester {
 		try{			
 			String reportPath = args[0];
 			
-			SystemTestFunc.InitializeReport(reportPath);			
-			SystemTestFunc.InitializeSystemTest();
+			SystemTestFunc.InitializeReport(reportPath);	
+			SystemTestFunc.CleanUpTestData();
+			SystemTestFunc.InitializeSystemTest();			
 			
 			AdEngineServiceTest adEngineTest = new AdEngineServiceTest();
 			BiddingServiceTest biddingTest = new BiddingServiceTest();
@@ -20,8 +21,7 @@ public class SystemTester {
 			biddingTest.Test_BiddingService(serviceURL);
 			keywordTest.Test_KeywordService(serviceURL);
 			mailTest.Test_MailService(serviceURL);
-			
-			SystemTestFunc.CleanUpTestData();			
+								
 			SystemTestFunc.FinalizeReport();
 		}
 		catch(Exception e){
