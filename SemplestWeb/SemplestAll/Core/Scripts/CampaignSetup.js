@@ -349,6 +349,13 @@ function removeNestedForm(element, container, deleteElement) {
     //    }
     $container.find(deleteElement).val('True');
     $container.hide();
+    var cnt = $(".ads input[name*='Delete']").length;
+    for (var i = 0; i < cnt; i++) {
+        if ($(".ads input[name*='Delete']")[i].value == 'False') {
+            $("#adMessage").css("visibility", "hidden");
+            return;
+        }
+    }
 }
 
 function addNestedForm(container, counter, ticks, content) {
@@ -633,6 +640,8 @@ function parseNewIds(newKeys) {
         }
     }
 }
+
+
 
 $('#getCategories').click(function () {
     enabledIsLaunched();
