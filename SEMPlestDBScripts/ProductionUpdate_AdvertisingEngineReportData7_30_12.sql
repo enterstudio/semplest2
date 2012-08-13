@@ -1,12 +1,22 @@
 update Configuration set SemplestAdEngineReportLookbackDays = 21
-
+Go
 alter table promotion drop column BudgetToAddDate
+GO
 alter table promotion drop column BudgetToAddToNextCycle
-
+GO
 alter table promotionpayment drop constraint DF__Promotion___Budg__314D4EA8
+GO
 alter table promotionpayment drop column _BudgetCarryOverAmount_
+GO
 alter table promotionpayment add BudgetCarryOverAmount money
 go
+---
+--- CREATE DEFAULT CONSTRAINT: KeywordBid.DF_KeywordBid_CompetitionType
+---
+ALTER TABLE dbo.KeywordBid ADD DEFAULT 'Reset' FOR CompetitionType
+GO
+
+
 -- NEED TO DROP THIS TABLE FIRST AdvertisingEngineReportData
 
 ---
