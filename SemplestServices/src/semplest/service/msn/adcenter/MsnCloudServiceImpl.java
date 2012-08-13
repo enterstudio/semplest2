@@ -3255,7 +3255,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			final MSNGeotargetObject msnGeoTargetGroup = SemplestDB.getMsnLocation(promotionId, null, null, null);
 			final List<String> states = msnGeoTargetGroup.getStates();
 			final List<String> metros = msnGeoTargetGroup.getMetro();
-			final List<String> cities = msnGeoTargetGroup.getCity();			
+			final List<String> cities = msnGeoTargetGroup.getCity();	
+			logger.info("Generated " + states.size() + " States, " + metros.size() + " MetroAreas, " + cities.size() + " Cities from MSN Geo Target Group [" + msnGeoTargetGroup + "]");
+			if (states.isEmpty() && metros.isEmpty() && cities.isEmpty())
+			{
+				logger.info("No Geo Targets to add");
+				return true;
+			}
 			if (states != null && !states.isEmpty())
 			{
 				final StateTarget stateTarget = getStateTarget(states);
