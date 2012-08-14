@@ -380,12 +380,15 @@
 	 	 	
 	 	 	<!-- update the installation path -->
 	 		<echo file="${dist}/path.txt" message="c:/${service.indexname}" />		
-	 	 	<!-- update the properties file -->
-	 	 	<propertyfile
-	 	 	    file="${dist}/bin/system.properties"
-	 	 	    comment="Update YAJSW.servicename. by Hudson Build Process">
-	 	 		<entry  key="YAJSW.servicename" value="${service.indexname}"/>		
-	 	 	</propertyfile>
+	 	 	<!-- update the properties file -->	 	 	
+	 	 	<property name="jdbc" value="jdbc:jtds:sqlserver://10.118.218.132/semplest" />
+ 			<propertyfile 
+	 	 		file="${dist}/bin/system.properties"
+	 	 		comment="Update YAJSW.servicename and jdbc.url by Hudson Build Process">
+ 				<entry  key="YAJSW.servicename" value="${service.indexname}"/>	
+ 			    <entry key="jdbc.url" operation="=" value="@JDBC"/>
+ 			</propertyfile>		
+ 			<replace file="${dist}/bin/system.properties" token="@JDBC" value="${jdbc}" />
 	 	 	<!-- build the installer -->
 	 	  	<izpack input="${install.xml}"
   		            output="${output.dir}/${product.short.name}-${service.indexname}-${product.version}-install.jar"
