@@ -9,8 +9,9 @@ public class SystemTester {
 			String reportPath = args[0];
 			
 			SystemTestFunc.InitializeReport(reportPath);	
+			SystemTestFunc.LoadConfiguration();		
 			SystemTestFunc.CleanUpTestData();
-			SystemTestFunc.InitializeSystemTest();			
+			SystemTestFunc.BuildTestData();
 			
 			AdEngineServiceTest adEngineTest = new AdEngineServiceTest();
 			BiddingServiceTest biddingTest = new BiddingServiceTest();
