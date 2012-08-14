@@ -66,6 +66,7 @@ public class SystemTestDataModel {
 	//GeoTargeting
 	public static final String address = "195 Broadway";
 	public static final String city = "New York";
+	public static final String state = "New York";
 	public static final Integer stateCode = 32;
 	public static final String zipCode = "10007";
 	public static final Double longitude = -74.009526;

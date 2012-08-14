@@ -43,10 +43,10 @@ public class SystemTestFunc extends BaseDB{
 		PrintMethodCall(tmp);
 	}
 	
-	public static void InitializeSystemTest() throws Exception{		
+	public static void LoadConfiguration() throws Exception{		
 		
 		System.out.println("====================================================================================");
-		System.out.println(">>> Initialization >>>");
+		System.out.println(">>> Load Configuration >>>");
 		System.out.println("====================================================================================");
 		System.out.println();
 
@@ -62,9 +62,13 @@ public class SystemTestFunc extends BaseDB{
 		{
 			object.wait();
 		}	
+	}
+	
+	public static void BuildTestData(){}{
 		
-		PrintLineSeperator();
-		System.out.println("Initializing the test data...");	
+		System.out.println("====================================================================================");
+		System.out.println(">>> Initialize Test Data >>>");
+		System.out.println("====================================================================================");
 		System.out.println();
 		
 		//create a new promotion for the test
