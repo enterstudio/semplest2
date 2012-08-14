@@ -36,7 +36,8 @@ public class InstallationSetup {
 	private final static String TestKeywordServer = "VMJAVA3";
 	
 	//EXP
-	private final static String ExpJdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_testing";
+	//private final static String ExpJdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_testing";
+	private final static String ExpJdbc = "jdbc:jtds:sqlserver://172.18.9.23/SemplestPRODUCTION";
 	private final static String ExpEsbServer = "172.18.9.26";
 	private final static String ExpServiceServer = "VMDEVJAVA3";
 	private final static String ExpKeywordServer = "VMDEVJAVA2";
@@ -49,9 +50,10 @@ public class InstallationSetup {
 	
 	//PRODUCTION
 	private final static String ProdJdbc = "jdbc:jtds:sqlserver://10.118.218.132/semplest";
-	private final static String ProdEsbServer = "10.80.130.64";
-	private final static String ProdServiceServer = "10.60.9.49";
-	private final static String ProdKeywordServer = "10.62.79.139";
+	private final static String ProdEsbServer = "23.22.63.111";
+	private final static String ProdServiceServer1 = "107.21.163.3";
+	private final static String ProdServiceServer2 = "23.22.245.35";
+	private final static String ProdKeywordServer = "107.20.43.149";
 	
 	private enum SERVER_BOX {DEV, TEST, EXP, UAT, PROD};
 	
@@ -156,7 +158,8 @@ public class InstallationSetup {
 				is.setEsb(SERVER_BOX.PROD);
 			}
 			
-			if(ownIP.getHostAddress().equalsIgnoreCase(config.get(SERVER_BOX.PROD).serviceServer)){				
+			if(ownIP.getHostAddress().equalsIgnoreCase(ProdServiceServer1)
+					|| ownIP.getHostAddress().equalsIgnoreCase(ProdServiceServer2)){				
 				//PROD Box Services
 				is.setServices(SERVER_BOX.PROD);
 			}
@@ -299,7 +302,7 @@ public class InstallationSetup {
 		config.put(SERVER_BOX.UAT, uatConfig);
 		
 		//for PRODUCTION box
-		ServerConfiguration prodConfig = new ServerConfiguration(ProdJdbc, ProdEsbServer, ProdServiceServer, ProdKeywordServer);
+		ServerConfiguration prodConfig = new ServerConfiguration(ProdJdbc, ProdEsbServer, ProdServiceServer1, ProdKeywordServer);
 		config.put(SERVER_BOX.PROD, prodConfig);
 		
 	}
