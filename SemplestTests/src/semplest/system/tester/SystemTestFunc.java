@@ -64,7 +64,7 @@ public class SystemTestFunc extends BaseDB{
 		}	
 	}
 	
-	public static void BuildTestData(){}{
+	public static void BuildTestData(){
 		
 		System.out.println("====================================================================================");
 		System.out.println(">>> Initialize Test Data >>>");
