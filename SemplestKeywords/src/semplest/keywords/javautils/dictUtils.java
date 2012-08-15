@@ -45,6 +45,17 @@ public class dictUtils
 
   // ********* [Note:] Temporary solution. Need to restructure
   public static final Set<String> cw = CommonWordSet();
+  public static final Set<String> sw = StopWordSet();
+  
+  
+  public static final String commonWordString = ",a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,de,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,la,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,pdf,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your,";
+
+  public static final String localWordString = ",class,div,escap,document,fals,file,function,floor,http,html,javascript,math,pdf,plugin,protocol,true,tv,var,width,window,write,www,org";
+
+  // the new, north, west etc are included but they are general stopwords 
+  public static final String stateWordString = ",north,south,east,west,alabama,alaska,arizona,arkansas,california,canada,colorado,connecticut,delaware,florida,georgia,hawaii,idaho,illinois,indiana,iowa,kansas,kentucky,louisiana,maine,maryland,massachusetts,mexico,michigan,minnesota,mississippi,missouri,montana,nebraska,nevada,hampshire,jersey,mexico,york,carolina,dakota,ohio,oklahoma,oregon,pennsylvania,rhode,carolina,dakota,tennessee,texas,utah,vermont,virginia,washington,wisconsin,wyoming";
+
+  public static final String sitesWordString = ",mozilla,google,yahoo,bing,wikipedia,aol,yippy,ask,netscape";
 
   /*
   // static methods to load paths from property file
@@ -86,6 +97,19 @@ public class dictUtils
   public static String getStemWord( String word ){
     return dict.get ( getRoot( word ));
   }
+  
+  //Stem a word eliminating stop words from list
+  public static String stemNSW( String word ){
+	    return isNSW(getRoot( word ));
+  }
+  
+  // Return word if is not stop word or empty array if it is
+  public static String isNSW( String word){
+	  if(sw.contains(word))
+		  return "";
+	  return word;
+  }
+  
   public static boolean validDoc( String doc ){
     return docsi.containsKey( doc );
   }
@@ -123,21 +147,16 @@ public class dictUtils
 
   //-----------------
   public static Set<String> CommonWordSet (){
-    String commonWordString = ",a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,de,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,la,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,pdf,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your,";
-
-    String localWordString = ",class,div,escap,document,fals,file,function,floor,http,html,javascript,math,pdf,plugin,protocol,true,tv,var,width,window,write,www,org";
-
-    // the new, north, west etc are included but they are general stopwords 
-    String stateWordString = ",north,south,east,west,alabama,alaska,arizona,arkansas,california,canada,colorado,connecticut,delaware,florida,georgia,hawaii,idaho,illinois,indiana,iowa,kansas,kentucky,louisiana,maine,maryland,massachusetts,mexico,michigan,minnesota,mississippi,missouri,montana,nebraska,nevada,hampshire,jersey,mexico,york,carolina,dakota,ohio,oklahoma,oregon,pennsylvania,rhode,carolina,dakota,tennessee,texas,utah,vermont,virginia,washington,wisconsin,wyoming";
-
-    String sitesWordString = ",mozilla,google,yahoo,bing,wikipedia,aol,yippy,ask,netscape";
-
     String wordString = commonWordString + localWordString + stateWordString + sitesWordString;
-    String[] commonWordArray = wordString.split(","); 
+    String[] commonWordArray = wordString.split(",");
     Set<String> cwSet = new HashSet<String> (Arrays.asList(commonWordArray));
     return cwSet;
   }
-
+  public static Set<String> StopWordSet(){
+	  String[] stopWordArray = commonWordString.split(",");
+	  Set<String> swSet = new HashSet<String> (Arrays.asList(stopWordArray));
+	  return swSet;
+  }
   //-------------------------------------------------------------
   public static void main (String[] args){
     System.out.println( dicti.size());

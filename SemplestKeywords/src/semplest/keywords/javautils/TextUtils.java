@@ -433,7 +433,13 @@ public class TextUtils {
       os = os + dictUtils.getStemWord( w ) + " ";
     return os;
   }
-
+  //Stem a sentence removing stop words
+  public static String stemSentNSW(String raw){
+	  String os = "";
+	    for( String w: raw.split("\\s+"))
+	      os = os + dictUtils.stemNSW( w ) + " ";
+	    return os;
+  }
   //-------------------------------------------------------------
   public static void main (String[] args) throws Exception {
     System.out.println( HTMLText( args[0] ));
