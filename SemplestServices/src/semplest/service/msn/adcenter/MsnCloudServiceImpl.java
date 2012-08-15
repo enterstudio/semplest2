@@ -257,7 +257,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 	{
 		try
 		{
-			final String key = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+			final String key = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");			
 			final AESBouncyCastle aes = AESBouncyCastle.getInstance(key);
 			final String user = (String) SemplestConfiguration.configData.get("MSNApiUsername");
 			final String pass = aes.decrypt((String) SemplestConfiguration.configData.get("MSNApiPassword"));
@@ -3997,7 +3997,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		IReportingService reportingService = getReportingService(accountId);
 
 		final int waitSeconds = 2;
-		final int maxWaitSeconds = 90;
+		final Integer maxWaitSeconds = (Integer) SemplestConfiguration.configData.get("ReportRetrievalTimeoutSecs");
 		int elapsedSeconds = 0;
 		// int waitMinutes = 15;
 		// int maxWaitMinutes = 120;

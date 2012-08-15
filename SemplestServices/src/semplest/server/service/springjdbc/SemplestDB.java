@@ -968,9 +968,9 @@ public class SemplestDB extends BaseDB
 	public static List<BidElement> getLatestBids(int promotionID, AdEngine searchEngine) throws Exception
 	{
 		String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType [matchType],kb.CompetitionType, kb.StartDate, kb.EndDate, "
-				+ " kb.isActive, kb.isDefaultValue, pka.IsNegative from Promotion p  "
+				+ " kb.isActive, kb.isDefaultValue, pka.IsNegative from Promotion p "
 				+ "inner join KeywordBid kb on kb.PromotionFK = p.PromotionPK "
-				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.keywordFK "
+				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.keywordFK and pka.IsActive = 1 and pka.IsDeleted = 0 and IsTarget" + searchEngine.name() + " = " + 1 + " "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
 				+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
 				+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
