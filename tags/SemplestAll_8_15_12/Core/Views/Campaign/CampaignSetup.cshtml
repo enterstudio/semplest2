@@ -1,0 +1,145 @@
+﻿@model Semplest.Core.Models.CampaignSetupModel
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/conditional-validation.js")" type="text/javascript"></script>
+@Html.AntiForgeryToken()
+@{}
+<style>
+    .enddate
+    {
+        display: none;
+        visibility: hidden;
+    }
+    .expand-padding
+    {
+        padding-right: 2px;
+    }
+</style>
+<link href="@Url.Content("~/Content/formStyle.css")"  rel="Stylesheet" />
+@section Title{
+    Ad Setup (@ViewBag.Title)
+}
+@section headscript{
+    <script src="@Url.Content("~/Scripts/jquery.maskedinput-1.3.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/enabledisable.js")" type="text/javascript"></script>
+}
+@section SectionNav{
+    <div id="examplesThemeChooser">
+        Step
+        <button type="button" class="k-button selected" id="btnOne">
+            1</button>
+        <button type="button" class="k-button unselected" id="btnTwo">
+            2</button>
+        <button type="button" class="k-button unselected" id="btnThree">
+            3</button>
+    </div>
+}
+<div>
+    <div id="example">
+        @using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", OnBegin = "OnBegin", OnFailure = "OnFailure" }))
+        {
+            @Html.ValidationSummary(true)
+            <div id="tabstrip">
+                <ul>
+                    <li class="k-state-active">Define Product</li>
+                    <li>Create Ads</li>
+                </ul>
+                <div style="overflow: auto;">
+                    @Html.EditorFor(t => t.ProductGroup)
+                </div>
+                <div style="overflow: auto;">
+                    @Html.EditorFor(t => t.AdModelProp)
+                </div>
+            </div>
+            @*<hr class="titlewhiteline" style="margin-top: -60px; margin-bottom:5px; " />
+            <br style="margin-top:1px;background-color:red;"></br>*@
+            <input type="hidden" id="ViewSelectedKeywordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'/>
+            <input type="hidden" id="NegativeKeyWordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["NegativeKeyWordsUrl"]'/>
+            <input type="hidden" id="AdditionalSiteLinksUrl" value='@System.Configuration.ConfigurationManager.AppSettings["AdditionalSiteLinksUrl"]'/>
+            <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+            <input type="hidden" id="LogoUrlStr" value='@System.Configuration.ConfigurationManager.AppSettings["LogoUrl"]'/>
+            <input type="hidden" id="BillingLaunchUrl" value='@System.Configuration.ConfigurationManager.AppSettings["BillingLaunchUrl"]'/>
+            <input type="hidden" id="CategoriesUrl" value='@System.Configuration.ConfigurationManager.AppSettings["CategoriesUrl"]'/>
+            <input type="hidden" id="CreateAdsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["CreateAdsUrl"]'/>
+            <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
+            <input type="hidden" id="IsLaunched" value="@Model.IsLaunched"/>
+            <input type="hidden" id="IsCompleted" value="@Model.IsCompleted"/>
+            <input type="hidden" id="HasSiteLinks" value="@Model.SiteLinks.Any()"/>
+            <input type="hidden" id="HasKeywords" value="@Model.AllKeywords.Any()"/>
+            <input type="hidden" id="HasNegativeKeywords" value="@Model.AdModelProp.NegativeKeywords.Any()"/>
+            @Html.HiddenFor(model => @Model.BillType)
+            @Html.HiddenFor(model => @Model.AdModelProp.IsNew)
+            <img id="displayBox" style="display: none" />
+            <div id="InvalidDescriptionWindow" style="display: none; text-align: center; font-weight: bold;">
+                <div class="InvalidDescriptionText">
+                </div>
+                <br />
+                <div style="text-align: center">
+                    <input type="button" id="btnCancelInvalid" value="OK" class="k-button" />
+                </div>
+            </div>
+            
+        }
+    </div>
+    
+                <div id="DirtyFormWindow" style="display: none">
+                <form name="hiddenDirtyForm" id="hiddenDirtyForm" action="DirtyForm" method="post">
+                        Your data has been modified. If you continue your current keyword selection will be deleted.
+                <div style="text-align: center">
+                    <input type="button" id="btnOkDF" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelDF" value="Cancel" class="k-button" />
+                </div>
+                </form>
+            </div>
+</div>
+<script type="text/javascript">
+    if ($('#currentMode').val() == "True") {
+        $("#btnOne").removeClass('unselected');
+        $("#btnTwo").removeClass('unselected');
+        $("#btnThree").removeClass('unselected');
+        $("#btnOne").addClass('selected');
+        $("#btnTwo").addClass('selected');
+        $("#btnThree").addClass('selected');
+    }
+    $(document).ready(function () {
+        if ($('#AdModelProp_IsNew').val() == 'False') {
+            enableDisable();
+            if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
+                openAllTabs(false);
+            } else if ($('#IsLaunched').val() == 'False') {
+                openAllTabs(true);
+            }
+        }
+        if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
+            $('#ProductGroup_ProductGroupName').attr("readonly", true);
+            $('#ProductGroup_ProductPromotionName').attr("readonly", true);
+            $('#ProductGroup_Words').attr("readonly", true);
+            $('#ProductGroup_Budget').attr("readonly", true);
+            $('#ProductGroup_StartDate').attr("readonly", true);
+            $('#ProductGroup_EndDate').attr("readonly", true);
+            $('input[name*="ProductGroup.AdEnginesList"]').attr("readonly", true);
+        }
+    });
+
+
+    $('#btnCongrats').live("click", function () {
+        $.unblockUI();
+    });
+
+
+    $('input[name*="ProductGroup.AdEnginesList"]').click(function (event) {
+        if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True')
+            event.preventDefault();
+    });
+    $("#btnCancelInvalid").click(function (event) {
+        var pausePromotionWindow = $('#InvalidDescriptionWindow').data("kendoWindow");
+        $('#InvalidDescriptionWindow').hide();
+        pausePromotionWindow.close();
+    });
+    function OnFailure() {
+        $.unblockUI();
+    }
+</script>
+<script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/AdditionalLinks.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/QuestionMarkHelp.js")" type="text/javascript"> </script>

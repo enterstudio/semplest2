@@ -1,0 +1,28 @@
+﻿@model List<Semplest.SharedResources.Controllers.ErrorModel>
+@{
+    ViewBag.Title = "ErrorView";
+}
+
+
+<table border =1 id ="errorResults"><tr><th>User</th><th>Error Message</th><th>Time Stamp</th></tr>
+            @foreach (Semplest.SharedResources.Controllers.ErrorModel item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="display-field">
+                            @Html.DisplayFor(model => item.User)
+                        </div>
+                    </td>
+                    <td>
+                        <div class="display-field">
+                            @Html.DisplayFor(model => item.ErrorMessage)
+                        </div>
+                    </td>
+                    <td>
+                        <div class="display-field">
+                            @Html.DisplayFor(model => item.TimeStamp)
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>   

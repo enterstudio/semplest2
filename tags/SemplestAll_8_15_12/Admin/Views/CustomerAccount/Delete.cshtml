@@ -1,0 +1,16 @@
+﻿@model Semplest.Admin.Models.CustomerAccountWithEmployeeModel
+@using (Html.BeginForm("Delete"))
+{
+    @Html.HiddenFor(model => model.CustomerAccount.UserPK)
+    @Html.HiddenFor(model => model.CustomerAccount.AccountNumber)
+    @Html.HiddenFor(model => model.CustomerAccount.Customer)
+
+    <h2>
+        Delete Customer Account #@Html.DisplayFor(model => model.CustomerAccount.AccountNumber)
+        / (@Html.DisplayFor(Model => Model.CustomerAccount.Customer)) ?</h2>
+    <br />
+    <div style="text-align: center">
+        <input type="submit" name="command" value="Delete" class="k-button" />
+        <input type="submit" name="command" value="Cancel" class="k-button" />
+    </div>
+}

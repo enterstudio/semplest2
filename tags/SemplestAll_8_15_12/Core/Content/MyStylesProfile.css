@@ -1,0 +1,388 @@
+﻿body {
+}
+.k-input#txtAccntNum
+{
+    margin-top:5px;
+margin-bottom:5px;
+    margin-left:67px;
+    width:200px;
+    }
+    .k-input#txtParentName
+    {
+        margin-left:50px;
+        width:200px;
+        margin-top:5px;
+margin-bottom:5px;
+        }
+          .k-label#lblSuperParent
+    {
+        margin-top:5px;
+margin-bottom:5px;
+        margin-left:10px;
+        }
+        .k-input#txtSuperParentName
+    {
+        margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:200px;
+        }
+      .k-label#lblFitstName
+      {
+          
+         margin-left:200px;
+          }
+           .k-label#lblMiddleName
+      {
+          
+        margin-left:100px;
+       
+          }
+           .k-label#lblLastName
+      {
+           
+        margin-left:90px;
+        width:200px;
+          }
+          .k-input#txtFirstName
+          {
+              
+        margin-left:80px;
+        width:150px;
+              }
+              .k-input#txtMiddleName
+          {
+        margin-left:20px;
+        width:50px;
+              }
+              .k-input#txtLastName
+          {
+              
+        margin-left:20px;
+        width:150px;
+              }
+              
+              
+          .k-input#txtPhone    {
+                   margin-top:5px;
+margin-bottom:5px;
+        margin-left:90px;
+        width:100px;
+                  }
+                  
+                  .k-input#txtPhone2
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:200px;
+                      }
+                      .k-input#txtEmail
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:90px;
+        width:300px;
+                      }
+                      
+                      .k-input#txtBillngAddress1
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:30px;
+        width:300px;
+                      }
+                      .k-input#txtBillngAddress2
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:140px;
+        width:300px;
+                      }
+                      
+                      .k-input#txtCity
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:40px;
+        width:150px;
+                      }
+                      .k-input#txtState
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:60px;
+                      }
+                      .k-input#txtZip
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:80px;
+                      }
+                      
+                      .k-input#txtZip1
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:60px;
+                      }
+                      
+                      
+                       .k-input#txtUserid
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:90px;
+        width:300px;
+                      }
+                      
+                      .k-input#txtPassword
+                      {
+                          margin-top:5px;
+margin-bottom:5px;
+        margin-left:70px;
+        width:200px;
+                          }
+                      
+                      .k-input#txtConfrmPassword
+                      {
+                          margin-top:5px;
+margin-bottom:5px;
+        margin-left:50px;
+        width:200px;
+                          }
+                          
+                          .k-label#lblConfrmPassword
+                          {
+                              margin-left:20px;
+                              }
+                              
+                               .k-input#txtSecurQues
+                      {
+                          margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:540px;
+                          }
+                          .k-input#txtSecurAnswer
+                      {
+                          margin-top:5px;
+margin-bottom:5px;
+        margin-left:30px;
+        width:540px;
+                          }
+                          
+                          
+                          .k-button#btnSave
+                          {
+                              margin-top:5px;
+margin-bottom:5px;
+        margin-left:150px;
+        width:150px;
+                              }
+                              
+                              .k-button#btnCancel
+                          {
+                              margin-top:5px;
+margin-bottom:5px;
+        margin-left:50px;
+        width:150px;
+                              }
+                              
+                              
+                              
+                              
+                              
+                              
+.k-input#ctxtAccntNum
+{
+    margin-top:5px;
+margin-bottom:5px;
+    margin-left:65px;
+    width:200px;
+    }
+    .k-input#ctxtParentName
+    {
+        margin-left:50px;
+        width:300px;
+        margin-top:5px;
+margin-bottom:5px;
+        }
+         
+        .k-input#ctxtCompanyName
+    {
+        margin-top:5px;
+margin-bottom:5px;
+        margin-left:30px;
+        width:300px;
+        }
+      .k-label#clblFitstName
+      {
+          
+         margin-left:200px;
+          }
+           .k-label#clblMiddleName
+      {
+          
+        margin-left:100px;
+       
+          }
+           .k-label#clblLastName
+      {
+           
+        margin-left:90px;
+        width:200px;
+          }
+          .k-input#ctxtFirstName
+          {
+              
+        margin-left:80px;
+        width:150px;
+              }
+              .k-input#ctxtMiddleName
+          {
+        margin-left:20px;
+        width:50px;
+              }
+              .k-input#ctxtLastName
+          {
+              
+        margin-left:20px;
+        width:150px;
+              }
+              
+              
+          .k-input#ctxtPhone    {
+                   margin-top:5px;
+margin-bottom:5px;
+        margin-left:90px;
+        width:100px;
+                  }
+                  
+                  .k-input#ctxPhone2
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:200px;
+                      }
+                      .k-input#ctxtEmail
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:90px;
+        width:300px;
+                      }
+                      
+                      .k-input#ctxtBillngAddress1
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:30px;
+        width:300px;
+                      }
+                      .k-input#ctxtBillngAddress2
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:140px;
+        width:300px;
+                      }
+                      
+                      .k-input#ctxtCity
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:40px;
+        width:150px;
+                      }
+                      .k-input#ctxtState
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:60px;
+                      }
+                      .k-input#ctxtZip
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:80px;
+                      }
+                      
+                      .k-input#ctxtZip1
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:60px;
+                      }
+                      
+                      
+                       .k-input#ctxtUserid
+                  {
+margin-top:5px;
+margin-bottom:5px;
+        margin-left:90px;
+        width:300px;
+                      }
+                      
+                      .k-input#ctxtPassword
+                      {
+                          margin-top:5px;
+margin-bottom:5px;
+        margin-left:75px;
+        width:200px;
+                          }
+                      
+                      .k-input#ctxtConfrmPassword
+                      {
+                          margin-top:5px;
+margin-bottom:5px;
+        margin-left:55px;
+        width:200px;
+                          }
+                          
+                          .k-label#lblConfrmPassword
+                          {
+                              margin-left:20px;
+                              }
+                              
+                               .k-input#ctxtSecurQues
+                      {
+                          margin-top:20px;
+margin-bottom:5px;
+        margin-left:20px;
+        width:540px;
+                          }
+                          .k-input#ctxtSecurAnswer
+                      {
+                          margin-top:5px;
+margin-bottom:5px;
+        margin-left:30px;
+        width:540px;
+                          }
+                          .k-label#clblConfrmPassword
+                          {
+                              margin-left:20px;
+                              }
+                          
+                          .k-button#cbtnSave
+                          {
+                              margin-top:5px;
+margin-bottom:5px;
+        margin-left:145px;
+        width:150px;
+                              }
+                              
+                              .k-button#cbtnCancel
+                          {
+                              margin-top:5px;
+margin-bottom:5px;
+        margin-left:45px;
+        width:150px;
+                              }                              
