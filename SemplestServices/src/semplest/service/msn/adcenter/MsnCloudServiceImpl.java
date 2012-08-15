@@ -3997,7 +3997,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		IReportingService reportingService = getReportingService(accountId);
 
 		final int waitSeconds = 2;
-		final Integer maxWaitSeconds = (Integer) SemplestConfiguration.configData.get("ReportRetrievalTimeoutSecs");
+		final Integer maxWaitSeconds = (Integer) SemplestConfiguration.configData.get("MSNReportRetrievalTimeoutSecs");
 		int elapsedSeconds = 0;
 		// int waitMinutes = 15;
 		// int maxWaitMinutes = 120;
