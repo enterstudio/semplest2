@@ -8,13 +8,13 @@ import semplest.nlp.common.Utils;
 import semplest.nlp.opennlp.SemplestChucnker;
 import semplest.nlp.opennlp.SemplestSentenceExtractor;
 
-public class SemplestNLPOpenNLP  implements SemplestNLP {
+public class SemplestOpenNLP  implements SemplestNLP {
 	
 	private SemplestSentenceExtractor sentenceExtractor;
 	private SemplestChucnker chunker;
 
 	
-	public SemplestNLPOpenNLP(){
+	public SemplestOpenNLP(){
 		sentenceExtractor= new SemplestSentenceExtractor();
 		chunker = new SemplestChucnker();
 
@@ -146,7 +146,7 @@ public class SemplestNLPOpenNLP  implements SemplestNLP {
 				"The Air Force had four X-51A Waveriders and has tested three. Officials said they do not yet know when " +
 				"or if the fourth Waverider will be tested.";
 		
-		SemplestNLP nlpEngine = new SemplestNLPOpenNLP();
+		SemplestNLP nlpEngine = new SemplestOpenNLP();
 		
 		// If we take care of breaking up into sentences
 		System.out.println("Parsing sentence by sentence... ");
