@@ -285,7 +285,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 7. Set Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE // 8. Service
 			 * call - semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
 			 */
-			SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);
+			final Map<AdEngine, PromotionStatus> promotionStatuses = SemplestDB.getPromotionStatus(PromotionID, adEngines);
+			if (!promotionStatuses.isEmpty())
+			{
+				throw new Exception("This promotion already has statuses from before, so it's not the first time this promotion is being added.  This shouldn't happen.\n" + SemplestUtils.getEasilyReadableString(promotionStatuses));
+			}
+			SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);			
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(PromotionID);
 			final PromotionObj promotionData = getPromoDataSP.getPromotionData();
