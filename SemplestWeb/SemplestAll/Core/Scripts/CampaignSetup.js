@@ -176,7 +176,7 @@ $(document).ready(function () {
         // access the selected item via e.item (jQuery object)
         var dataItem = this.dataItem(e.item.index());
         if (dataItem.text == 'Specific Period') {
-            $('#lblbudgetdisplay').html('/ Promotion');
+            $('#lblbudgetdisplay').html('/ Promotion Total Budget');
             $("#ProductGroup_EndDate").removeClass("enddate");
             $("#ProductGroup_EndDate").kendoDatePicker({
                 //change: endChange
