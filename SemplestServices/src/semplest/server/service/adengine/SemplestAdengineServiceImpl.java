@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1059,7 +1060,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			adGrpData.setAdGroupID(adGroupID);
 			adGrpData.setAds(nonDeletedAds);
 			// final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);
-			msn.updateGeoTargets(promotionId, msnAccountId, campaignID);
+			msn.updateGeoTargets(msnAccountId, campaignID, geoTargetVsTypeMap);
 			logger.info("Added MSN GeoTargets for PromotionID [" + promotionId + "], MsnAccountID [" + msnAccountId + "], CampaignID [" + campaignID + "]");
 		}
 		else
@@ -1511,8 +1512,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long accountId = promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
 				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = getGeoTargetVsTypeMap(geoTargets);
-				// final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);
-				msn.updateGeoTargets(promotionID, accountId, campaignId);
+				final Collection<GeoTargetType> geoTargetTypes = geoTargetVsTypeMap.values();
+				final Set<GeoTargetType> geoTargetTypeSet = new HashSet<GeoTargetType>(geoTargetTypes);
+				if (geoTargetTypeSet.size() > 1)
+				{
+					throw new Exception("There is more than 1 type of Geo Target in the database for PromotionID [" + promotionID + "], which is not allowed: [" + geoTargetTypes + "]");
+				}
+				//final Set<MSNGeotargetObject> msnGeoTargets = MsnCloudServiceImpl.getMsnGeoTargets(geoTargetVsTypeMap);
+				msn.updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
 			}
 			else
 			{
