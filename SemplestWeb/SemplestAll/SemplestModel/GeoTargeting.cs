@@ -23,8 +23,10 @@ namespace SemplestModel
         public Nullable<decimal> Longitude { get; set; }
         public Nullable<decimal> Latitude { get; set; }
         public Nullable<decimal> ProximityRadius { get; set; }
+        public Nullable<int> AddressTypeFK { get; set; }
     
         public virtual Promotion Promotion { get; set; }
         public virtual StateCode StateCode { get; set; }
+        public virtual AddressType AddressType { get; set; }
     }
 }

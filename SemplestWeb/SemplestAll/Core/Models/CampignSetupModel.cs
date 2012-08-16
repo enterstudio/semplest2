@@ -101,6 +101,7 @@ namespace Semplest.Core.Models
         // display url limit 35 characters
         public string DisplayUrl { get; set; }
         public bool IsNew { get; set; }
+        public string PromotionAddressType { get; set; }
     }
 
     public class AdEngineSelectModel

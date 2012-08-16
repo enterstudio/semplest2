@@ -17,11 +17,13 @@ namespace SemplestModel
         public AddressType()
         {
             this.CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
+            this.GeoTargetings = new HashSet<GeoTargeting>();
         }
     
         public int AddressTypePK { get; set; }
         public string AddressType1 { get; set; }
     
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
+        public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
     }
 }

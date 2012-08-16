@@ -5,16 +5,14 @@
     <table>
         <tr>
             <td>
-                <label style="min-width: 65px">
+                <label style="min-width: 65px" disabled="disabled">
                     Street</label> @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
             </td>
 
             <td >
-                @Html.TextBoxFor(t => t.Address, new { @class = "street textboxAd" })
+                @Html.TextBoxFor(t => t.Address, new { @class = "street textboxAd", @disabled = "disabled" })
             </td>
             <td rowspan="5">
-            @Html.LabelFor(t => t.MapMessage, new { style = "visibility:hidden; color:red;" }, true)
-            
                 <div class="mapcontainer">
                 
                     <div class="map">
@@ -25,39 +23,38 @@
         </tr>
         <tr>
             <td>
-                <label style="min-width: 65px">
+                <label style="min-width: 65px" disabled="disabled">
                     City</label>
             </td>
             <td>
-                @Html.TextBoxFor(t => t.City, new { @class = "street" })
+                @Html.TextBoxFor(t => t.City, new { @class = "street", @disabled = "disabled" })
                 @Html.ValidationMessageFor(t => t.City)
             </td>
         </tr>
         <tr>
             <td>
-                <label style="min-width: 65px">
-                    State</label>
+                <label style="min-width: 65px" disabled="disabled">State</label>
             </td>
             <td>
-                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr", @Model.StateCodeFK), new { @class = "k-dropdownlist state" })
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr", @Model.StateCodeFK), new { @class = "k-dropdownlist state", @disabled = "disabled" })
             </td>
         </tr>
         <tr>
             <td>
-                <label style="min-width: 65px">
+                <label style="min-width: 65px" disabled="disabled">
                     Zip</label>
             </td>
             <td>
-                @Html.TextBoxFor(t => t.Zip, new { @class = "zip" })
+                @Html.TextBoxFor(t => t.Zip, new { @class = "zip", @disabled = "disabled" })
             </td>
         </tr>
         <tr>
             <td>
-                <label style="min-width: 65px">
+                <label style="min-width: 65px" disabled="disabled">
                     Proximity</label>
             </td>
             <td>
-                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity" })<label style="padding-left: 10px">
+                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity", @disabled = "disabled" })<label style="padding-left: 10px">
                     in miles</label>
                 @Html.ValidationMessageFor(t => t.ProximityRadius)
                 @Html.LabelFor(t => t.ProximityMessage, new { style = "visibility:hidden; margin-left: 84px;color:red;" }, true)

@@ -2,13 +2,15 @@
 @model Semplest.Core.Models.AdModel
 <script src="@Url.Content("~/Scripts/Maps.js")" type="text/javascript"> </script>
 <div id="adModel" class="configuration">
-    <span class="infoHead">Create Ads</span>
+    <span class="infoHead">Create Ads</span><br/>
+    
     <ul class="options">
         <li>
             <h3>
-                Location (Enter Address,City,State or Zip) <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  tabindex="-1" >
-                                                               ?</a></h3>
+                Where do you want your ads shown? <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  tabindex="-1" >
+                                                      ?</a> </h3>
         </li>
+        <li><p><input type="radio" name="group1" value="NATIONALLY" checked="checked" /> Nationally &nbsp;&nbsp;&nbsp;<input type="radio" name="group1" value="STATE" /> Statewide&nbsp;&nbsp;&nbsp;<input type="radio" name="group1" value="GEO_POINT" /> Exact Location</p><br/></li>
         <li>
             <fieldset style="padding-bottom: 10px">
                 <legend>Business Address</legend>
@@ -18,7 +20,7 @@
                             <div id="addresses">
                                 @Html.EditorFor(t => t.Addresses)
                             </div>
-                            <div style="text-align: left; margin-left: 75px; margin-top: -30px;">
+                            <div style="text-align: left; margin-left: 75px; margin-top: -30px;" class ="adLink">
                                 @Html.LinkToAddNestedForm("Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp")
                             </div>
                         </td>
@@ -72,7 +74,7 @@
             </fieldset>
         </li>
         <li class="infoHead">
-            <span><h3>Ad Copy</h3><label id="adMessage" for="adMessage"></label></span>
+            <span><h3>Ad Copy</h3><label id="adMessage" for="adMessage">There must be one ad.</label></span>
         </li>
         <li>
             <div id="ads">
@@ -117,3 +119,7 @@
         }
     </style>
 </div>
+@{
+    var at = @Model.Addresses != null ? @Model.Addresses.Single().AddressType != null ? @Model.Addresses.Single().AddressType.AddressType1 : "" : "";
+    @Html.HiddenFor(t => t.PromotionAddressType);
+}

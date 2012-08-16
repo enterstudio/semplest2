@@ -82,15 +82,26 @@
         }
     </div>
     
-                <div id="DirtyFormWindow" style="display: none">
-                <form name="hiddenDirtyForm" id="hiddenDirtyForm" action="DirtyForm" method="post">
-                        Your data has been modified. If you continue your current keyword selection will be deleted.
-                <div style="text-align: center">
-                    <input type="button" id="btnOkDF" value="OK" class="k-button" />
-                    <input type="button" id="btnCancelDF" value="Cancel" class="k-button" />
-                </div>
-                </form>
+    <div id="DirtyFormWindow" style="display: none">
+        <form name="hiddenDirtyForm" id="hiddenDirtyForm" action="DirtyForm" method="post">
+            Your data has been modified. If you continue your current keyword selection will be deleted.
+            <div style="text-align: center">
+                <input type="button" id="btnOkDF" value="OK" class="k-button" />
+                <input type="button" id="btnCancelDF" value="Cancel" class="k-button" />
             </div>
+        </form>
+    </div>
+    
+    
+    
+        <div id="ChangeAddressTypeForm" style="display: none">
+            You are about to remove all of your location settings, do you want to continue?
+            <div style="text-align: center">
+                <input type="button" id="btnOkCAT" value="OK" class="k-button" />
+                <input type="button" id="btnCancelCAT" value="Cancel" class="k-button" />
+            </div>
+    </div>
+
 </div>
 <script type="text/javascript">
     if ($('#currentMode').val() == "True") {

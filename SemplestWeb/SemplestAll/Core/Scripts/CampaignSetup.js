@@ -1,4 +1,7 @@
 ﻿/// <reference path="jquery-1.7.2-vsdoc.js" />
+/// <reference path="kendo.all-vsdoc.js" />
+
+
 var formClean;
 
 
@@ -6,9 +9,8 @@ var formClean;
 
 $(document).ready(function () {
     //tabStrip.tabGroup.children('li:contains("Create Ads")').find('a.k-link').data('contentUrl', $('#CreateAdsUrl').val());
-
+    $("#adMessage").css("visibility", "hidden");
     formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
-
 
 
 
@@ -329,13 +331,43 @@ $(document).ready(function () {
         $('#DirtyFormWindow').hide();
         dirtyWindow.close();
     });
-//    if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
-//        start.enable(false);
-//        var datePicker = $("#ProductGroup_EndDate").data("kendoDatePicker");
-//        if (datePicker != null)
-//            datePicker.enable(false);
-//    }
-});
+
+    $("#btnOkCAT").click(function (event) {
+        //for now know submit lets just remove tabs
+        //$("#hiddenDirtyForm").submit();
+        $('#AdModelProp_PromotionAddressType').val($('input[name=group1]:checked').val());
+        $("div .address button").trigger('click');
+        $("div .adLink button").trigger('click');
+        $('#ChangeAddressTypeForm').hide();
+        $('#ChangeAddressTypeForm').data("kendoWindow").close();
+    });
+    var selectionAddress = $('#AdModelProp_PromotionAddressType').val();
+    if (selectionAddress == '')
+        selectionAddress = 'NATIONALLY';
+
+    $('input:radio[value|=' + $('#AdModelProp_PromotionAddressType').val() + ']').attr('checked', true);
+    $("#btnCancelCAT").click(function (event) {
+        $('input:radio[value|=' + $('#AdModelProp_PromotionAddressType').val() + ']').attr('checked', true);
+        var changeWindow = $('#ChangeAddressTypeForm').data("kendoWindow");
+        $('#ChangeAddressTypeForm').hide();
+        changeWindow.close();
+    });
+
+    $("input[name=group1]").change(function (e) {
+
+        $('#groupSelection').val($('#ChangeAddressTypeForm').val());
+        var changeWindow = $('#ChangeAddressTypeForm').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Change Locale"
+        }).data("kendoWindow");
+        $('#ChangeAddressTypeForm').show();
+        changeWindow.center();
+        changeWindow.open();
+
+    });
+
+});            //end ready
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
@@ -355,7 +387,11 @@ function removeNestedForm(element, container, deleteElement) {
             $("#adMessage").css("visibility", "hidden");
             return;
         }
+
     }
+    $("#adMessage").css("visibility", "visible");
+
+    $("#getCategories").attr('disabled', true);
 }
 
 function addNestedForm(container, counter, ticks, content) {
@@ -371,6 +407,17 @@ function addNestedForm(container, counter, ticks, content) {
 
         content = content.replace("class=\"map\"", "class=\"map\"" + "id=\"map_" + nextIndex + "\"");
         content.replace(new RegExp('nestedObject', "igm"), ' Addresses_' + nextIndex + '_');
+        if ($('input:radio[name=group1]:checked').val() == "STATE") {
+            var labelStart = content.indexOf('State</label>') - 30;
+            var comboStart = content.indexOf('--');
+            var firstPartOfString = content.substr(0, labelStart);
+            var secondPartOfString = content.substr(comboStart);
+            content = firstPartOfString + content.substr(labelStart, comboStart - labelStart).replace(/disabled=\"disabled\"/g, '') + secondPartOfString;
+        }
+        else if ($('input:radio[name=group1]:checked').val() == "GEO_POINT") {
+            content = content.replace(/disabled=\"disabled\"/g, '');
+        }
+
     }
 
     if (container == "#sitelinks") {
@@ -385,6 +432,8 @@ function addNestedForm(container, counter, ticks, content) {
     }
     $(container).append(content);
     if (container == "#ads") {
+        $("#adMessage").css("visibility", "hidden");
+        $("#getCategories").attr('disabled', false);
         $("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
             id: nextIndex + 1,
             title: $("#AdModelProp_DisplayUrl").val(),
@@ -408,7 +457,7 @@ function addNestedForm(container, counter, ticks, content) {
         }));
     }
     if (container == "#addresses") {
-        $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList({ optionLabel: "--" });
+        $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
         doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
         $('#AdModelProp_Addresses_' + nextIndex + '__Address').change(function (e) {
             doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
@@ -582,10 +631,10 @@ function OnBegin() {
                         text: "Categories",
                         contentUrl: $('#CategoriesUrl').val()
                     }, tabStrip.tabGroup.children("li:last")).select();
-                    tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+                    tab = tabStrip.tabGroup.children('li:contains("' + id.name + '")');
                     tabStrip.select(tab);
                 } else {
-                    tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+                    tab = tabStrip.tabGroup.children('li:contains("' + id.name + '")');
                     tabStrip.select(tab);
                 }
             }
@@ -657,3 +706,4 @@ function removeCurrentTab() {
     tabStrip.remove(tab);
     tabStrip.select(tabStrip.tabGroup.children('li:contains("Create Ads")'));
 }
+

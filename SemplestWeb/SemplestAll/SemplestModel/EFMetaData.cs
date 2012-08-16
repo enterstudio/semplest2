@@ -68,7 +68,7 @@ namespace SemplestModel
             get
             {
                 var stateCodes = new Semplest().StateCodes.OrderBy(t => t.StateAbbr).ToList();
-                stateCodes.Insert(0, new StateCode() { StateAbbrPK = -2, StateAbbr = "--" });
+                stateCodes.Insert(0, new StateCode() { StateAbbrPK = int.MinValue, StateAbbr = "--" });
                 return stateCodes;
             }
         }
@@ -76,7 +76,6 @@ namespace SemplestModel
         public bool Delete { get; set; }
         public bool IsCountry { get; set; }
         public bool IsState { get; set; }
-        public string MapMessage { get; set; }
         public string ProximityMessage { get; set; }
         public bool HasBeenSaved { get; set; }
         public string UID { get; set; }
@@ -90,8 +89,7 @@ namespace SemplestModel
         }
     }
 
-    
-    public partial class SiteLink
+ public partial class SiteLink
     {
         public bool Delete { get; set; }
         public bool SiteLinksSaved { get; set; }

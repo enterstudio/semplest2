@@ -136,5 +136,6 @@ namespace SemplestModel
         public Nullable<double> BiddingServiceBidMultiplierForGoogleFromMSNHistory { get; set; }
         public Nullable<int> BiddingServiceGoogleVolMultiplierFromMSNHistory { get; set; }
         public Nullable<int> SemplestAdEngineReportLookbackDays { get; set; }
+        public Nullable<int> MSNReportRetrievalTimeoutSecs { get; set; }
     }
 }

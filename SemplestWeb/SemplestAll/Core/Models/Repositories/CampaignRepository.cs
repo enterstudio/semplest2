@@ -153,7 +153,7 @@ namespace Semplest.Core.Models.Repositories
             var geoList = new List<GeoTargetObject>();
             foreach (var geo in model.AdModelProp.Addresses)
             {
-                if (!geo.IsState)
+                if (!geo.IsState && !geo.Delete && !geo.IsCountry)
                 {
                     var geoTObj = new GeoTargetObject();
                     geoTObj.address = geo.Address;
@@ -306,6 +306,10 @@ namespace Semplest.Core.Models.Repositories
                         throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                 }
                 GeoTargetTableType gt;
+                int addressCode =-1;
+                var st = dbcontext.AddressTypes.SingleOrDefault(pt => pt.AddressType1 == model.AdModelProp.PromotionAddressType);
+                if (st != null)
+                    addressCode = st.AddressTypePK;
                 var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, customerFK, oldModel, out gt);
                 if (shouldUpdateGeoTargeting)
                 {
@@ -315,22 +319,17 @@ namespace Semplest.Core.Models.Repositories
                         gv = ValidateGeotargeting(gtos);
                         if (gv.Length > 0)
                             throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                        var op = new System.Data.Objects.ObjectParameter("totalSize", typeof(int));
-                        const string valueDelimiter = ",";
-                        const string listDelimiter = ";";
-                        dbcontext.GetMSNGeoLocation(null, SerializeToCommaDlimitedString(model.AdModelProp.Addresses, valueDelimiter, listDelimiter), valueDelimiter, listDelimiter, op);
-                        if ((int)op.Value > 250)
-                            throw new Exception("geotarget limit");
                     }
                 }
 
                 var parameter = new SqlParameter("PromotionPK", promo.PromotionPK) { SqlDbType = SqlDbType.Int };
                 var parameter2 = new SqlParameter("LandingUrl", model.AdModelProp.LandingUrl.Trim()) { SqlDbType = SqlDbType.NVarChar };
                 var parameter3 = new SqlParameter("DisplayUrl", model.AdModelProp.DisplayUrl.Trim()) { SqlDbType = SqlDbType.NVarChar };
-                var parameter4 = new SqlParameter("GeoTVP", gt) { SqlDbType = SqlDbType.Structured, TypeName = "GeoTargetTableType" };
-                var parameter5 = new SqlParameter("AdTVP", at) { SqlDbType = SqlDbType.Structured, TypeName = "PromoAdTableType" };
-                var parameters = new object[] {parameter, parameter2, parameter3, parameter4, parameter5};
-                var results = ((IObjectContextAdapter)dbcontext).ObjectContext.ExecuteStoreQuery<RVal>("exec UpdateGeoTargetingPromoAds @PromotionPK, @LandingUrl, @DisplayUrl, @GeoTVP, @AdTVP", parameters);
+                var parameter4 = new SqlParameter("AddressTypeFK", addressCode) { SqlDbType = SqlDbType.Int };
+                var parameter5 = new SqlParameter("GeoTVP", gt) { SqlDbType = SqlDbType.Structured, TypeName = "GeoTargetTableType" };
+                var parameter6 = new SqlParameter("AdTVP", at) { SqlDbType = SqlDbType.Structured, TypeName = "PromoAdTableType" };
+                var parameters = new object[] {parameter, parameter2, parameter3, parameter4, parameter5, parameter6};
+                var results = ((IObjectContextAdapter)dbcontext).ObjectContext.ExecuteStoreQuery<RVal>("exec UpdateGeoTargetingPromoAds @PromotionPK, @LandingUrl, @DisplayUrl, @AddressTypeFK, @GeoTVP, @AdTVP", parameters);
                 _savedCampaign = true;
                 foreach (var r in results)
                 {
@@ -449,6 +448,11 @@ namespace Semplest.Core.Models.Repositories
 
                 // set geotargetings
                 model.AdModelProp.Addresses = promo.GeoTargetings.ToList();
+                var singleOrDefault = promo.GeoTargetings.FirstOrDefault();
+                if (singleOrDefault != null && singleOrDefault.AddressType != null)
+                    model.AdModelProp.PromotionAddressType = singleOrDefault.AddressType.AddressType1;
+                else
+                    model.AdModelProp.PromotionAddressType = "NATIONALLY";
 
                 // set promotionads
                 model.AdModelProp.Ads = promo.PromotionAds.Where(ads => !ads.IsDeleted).ToList();
@@ -729,7 +733,7 @@ namespace Semplest.Core.Models.Repositories
                         shouldUpdateGeoTargeting = true;
                         gtr.Address = geo.Address;
                         gtr.City = geo.City;
-                        gtr.StateCodeFK = geo.StateCodeFK;
+                        gtr.StateCodeFK = geo.StateCodeFK == int.MinValue ? null: geo.StateCodeFK;
                         gtr.Zip = geo.Zip;
                         gtr.ProximityRadius = geo.ProximityRadius;
                         gtr.Latitude = geo.Latitude;
@@ -737,7 +741,7 @@ namespace Semplest.Core.Models.Repositories
                         gtr.UID = geo.UID;
                         gtr.Operation = "I";
                     }
-                    else
+                    else if (!geo.IsCountry)
                     {
                         GeoTargeting geoOld =
                             oldModel.AdModelProp.Addresses.SingleOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK);
@@ -756,7 +760,7 @@ namespace Semplest.Core.Models.Repositories
                             gtr.Longitude = geo.Longitude;
                             gtr.ProximityRadius = geo.ProximityRadius;
                             gtr.Zip = geo.Zip;
-                            gtr.StateCodeFK = geo.StateCodeFK;
+                            gtr.StateCodeFK = geo.StateCodeFK == int.MinValue ? null : geo.StateCodeFK;
                             gtr.PKEY = geo.GeoTargetingPK;
                             gtr.Operation = "U";
                         }
