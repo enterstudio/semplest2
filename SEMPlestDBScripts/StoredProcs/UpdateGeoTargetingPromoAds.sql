@@ -14,6 +14,7 @@ CREATE PROCEDURE dbo.UpdateGeoTargetingPromoAds
 	@PromotionPK            INT,
 	@LandingUrl				nvarchar(1024),
 	@DisplayUrl				nvarchar(35),
+	@AddressTypeFK          INT,
 	@GeoTVP					dbo.GeoTargetTableType READONLY,
 	@AdTVP					dbo.PromoAdTableType READONLY
 )
@@ -26,12 +27,12 @@ BEGIN TRY
 	
 		UPDATE promotion set LandingPageURL = @LandingUrl, DisplayUrl = @DisplayUrl WHERE PromotionPK = @PromotionPK
 		
-		INSERT INTO dbo.GeoTargeting(PromotionFK,Address,City,StateCodeFK,Zip,ProximityRadius,Latitude,Longitude)
-			select @PromotionPK,g.Address,g.City,g.StateCodeFK,g.Zip,g.ProximityRadius,g.Latitude,g.Longitude from @GeoTVP g WHERE g.operation='I'
+		INSERT INTO dbo.GeoTargeting(PromotionFK,Address,City,StateCodeFK,Zip,ProximityRadius,Latitude,Longitude,AddressTypeFK)
+			select @PromotionPK,g.Address,g.City,g.StateCodeFK,g.Zip,g.ProximityRadius,g.Latitude,g.Longitude,@AddressTypeFK from @GeoTVP g WHERE g.operation='I'
 
         UPDATE g SET 
 			g.Address = gt.Address, g.City= gt.City, g.StateCodeFK = gt.StateCodeFK, g.Zip = gt.Zip, 
-			g.ProximityRadius = gt.ProximityRadius,g.Latitude = gt.Latitude, g.Longitude = gt.Longitude 
+			g.ProximityRadius = gt.ProximityRadius,g.Latitude = gt.Latitude, g.Longitude = gt.Longitude, g.AddressTypeFK=@AddressTypeFK
 			FROM dbo.GeoTargeting g 
 			INNER JOIN @GeoTVP gt ON gt.PKEY = g.GeoTargetingPK WHERE gt.Operation = 'U'
 			
