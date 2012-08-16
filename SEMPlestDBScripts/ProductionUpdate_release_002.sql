@@ -1,3 +1,26 @@
+---
+--- CHANGE COLUMN: AddressType.AddressType
+---
+ALTER TABLE dbo.AddressType
+	ALTER COLUMN AddressType
+		nvarchar(25)
+GO
+
+
+---
+--- CREATE COLUMN: AddressTypeFK
+---
+ALTER TABLE dbo.GeoTargeting ADD AddressTypeFK int
+GO
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_AddressType_GeoTargeting_3
+---
+ALTER TABLE dbo.GeoTargeting ADD 
+	CONSTRAINT REL_AddressType_GeoTargeting_3 FOREIGN KEY (AddressTypeFK)
+		REFERENCES dbo.AddressType(AddressTypePK)
+GO
+
+
 alter table configuration add MSNReportRetrievalTimeoutSecs int
 go
 update Configuration set MSNReportRetrievalTimeoutSecs = 900
