@@ -37,6 +37,9 @@ public class RichSentence {
 	}
 	
 	public boolean isConsistent(){
+		if(tokens==null || tags == null || chunks == null){
+			return false;
+		}
 		int len = tokens.length;
 		if((tags.length!=len) || (chunks.length!=len)){
 			return false;
