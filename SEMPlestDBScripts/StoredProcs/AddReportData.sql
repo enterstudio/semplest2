@@ -51,7 +51,7 @@ BEGIN TRY
 	END;
 	--ADD ONLY IF THE TRANSACTION DOES NOT EXIST
 	if not exists (select * from AdvertisingEngineReportData aerd where aerd.PromotionFK = @PromotionID and aerd.KeywordFK = @keywordPK 
-		and aerd.BidTypeFK =  @BidTypeID and aerd.TransactionDate = @TransactionDate)
+		and aerd.BidTypeFK =  @BidTypeID and aerd.AdvertisingEngineFK = @AdEngineID and aerd.TransactionDate = @TransactionDate)
 	BEGIN
 		insert into AdvertisingEngineReportData(PromotionFK, KeywordFK,AdvertisingEngineFK, TransactionDate, MicroBidAmount, NumberImpressions, NumberClick, 
 			AveragePosition, AverageCPC, BidTypeFK, QualityScore,ApprovalStatus, FirstPageMicroCPC, MicroCost, CreatedDate)
@@ -68,11 +68,7 @@ BEGIN TRY
 		from AdvertisingEngineReportData aerd 
 		where aerd.PromotionFK = @PromotionID and aerd.KeywordFK = @keywordPK 
 			and aerd.BidTypeFK =  @BidTypeID and aerd.AdvertisingEngineFK = @AdEngineID and aerd.TransactionDate = @TransactionDate
-		
-		select @ID = aerd.AdvertisingEngineBidDataPK from AdvertisingEngineReportData aerd 
-		where aerd.PromotionFK = @PromotionID and aerd.KeywordFK = @keywordPK 
-			and aerd.BidTypeFK =  @BidTypeID and aerd.AdvertisingEngineFK = @AdEngineID and aerd.TransactionDate = @TransactionDate	
-			
+		--@ID will return 0
 	END
 END TRY
 BEGIN CATCH
