@@ -178,15 +178,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			final Long campaignId = 110214273L;
 			final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = new HashMap<GeoTargetObject, GeoTargetType>();
 			
-			/*
+			
 			final GeoTargetObject geoTarget1 = new GeoTargetObject();
 			geoTarget1.setState("NY");
 			geoTargetVsTypeMap.put(geoTarget1, GeoTargetType.STATE);			
 			final GeoTargetObject geoTarget2 = new GeoTargetObject();
 			geoTarget2.setState("AL");
 			geoTargetVsTypeMap.put(geoTarget2, GeoTargetType.STATE);
-			*/
 			
+			/*
 			final GeoTargetObject geoTarget3 = new GeoTargetObject();
 			geoTarget3.setLatitude(40.7142);
 			geoTarget3.setLongitude(74.0064);
@@ -197,7 +197,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			geoTarget4.setLongitude(106.6506);
 			geoTarget4.setRadius(5.5);
 			geoTargetVsTypeMap.put(geoTarget4, GeoTargetType.GEO_POINT);
-			
+			*/
 			msn.updateGeoTargets(accountId, campaignId, geoTargetVsTypeMap);
 			
 			/*
@@ -3320,9 +3320,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 				throw new Exception("Problem doing " + operationDescription + " because encountered GeoTargetType [" + geoTargetType + "] that is not either [" + GeoTargetType.STATE + "] or [" + GeoTargetType.GEO_POINT + "]");
 			}
 			final AddTargetsToLibraryRequest addRequest = new AddTargetsToLibraryRequest();			
-			final Target target = new Target();			
+			final Target target = new Target();		
+			target.setLocation(location);
 			final Target[] targetArray = new Target[]{target};
 			addRequest.setTargets(targetArray);
+			logger.info("Targets we'll try to add: " + SemplestUtils.getMsnTargetString(targetArray, true));
 			final AddTargetsToLibraryResponse response = campaignManagement.addTargetsToLibrary(addRequest);
 			final long[] targetIds = response.getTargetIds();
 			logger.info("Resulting Target Ids: " + SemplestUtils.getStringForArray(targetIds));
