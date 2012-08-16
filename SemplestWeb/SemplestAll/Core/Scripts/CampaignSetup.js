@@ -626,7 +626,7 @@ function OnBegin() {
             $('input[name *= "HasBeenSaved"]').val('True');
 
             if ($('#IsLaunched').val() == 'False') {
-                if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
+                if (!tabStrip.tabGroup.children('li:contains("' + id.name + '")').text()) {
                     tabStrip.append({
                         text: "Categories",
                         contentUrl: $('#CategoriesUrl').val()
