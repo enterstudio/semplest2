@@ -28,6 +28,10 @@ BEGIN TRY
 		SELECT @ErrMsg = 'The Promotion was not found.'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
+	
+	return;
+	/*
+	
 	Declare @ReportDataTable Table(TransactionDate datetime2, MicroCost bigint)
 	--Table of transactions not yet applied to promotion from all AdEngines
 	insert into @ReportDataTable(TransactionDate,MicroCost)
@@ -59,7 +63,7 @@ BEGIN TRY
 	Set @ID = @PromotionPK
 	return @ID
 			 
-	
+	*/
 END TRY
 BEGIN CATCH
 IF XACT_STATE() != 0 OR @@TRANCOUNT > 0
