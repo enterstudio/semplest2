@@ -1,3 +1,123 @@
+
+drop table promotionpayment
+drop table CreditCardTransaction
+drop table invoicetransaction
+---
+--- CREATE COLUMN: IsDeleted
+---
+ALTER TABLE dbo.NickNameProfileAssociation ADD IsDeleted bit NOT NULL DEFAULT 0
+GO
+
+---
+--- CREATE TABLE: dbo.PayType
+---
+CREATE TABLE dbo.PayType
+(
+	PayTypePK int NOT NULL IDENTITY,
+	PayType varchar(50) NOT NULL,
+	PRIMARY KEY CLUSTERED (PayTypePK)
+)
+GO
+---
+--- CREATE TABLE: dbo.PromotionBudget
+---
+drop table promotionpayment
+CREATE TABLE dbo.PromotionBudget
+(
+	PromotionBudgetPK int NOT NULL IDENTITY,
+	TransactionsFK int NOT NULL,
+	PromotionFK int,
+	BudgetToAddDate datetime2 NOT NULL,
+	IsValid bit NOT NULL DEFAULT 1,
+	IsAppliedToPromotion bit NOT NULL DEFAULT 0,
+	BudgetCarryOverAmount money NOT NULL DEFAULT 0,
+	BudgetToAddAmount money,
+	CreatedDate datetime2 NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY CLUSTERED (PromotionBudgetPK)
+)
+GO
+
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_Promotion_PromotionBudget_1
+---
+ALTER TABLE dbo.PromotionBudget ADD 
+	CONSTRAINT REL_Promotion_PromotionBudget_1 FOREIGN KEY (PromotionFK)
+		REFERENCES dbo.Promotion(PromotionPK)
+GO
+
+
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_Transactions_PromotionBudget_2
+---
+ALTER TABLE dbo.PromotionBudget ADD 
+	CONSTRAINT REL_Transactions_PromotionBudget_2 FOREIGN KEY (TransactionsFK)
+		REFERENCES dbo.Transactions(TransactionsPK)
+GO
+
+
+
+---
+--- CREATE TABLE: dbo.Transactions
+---
+CREATE TABLE dbo.Transactions
+(
+	TransactionsPK int NOT NULL IDENTITY,
+	CustomerFK int NOT NULL,
+	PayTypeFK int NOT NULL,
+	TransactionTypeFK int NOT NULL,
+	CreditCardProfileFK int,
+	Amount money NOT NULL DEFAULT 0,
+	CreatedDate datetime2 NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	EditedDate datetime2,
+	PRIMARY KEY CLUSTERED (TransactionsPK)
+)
+GO
+
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_CreditCardProfile_Transactions_2
+---
+ALTER TABLE dbo.Transactions ADD 
+	CONSTRAINT REL_CreditCardProfile_Transactions_2 FOREIGN KEY (CreditCardProfileFK)
+		REFERENCES dbo.CreditCardProfile(CreditCardProfilePK)
+GO
+
+
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_PayType_Transactions_3
+---
+ALTER TABLE dbo.Transactions ADD 
+	CONSTRAINT REL_PayType_Transactions_3 FOREIGN KEY (PayTypeFK)
+		REFERENCES dbo.PayType(PayTypePK)
+GO
+
+
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_Customer_Transactions_4
+---
+ALTER TABLE dbo.Transactions ADD 
+	CONSTRAINT REL_Customer_Transactions_4 FOREIGN KEY (CustomerFK)
+		REFERENCES dbo.Customer(CustomerPK)
+GO
+
+---
+--- CREATE TABLE: dbo.TransactionType
+---
+CREATE TABLE dbo.TransactionType
+(
+	TransactionTypePK int NOT NULL IDENTITY,
+	TransactionType varchar(50) NOT NULL,
+	PRIMARY KEY CLUSTERED (TransactionTypePK)
+)
+GO
+
+insert into PayType(PayType) values ('CreditCard')
+insert into PayType(PayType) values ('Invoice')
+insert into PayType(PayType) values ('NoPay')
+
+insert into TransactionType(TransactionType) values ('MediaSpend')
+insert into TransactionType(TransactionType) values ('SemplestMediaSpendFee')
+insert into TransactionType(TransactionType) values ('SemplestFlatFee')
+
 ---
 --- CHANGE COLUMN: AddressType.AddressType
 ---
