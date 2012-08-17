@@ -1,5 +1,6 @@
 package semplest.keywords.javautils;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Document;
@@ -38,6 +39,8 @@ public class JSoupUtils {
 	 * Utils to use JSoup HTML parser
 	 * @throws IOException 
 	 */
+	private static final Logger logger = Logger.getLogger(JSoupUtils.class);
+	
 	public static void main(String[] args) throws Exception {
 		
         String url = "http://www.shopping.hp.com/en_US/home-office/-/products/Printers/Printers";
@@ -132,6 +135,7 @@ public class JSoupUtils {
         }
         return importL;
 	}
+	
 	public static List<String> getImportsSource(String url) throws IOException{
 		JSoupUtils jSoup = new JSoupUtils();
         Document doc = Jsoup.connect(url).get();
@@ -147,6 +151,12 @@ public class JSoupUtils {
 
         return formatter.toString();
     }
+    public static String getPlainText(String url) throws IOException {
+    	JSoupUtils jSoup = new JSoupUtils();
+        Document doc = Jsoup.connect(url).get();
+        return getPlainText(doc);
+    }
+    
     
     // Returns a map with each of the tags in the document and a list of all the content lines withing that tag
     public static Map<String, List<String>> getTagContent(Element element) {
@@ -156,8 +166,14 @@ public class JSoupUtils {
         return tagFormatter.getTagContentMap();
     }
     
+    public static Map<String, List<String>> getTagContent(String url) throws IOException {
+    	JSoupUtils jSoup = new JSoupUtils();
+        Document doc = Jsoup.connect(url).get();
+        return getTagContent(doc);
+    }
+    
     private static void print(String msg, Object... args) {
-        System.out.println(String.format(msg, args));
+        logger.debug(String.format(msg, args));
     }
 
     private static String trim(String s, int width) {
