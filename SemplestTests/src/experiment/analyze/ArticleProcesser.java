@@ -38,7 +38,7 @@ public class ArticleProcesser {
 		ArrayList<String> longTailWords = generateLongTailWords(filteredWords);
 		HashMap<String,Double> probOfLongTailWords = calProbOfLongTailWords(longTailWords, probOfAllWords);		
 		HashMap<String,Double> flexOfLongTailWords = calFlexOfLongTailWords(listOfWords, longTailWords);		
-		ArrayList<String> rankedLongTailWords = rankLongTailWords(longTailWords, flexOfLongTailWords, flexOfLongTailWords);
+		ArrayList<String> rankedLongTailWords = rankLongTailWords(longTailWords, flexOfLongTailWords, probOfLongTailWords);
 		for(String s : rankedLongTailWords){
 			System.out.println(s);
 		}
