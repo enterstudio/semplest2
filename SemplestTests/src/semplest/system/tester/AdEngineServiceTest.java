@@ -40,8 +40,9 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 	public static void main(String[] args){
 		try {
 			SystemTestFunc.LoadConfiguration();			
+			SystemTestFunc.BuildTestData();
 			System.out.println("########## Initialization done!");
-			Thread.sleep(10000);
+			Thread.sleep(1000);
 			System.out.println("########## AddPromotionToAdEngine Starts!");
 			
 			AdEngineServiceTest test = new AdEngineServiceTest();
