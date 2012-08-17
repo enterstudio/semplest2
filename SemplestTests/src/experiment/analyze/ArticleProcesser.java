@@ -15,8 +15,9 @@ import java.util.TreeMap;
 public class ArticleProcesser {
 	
 	private final String seperators = " |\\.|\\,|\\(|\\)|\\[|\\]|\\\"|\\'";	
-	private final Integer maxLengthOfLongTailWord = 5;
-	private final Double weightOfFlexibility = 1d;
+	private final Integer maxWordsOfPhrase = 5;
+	private Double weightOfProbability = 0.3;
+	private Double weightOfFlexibility = 0.7;
 	
 	public static void main(String[] args){
 		ArticleProcesser ap = new ArticleProcesser();
@@ -26,43 +27,46 @@ public class ArticleProcesser {
 		//String targetFile = "/semplest/nan/sample1.txt";
 		//String baseFile = "/semplest/nan/sample2.txt";
 		
-		ap.processArticle(targetFile, baseFile);
+		ap.ProcessArticle(targetFile, baseFile);
 		
 	}
 	
-	public void processArticle(String targetFile, String baseFile){
-		ArrayList<String> listOfWords = readFile(targetFile);
-		Set<String> generalWords = getGeneralWords(baseFile);
-		ArrayList<String> filteredWords = getFilteredWordList(listOfWords, generalWords);
-		HashMap<String,Double> probOfAllWords = calProbOfWords(filteredWords);		
-		ArrayList<String> longTailWords = generateLongTailWords(filteredWords);
-		HashMap<String,Double> probOfLongTailWords = calProbOfLongTailWords(longTailWords, probOfAllWords);		
-		HashMap<String,Double> flexOfLongTailWords = calFlexOfLongTailWords(listOfWords, longTailWords);		
-		ArrayList<String> rankedLongTailWords = rankLongTailWords(longTailWords, flexOfLongTailWords, probOfLongTailWords);
-		for(String s : rankedLongTailWords){
+	public void ProcessArticle(String targetFile, String baseFile){
+		ArrayList<String> listOfWords = ReadFile(targetFile);
+		Set<String> listOfGeneralWords = GetGeneralWords(baseFile);
+		ArrayList<String> listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
+		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
+		ArrayList<String> listOfPhrases = GeneratePhrases(listOfFilteredWords);
+		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(listOfPhrases, probOfAllWords);		
+		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, listOfPhrases);		
+		ArrayList<String> rankedPhrases = RankPhrases(listOfPhrases, freqOfPhrases, flexOfPhrases);
+		/*for(String s : rankedLongTailWords){
 			System.out.println(s);
-		}
+		}*/
 	}
 	
-	public ArrayList<String> rankLongTailWords(ArrayList<String> longTailWords, HashMap<String,Double> probOfLongTailWords, HashMap<String,Double> flexOfLongTailWords){
+	public ArrayList<String> RankPhrases(ArrayList<String> listOfPhrases, HashMap<String,Double> frequencyOfPhrases, HashMap<String,Double> flexibilityOfPhrases){
 		HashMap<String,Double> scoreMap = new HashMap<String,Double>();
-		for(String word : longTailWords){
-			Double prob = probOfLongTailWords.get(word);
-			Double flex = flexOfLongTailWords.get(word);
-			Double score = prob * flex;
-			scoreMap.put(word, score);
+		for(String phrase : listOfPhrases){
+			Double prob = frequencyOfPhrases.get(phrase);
+			Double flex = flexibilityOfPhrases.get(phrase);
+			Double score = (prob * weightOfProbability + flex * weightOfFlexibility) * 10000;
+			scoreMap.put(phrase, score);
 		}
-		TreeMap<String, Double> rankedMap = sortMap(scoreMap);
+		TreeMap<String, Double> rankedMap = SortMap(scoreMap);
+		for(String s : rankedMap.descendingKeySet()){
+			System.out.println(s + " - " + rankedMap.get(s));
+		}
 		ArrayList<String> ret = new ArrayList<String>();
 		ret.addAll(rankedMap.descendingKeySet());
 		return ret;
 	}
 	
-	public HashMap<String,Double> calFlexOfLongTailWords(ArrayList<String> listOfWords, ArrayList<String> longTailWords){
-		HashMap<String,FlexibilityOfWord> flexOfLongTailWords = new HashMap<String,FlexibilityOfWord>();
+	public HashMap<String,Double> FlexibilityOfPhrases(ArrayList<String> listOfWords, ArrayList<String> listOfPhrases){
+		HashMap<String,FlexibilityOfWord> flexOfPhrases = new HashMap<String,FlexibilityOfWord>();
 		
-		for(String longTailWord : longTailWords){
-			String[] words = longTailWord.split(" ");
+		for(String phrase : listOfPhrases){
+			String[] words = phrase.split(" ");
 			for(int i = 0; i < listOfWords.size(); i++){
 				int count = 0;
 				//find the long tail word in the entire article
@@ -78,8 +82,8 @@ public class ArticleProcesser {
 				if(count == words.length){
 					//we found one, now calculate the left flexibility and the right flexibility					
 					FlexibilityOfWord flex;
-					if(flexOfLongTailWords.containsKey(longTailWord)){
-						flex = flexOfLongTailWords.get(longTailWord);
+					if(flexOfPhrases.containsKey(phrase)){
+						flex = flexOfPhrases.get(phrase);
 					}
 					else{
 						flex = new FlexibilityOfWord();
@@ -94,49 +98,49 @@ public class ArticleProcesser {
 						String rightWord = listOfWords.get(ptrToTheRightWord);
 						flex.addRight(rightWord);
 					}
-					flexOfLongTailWords.put(longTailWord, flex);
+					flexOfPhrases.put(phrase, flex);
 				}
 			}
 		}
 		
 		//process the map
 		HashMap<String,Double> finalFlexMap = new HashMap<String,Double>();
-		for(String longTailWord : flexOfLongTailWords.keySet()){
-			Double flexVal = flexOfLongTailWords.get(longTailWord).getFlexibility();
+		for(String longTailWord : flexOfPhrases.keySet()){
+			Double flexVal = flexOfPhrases.get(longTailWord).getFlexibility() / listOfWords.size();
 			finalFlexMap.put(longTailWord, flexVal);
 		}
 		return finalFlexMap;
 	}
 	
-	public HashMap<String,Double> calProbOfLongTailWords(ArrayList<String> longTailWords, HashMap<String,Double> probabilityOfAllWords){
-		HashMap<String,Double> probOfLongTailWords = new HashMap<String,Double>();
-		for(String longWord : longTailWords){
-			String[] words = longWord.trim().split(" ");
-			Double probabilityOfLongWord = 1d;
+	public HashMap<String,Double> FrequencyOfPhrases(ArrayList<String> listOfPhrases, HashMap<String,Double> probabilityOfAllWords){
+		HashMap<String,Double> freqOfPhrases = new HashMap<String,Double>();
+		for(String phrase : listOfPhrases){
+			String[] words = phrase.trim().split(" ");
+			Double probabilityOfPhrase = 1d;
 			for(String word : words){
 				Double probabilityOfWord = probabilityOfAllWords.get(word);				
-				probabilityOfLongWord = probabilityOfLongWord * probabilityOfWord;				
+				probabilityOfPhrase = probabilityOfPhrase * probabilityOfWord;				
 			}
-			probOfLongTailWords.put(longWord, probabilityOfLongWord);
+			freqOfPhrases.put(phrase, probabilityOfPhrase);
 		}
-		return probOfLongTailWords;
+		return freqOfPhrases;
 	}
 	
-	public ArrayList<String> generateLongTailWords(ArrayList<String> listOfWords){
-		ArrayList<String> longTailWords = new ArrayList<String>();
+	public ArrayList<String> GeneratePhrases(ArrayList<String> listOfWords){
+		ArrayList<String> phrases = new ArrayList<String>();
 		for(int i = 0 ; i < listOfWords.size(); i++){
 			if(!listOfWords.get(i).isEmpty()){
-				//use it as a start point to form word
-				String longWord = "";
+				//use it as a start point to form a phrase
+				String phrase = "";
 				int count = 0;
-				for(int ptr = 0 ; ptr < maxLengthOfLongTailWord; ptr++){
+				for(int ptr = 0 ; ptr < maxWordsOfPhrase; ptr++){
 					int current = i + ptr;
 					if(current > listOfWords.size() - 1){
 						//out of the array
 						break;
 					}
 					if(!listOfWords.get(current).isEmpty()){
-						longWord = longWord + " " + listOfWords.get(current);
+						phrase = phrase + " " + listOfWords.get(current);
 					}
 					else{
 						break;
@@ -144,14 +148,14 @@ public class ArticleProcesser {
 					count++;
 				}
 				if(count > 1){
-					longTailWords.add(longWord.trim());
+					phrases.add(phrase.trim());
 				}
 			}
 		}		
-		return longTailWords;
+		return phrases;
 	}
 	
-	public ArrayList<String> getFilteredWordList(ArrayList<String> listOfWords, Set<String> generalWords){
+	public ArrayList<String> GetFilteredWordList(ArrayList<String> listOfWords, Set<String> generalWords){
 		ArrayList<String> newListOfWords = new ArrayList<String>();
 		newListOfWords.addAll(listOfWords);
 		for(int i = 0; i < newListOfWords.size(); i++){
@@ -166,17 +170,17 @@ public class ArticleProcesser {
 		return newListOfWords;
 	}
 	
-	public Set<String> getGeneralWords(String path){
-		ArrayList<String> listOfWords = readFile(path);
-		HashMap<String,Double> probOfWords = calProbOfWords(listOfWords);
-		TreeMap<String,Double> sortedMap = sortMap(probOfWords);
+	public Set<String> GetGeneralWords(String path){
+		ArrayList<String> listOfWords = ReadFile(path);
+		HashMap<String,Double> probOfWords = FrequencyOfWords(listOfWords);
+		TreeMap<String,Double> sortedMap = SortMap(probOfWords);
 		return sortedMap.descendingKeySet();
 	}
 	
-	public HashMap<String,Double> calProbOfWords(ArrayList<String> listOfWords){
-		HashMap<String,Double> probOfWords = new HashMap<String,Double>();
+	public HashMap<String,Double> FrequencyOfWords(ArrayList<String> listOfWords){
+		HashMap<String,Double> freqOfWords = new HashMap<String,Double>();
 		
-		HashMap<String,Integer> countOfWords = calCountsOfWords(listOfWords);
+		HashMap<String,Integer> countOfWords = CountsOfWords(listOfWords);
 				
 		Integer totalCounts = 0;
 		for(String word : countOfWords.keySet()){
@@ -184,21 +188,21 @@ public class ArticleProcesser {
 		}
 		
 		for(String word : countOfWords.keySet()){
-			Double probability = (countOfWords.get(word) * 1.0) / totalCounts;
-			probOfWords.put(word, probability);
-		}		
+			Double frequency = (countOfWords.get(word) * 1.0) / totalCounts;
+			freqOfWords.put(word, frequency);
+		};
 		
-		return probOfWords;
+		return freqOfWords;
 	}
 	
-	public TreeMap<String,Double> sortMap(HashMap<String,Double> map){
+	public TreeMap<String,Double> SortMap(HashMap<String,Double> map){
 		ValueComparator bvc =  new ValueComparator(map);
         TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
         sorted_map.putAll(map);
         return sorted_map;
 	}
 	
-	public ArrayList<String> readFile(String path){
+	public ArrayList<String> ReadFile(String path){
 		ArrayList<String> singleWords = new ArrayList<String>();
 		try{
 			FileInputStream fstream = new FileInputStream(path);
@@ -219,18 +223,18 @@ public class ArticleProcesser {
 		return singleWords;
 	}
 	
-	public HashMap<String,Integer> calCountsOfWords(ArrayList<String> listOfWords){
-		HashMap<String,Integer> countOfWords = new HashMap<String,Integer>();
+	public HashMap<String,Integer> CountsOfWords(ArrayList<String> listOfWords){
+		HashMap<String,Integer> countsOfWords = new HashMap<String,Integer>();
 		for(String word : listOfWords){			
 			if(!word.isEmpty()){
 				Integer count = 1;
-				if(countOfWords.containsKey(word)){
-					count = countOfWords.get(word) + 1;				
+				if(countsOfWords.containsKey(word)){
+					count = countsOfWords.get(word) + 1;				
 				}
-				countOfWords.put(word, count);
+				countsOfWords.put(word, count);
 			}
 		}
-		return countOfWords;
+		return countsOfWords;
 	}
 	
 	
@@ -273,7 +277,7 @@ public class ArticleProcesser {
 			return Right.size();
 		}
 		public Double getFlexibility() {
-			return (Left.size() + Right.size()) * weightOfFlexibility;
+			return (Left.size() + Right.size()) * 1d;
 		}
 	}
 	
