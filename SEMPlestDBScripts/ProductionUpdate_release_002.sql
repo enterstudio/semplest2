@@ -21,7 +21,6 @@ GO
 ---
 --- CREATE TABLE: dbo.PromotionBudget
 ---
-drop table promotionpayment
 CREATE TABLE dbo.PromotionBudget
 (
 	PromotionBudgetPK int NOT NULL IDENTITY,
