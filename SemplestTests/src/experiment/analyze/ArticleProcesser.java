@@ -15,16 +15,16 @@ import java.util.TreeMap;
 public class ArticleProcesser {
 	
 	private final String seperators = " |\\.|\\,|\\(|\\)|\\[|\\]|\\\"|\\'";	
-	private final Integer maxLengthOfKeyword = 5;
+	private final Integer maxLengthOfLongTailWord = 5;
 	private final Double weightOfFlexibility = 1d;
 	
 	public static void main(String[] args){
 		ArticleProcesser ap = new ArticleProcesser();
 		
-		//String targetFile = "c:\\temp\\sample1.txt";
-		//String baseFile = "c:\\temp\\sample2.txt";
-		String targetFile = "/semplest/nan/sample1.txt";
-		String baseFile = "/semplest/nan/sample2.txt";
+		String targetFile = "c:\\temp\\sample1.txt";
+		String baseFile = "c:\\temp\\sample2.txt";
+		//String targetFile = "/semplest/nan/sample1.txt";
+		//String baseFile = "/semplest/nan/sample2.txt";
 		
 		ap.processArticle(targetFile, baseFile);
 		
@@ -129,7 +129,7 @@ public class ArticleProcesser {
 				//use it as a start point to form word
 				String longWord = "";
 				int count = 0;
-				for(int ptr = 0 ; ptr < maxLengthOfKeyword; ptr++){
+				for(int ptr = 0 ; ptr < maxLengthOfLongTailWord; ptr++){
 					int current = i + ptr;
 					if(current > listOfWords.size() - 1){
 						//out of the array
