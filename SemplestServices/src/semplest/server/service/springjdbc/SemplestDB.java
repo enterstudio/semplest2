@@ -35,6 +35,8 @@ import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.EmailType;
 import semplest.server.protocol.Job;
 import semplest.server.protocol.JobName;
+import semplest.server.protocol.PromotionBudget;
+import semplest.server.protocol.Transaction;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
@@ -108,10 +110,13 @@ public class SemplestDB extends BaseDB
 	public static final String GET_USER_FOR_REGISTRATION_REMINDER_SQL = GET_USERS_FOR_REGISTRATION_REMINDER_SQL + " and UserPK = ?";
 
 	public static final String GET_USER_SQL = "select UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate from Users where UserPK = ?";
+	
+	public static final String GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate > ? and IsAppliedToPromotion = 0";
 
 	public static final RowMapper<User> USER_ROW_MAPPER;
 	public static final RowMapper<CustomerHierarchy> CUSTOMER_HIERARCHY_ROW_MAPPER;
 	public static final RowMapper<Job> JOB_ROW_MAPPER;
+	public static final RowMapper<PromotionBudget> PROMOTION_BUDGET_ROW_MAPPER;
 
 	static
 	{
@@ -164,6 +169,25 @@ public class SemplestDB extends BaseDB
 				return job;
 			}	
 		};
+		
+		PROMOTION_BUDGET_ROW_MAPPER = new RowMapper<PromotionBudget>()
+		{
+			@Override
+			public PromotionBudget mapRow(final ResultSet rs, final int index) throws SQLException
+			{
+				final Integer pk = rs.getInt("PromotionBudgetPK");
+				final Integer transactionPK = rs.getInt("TransactionsFK");
+				final Integer promotionFK = rs.getInt("PromotionFK");
+				final Double budgetToAddAmount = rs.getDouble("BudgetToAddAmount");
+				final java.util.Date budgetToAddDate = rs.getTimestamp("BudgetToAddDate");
+				final Boolean isValid = rs.getBoolean("IsValid");
+				final Boolean isAppliedToPromotion = rs.getBoolean("IsAppliedToPromotion");
+				final Double budgetCarryOverAmount = rs.getDouble("BudgetCarryOverAmount");
+				final java.util.Date createDate = rs.getTimestamp("CreatedDate");
+				final PromotionBudget promotionBudget = new PromotionBudget(pk, transactionPK, promotionFK, budgetToAddAmount, budgetToAddDate, isValid, isAppliedToPromotion, budgetCarryOverAmount, createDate, null);
+				return promotionBudget;
+			}	
+		}; 
 	}
 	
 	public static void updateJobLastSuccessfulRunTime(final JobName jobName) throws Exception
@@ -295,6 +319,13 @@ public class SemplestDB extends BaseDB
 			throw new Exception("Problem performing operations even after max " + maxRetries + " retries", e);
 		}
 	}
+	
+	public static List<PromotionBudget> getPromotionBudgetsForMaintenance(final java.util.Date asOfDate)
+	{
+		logger.info("Will try to Retrieve Promotion Budgets for Maintenance as of [" + asOfDate + "]");
+		final List<PromotionBudget> budgets = jdbcTemplate.query(GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL, PROMOTION_BUDGET_ROW_MAPPER, asOfDate);
+		return budgets;
+	}
 
 	public static Credential getCredential(final Integer userID)
 	{
@@ -342,10 +373,8 @@ public class SemplestDB extends BaseDB
 
 	public static User getUserForRegistrationReminder(final java.util.Date asOfDate, final Integer daysBack, final Integer userID) throws Exception
 	{
-		logger.info("Will try to find User for registration reminder using UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack ["
-				+ daysBack + "]");
-		final List<User> userList = jdbcTemplate.query(GET_USER_FOR_REGISTRATION_REMINDER_SQL, USER_ROW_MAPPER, daysBack, asOfDate, daysBack,
-				asOfDate, userID);
+		logger.info("Will try to find User for registration reminder using UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack [" + daysBack + "]");
+		final List<User> userList = jdbcTemplate.query(GET_USER_FOR_REGISTRATION_REMINDER_SQL, USER_ROW_MAPPER, daysBack, asOfDate, daysBack, asOfDate, userID);
 		if (userList == null || userList.isEmpty())
 		{
 			return null;
@@ -355,8 +384,7 @@ public class SemplestDB extends BaseDB
 			final Integer numUsersFound = userList.size();
 			if (numUsersFound != 1)
 			{
-				throw new Exception("Found " + numUsersFound + " Users in database for UserID [" + userID + "], AsOfDate [" + asOfDate
-						+ "], DaysBack [" + daysBack + "], but should be 1");
+				throw new Exception("Found " + numUsersFound + " Users in database for UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack [" + daysBack + "], but should be 1");
 			}
 			final User user = userList.get(0);
 			return user;

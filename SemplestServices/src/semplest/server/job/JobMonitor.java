@@ -18,7 +18,7 @@ public class JobMonitor
 	
 	public JobMonitor() throws Exception
 	{
-		final ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+		new ClassPathXmlApplicationContext("Service.xml");
 		final Object object = new Object();
 		final SemplestConfiguration configDB = new SemplestConfiguration(object);
 		final Thread configThread = new Thread(configDB);

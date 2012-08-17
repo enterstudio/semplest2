@@ -243,7 +243,7 @@ public class AccountActivationEmailSender
 		{
 			log.info("Starting process for sending account activation email");
 			log.info("Initializing");		
-			final ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
 			SemplestConfiguration configDB = new SemplestConfiguration(object);
 			Thread configThread = new Thread(configDB);
