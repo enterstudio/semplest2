@@ -40,9 +40,9 @@ public class ArticleProcesser {
 		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(listOfPhrases, probOfAllWords);		
 		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, listOfPhrases);		
 		ArrayList<String> rankedPhrases = RankPhrases(listOfPhrases, freqOfPhrases, flexOfPhrases);
-		/*for(String s : rankedLongTailWords){
+		for(String s : rankedPhrases){
 			System.out.println(s);
-		}*/
+		}
 	}
 	
 	public ArrayList<String> RankPhrases(ArrayList<String> listOfPhrases, HashMap<String,Double> frequencyOfPhrases, HashMap<String,Double> flexibilityOfPhrases){
@@ -53,10 +53,7 @@ public class ArticleProcesser {
 			Double score = (prob * weightOfProbability + flex * weightOfFlexibility) * 10000;
 			scoreMap.put(phrase, score);
 		}
-		TreeMap<String, Double> rankedMap = SortMap(scoreMap);
-		for(String s : rankedMap.descendingKeySet()){
-			System.out.println(s + " - " + rankedMap.get(s));
-		}
+		TreeMap<String, Double> rankedMap = SortMap(scoreMap);		
 		ArrayList<String> ret = new ArrayList<String>();
 		ret.addAll(rankedMap.descendingKeySet());
 		return ret;
