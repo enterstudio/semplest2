@@ -32,10 +32,6 @@ import java.util.Set;
 import java.util.Stack;
 
 
-
-
-
-
 public class JSoupUtils {
 
 	/**
@@ -77,6 +73,11 @@ public class JSoupUtils {
 		Set<String> linkSet = getLinksMap(element).keySet();
         return Arrays.asList(linkSet.toArray(new String[linkSet.size()]));
 	}
+	public static List<String> getLinks(String url) throws IOException{
+		JSoupUtils jSoup = new JSoupUtils();
+        Document doc = Jsoup.connect(url).get();
+        return getLinks(doc);
+	}
 	
 	//Returns a list of all the links in the primary Url
 	public static Map<String, String> getLinksMap(Element element){
@@ -89,6 +90,13 @@ public class JSoupUtils {
         }
         return linksM;
 	}
+	
+	public static Map<String, String> getLinksMap(String url) throws IOException{
+		JSoupUtils jSoup = new JSoupUtils();
+        Document doc = Jsoup.connect(url).get();
+        return getLinksMap(doc);
+	}
+	
 	//Returns a list all the media sources
 	public static List<String> getMediaSource(Element element){
 		List<String> mediaL = new ArrayList<String>();
@@ -106,6 +114,12 @@ public class JSoupUtils {
         return mediaL;
 	}
 	
+	public static List<String> getMediaSource(String url) throws IOException{
+		JSoupUtils jSoup = new JSoupUtils();
+        Document doc = Jsoup.connect(url).get();
+        return getMediaSource(doc);
+	}
+	
 	//Returns a list the import sources
 	public static List<String> getImportsSource(Element element){
 		List<String> importL = new ArrayList<String>();
@@ -118,6 +132,12 @@ public class JSoupUtils {
         }
         return importL;
 	}
+	public static List<String> getImportsSource(String url) throws IOException{
+		JSoupUtils jSoup = new JSoupUtils();
+        Document doc = Jsoup.connect(url).get();
+        return getImportsSource(doc);
+	}
+	
 	
 	//Returns plain text of specidified url
     public static String getPlainText(Element element) {
