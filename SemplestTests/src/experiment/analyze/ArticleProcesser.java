@@ -21,8 +21,10 @@ public class ArticleProcesser {
 	public static void main(String[] args){
 		ArticleProcesser ap = new ArticleProcesser();
 		
-		String targetFile = "c:\\temp\\sample1.txt";
-		String baseFile = "c:\\temp\\sample2.txt";
+		//String targetFile = "c:\\temp\\sample1.txt";
+		//String baseFile = "c:\\temp\\sample2.txt";
+		String targetFile = "/semplest/nan/sample1.txt";
+		String baseFile = "/semplest/nan/sample2.txt";
 		
 		ap.processArticle(targetFile, baseFile);
 		
