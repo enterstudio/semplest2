@@ -73,6 +73,7 @@ namespace SemplestModel
             }
         }
 
+        public List<int> ProximityRadii { get { return new List<int> {5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; } }
         public bool Delete { get; set; }
         public bool IsCountry { get; set; }
         public bool IsState { get; set; }

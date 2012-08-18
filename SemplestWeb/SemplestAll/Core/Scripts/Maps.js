@@ -83,12 +83,19 @@ function renderOptions(response) {
         } else {
             map = new L.Map('map', { zoomControl: false, doubleClickZoom: false, attributionControl: false, trackResize: false });
         }
-        var proxVal = this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__ProximityRadius']")[0].value;
+        var proxVal = this.$.find("select[id='AdModelProp_Addresses_" + localIndex + "__ProximityRadius']")[0].value;
+        if ($('input:radio[name=group1]:checked').val() == "STATE") {
+            proxVal = 0;
+        }
         if (proxVal == null || proxVal == "")
             proxVal = 0;
         var zoomval = getCustomZoom(proxVal);
         if (zoomval == null)
             zoomval = 13;
+        if ($('input:radio[name=group1]:checked').val() == "STATE") {
+            proxVal = 0;
+            zoomval = 3;
+        }
         var lng = location.latLng.lng;
         var lat = location.latLng.lat;
         $("#IsState").val("False");
@@ -115,7 +122,7 @@ function renderOptions(response) {
             zoomval = 3;
         }
         else if ($("#AdModelProp_Addresses_" + localIndex + "__StateCodeFK").val() != "--" &&
-                    ($("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val().trim() > '0') &&
+                    ($("#AdModelProp_Addresses_" + localIndex + "__ProximityRadius").val() != 5) &&
                     $("#AdModelProp_Addresses_" + localIndex + "__City").val().trim() == '' &&
                     $("#AdModelProp_Addresses_" + localIndex + "__Zip").val().trim() == '' &&
                     $("#AdModelProp_Addresses_" + localIndex + "__Address").val().trim() == '') {
@@ -126,7 +133,7 @@ function renderOptions(response) {
            $("#getCategories").attr("disabled", "disabled");
            zoomval = 3;
         }
-       else {
+       else if (locations[0].geocodeQuality != "STATE") {
            $("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']").val(location.latLng.lat);
            $("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']").val(location.latLng.lng);
         }

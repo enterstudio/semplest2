@@ -21,7 +21,7 @@
                                 @Html.EditorFor(t => t.Addresses)
                             </div>
                             <div style="text-align: left; margin-left: 75px; margin-top: -30px;" class ="adLink">
-                                @Html.LinkToAddNestedForm("Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp")
+                                @Html.LinkToAddNestedForm("Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp", "AddBusinessLocationButton")
                             </div>
                         </td>
                     </tr>
@@ -83,7 +83,7 @@
         </li>
         <li>
             <div style="margin-left: 77px;">
-                @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")
+                @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp", "CreateAnotherAdButton")
                 
                 
                 
@@ -120,6 +120,5 @@
     </style>
 </div>
 @{
-    var at = @Model.Addresses != null ? @Model.Addresses.Single().AddressType != null ? @Model.Addresses.Single().AddressType.AddressType1 : "" : "";
     @Html.HiddenFor(t => t.PromotionAddressType);
 }

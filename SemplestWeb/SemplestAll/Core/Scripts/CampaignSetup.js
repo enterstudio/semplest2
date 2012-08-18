@@ -335,17 +335,26 @@ $(document).ready(function () {
     $("#btnOkCAT").click(function (event) {
         //for now know submit lets just remove tabs
         //$("#hiddenDirtyForm").submit();
-        $('#AdModelProp_PromotionAddressType').val($('input[name=group1]:checked').val());
+
+        selectionAddress = $('input[name=group1]:checked').val();
+        $('#AdModelProp_PromotionAddressType').val(selectionAddress);
+        $("#AddBusinessLocationButton").attr('disabled', selectionAddress == 'NATIONALLY');
+
         $("div .address button").trigger('click');
         $("div .adLink button").trigger('click');
-        $('#ChangeAddressTypeForm').hide();
-        $('#ChangeAddressTypeForm').data("kendoWindow").close();
+        if ($('#ChangeAddressTypeForm').data("kendoWindow") != null) {
+            $('#ChangeAddressTypeForm').hide();
+            $('#ChangeAddressTypeForm').data("kendoWindow").close();
+        }
     });
     var selectionAddress = $('#AdModelProp_PromotionAddressType').val();
-    if (selectionAddress == '')
+    if (selectionAddress == '') {
         selectionAddress = 'NATIONALLY';
+        $("#AddBusinessLocationButton").attr('disabled', true);
+        $('#AdModelProp_PromotionAddressType').val(selectionAddress);
+    }
 
-    $('input:radio[value|=' + $('#AdModelProp_PromotionAddressType').val() + ']').attr('checked', true);
+    $('input:radio[value|=' + selectionAddress + ']').attr('checked', true);
     $("#btnCancelCAT").click(function (event) {
         $('input:radio[value|=' + $('#AdModelProp_PromotionAddressType').val() + ']').attr('checked', true);
         var changeWindow = $('#ChangeAddressTypeForm').data("kendoWindow");
@@ -354,20 +363,38 @@ $(document).ready(function () {
     });
 
     $("input[name=group1]").change(function (e) {
+        var freshForm = true;
+        for (var i = 0; i < $('div .address input[name*="Delete"]').length; i++) {
+            if ($('#AdModelProp_Addresses_' + i + '__Delete').val() == 'False') {
+                if ($('#AdModelProp_Addresses_' + i + '__Address').val() != '' ||
+                    $('#AdModelProp_Addresses_' + i + '__City').val() != '' ||
+                        $('#AdModelProp_Addresses_' + i + '__StateCodeFK').val() > 0 ||
+                            $('#AdModelProp_Addresses_' + i + '__Zip').val() != '' ||
+                                $('#AdModelProp_Addresses_' + i + '__ProximityRadius').val() != 5) {
+                    freshForm = false;
+                    break;
+                }
+            }
+        }
 
-        $('#groupSelection').val($('#ChangeAddressTypeForm').val());
-        var changeWindow = $('#ChangeAddressTypeForm').kendoWindow({
-            resizable: false,
-            modal: true,
-            title: "Change Locale"
-        }).data("kendoWindow");
-        $('#ChangeAddressTypeForm').show();
-        changeWindow.center();
-        changeWindow.open();
-
+        //            &&
+        //
+        if (freshForm) {
+            $("#btnOkCAT").trigger('click');
+        } else {
+            var changeWindow = $('#ChangeAddressTypeForm').kendoWindow({
+                resizable: false,
+                modal: true,
+                title: "Change Locale"
+            }).data("kendoWindow");
+            $('#ChangeAddressTypeForm').show();
+            changeWindow.center();
+            changeWindow.open();
+        }
     });
+    $('.address')[0].outerHTML = DisableGeoTargetFields($('.address')[0].outerHTML);
 
-});            //end ready
+});                        //end ready
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
@@ -407,16 +434,7 @@ function addNestedForm(container, counter, ticks, content) {
 
         content = content.replace("class=\"map\"", "class=\"map\"" + "id=\"map_" + nextIndex + "\"");
         content.replace(new RegExp('nestedObject', "igm"), ' Addresses_' + nextIndex + '_');
-        if ($('input:radio[name=group1]:checked').val() == "STATE") {
-            var labelStart = content.indexOf('State</label>') - 30;
-            var comboStart = content.indexOf('--');
-            var firstPartOfString = content.substr(0, labelStart);
-            var secondPartOfString = content.substr(comboStart);
-            content = firstPartOfString + content.substr(labelStart, comboStart - labelStart).replace(/disabled=\"disabled\"/g, '') + secondPartOfString;
-        }
-        else if ($('input:radio[name=group1]:checked').val() == "GEO_POINT") {
-            content = content.replace(/disabled=\"disabled\"/g, '');
-        }
+        content = DisableGeoTargetFields(content);
 
     }
 
@@ -458,6 +476,7 @@ function addNestedForm(container, counter, ticks, content) {
     }
     if (container == "#addresses") {
         $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
+        $("#AdModelProp_Addresses_" + nextIndex + "__ProximityRadii").kendoDropDownList();
         doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
         $('#AdModelProp_Addresses_' + nextIndex + '__Address').change(function (e) {
             doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
@@ -479,6 +498,21 @@ function addNestedForm(container, counter, ticks, content) {
 //    $.validate.unobtrusive.parse('#form0');
 }
 
+function DisableGeoTargetFields(content) {
+    if ($('input:radio[name=group1]:checked').val() == "STATE") {
+        var labelStart = content.indexOf('State</label>') - 30;
+        var comboStart = content.indexOf('--');
+        var firstPartOfString = content.substr(0, labelStart);
+        var secondPartOfString = content.substr(comboStart);
+        content = firstPartOfString + content.substr(labelStart, comboStart - labelStart).replace(/disabled=\"disabled\"/g, '') + secondPartOfString;
+    }
+    else if ($('input:radio[name=group1]:checked').val() == "GEO_POINT") {
+        content = content.replace('k-state-disabled', '');
+        
+        content = content.replace(/disabled=\"disabled\"/g, '');
+    }
+    return content;
+}
 
 var onSelect = function (e) {
 

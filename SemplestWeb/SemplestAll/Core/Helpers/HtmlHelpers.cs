@@ -29,7 +29,7 @@ namespace Semplest.Core.Helpers
         }
         public static IHtmlString LinkToAddNestedForm<TModel>(this HtmlHelper<TModel> htmlHelper, string linkText,
                                                               string containerElement, string counterElement,
-                                                              string collectionProperty, Type nestedType, string prefix)
+                                                              string collectionProperty, Type nestedType, string prefix, string buttonId)
         {
             long ticks = DateTime.UtcNow.Ticks;
             object nestedObject = Activator.CreateInstance(nestedType);
@@ -42,6 +42,7 @@ namespace Semplest.Core.Helpers
             tb.Attributes.Add("onclick", js);
             tb.InnerHtml = "<span class=\"k-add k-icon\"></span>" + linkText;
             tb.Attributes.Add("class", "k-button");
+            tb.Attributes.Add("id", buttonId);
             string tag = tb.ToString(TagRenderMode.Normal);
             return MvcHtmlString.Create(tag);
         }

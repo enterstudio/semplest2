@@ -54,8 +54,11 @@
                     Proximity</label>
             </td>
             <td>
-                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity", @disabled = "disabled" })<label style="padding-left: 10px">
-                    in miles</label>
+                @{
+                    var i = @Model.ProximityRadius ?? 5;
+                    @Html.DropDownListFor(t => t.ProximityRadius, new SelectList(Model.ProximityRadii, "", "", (int)i), new { @class = "k-dropdownlist proximity", @disabled = "disabled" })
+                }
+                <label style="padding-left: 10px">in miles</label>
                 @Html.ValidationMessageFor(t => t.ProximityRadius)
                 @Html.LabelFor(t => t.ProximityMessage, new { style = "visibility:hidden; margin-left: 84px;color:red;" }, true)
 
