@@ -111,7 +111,8 @@ public class SemplestDB extends BaseDB
 
 	public static final String GET_USER_SQL = "select UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate from Users where UserPK = ?";
 	
-	public static final String GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate > ? and IsAppliedToPromotion = 0";
+	public static final String GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate > ? and IsAppliedToPromotion = 0 and IsValid = 1";
+	//public static final String GET_TRANSACTION_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate > ? and IsAppliedToPromotion = 0 and IsValid = 1";
 
 	public static final RowMapper<User> USER_ROW_MAPPER;
 	public static final RowMapper<CustomerHierarchy> CUSTOMER_HIERARCHY_ROW_MAPPER;
@@ -324,6 +325,11 @@ public class SemplestDB extends BaseDB
 	{
 		logger.info("Will try to Retrieve Promotion Budgets for Maintenance as of [" + asOfDate + "]");
 		final List<PromotionBudget> budgets = jdbcTemplate.query(GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL, PROMOTION_BUDGET_ROW_MAPPER, asOfDate);
+		for (final PromotionBudget budget : budgets)
+		{
+			final Integer budgetPk = budget.getPk();
+			// TODO: get transactions for the budget
+		}
 		return budgets;
 	}
 

@@ -29,8 +29,17 @@ public class PromotionMaintenance
 	{
 		log.info("Will try to do Promotion Maintenance for As-Of-Date [" + asOfDate + "]");		
 		final List<PromotionBudget> budgets = SemplestDB.getPromotionBudgetsForMaintenance(asOfDate);
-		log.info("Budgets that require maintenance:\n" + SemplestUtils.getEasilyReadableString(budgets));
-		
+		log.info(budgets.size() + " budgets that require maintenance:\n" + SemplestUtils.getEasilyReadableString(budgets));
+		for (final PromotionBudget budget : budgets)
+		{
+			final Double carryOverAmount = budget.getBudgetCarryOverAmount();
+			
+/*
+ * what's the difference between carryOverAmount and BudgetToAddAmount?
+ * instead of TransactionsFK, shouldn't the transactions be pointing to PromotionBudget instead?
+ * where would one-time transactions (i.e. fees) be pointed to?  It should point to the PromotionBudget, right?
+ */
+		}
 	}
 	
 	public static RunMode getRunMode() throws Exception

@@ -37,8 +37,9 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
 	//private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
+	//private static String BASEURLTEST = "http://172.18.9.26:9898/semplest";
 	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
 	private static String timeoutMS = "18000000"; // 5 hours
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
@@ -79,6 +80,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		*/
 		
 		// validateGoogleGeoTargets 
+		/*
 		final GeoTargetObject geoTargetGeoPoint = new GeoTargetObject();
 		geoTargetGeoPoint.setAddress("195 Broadway");
 		geoTargetGeoPoint.setCity("New York");
@@ -93,7 +95,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		//final List<GeoTargetObject> geoTargets = Arrays.asList(geoTargetGeoPoint, geoTargetState);
 		final List<GoogleViolation> googleViolations_validateGoogleGeoTargets = client.validateGoogleGeoTargets(geoTargets);
 		logger.info("Google Violations from validateGoogleGeoTargets:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleGeoTargets));
-		
+		*/
 		 /* // scheduleAddAds final Integer customerID_ScheduleAddAds = 12; final Integer promotionID_ScheduleAddAds = 62; final List<Integer>
 		 * promotionAdIds_ScheduleAddAds = Arrays.asList(218); final List<String> adEngines_ScheduleAddAds = Arrays.asList(AdEngine.Google.name());
 		 * client.scheduleAddAds(customerID_ScheduleAddAds, promotionID_ScheduleAddAds, promotionAdIds_ScheduleAddAds, adEngines_ScheduleAddAds);
@@ -161,14 +163,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 */
 		
 		
-		/*
+		
 		 // scheduleAddPromotionToAdEngine 			
-		 final Integer customerID_scheduleAddPromotionToAdEngine = 1; 
-		 final Integer productGroupID_scheduleAddPromotionToAdEngine = 1; 
-		 final Integer promotionID_scheduleAddPromotionToAdEngine = 1; 
+		 final Integer customerID_scheduleAddPromotionToAdEngine = 6; 
+		 final Integer productGroupID_scheduleAddPromotionToAdEngine = 8; 
+		 final Integer promotionID_scheduleAddPromotionToAdEngine = 8; 
 		 final List<AdEngine> adEngines_scheduleAddPromotionToAdEngine = Arrays.asList(AdEngine.Google);
 		 client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngine, productGroupID_scheduleAddPromotionToAdEngine, promotionID_scheduleAddPromotionToAdEngine, adEngines_scheduleAddPromotionToAdEngine);
-		 */
+		
 		
 		//client.validateGoogleNegativeKeywords(Arrays.asList("hooker"));
 		
