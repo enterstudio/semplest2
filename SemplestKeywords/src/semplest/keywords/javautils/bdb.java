@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.sleepycat.je.*;
 
-/* Utilities to stor/retrieve key/value tuples in a Berkeley Database
+/* Utilities to store/retrieve key/value tuples in a Berkeley Database
  * Note: Implementation where keys and values are Strings (this need not be the case)
  */
 public class bdb {
