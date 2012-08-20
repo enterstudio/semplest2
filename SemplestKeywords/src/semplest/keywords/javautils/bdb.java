@@ -13,8 +13,8 @@ import com.sleepycat.je.*;
 public class bdb {
 
   // - Privates ------------
-  //  private static String DIR = "/semplest/data/dmoz/bdb/";
-  private static String DIR = ProjectProperties.bdbdir;
+  private static String DIR = "/semplest/data/dmoz/bdb/";
+  //  private static String DIR = ProjectProperties.bdbdir;
 
   private static Environment getEnv( String id, Boolean ro){
     EnvironmentConfig ec = new EnvironmentConfig();
