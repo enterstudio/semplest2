@@ -44,17 +44,6 @@ ALTER TABLE dbo.PromotionBudget ADD
 		REFERENCES dbo.Promotion(PromotionPK)
 GO
 
-
----
---- CREATE FOREIGN KEY CONSTRAINT: REL_Transactions_PromotionBudget_2
----
-ALTER TABLE dbo.PromotionBudget ADD 
-	CONSTRAINT REL_Transactions_PromotionBudget_2 FOREIGN KEY (TransactionsFK)
-		REFERENCES dbo.Transactions(TransactionsPK)
-GO
-
-
-
 ---
 --- CREATE TABLE: dbo.Transactions
 ---
@@ -70,6 +59,14 @@ CREATE TABLE dbo.Transactions
 	EditedDate datetime2,
 	PRIMARY KEY CLUSTERED (TransactionsPK)
 )
+GO
+
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_Transactions_PromotionBudget_2
+---
+ALTER TABLE dbo.PromotionBudget ADD 
+	CONSTRAINT REL_Transactions_PromotionBudget_2 FOREIGN KEY (TransactionsFK)
+		REFERENCES dbo.Transactions(TransactionsPK)
 GO
 
 ---
