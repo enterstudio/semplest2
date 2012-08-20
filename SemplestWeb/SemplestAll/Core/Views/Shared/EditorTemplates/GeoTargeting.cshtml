@@ -5,7 +5,7 @@
     <table>
         <tr>
             <td>
-                <label style="min-width: 65px" disabled="disabled">
+                <label style="min-width: 65px" >
                     Street</label> @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
             </td>
 
@@ -23,7 +23,7 @@
         </tr>
         <tr>
             <td>
-                <label style="min-width: 65px" disabled="disabled">
+                <label style="min-width: 65px" >
                     City</label>
             </td>
             <td>
@@ -33,15 +33,15 @@
         </tr>
         <tr>
             <td>
-                <label style="min-width: 65px" disabled="disabled">State</label>
+                <label style="min-width: 65px" >State</label>
             </td>
             <td>
-                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr", @Model.StateCodeFK), new { @class = "k-dropdownlist state", @disabled = "disabled" })
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr", @Model.StateCodeFK), new { @disabled = "disabled"})
             </td>
         </tr>
         <tr>
             <td>
-                <label style="min-width: 65px" disabled="disabled">
+                <label style="min-width: 65px" >
                     Zip</label>
             </td>
             <td>
@@ -50,13 +50,13 @@
         </tr>
         <tr>
             <td>
-                <label style="min-width: 65px" disabled="disabled">
+                <label style="min-width: 65px" >
                     Proximity</label>
             </td>
             <td>
                 @{
                     var i = @Model.ProximityRadius ?? 5;
-                    @Html.DropDownListFor(t => t.ProximityRadius, new SelectList(Model.ProximityRadii, "", "", (int)i), new { @class = "k-dropdownlist proximity", @disabled = "disabled" })
+                    @Html.DropDownListFor(t => t.ProximityRadius, new SelectList(Model.ProximityRadii, "", "", (int)i), new { @disabled = "disabled"})
                 }
                 <label style="padding-left: 10px">in miles</label>
                 @Html.ValidationMessageFor(t => t.ProximityRadius)

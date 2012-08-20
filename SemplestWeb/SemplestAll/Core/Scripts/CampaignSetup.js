@@ -392,9 +392,11 @@ $(document).ready(function () {
             changeWindow.open();
         }
     });
-    $('.address')[0].outerHTML = DisableGeoTargetFields($('.address')[0].outerHTML);
+    for (var i = 0; i < $('.address').length; i++) {
+        $('.address')[i].outerHTML = DisableGeoTargetFields($('.address')[i].outerHTML);
+    }
 
-});                        //end ready
+});                           //end ready
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
@@ -475,8 +477,8 @@ function addNestedForm(container, counter, ticks, content) {
         }));
     }
     if (container == "#addresses") {
-        $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
-        $("#AdModelProp_Addresses_" + nextIndex + "__ProximityRadii").kendoDropDownList();
+        //$("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
+        //$("#AdModelProp_Addresses_" + nextIndex + "__ProximityRadii").kendoDropDownList();
         doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
         $('#AdModelProp_Addresses_' + nextIndex + '__Address').change(function (e) {
             doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');

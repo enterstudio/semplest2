@@ -665,17 +665,17 @@ namespace Semplest.SharedResources.Services
                 get; set;
             }
 
-            public Double latitude
+            public Double? latitude
             {
                 get; set;
             }
 
-            public Double longitude
+            public Double? longitude
             {
                 get; set;
             }
 
-            public Double radius
+            public Double? radius
             {
                 get; set;
             }

@@ -158,11 +158,11 @@ namespace Semplest.Core.Models.Repositories
                     var geoTObj = new GeoTargetObject();
                     geoTObj.address = geo.Address;
                     geoTObj.city = geo.City;
-                    if (geo.StateCodeFK != null) geoTObj.state = GetStateNameFromDb((int)geo.StateCodeFK);
+                    if (geo.StateCodeFK != int.MinValue) geoTObj.state = GetStateNameFromDb((int)geo.StateCodeFK);
                     geoTObj.zip = geo.Zip;
-                    geoTObj.radius = (double)(geo.ProximityRadius ?? 0);
-                    geoTObj.latitude = (double)(geo.Latitude ?? 0);
-                    geoTObj.longitude = (double)(geo.Longitude ?? 0);
+                    geoTObj.radius = (double?)(geo.ProximityRadius ?? null);
+                    geoTObj.latitude = (double?)(geo.Latitude ?? null);
+                    geoTObj.longitude = (double?)(geo.Longitude ?? null);
                     geoList.Add(geoTObj);
                 }
             }
