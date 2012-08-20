@@ -644,7 +644,7 @@ namespace Semplest.Core.Models.Repositories
                                              decimal customerDefaultPerCampaignFlatFeeAmount)
         {
             model.AdModelProp.LandingUrl = model.AdModelProp.LandingUrl.Trim();
-            model.AdModelProp.DisplayUrl = model.AdModelProp.DisplayUrl.Trim();
+            model.AdModelProp.DisplayUrl = string.IsNullOrEmpty(model.AdModelProp.DisplayUrl) ? string.Empty : model.AdModelProp.DisplayUrl.Trim();
             updatePromotion.LandingPageURL = model.AdModelProp.LandingUrl;
             updatePromotion.DisplayURL = model.AdModelProp.DisplayUrl;
             updatePromotion.PromotionDescription = model.ProductGroup.Words;
