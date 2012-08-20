@@ -37,6 +37,16 @@ public class ioUtils {
       return "";
     }
   }
+  // returns first n lines of file  string
+  public static String[] readLines(String file, int n){
+    String[] lines = new String[ n ];
+    try {
+      BufferedReader r = new BufferedReader(new FileReader(file));
+      for( int i=0; i< n; i++)
+        lines[i] = r.readLine();
+    } catch (Exception e) { logger.error("Problem", e); }
+    return lines;
+  }
 
   // returns lines of file specified and returns as string array
   public static String[] readLine(String file, int[] is){
