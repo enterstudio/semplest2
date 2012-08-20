@@ -1,0 +1,134 @@
+﻿@model Semplest.Core.Models.CampaignSetupModel
+<style>
+    .spacing
+    {
+        margin-left: 10px;
+        margin-right: 20px;
+    }
+    .options1
+    {
+        border-color: #fff;
+        border-width: 0.3em;
+        border-style: inset;
+        height: 345px;
+        width: 700px;
+        overflow-x: auto;
+    }
+</style>
+<div class="configuration">
+    <span class="infoHead">Billing and Launch (continue)</span>
+    <h3>
+        View Keywords</h3>
+    <p>
+        Hundreds of keywords have been generated for you. It is recommemded that you do
+        not delete keywords that seem obscure because they help you beat the competition
+        by reaching potential customers without engaging in a price war for the most obvious
+        ones. In the following weeks, this tool will take care of cleaning up your keywords,
+        keeping only the most effective ones.
+    </p>
+    <div style="display: inline-block; margin-top:10px;margin-bottom: 10px;">
+        <label style="color: #919297">
+            Delete</label>
+        <label style="color: #919297; margin-left: 7px;">
+            Keywords</label>
+        <label style="color: #919297; margin-left: 150px;">
+            Search</label>
+        <input type="text" class="k-textbox"/>
+    </div>
+    <br />
+    <div class="options" id="keywords">
+        @if (Model != null)
+        {
+         
+@*@Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
+            
+
+            <div class="options1" id="wrap">
+                @* <h1 id="headerF">Filter</h1>  *@ @* <<<----- uncomment h1  to get the filter*@
+                @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { @class = "spacing" }, 2)
+            </div>
+
+        }
+    </div>
+    <div class="options">
+        <br />
+        <hr class="titlewhitelinebottom" />
+        <div style="text-align: center;">
+            <button class="k-button" id="backKey" type="button">
+                <span class="k-back k-icon"></span>back</button>
+            <button class="k-button" id="getBillingLaunch" type="submit" name="Command" value="KeyWords">
+                <span class="k-update k-icon"></span>Save And Continue</button>
+        </div>
+        @*<input class="k-button" id="getBillingLaunch" type="submit" name="Command" value="GetBillingLaunch"/>*@
+    </div>
+    @*    <div style="border:3px solid #fff">
+    </div>
+*@
+</div>
+<script type="text/javascript">
+    $('#backKey').click(function () {
+        tabChange();
+    });
+
+    $('#getBillingLaunch').click(function () {
+        //alert('billinglaunch clicked');
+        //tabChange();
+    });
+
+    function tabChange(parameters) {
+        var tab = tabStrip.select(),
+        otherTab = tab.prev();
+        tabStrip.remove(tab);
+        tabStrip.select(otherTab);
+
+    }
+
+
+</script>
+<script type="text/javascript">
+
+    (function ($) {
+        enableDisable();
+        // custom css expression for a case-insensitive contains()
+        jQuery.expr[':'].Contains = function (a, i, m) {
+            return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+        };
+
+
+        function listFilter(header, list) { // header is any element, list is an unordered list
+            // create and add the filter form to the header
+
+            var form = $("<form>").attr({ "class": "filterform", "action": "#" }),
+        input = $("<input>").attr({ "class": "filterinput", "type": "text" });
+            $(form).append(input).appendTo(header);
+
+
+
+            $(input)
+      .change(function () {
+          var filter = $(this).val();
+          if (filter) {
+              // this finds all links in a list that contain the input,
+              // and hide the ones not containing the input while showing the ones that do
+              //alert(1);
+              $(list).find("li:not(:Contains(" + filter + "))").parent().slideUp();
+              $(list).find("li:Contains(" + filter + ")").parent().slideDown();
+          } else {
+              $(list).find("li").slideDown();
+          }
+          return false;
+      })
+    .keyup(function () {
+        // fire the above change event after every letter
+        $(this).change();
+    });
+        }
+
+
+        //ondomready
+        $(function () {
+            listFilter($("#headerF"), $("#list"));
+        });
+    } (jQuery));
+
+</script>

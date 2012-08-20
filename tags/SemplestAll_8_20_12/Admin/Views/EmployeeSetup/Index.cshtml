@@ -1,0 +1,81 @@
+﻿@using System.Globalization
+@model IEnumerable<Semplest.Admin.Models.EmployeeSetup>
+@{
+    ViewBag.Title = "Index";
+}
+@section Title{
+Employee Setup
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Headscript{
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+@using (Html.BeginForm("Index"))
+{
+    <div class='container'>
+        <div class='column span-9'>
+            <div style="margin-left: 20px; margin-bottom: 10px; margin-top: 10px">
+                Search
+                <input type="text" id="Search" style="margin-left: 5px; margin-right: 5px;" name="search" class="k-textbox" required validationmessage="Please enter {0}" />
+                <input type="submit" value="Search" class="k-button" />
+            </div>
+        </div>
+        <div class="column span-9" style="margin-top: 16px;">
+            @Html.RouteLink("Add New Employee", new { Controller = "EmployeeSetup", action = "Add" })                    
+        </div>
+    </div>
+}
+@if (TempData["message"] != null)
+{
+    <div style="color: red;">
+        @TempData["message"]
+    </div>
+}
+@if (Model.Any())
+{ 
+    <div style="overflow: auto; height: 400px; width: 800px;">
+        <table id="gradient-style">
+            <tr>
+                <th>
+                    First Name
+                </th>
+                <th>
+                    Last Name
+                </th>
+                <th>
+                    Active
+                </th>
+                <th>
+                    Role
+                </th>
+                <th>
+                    Email
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.RouteLink(item.FirstName, new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    </td>
+                    <td>
+                        @Html.RouteLink(item.LastName, new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    </td>
+                    <td>
+                        @Html.RouteLink(item.isActive ? "Active" : "InActive", new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    </td>
+                    <td>
+                        @Html.RouteLink(item.RoleName, new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    </td>
+                    <td>
+                        @Html.RouteLink(item.Email, new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
