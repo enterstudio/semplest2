@@ -80,7 +80,11 @@ public class CleanUpMsnAccounts extends BaseDB{
 		for(Integer promotionId : promotionIDs){
 			sql = "UPDATE PromotionAdengineStatus SET PromotionStatusFK = 5 WHERE PromotionFK = ? AND AdvertisingEngineFK = 1";
 			jdbcTemplate.update(sql, new Object[]
-					{promotionId});							
+					{promotionId});				
+			
+			sql = "UPDATE Schedule SET IsEnabled = 0, IsInactive = 1 WHERE PromotionFK = ?";
+			jdbcTemplate.update(sql, new Object[]
+					{promotionId});	
 		}
 		for(Long accountId : toDeleteAccounts){
 			sql = "SELECT aep.AdvertisingEngineCampaignPK FROM AdvertisingEnginePromotion aep WHERE aep.AdvertisingEngineAccountFK = ?";
