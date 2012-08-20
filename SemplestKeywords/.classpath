@@ -47,5 +47,6 @@
 	<classpathentry kind="lib" path="lib/ehcache-core-2.5.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServices"/>
+	<classpathentry kind="lib" path="/opt/lib/je-5.0.58.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
