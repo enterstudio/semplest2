@@ -461,6 +461,17 @@ public class SemplestDB extends BaseDB
 			return null;
 		}
 	}
+	
+	public static void applyPromotionBudget(final Integer promotionID, final java.util.Date newCycleStartDate, final java.util.Date newCycleEndDate, final Double newRemainingBudget) throws Exception
+	{
+		final String operationDescription = "update Promotion for PromotionID [" + promotionID + "], NewCycleStartDate [" + newCycleStartDate + "], NewCycleEndDate [" + newCycleEndDate + "], NewRemainingBudget [" + newRemainingBudget + "]";
+		logger.info("Will try to " + operationDescription);
+		final int rowcount = jdbcTemplate.update("update Promotion set CycleStartDate = ?, CycleEndDate = ?, RemainingBudgetInCycle = ? where PromotionPK = ?", new Object[]{promotionID, newCycleStartDate, newCycleEndDate, newRemainingBudget});
+		if (rowcount != 1)
+		{
+			throw new Exception("Problem doing " + operationDescription + ".  Rowcount returned from database after doing the update should be 1, but is " + rowcount);
+		}
+	}
 
 	public static void updatePromotionStatus(final Integer promotionID, final AdEngine adEngine, final PromotionStatus promotionStatus)
 	{
@@ -477,8 +488,7 @@ public class SemplestDB extends BaseDB
 	public static void updateUserLastEmailReminderDate(final Integer userID, final java.util.Date now)
 	{
 		logger.info("Will update LastEmailReminderDate to [" + now + "] for UserID [" + userID + "]");
-		jdbcTemplate.update("update Users set LastEmailReminderDate = ? where UserPK = ?", new Object[]
-		{ now, userID });
+		jdbcTemplate.update("update Users set LastEmailReminderDate = ? where UserPK = ?", new Object[]{now, userID});
 	}
 
 	public static void SetCurrentDailyBudget(Double currentDailyBudget, Integer promotionID, String adEngine) throws Exception

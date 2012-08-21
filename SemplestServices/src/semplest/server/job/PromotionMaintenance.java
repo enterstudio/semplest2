@@ -1,6 +1,10 @@
 package semplest.server.job;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -12,7 +16,9 @@ import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.RunMode;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.mail.SemplestMailClient;
+import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.util.SemplestUtils;
 
 public class PromotionMaintenance
@@ -23,25 +29,58 @@ public class PromotionMaintenance
 	 * Apply budget to promotion
 	 * 1) update cycle dates
 	 * 2) refill budget
-	 * 3) setup next budget for invoice transactions
+	 * 3) setup next budget for invoice transactions 
 	 */
 	public void engage(final java.util.Date asOfDate)
 	{
 		log.info("Will try to do Promotion Maintenance for As-Of-Date [" + asOfDate + "]");		
 		final List<PromotionBudget> budgets = SemplestDB.getPromotionBudgetsForMaintenance(asOfDate);
 		log.info(budgets.size() + " budgets that require maintenance:\n" + SemplestUtils.getEasilyReadableString(budgets));
+		final GetAllPromotionDataSP getPromotionSP = new GetAllPromotionDataSP();
+		final Map<Integer, String> errorMap = new HashMap<Integer, String>();
+		final List<Integer> promotionsProcessed = new ArrayList<Integer>();
 		for (final PromotionBudget budget : budgets)
-		{
-			final Double carryOverAmount = budget.getBudgetCarryOverAmount();
-			
-/*
- * what's the difference between carryOverAmount and BudgetToAddAmount?
- * instead of TransactionsFK, shouldn't the transactions be pointing to PromotionBudget instead?
- * where would one-time transactions (i.e. fees) be pointed to?  It should point to the PromotionBudget, right?
- */
+		{			
+			try
+			{
+				final Double amountToRefill = budget.getBudgetCarryOverAmount();
+				//final Double spendIncurredThisMonth = getMonthlySpend(...);
+				
+				final Double spendIncurredThisMonth = 5.2;
+				
+				
+				final Integer promotionId = budget.getPromotionFK();
+				final Boolean result = getPromotionSP.execute(promotionId);
+				final PromotionObj promotion = getPromotionSP.getPromotionData();
+				final Double remainingBudget = promotion.getRemainingBudgetInCycle();
+				final Double carryOverAmount = amountToRefill - spendIncurredThisMonth;			
+				final java.util.Date cycleStartDate = promotion.getCycleStartDate();
+				final Calendar cal = Calendar.getInstance();
+				cal.setTime(cycleStartDate);
+				cal.add(Calendar.MONTH, 1);
+				final java.util.Date newCycleStartDate = cal.getTime();
+				final java.util.Date cycleEndDate = promotion.getCycleEndDate();
+				final Calendar c = Calendar.getInstance();
+				c.setTime(cycleEndDate);
+				c.add(Calendar.MONTH, 1);
+				final java.util.Date newCycleEndDate = c.getTime();
+				final Double newRemainingBudget = remainingBudget + amountToRefill;
+				SemplestDB.applyPromotionBudget(promotionId, newCycleStartDate, newCycleEndDate, newRemainingBudget);
+				promotionsProcessed.add(promotionId);
+			}
+			catch (Exception e)
+			{				
+				final Integer promotionId = budget.getPromotionFK();
+				final String errMsg = "Problem applying new budget for PromotionID [" + promotionId + "] by processing Budget [" + budget + "]: " + e.getMessage();
+				log.error(errMsg, e);
+				errorMap.put(promotionId, errMsg);
+			}
 		}
+		log.info("Summary:\n\nPromotions successfully processed:\n" + SemplestUtils.getEasilyReadableString(promotionsProcessed) + "\n\nPromotions with problems:\n" + SemplestUtils.getEasilyReadableString(errorMap));
 	}
 	
+	// TODO: see if you need StartBudgetInCycle column, if not then delete it
+
 	public static RunMode getRunMode() throws Exception
 	{
 		final String runModeString = (String) SemplestConfiguration.configData.get("RunMode");

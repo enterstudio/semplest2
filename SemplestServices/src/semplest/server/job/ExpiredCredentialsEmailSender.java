@@ -24,6 +24,7 @@ import semplest.util.SemplestUtils;
 public class ExpiredCredentialsEmailSender
 {
 	private static final Logger log = Logger.getLogger(ExpiredCredentialsEmailSender.class);
+	private static final String LINK_NAME = "here";
 	
 	private final String defaultEmailContactUsEmail;
 	private final String esbWebServerURL;
@@ -53,7 +54,7 @@ public class ExpiredCredentialsEmailSender
 		this.numDaysInLink = numDaysInLink;
 	}
 
-	public String getRefinedEmailBody(final String rawEmailBody, final User user, final Integer numDaysTillExpiration)
+	public String getRefinedEmailBody(final String rawEmailBody, final User user, final Integer numDaysTillExpiration) throws Exception
 	{
 		final Integer userID = user.getUserPk();
 		final String firstName = user.getFirstName();
@@ -72,7 +73,7 @@ public class ExpiredCredentialsEmailSender
 		final String username = credential.getUsername();
 		final String password = credential.getPassword();
 		final java.util.Date now = new java.util.Date();
-		final String link = SemplestUtils.generateEncryptedHtmlLink(aes, reminderEmailUrlPrefix, userID, now, username, password);
+		final String link = SemplestUtils.generateEncryptedHtmlLink(aes, reminderEmailUrlPrefix, userID, now, username, password, LINK_NAME);
 		final String mailToLink = "<a href=\"mailto:" + defaultEmailContactUsEmail + "?subject=Please%20help%20me%20(User%20Name:%20" + username + ")\">" + defaultEmailContactUsEmail + "</a>";
 		final String refinedEmailBody = rawEmailBody.replaceAll("\\[VendorName\\]", fullName)
 													.replaceAll("\\[XX\\]", "" + numDaysTillExpiration)

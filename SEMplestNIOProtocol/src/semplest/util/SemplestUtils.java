@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +35,6 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleViolation;
-import semplest.server.protocol.msn.MSNGeotargetObject;
 
 import com.google.api.adwords.v201109.cm.ApiError;
 import com.google.api.adwords.v201109.cm.ApiException;
@@ -288,23 +288,24 @@ public final class SemplestUtils
 		}
 	}
 	
-	public static String generateEncryptedHtmlLink(final AESBouncyCastle aes, final String reminderEmailUrlPrefix, final Integer userID, final java.util.Date dateTime, final String username, final String password)
+	public static String generateEncryptedHtmlLink(final AESBouncyCastle aes, final String reminderEmailUrlPrefix, final Integer userID, final java.util.Date dateTime, final String username, final String password, final String linkName) throws Exception
 	{
 		final String rawLink = generateEncryptedLink(aes, reminderEmailUrlPrefix, userID, dateTime, username, password);
-		final String htmlLink = getHtmlLink(rawLink);
+		final String htmlLink = getHtmlLink(rawLink, linkName);
 		return htmlLink;
 	}
 	
-	public static String generateEncryptedLink(final AESBouncyCastle aes, final String reminderEmailUrlPrefix, final Integer userID, final java.util.Date dateTime, final String username, final String password)
+	public static String generateEncryptedLink(final AESBouncyCastle aes, final String reminderEmailUrlPrefix, final Integer userID, final java.util.Date dateTime, final String username, final String password) throws Exception 
 	{
 		final String encryptedToken = generateEncryptedToken(aes, userID, dateTime, username, password);
-		final String encryptedUrl = reminderEmailUrlPrefix + encryptedToken;
+		final String encyptedTokenEncoded = URLEncoder.encode(encryptedToken, "UTF-8");
+		final String encryptedUrl = reminderEmailUrlPrefix + encyptedTokenEncoded;				
 		return encryptedUrl;
 	}
 	
-	public static String getHtmlLink(final String rawLink)
+	public static String getHtmlLink(final String rawLink, final String linkName)
 	{
-		final String htmlEncryptedUrl = "<a href=\"" + rawLink + "\">" + rawLink + "</a>";
+		final String htmlEncryptedUrl = "<a href=\"" + linkName + "\">" + rawLink + "</a>";
 		return htmlEncryptedUrl;
 	}
 	

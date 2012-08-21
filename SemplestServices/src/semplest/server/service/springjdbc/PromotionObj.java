@@ -23,6 +23,7 @@ public class PromotionObj
 	private String BudgetCycle;
 	//private Double BudgetToAddToNextCycle;
 	private Date CycleStartDate;
+	private Date CycleEndDate;
 	private Double RemainingBudgetInCycle;
 	private Double StartBudgetInCycle;
 	private Date EditedDate;
@@ -35,7 +36,15 @@ public class PromotionObj
 	private Long AdvertisingEngineAccountPK; 
 	private String AdvertisingEngine;
 	private String AdvertisingEngineAccountNumber;
-	
+		
+	public Date getCycleEndDate()
+	{
+		return CycleEndDate;
+	}
+	public void setCycleEndDate(Date cycleEndDate)
+	{
+		CycleEndDate = cycleEndDate;
+	}
 	public String getDisplayURL()
 	{
 		return DisplayURL;
@@ -245,6 +254,7 @@ public class PromotionObj
 		result = prime * result + ((AdvertisingEngineCampaignPK == null) ? 0 : AdvertisingEngineCampaignPK.hashCode());
 		result = prime * result + ((BudgetCycle == null) ? 0 : BudgetCycle.hashCode());
 		result = prime * result + ((CreatedDate == null) ? 0 : CreatedDate.hashCode());
+		result = prime * result + ((CycleEndDate == null) ? 0 : CycleEndDate.hashCode());
 		result = prime * result + ((CycleStartDate == null) ? 0 : CycleStartDate.hashCode());
 		result = prime * result + ((DisplayURL == null) ? 0 : DisplayURL.hashCode());
 		result = prime * result + ((EditedDate == null) ? 0 : EditedDate.hashCode());
@@ -322,6 +332,13 @@ public class PromotionObj
 				return false;
 		}
 		else if (!CreatedDate.equals(other.CreatedDate))
+			return false;
+		if (CycleEndDate == null)
+		{
+			if (other.CycleEndDate != null)
+				return false;
+		}
+		else if (!CycleEndDate.equals(other.CycleEndDate))
 			return false;
 		if (CycleStartDate == null)
 		{
@@ -442,9 +459,9 @@ public class PromotionObj
 	public String toString()
 	{
 		return "PromotionObj [PromotionPK=" + PromotionPK + ", ProductGroupFK=" + ProductGroupFK + ", PromotionName=" + PromotionName + ", PromotionDescription=" + PromotionDescription + ", LandingPageURL=" + LandingPageURL + ", DisplayURL=" + DisplayURL + ", PromotionBudgetAmount="
-				+ PromotionBudgetAmount + ", PromotionStartDate=" + PromotionStartDate + ", PromotionEndDate=" + PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", CycleStartDate=" + CycleStartDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle + ", StartBudgetInCycle="
-				+ StartBudgetInCycle + ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused + ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK=" + AdvertisingEngineCampaignPK + ", AdvertisingEngineAdGroupID="
-				+ AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + ", AdvertisingEngine=" + AdvertisingEngine + ", AdvertisingEngineAccountNumber=" + AdvertisingEngineAccountNumber + "]";
+				+ PromotionBudgetAmount + ", PromotionStartDate=" + PromotionStartDate + ", PromotionEndDate=" + PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", CycleStartDate=" + CycleStartDate + ", CycleEndDate=" + CycleEndDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle
+				+ ", StartBudgetInCycle=" + StartBudgetInCycle + ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused + ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK=" + AdvertisingEngineCampaignPK
+				+ ", AdvertisingEngineAdGroupID=" + AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + ", AdvertisingEngine=" + AdvertisingEngine + ", AdvertisingEngineAccountNumber=" + AdvertisingEngineAccountNumber + "]";
 	}
-		
+			
 }
