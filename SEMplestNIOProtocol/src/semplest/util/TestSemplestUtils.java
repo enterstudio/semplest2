@@ -1,5 +1,6 @@
 package semplest.util;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -14,6 +15,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.CustomerHierarchy;
 import semplest.server.protocol.CustomerType;
 import semplest.server.protocol.EmailTemplate;

@@ -3275,8 +3275,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to validate Account Activation Token [" + ecryptedToken + "]");
 		final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
 		final AESBouncyCastle aes = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
-		final String encryptedTokenUrlDecrypted = URLDecoder.decode(ecryptedToken, "UTF-8");
-		final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, encryptedTokenUrlDecrypted);
+		//final String encryptedTokenUrlDecrypted = URLDecoder.decode(ecryptedToken, "UTF-8");
+		//final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, encryptedTokenUrlDecrypted);
+		final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, ecryptedToken);
 		logger.info("Decrypted info [" + decryptedInfo + "]");
 		final java.util.Date dateTime = decryptedInfo.getDateTime();
 		final String username = decryptedInfo.getUsername();
