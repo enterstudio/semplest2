@@ -1,4 +1,8 @@
 package semplest.keywords.javautils;
+/**
+ * Given an input text and a list of categories, it finds the noun phrases from the input text that contain any of the keywords 
+ * associated with the categories inputed
+ */
 
 import java.io.IOException;
 import java.util.ArrayList;
