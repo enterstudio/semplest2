@@ -305,7 +305,7 @@ public final class SemplestUtils
 	
 	public static String getHtmlLink(final String rawLink, final String linkName)
 	{
-		final String htmlEncryptedUrl = "<a href=\"" + linkName + "\">" + rawLink + "</a>";
+		final String htmlEncryptedUrl = "<a href=\"" + rawLink + "\">" + linkName + "</a>";
 		return htmlEncryptedUrl;
 	}
 	
