@@ -10,10 +10,11 @@ import java.util.HashSet;
 public class keywordb {
 
   // - Privates ------------
+  // The keyword databases (2 => 2grams, 3 => 3grams, ..., 23 => autocompletes)
   private static String[] dbs = {"2","3","4","23"};
 
   // - Interface ------------------------
-  // db can be one of "2","3","4","23" corresponding to 2-tuple, 3-tuple, .. ,autocom
+  // db can be one of "2","3","4","23" corresponding to 2gram, .. ,autocom
   public static Map<String,Integer> get( String cat, String db) throws Exception {
     return ioUtils.toWc( bdb.get( db, cat ) );
   }
@@ -21,7 +22,8 @@ public class keywordb {
     throws Exception {
     Map<String,String> res = bdb.get( db, cats );
 
-    HashMap<String,Map<String,Integer>> resm=new HashMap<String,Map<String,Integer>>();
+    HashMap<String,Map<String,Integer>> resm = 
+      new HashMap<String,Map<String,Integer>>();
     for( Map.Entry<String,String> e: res.entrySet() )
      resm.put( e.getKey(), ioUtils.toWc( e.getValue() )); 
 
@@ -40,8 +42,10 @@ public class keywordb {
     }
     return resm;
   }
-  public static Map<String,Map<String,Integer>> get( String[] cats) throws Exception {
-    HashMap<String, Map<String,Integer>> resm=new HashMap<String,Map<String,Integer>>();
+  public static Map<String,Map<String,Integer>> get( String[] cats) 
+    throws Exception {
+    HashMap<String, Map<String,Integer>> resm
+      = new HashMap<String,Map<String,Integer>>();
  
     for( String db : dbs ){
       Map<String,Map<String,Integer>> wcs = get(cats, db );
@@ -55,9 +59,9 @@ public class keywordb {
   }
   
   // - Private -----------
-  // Combine word-counts. 
-  // We use the maximum value
-  private static Map<String,Integer> cWc(Map<String,Integer> a, Map<String,Integer> b){
+  // Combine word-counts by using the maximum-count
+  private static Map<String,Integer> cWc(Map<String,Integer> a, 
+      Map<String,Integer> b){
     HashMap<String,Integer> res = new HashMap<String,Integer>();
     HashSet<String> abkeys = new HashSet<String>();
     abkeys.addAll( a.keySet()); 
@@ -69,7 +73,7 @@ public class keywordb {
     }
     return res;
   }
-  // - Test ------------------------
+  // - Test routines  ------------------------
   public static void test() throws Exception {
     String[] cats = {"top/news/weather","top/news/weather/aviation"};
     Map<String, Map<String,Integer>> wc = get( cats );
@@ -89,7 +93,7 @@ public class keywordb {
     int mms = (int)(( et - st ) / COUNT);
     System.out.println("\n\n" + COUNT + " cats took " + mms + " ms each");
   }
-  public static String[] getCats( int num ){
+  private static String[] getCats( int num ){
     String FILE = "/semplest/data/dmoz/all.cids";
     String[] lines = ioUtils.readLines( FILE, num );
     String[] res = new String[ num ];
