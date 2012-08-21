@@ -28,8 +28,8 @@ public class ReportActiveCampaigns {
 	PrintStream pr;
 	public static void main(String[] args) throws Exception{
 		ReportActiveCampaigns rep = new ReportActiveCampaigns();
-		//rep.getAccountsAndActiveCampaigns();
-		rep.getAccountbyAccountId(800609L);
+		rep.getAccountsAndActiveCampaigns();
+		//rep.getAccountbyAccountId(800609L);
 	}
 	public ReportActiveCampaigns() throws Exception{
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
