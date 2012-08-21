@@ -32,7 +32,12 @@ public class bdb {
     Database d = e.openDatabase( null, id, dc );
     if ( ro ) d.preload( null );
     return d;
-  } 
+  }
+
+  private static String toS( DatabaseEntry de ) throws Exception { 
+    return new String( de.getData(), "UTF-8");}
+  private static DatabaseEntry toDE( String s ) throws Exception {
+    return new DatabaseEntry( s.getBytes("UTF-8") );}
 
   // - Interface ------------------------
   public static int add( String id, HashMap<String,String> kvs) throws Exception {
@@ -80,7 +85,24 @@ public class bdb {
     e.close();
     return rm; 
   }
-
+  // entries whose keys are children of k
+  // children => greater than k (in the natural ordering of Strings) containing k
+  public static Map<String,String> children(String id, String k) throws Exception {
+    Environment e   = getEnv( id, false );
+    Database    db  = getDB( id, false, e );
+    
+    Cursor c = db.openCursor( null, null );
+    DatabaseEntry fk = toDE( k );
+    DatabaseEntry fv = new DatabaseEntry();
+    HashMap<String,String> mm = new HashMap<String,String>();
+    if( c.getSearchKeyRange( fk, fv, LockMode.DEFAULT ) == OperationStatus.SUCCESS )
+      mm.put( toS( fk ), toS( fv ) );
+    while ( c.getNext( fk, fv, LockMode.DEFAULT ) == OperationStatus.SUCCESS &&
+      toS( fk ).contains( k ))
+      mm.put( toS( fk ), toS( fv ));
+    c.close();
+    return mm;
+  }
   public static int delete( String id, String k ) throws Exception {
     Environment e   = getEnv( id, false );
     Database    db  = getDB( id, false, e );
@@ -110,10 +132,11 @@ public class bdb {
   // ---------------------------------------------------------------------
   public static void main(String[] args) throws Exception {
     String key = "top/news/satire";
-    String[] dbs = {"2","3","4","23"};
+    String[] dbs = {"2g","3g","4g","ac","descs"};
 
-    for( String id: dbs )
-      System.out.println( get( id, key ));
+    for( Map.Entry<String,String> e: children( "2g", key ).entrySet())
+      System.out.println( e.getKey() );
+    System.out.println( get( "descs", key ));
 
   }
 }
