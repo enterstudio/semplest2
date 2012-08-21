@@ -2,6 +2,7 @@ package semplest.server.service.adengine;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3274,7 +3275,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to validate Account Activation Token [" + ecryptedToken + "]");
 		final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
 		final AESBouncyCastle aes = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
-		final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, ecryptedToken);
+		final String encryptedTokenUrlDecrypted = URLDecoder.decode(ecryptedToken, "UTF-8");
+		final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, encryptedTokenUrlDecrypted);
 		logger.info("Decrypted info [" + decryptedInfo + "]");
 		final java.util.Date dateTime = decryptedInfo.getDateTime();
 		final String username = decryptedInfo.getUsername();
