@@ -29,7 +29,9 @@ public class bdb {
     if( ro ) dc.setReadOnly( true );
     dc.setSortedDuplicates( false );
     dc.setDeferredWrite( true );
-    return e.openDatabase( null, id, dc );
+    Database d = e.openDatabase( null, id, dc );
+    if ( ro ) d.preload( null );
+    return d;
   } 
 
   // - Interface ------------------------
