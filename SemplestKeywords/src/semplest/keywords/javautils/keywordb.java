@@ -4,18 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.HashSet;
 
-
-/* Utilities to store/retrieve semplest keywords/descriptions in a Berkeley Database
+/*
+ * Utilities to store/retrieve semplest keywords/descriptions in a Berkeley Database
  */
 public class keywordb {
 
   // - Privates ------------
   // The keyword databases (2g => 2grams, 3g => 3grams, ..., ac => autocompletes)
+  // descs => descriptions 
   private static String[] dbs = { "2g","3g","4g","ac"};
   private static String   ddb =   "descs";
 
   // - Interface ------------------------
-  // db can be one of "2g","3g","4g","ac" corresponding to 2gram, .. ,autocom
+
+  // keyword-count for a category/categories from a db 
+  //  db can be one of "2g","3g","4g","ac" corresponding to 2gram, .. ,autocom
   public static Map<String,Integer> get( String cat, String db) throws Exception {
     return ioUtils.toWc( bdb.get( db, cat ) );
   }
@@ -30,7 +33,7 @@ public class keywordb {
 
     return resm;
   }
-  // get word-counts for all chidren categories of "cat"
+  // keyword-counts for all chidren categories of "cat"
   public static Map<String,Map<String,Integer>> children( String cat, String db) 
     throws Exception {
     HashMap<String,Map<String,Integer>> resm = 
@@ -44,8 +47,8 @@ public class keywordb {
   public static String description( String cat) throws Exception {
     return bdb.get( ddb, cat );
   }
-  // - Utilities -----------------------------------------------------
-  // combine wcs from all databases 
+  // - Utilities ------------------------------------------------------
+  // combine word-counts from all the databases (2g, 3g, 4g, ac)
   public static Map<String,Integer> get( String cat) throws Exception {
     HashMap<String,Integer> resm = new HashMap<String,Integer>();
     for( String db : dbs ){
@@ -73,7 +76,7 @@ public class keywordb {
     return resm;
   }
   
-  // - Private -----------
+  // - Private ----------------------------------------------------------------
   // Combine word-counts by using the maximum-count
   private static Map<String,Integer> cWc(Map<String,Integer> a, 
       Map<String,Integer> b){
@@ -88,7 +91,7 @@ public class keywordb {
     }
     return res;
   }
-  // - Test routines  ------------------------
+  // - Test routines  ---------------------------------------------------------
   public static void test() throws Exception {
     String[]  cats = {"top/news/weather","top/news/weather/aviation"};
     String    cat = "top/news/satire";
