@@ -123,21 +123,13 @@ namespace Semplest.SharedResources.Encryption
 
         public string EncryptString(string s)
         {
-            try
+            BufferedBlockCipher encrypt = instance.getEncryptCipher();
+            if (encrypt == null)
             {
-                BufferedBlockCipher encrypt = instance.getEncryptCipher();
-                if (encrypt == null)
-                {
-                    throw new Exception("Must initialize AES Encrypt Cipher with call to getInstance()");
-                }
-                byte[] encryptData = encrypt.DoFinal(Encoding.UTF8.GetBytes(s));
-                return Convert.ToBase64String(encryptData);
+                throw new Exception("Must initialize AES Encrypt Cipher with call to getInstance()");
             }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            byte[] encryptData = encrypt.DoFinal(Encoding.UTF8.GetBytes(s));
+            return Convert.ToBase64String(encryptData);
         }
 
         private static void Initalize()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Semplest.SharedResources.Models;
+using Semplest.SharedResources.Services;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using Semplest.SharedResources.Encryption;
@@ -44,7 +45,7 @@ namespace Semplest.SharedResources.Controllers
                     loginHash.Add(pm.UserName, 1);
 
                 Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = loginHash;
-                bool isAdminLogin = isAdmin == null ? false : true;
+                bool isAdminLogin = isAdmin != null;
                 using (var dbContext = new SemplestModel.Semplest())
                 {
                     Credential cred = null;
@@ -55,10 +56,14 @@ namespace Semplest.SharedResources.Controllers
                     else
                     {
                         IQueryable<Credential> creds = null;
-                        if(pm.LoggedInSucceeded)
+                        if (pm.LoggedInSucceeded)
                             creds = dbContext.Credentials.Where(c => c.Username == pm.UserName);
                         else
-                            creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
+                        {AesEncyrption a = AesEncyrption.getInstance();
+                            var encryptedPassword = a.EncryptString(pm.Password1);
+                            creds =
+                                dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == encryptedPassword);
+                        }
 
                         if (creds.Count() == 1)
                         {
@@ -109,7 +114,9 @@ namespace Semplest.SharedResources.Controllers
                             //authenticated properly and submitted secondary form SecurityAnswer/SecurityQuestion
                             saveCred.SecurityAnswer = pm.SecurityAnswer;
                             saveCred.SecurityQuestion = pm.SecurityQuestion;
-                            saveCred.Password = pm.Password2;
+                            AesEncyrption a = AesEncyrption.getInstance();
+                            var encryptedPassword = a.EncryptString(pm.Password1);
+                            saveCred.Password = encryptedPassword;
                             saveCred.User.IsRegistered = true;
                             int i = dbContext.SaveChanges();
                             return RedirectToAction("Index", "Home");
@@ -140,23 +147,9 @@ namespace Semplest.SharedResources.Controllers
         [HttpGet]
         public ActionResult Verify(string token)
         {
-            
-            string parentid, datetime, username, password;
-            Encryption.AesEncyrption.getInstance().DecryptToken(token, out parentid, out datetime, out username, out password);
-            using (var dbContext = new SemplestModel.Semplest())
-            {
-                IQueryable<Credential> creds;
-                creds = dbContext.Credentials.Where(c => c.Username == username && c.Password == password);
-                if (creds != null)
-                {
-                    int? parentKey = string.IsNullOrEmpty(parentid) ? -1 : int.Parse(parentid);
-                    parentKey = parentKey == -1 ? null : parentKey;
-                    if (creds.Count() == 1 && creds.First().User.Customer.CustomerHierarchies1.First().CustomerParentFK == parentKey)
-                    {
-                        return RedirectToAction("Login", "Profile");
-                    }
-                }
-            }
+            var sr = new ServiceClientWrapper();
+            if (sr.ValidateAccountActivationToken(token))
+                return RedirectToAction("Login", "Profile");
             return Content("The URL is invalid.");
         }
 

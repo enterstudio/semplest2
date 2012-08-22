@@ -2,6 +2,7 @@
 using System.Web.Routing;
 using System.Web.Security;
 using Semplest.Core.Models;
+using Semplest.SharedResources.Encryption;
 using Semplest.SharedResources.Helpers;
 using SemplestModel;
 using System.Linq;
@@ -214,7 +215,9 @@ namespace Semplest.Core.Controllers
             //add userid and password to model
             var credential = dbcontext.Credentials.First(r => r.UsersFK.Equals(userid));
             cm.UserID = credential.Username;
-            cm.UserPassword = credential.Password;
+            AesEncyrption ae = AesEncyrption.getInstance();
+            var decryptedPassword = ae.DecryptString(credential.Password);
+            cm.UserPassword = decryptedPassword;
             cm.SecurityQuestion = credential.SecurityQuestion;
             cm.SecurityAnswer = credential.SecurityAnswer;
 
@@ -313,7 +316,9 @@ namespace Semplest.Core.Controllers
 
             var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.UserPK);
             credentials.Username = m.UserID;
-            credentials.Password = m.UserPassword;
+            AesEncyrption ae = AesEncyrption.getInstance();
+            var encryptedPassword = ae.EncryptString(m.UserPassword);
+            credentials.Password = encryptedPassword;
             credentials.SecurityQuestion = m.SecurityQuestion;
             credentials.SecurityAnswer = m.SecurityAnswer;
 

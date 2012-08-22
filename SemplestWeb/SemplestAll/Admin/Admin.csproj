@@ -151,6 +151,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\Repositories\CustomerRepository.cs" />
+    <Compile Include="Models\Repositories\ICustomerRepository.cs" />
     <Compile Include="Models\SchedulerViewModel.cs" />
     <Compile Include="Models\SemplestAdminAppContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

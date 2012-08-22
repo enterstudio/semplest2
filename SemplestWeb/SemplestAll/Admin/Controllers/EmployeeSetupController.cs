@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Semplest.Admin.Models;
 using System.Data.Entity.Validation;
+using Semplest.SharedResources.Encryption;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using LinqKit;
@@ -188,7 +189,9 @@ namespace Semplest.Admin.Controllers
             //add userid and password to model
             var credential = dbcontext.Credentials.First(r => r.UsersFK.Equals(x.EmployeeSetup.UserPK));
             x.EmployeeSetup.UserID = credential.Username;
-            x.EmployeeSetup.UserPassword = credential.Password;
+            AesEncyrption ae = AesEncyrption.getInstance();
+            var decryptedPassword = ae.DecryptString(credential.Password);
+            x.EmployeeSetup.UserPassword = decryptedPassword;
 
 
             /////////////////////////////////////////////////////////////////////////////////
@@ -352,7 +355,9 @@ namespace Semplest.Admin.Controllers
 
             var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
             credentials.Username = m.EmployeeSetup.UserID;
-            credentials.Password = m.EmployeeSetup.UserPassword;
+            AesEncyrption ae = AesEncyrption.getInstance();
+            var encryptedPassword = ae.EncryptString(m.EmployeeSetup.UserPassword);
+            credentials.Password = encryptedPassword;
 
             UpdateModel(credentials);
 
@@ -536,13 +541,13 @@ namespace Semplest.Admin.Controllers
                 var e = new Employee { EmployeeType = et, User = u, HireDate = m.EmployeeSetup.HireDate };
                 dbcontext.Employees.Add(e);
                 //Credential c = dbcontext.Credentials.Add(new Credential { User = u, Username = m.EmployeeSetup.Email, Password = "t" });
-
+                AesEncyrption ae = AesEncyrption.getInstance();
                 var cr = new Credential
                              {
                                  User = u,
                                  UsersFK = u.UserPK,
                                  Username = m.EmployeeSetup.UserID,
-                                 Password = m.EmployeeSetup.UserPassword
+                                 Password = ae.EncryptString(m.EmployeeSetup.UserPassword)
                              };
                 dbcontext.Credentials.Add(cr);
 

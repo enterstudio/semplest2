@@ -10,6 +10,7 @@ using LinqKit;
 using System.Data.Objects;
 using Semplest.SharedResources.Services;
 using Semplest.SharedResources.Encryption;
+using Semplest.Admin.Models.Repositories;
 //using System.Web.Security;
 
 
@@ -253,7 +254,9 @@ namespace Semplest.Admin.Controllers
             //add userid and password to model
             var credential = dbcontext.Credentials.First(r => r.UsersFK.Equals(x.CustomerAccount.UserPK));
             x.CustomerAccount.UserID = credential.Username;
-            x.CustomerAccount.UserPassword = credential.Password;
+            AesEncyrption ae = AesEncyrption.getInstance();
+            var decryptedPassword = ae.DecryptString(credential.Password);
+            x.CustomerAccount.UserPassword = decryptedPassword;
 
 
 
@@ -669,7 +672,9 @@ namespace Semplest.Admin.Controllers
             //sales.ToList().First().EmployeePK = m.SelectedSalesPersonID;
             var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.CustomerAccount.UserPK);
             credentials.Username = m.CustomerAccount.UserID;
-            credentials.Password = m.CustomerAccount.UserPassword;
+            AesEncyrption ae = AesEncyrption.getInstance();
+            var encryptedPassword = ae.EncryptString(m.CustomerAccount.UserPassword);
+            credentials.Password = encryptedPassword;
 
             var employeesales = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber && p.EmployeeFK == (sales.ToList().FirstOrDefault()==null?-1: sales.ToList().FirstOrDefault().EmployeePK) );
             if (employeesales == null && m.SelectedSalesPersonID !=-1)
@@ -926,378 +931,155 @@ namespace Semplest.Admin.Controllers
 
 
         [HttpPost]
-        public ActionResult Add(CustomerAccountWithEmployeeModel m, string command, FormCollection fc )
+        public ActionResult Add(CustomerAccountWithEmployeeModel m, string command, FormCollection fc)
         {
-            
+
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
+            var cry = new CustomerRepository();
+            if (cry.DoesUserExit(m.CustomerAccount.UserID))
+                ModelState.AddModelError("CustomerAccount.UserID", "This UserID is already taken!!");
+            if (!ModelState.IsValid)
+            {
+                //repopulate 
+                #region needs to repopulate lists to get the same view again
+                using (var dbcontext = new SemplestModel.Semplest())
+                {
+                    var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+
+                    m.Roles = roles.Select(r => new SelectListItem
+                                                    {
+                                                        Value = r.RolePK.ToString(),
+                                                        Text = r.RoleName.ToString()
+                                                    });
 
 
-            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
-
-            
 
 
-            //check if userid has been taken by other users
+                    //repopualte
 
-            var userIDSs = from c in dbcontext.Credentials
-                        where c.Username.Equals(m.CustomerAccount.UserID) 
+                    var allreps = from e in dbcontext.Employees
+                                  //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                                  join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                                  join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                                  where (et.EmployeeType1 == "Rep" && u.IsActive.Equals(true))
+                                  select new EmployeeCustomerAssociaitionModel
+                                             {
+                                                 //AccountNumber = eca.CustomerFK,
+                                                 employeePK = e.EmployeePK,
+                                                 EmployeeType = et.EmployeeType1,
+                                                 EmployeeUserPK = u.UserPK,
+                                                 FirstName = u.FirstName,
+                                                 MiddleInitial = u.MiddleInitial,
+                                                 LastName = u.LastName
+                                             };
+
+
+
+                    /////////////////////////////////////////////////////////////////////////////////
+                    //for sales dropdown
+                    /////////////////////////////////////////////////////////////////////////////////
+                    var allsalespersons = from e in dbcontext.Employees
+                                          //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                                          join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals
+                                              et.EmployeeTypeID
+                                          join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                                          where (et.EmployeeType1 == "Sales" && u.IsActive.Equals(true))
+                                          select new EmployeeCustomerAssociaitionModel
+                                                     {
+                                                         //AccountNumber = eca.CustomerFK,
+                                                         employeePK = e.EmployeePK,
+                                                         EmployeeType = et.EmployeeType1,
+                                                         EmployeeUserPK = u.UserPK,
+                                                         FirstName = u.FirstName,
+                                                         MiddleInitial = u.MiddleInitial,
+                                                         LastName = u.LastName
+                                                     };
+
+
+                    var allparents =
+                        from c in dbcontext.Customers
+                        join chi in dbcontext.CustomerHierarchies.Where(p => p.CustomerParentFK == null) on c.CustomerPK
+                            equals chi.CustomerFK
                         select c;
-            if (userIDSs.Count() > 0)
-                      ModelState.AddModelError("CustomerAccount.UserID", "This UserID is already taken!!");
 
-               
-                  if (!ModelState.IsValid)
-                  {
-                      //repopulate 
-                   #region needs to repopulate lists to get the same view again
+                    List<SelectListItem> sli = new List<SelectListItem>();
 
-                      var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
 
-                      m.Roles = roles.Select(r => new SelectListItem
-                      {
-                          Value = r.RolePK.ToString(),
-                          Text = r.RoleName.ToString()
-                      });
+                    sli.Add(new SelectListItem {Value = (-1).ToString(), Text = "«« Parent »»"});
+                    sli.Add(new SelectListItem {Value = (0).ToString(), Text = "«« Single User   »»"});
+
+                    //x.SelectedParentID = -1;
+
+                    m.Parents = allparents.ToList().Select(r => new SelectListItem
+                                                                    {
+                                                                        Value = r.CustomerPK.ToString(),
+                                                                        Text = r.Name.ToString()
+                                                                    }).Union(sli);
 
 
 
-
-                      //repopualte
-
-                      var allreps = from e in dbcontext.Employees
-                                    //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
-                                    join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
-                                    join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                                    where (et.EmployeeType1 == "Rep" && u.IsActive.Equals(true))
-                                    select new EmployeeCustomerAssociaitionModel
-                                    {
-                                        //AccountNumber = eca.CustomerFK,
-                                        employeePK = e.EmployeePK,
-                                        EmployeeType = et.EmployeeType1,
-                                        EmployeeUserPK = u.UserPK,
-                                        FirstName = u.FirstName,
-                                        MiddleInitial = u.MiddleInitial,
-                                        LastName = u.LastName
-                                    };
+                    /////////////////////////////////////////////////////////////////////////////////
+                    //for billtype dropdown
+                    /////////////////////////////////////////////////////////////////////////////////
+                    var allbilltypes = (from a in dbcontext.BillTypes select a).ToList();
 
 
-
-                      /////////////////////////////////////////////////////////////////////////////////
-                      //for sales dropdown
-                      /////////////////////////////////////////////////////////////////////////////////
-                      var allsalespersons = from e in dbcontext.Employees
-                                            //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
-                                            join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
-                                            join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                                            where (et.EmployeeType1 == "Sales" && u.IsActive.Equals(true))
-                                            select new EmployeeCustomerAssociaitionModel
-                                            {
-                                                //AccountNumber = eca.CustomerFK,
-                                                employeePK = e.EmployeePK,
-                                                EmployeeType = et.EmployeeType1,
-                                                EmployeeUserPK = u.UserPK,
-                                                FirstName = u.FirstName,
-                                                MiddleInitial = u.MiddleInitial,
-                                                LastName = u.LastName
-                                            };
-
-
-                      var allparents =
-              from c in dbcontext.Customers
-              join chi in dbcontext.CustomerHierarchies.Where(p => p.CustomerParentFK == null) on c.CustomerPK equals chi.CustomerFK
-              select c;
-
-                      List<SelectListItem> sli = new List<SelectListItem>();
-
-
-                      sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Parent »»" });
-                      sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User   »»" });
-
-                      //x.SelectedParentID = -1;
-
-                      m.Parents = allparents.ToList().Select(r => new SelectListItem
-                      {
-                          Value = r.CustomerPK.ToString(),
-                          Text = r.Name.ToString()
-                      }).Union(sli);
-
-
-
-                      /////////////////////////////////////////////////////////////////////////////////
-                      //for billtype dropdown
-                      /////////////////////////////////////////////////////////////////////////////////
-                      var allbilltypes = (from a in dbcontext.BillTypes select a).ToList();
-
-                      
-                      m.BillTypes = allbilltypes.Select(r => new SelectListItem
-                      {
-                          Value = r.BillTypePK.ToString(),
-                          Text = r.BillType1.ToString()
-                      });
+                    m.BillTypes = allbilltypes.Select(r => new SelectListItem
+                                                               {
+                                                                   Value = r.BillTypePK.ToString(),
+                                                                   Text = r.BillType1.ToString()
+                                                               });
 
 
 
 
-                      //for state dropdown
-                      /////////////////////////////////////////////////////////////////////////////////
-                      var allstates = (from sc in dbcontext.StateCodes select sc).ToList();
-                      
-                      m.States = allstates.Select(r => new SelectListItem
-                      {
-                          Value = r.StateAbbrPK.ToString(),
-                          Text = r.StateAbbr.ToString()
-                      });
+                    //for state dropdown
+                    /////////////////////////////////////////////////////////////////////////////////
+                    var allstates = (from sc in dbcontext.StateCodes select sc).ToList();
+
+                    m.States = allstates.Select(r => new SelectListItem
+                                                         {
+                                                             Value = r.StateAbbrPK.ToString(),
+                                                             Text = r.StateAbbr.ToString()
+                                                         });
 
 
-                      List<SelectListItem> slina = new List<SelectListItem>();
-                      slina.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+                    List<SelectListItem> slina = new List<SelectListItem>();
+                    slina.Add(new SelectListItem {Value = (-1).ToString(), Text = "«« Not Assigned »»"});
 
 
 
-                      List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList(); ;
-                      List<SelectListItem> sl1 = new List<SelectListItem>();
-                      foreach (EmployeeCustomerAssociaitionModel s in ll1)
-                      {
-                          SelectListItem mylistitem = new SelectListItem();
-                          mylistitem.Text = s.FirstName + " " + s.LastName;
-                          mylistitem.Value = s.employeePK.ToString();
-                          sl1.Add(mylistitem);
-                      }
-                      m.Reps = sl1.Union(slina);
-
-
-                      List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
-                      List<SelectListItem> sl2 = new List<SelectListItem>();
-                      foreach (EmployeeCustomerAssociaitionModel s in ll2)
-                      {
-                          SelectListItem mylistitem = new SelectListItem();
-                          mylistitem.Text = s.FirstName + " " + s.LastName;
-                          mylistitem.Value = s.employeePK.ToString();
-                          sl2.Add(mylistitem);
-                      }
-                      m.SalesPersons = sl2.Union(slina);
-                      return View(m);     
-   #endregion
-                  }
-
-             
-
-            try
-            {
-                
-
-
-                //BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
-                //revisit 
-                ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
-
-                var c = new Customer
-                            { 
-                                Name = m.CustomerAccount.Customer,
-                                BillTypeFK = m.SelectedBillTypeID,
-                                ProductGroupCycleType = pgct,
-                                 PercentOfMedia=m.CustomerAccount.PercentMedia,
-                                 ServiceFee= m.CustomerAccount.ServiceFee,
-                                  InternalCustomerId= m.CustomerAccount.internalID,
-                                PromotionFeeAmount = m.CustomerAccount.PromotionFeeAmount,
-                                CreditLimit=m.CustomerAccount.CreditLimit,
-                                PromotionFeeOverride=m.CustomerAccount.PromotionFeeOverride 
-                            };
-
-                dbcontext.Customers.Add(c);
-
-                var u = new User
-                            {
-                                Customer = c,
-                                Email = m.CustomerAccount.Email,
-                                FirstName = m.CustomerAccount.FirstName,
-                                LastName = m.CustomerAccount.LastName,
-                                MiddleInitial = m.CustomerAccount.MiddleInitial,
-                                IsActive = m.CustomerAccount.isActive
-                            };
-                dbcontext.Users.Add(u);
-
-                var r = dbcontext.Roles.First(p => p.RolePK == m.SelectedRoleID);
-                var ura = new UserRolesAssociation { Role = r, User = u };
-                dbcontext.UserRolesAssociations.Add(ura);
-
-
-                //
-                var cr = new Credential
-                             { 
-                                 User = u,
-                                 UsersFK = u.UserPK,
-                                 Username = m.CustomerAccount.UserID,
-                                 Password = m.CustomerAccount.UserPassword
-                             };
-                dbcontext.Credentials.Add(cr);
-
-
-                PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
-                var ph = new Phone {Phone1 = m.CustomerAccount.Phone, PhoneType = pt};
-                dbcontext.Phones.Add(ph);
-
-                var cpa = new CustomerPhoneAssociation {Customer = c, Phone = ph};
-                dbcontext.CustomerPhoneAssociations.Add(cpa);
-
-                var sc = dbcontext.StateCodes.First(p => p.StateAbbrPK == m.SelectedStateID);
-                var at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
-
-                var a = new Address
-                            {
-                                Address1 = m.CustomerAccount.Address1,
-                                Address2 = m.CustomerAccount.Address2,
-                                City = m.CustomerAccount.City,
-                                ZipCode = m.CustomerAccount.Zip,
-                                StateCode = sc
-                            };
-                dbcontext.Addresses.Add(a);
-
-                var caa = new CustomerAddressAssociation {Address = a, Customer = c, AddressType = at};
-                dbcontext.CustomerAddressAssociations.Add(caa);
-
-                var cn = new CustomerNote {Customer = c, Note = m.CustomerAccount.CustomerNote};
-                dbcontext.CustomerNotes.Add(cn);
-
-                
-                //don't add if not assigned
-                if (m.SelectedRepID != -1)
-                {
-                    var addrep = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedRepID };
-                    dbcontext.EmployeeCustomerAssociations.Add(addrep);
-                }
-                
-                //don't add if not assigned
-                if (m.SelectedSalesPersonID != -1)
-                {
-                    var addsales = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedSalesPersonID };
-                    dbcontext.EmployeeCustomerAssociations.Add(addsales);
-                }
-
-                CustomerHierarchy ch = null;
-                if (m.SelectedParentID == -1) //set parent
-                {
-                    ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = null};
-                    dbcontext.CustomerHierarchies.Add(ch);
-                }
-                else if (m.SelectedParentID == 0) //set self -- single user
-                {
-                    ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = c.CustomerPK};
-                    dbcontext.CustomerHierarchies.Add(ch);
-                }
-                else //assign a parent
-                {
-                    ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = m.SelectedParentID};
-                    dbcontext.CustomerHierarchies.Add(ch);
-                }
-                dbcontext.SaveChanges();
-
-                /////////////////////////////////////////////////////////////////////////////
-                ///// sending of emails
-                AesEncyrption ae = AesEncyrption.getInstance();
-                string encryptedToken = ae.GenerateToken(ch.CustomerParentFK.Value.ToString(), DateTime.Now.ToString(), cr.Username, cr.Password);
-                string emailUrl = System.Configuration.ConfigurationManager.AppSettings["VerificationUrl"].ToString() + encryptedToken;
-                if (fc["sendcustomeremail"] != null)
-                {
-                    string from, to, body, subject;
-
-                    //send email to child customers
-                    //if  child customer
-                    if (m.SelectedParentID >0)
+                    List<EmployeeCustomerAssociaitionModel> ll1 =
+                        allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
+                    ;
+                    List<SelectListItem> sl1 = new List<SelectListItem>();
+                    foreach (EmployeeCustomerAssociaitionModel s in ll1)
                     {
-                        var emailtemplate = (
-                                            from et in dbcontext.EmailTemplates
-                                            join ey in dbcontext.EmailTypes on et.EmailTypeFK equals ey.EmailTypePK
-                                            where ey.EmailType1.Equals("WelcomeEmailChild")
-                                            select et).FirstOrDefault();
-
-                        var parentdetails = from usr in dbcontext.Users
-                                            join cus in dbcontext.Customers on usr.CustomerFK equals cus.CustomerPK
-                                            where usr.CustomerFK == m.SelectedParentID
-                                            select new { usr.CustomerFK, usr.Email, cus.Name };
-
-                        //send mail //revisit
-                        from = "accounts@semplest.com";
-                        to = u.Email;
-                        body = emailtemplate.EmailBody;
-                        //parent name in subject line
-                        subject = parentdetails.FirstOrDefault().Name + " " +emailtemplate.EmailSubject;
-                        body = body.Replace("[ChildCustomerFirstLast]", u.FirstName.ToString() + " " + u.LastName.ToString());
-                        body = body.Replace("[ParentCustomerName]", parentdetails.FirstOrDefault().Name.ToString());
-                        body = body.Replace("[FAQs]", "http://faq");
-                        body = body.Replace("[ChildCustomerUserID]", cr.Username.ToString());
-                        body = body.Replace("[ChildCustomerPassword]", cr.Password.ToString());
-                        body = body.Replace("[INSERT LINK]", emailUrl);
-                        bool sent = false;
-                        ServiceClientWrapper scw = new ServiceClientWrapper();
-                        sent = scw.SendEmail(subject, from, to, body);
+                        SelectListItem mylistitem = new SelectListItem();
+                        mylistitem.Text = s.FirstName + " " + s.LastName;
+                        mylistitem.Value = s.employeePK.ToString();
+                        sl1.Add(mylistitem);
                     }
+                    m.Reps = sl1.Union(slina);
 
 
-                    if (m.SelectedParentID == -1) ///set parent
+                    List<EmployeeCustomerAssociaitionModel> ll2 =
+                        allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
+                    List<SelectListItem> sl2 = new List<SelectListItem>();
+                    foreach (EmployeeCustomerAssociaitionModel s in ll2)
                     {
-                        var emailtemplate = (
-                                            from et in dbcontext.EmailTemplates
-                                            join ey in dbcontext.EmailTypes on et.EmailTypeFK equals ey.EmailTypePK
-                                            where ey.EmailType1.Equals("WelcomeEmailParent")
-                                            select et).FirstOrDefault();
-
-                        
-                        //send mail //revisit
-                        from = "accounts@semplest.com";
-                        to = u.Email;
-                        body = emailtemplate.EmailBody;
-                        subject = emailtemplate.EmailSubject;
-                        
-
-                        
-                        body = body.Replace("[ParentCustomerName]", c.Name.FirstOrDefault().ToString());
-                        body = body.Replace("[ParentCustomerUserID]", cr.Username.ToString());
-                        body = body.Replace("[ParentCustomerPassword]", cr.Password.ToString());
-                        body = body.Replace("[INSERT LINK]", emailUrl);
-                        body = body.Replace("[DefaultEmailContactUS]", dbcontext.Configurations.First().DefaultEmailContactUs.ToString());
-                        bool sent = false;
-                        ServiceClientWrapper scw = new ServiceClientWrapper();
-                        sent = scw.SendEmail(subject, from, to, body);
+                        SelectListItem mylistitem = new SelectListItem();
+                        mylistitem.Text = s.FirstName + " " + s.LastName;
+                        mylistitem.Value = s.employeePK.ToString();
+                        sl2.Add(mylistitem);
                     }
-
-
-
-                    
-                    if (m.SelectedParentID ==0) // non child parent customer - self
-                    {
-
-                        var emailtemplate = (
-                                                from et in dbcontext.EmailTemplates
-                                                join ey in dbcontext.EmailTypes on et.EmailTypeFK equals ey.EmailTypePK
-                                                where ey.EmailType1.Equals("WelcomeEmailNonParentUser")
-                                                select et).FirstOrDefault();
-
-                        //send mail //revisit
-                        from = "accounts@semplest.com";
-                        to = u.Email;
-                        body = emailtemplate.EmailBody;
-                        subject = emailtemplate.EmailSubject;
-                        body = body.Replace("[NonParentCustomer]", u.FirstName.ToString() + " " + u.LastName.ToString());
-                        body = body.Replace("[NonParentCustomerUserID]", cr.Username.ToString());
-                        body = body.Replace("[NonParentCustomerPassword]", cr.Password.ToString());
-                        body = body.Replace("[INSERT LINK]", emailUrl);
-                        bool sent = false;
-                        ServiceClientWrapper scw = new ServiceClientWrapper();
-                        sent = scw.SendEmail(subject, from, to, body);
-                    }
-                    //SendEmail
-
-
+                    m.SalesPersons = sl2.Union(slina);
                 }
+                return View(m);
 
+                #endregion
             }
-            catch (Exception ex)
-            {
-                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);
-            }
-
-
+            cry.AddCustomer(m);
             return RedirectToAction("Index");
         }
 

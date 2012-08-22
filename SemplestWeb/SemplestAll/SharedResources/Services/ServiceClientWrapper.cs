@@ -351,6 +351,26 @@ namespace Semplest.SharedResources.Services
 
         #endregion
 
+
+        public bool SendAccountActivationEmail(int userId)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("userID", userId.ToString());
+            return runBooleanMethod(ADENGINESERVICE, "sendAccountActivationEmail", JsonConvert.SerializeObject(jsonHash));
+        }
+
+        public bool ValidateAccountActivationToken(string token)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("ecryptedToken", token.ToString());
+            string returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateAccountActivation", JsonConvert.SerializeObject(jsonHash), timeoutMS);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            List<string> lis = dict.Values.ToList();
+            string jsonstrlist = lis[0];
+            var listoflist = JsonConvert.DeserializeObject<string[]>(jsonstrlist);
+            return true;
+        }
+
         private Thread _workerThread;
 
         private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
@@ -565,7 +585,6 @@ namespace Semplest.SharedResources.Services
         }
 
         //
-
 
 
 
