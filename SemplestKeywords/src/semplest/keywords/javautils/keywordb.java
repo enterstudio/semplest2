@@ -9,12 +9,6 @@ import java.util.HashSet;
  */
 public class keywordb {
 
-  // - Privates ------------
-  // The keyword databases (2g => 2grams, 3g => 3grams, ..., ac => autocompletes)
-  // descs => descriptions 
-  private static String[] dbs = { "2g","3g","4g","ac"};
-  private static String   ddb =   "descs";
-
   // - Interface ------------------------
 
   // keyword-count for a category/categories from a db 
@@ -77,6 +71,12 @@ public class keywordb {
   }
   
   // - Private ----------------------------------------------------------------
+  // The keyword databases (2g => 2grams, 3g => 3grams, ..., ac => autocompletes)
+  // descs => descriptions 
+  private static String[] dbs = { "2g","3g","4g","ac"};
+  private static String   ddb =   "descs";
+
+  // - Utility --
   // Combine word-counts by using the maximum-count
   private static Map<String,Integer> cWc(Map<String,Integer> a, 
       Map<String,Integer> b){
