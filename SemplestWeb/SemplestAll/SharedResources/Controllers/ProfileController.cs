@@ -148,7 +148,8 @@ namespace Semplest.SharedResources.Controllers
         public ActionResult Verify(string token)
         {
             var sr = new ServiceClientWrapper();
-            if (sr.ValidateAccountActivationToken(token))
+            var qs = Request.Url.Query.Substring(7);
+            if (sr.ValidateAccountActivationToken(qs))
                 return RedirectToAction("Login", "Profile");
             return Content("The URL is invalid.");
         }

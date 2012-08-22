@@ -361,14 +361,24 @@ namespace Semplest.SharedResources.Services
 
         public bool ValidateAccountActivationToken(string token)
         {
-            var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("ecryptedToken", token.ToString());
-            string returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateAccountActivation", JsonConvert.SerializeObject(jsonHash), timeoutMS);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-            var listoflist = JsonConvert.DeserializeObject<string[]>(jsonstrlist);
-            return true;
+            bool rval = false;
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("ecryptedToken", token);
+                string returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateAccountActivation",
+                                              JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                var listoflist = JsonConvert.DeserializeObject<string[]>(jsonstrlist);
+                rval = true;
+            }
+            catch (Exception ex)
+            {
+                Helpers.ExceptionHelper.LogException(ex);
+            }
+            return rval;
         }
 
         private Thread _workerThread;
