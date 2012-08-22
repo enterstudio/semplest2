@@ -5,16 +5,17 @@ import java.util.Map;
 import java.util.HashSet;
 
 
-/* Utilities to store/retrieve semplest keywords in a Berkeley Database
+/* Utilities to store/retrieve semplest keywords/descriptions in a Berkeley Database
  */
 public class keywordb {
 
   // - Privates ------------
-  // The keyword databases (2 => 2grams, 3 => 3grams, ..., 23 => autocompletes)
-  private static String[] dbs = {"2","3","4","23"};
+  // The keyword databases (2g => 2grams, 3g => 3grams, ..., ac => autocompletes)
+  private static String[] dbs = { "2g","3g","4g","ac"};
+  private static String   ddb =   "descs";
 
   // - Interface ------------------------
-  // db can be one of "2","3","4","23" corresponding to 2gram, .. ,autocom
+  // db can be one of "2g","3g","4g","ac" corresponding to 2gram, .. ,autocom
   public static Map<String,Integer> get( String cat, String db) throws Exception {
     return ioUtils.toWc( bdb.get( db, cat ) );
   }
@@ -28,6 +29,20 @@ public class keywordb {
      resm.put( e.getKey(), ioUtils.toWc( e.getValue() )); 
 
     return resm;
+  }
+  // get word-counts for all chidren categories of "cat"
+  public static Map<String,Map<String,Integer>> children( String cat, String db) 
+    throws Exception {
+    HashMap<String,Map<String,Integer>> resm = 
+      new HashMap<String,Map<String,Integer>>();
+    for( Map.Entry<String,String> e: bdb.children( db, cat ).entrySet() )
+      resm.put( e.getKey(), ioUtils.toWc( e.getValue() ));
+    
+    return resm;
+  }
+  // dmoz description data for a category
+  public static String description( String cat) throws Exception {
+    return bdb.get( ddb, cat );
   }
   // - Utilities -----------------------------------------------------
   // combine wcs from all databases 
@@ -75,14 +90,23 @@ public class keywordb {
   }
   // - Test routines  ------------------------
   public static void test() throws Exception {
-    String[] cats = {"top/news/weather","top/news/weather/aviation"};
+    String[]  cats = {"top/news/weather","top/news/weather/aviation"};
+    String    cat = "top/news/satire";
     Map<String, Map<String,Integer>> wc = get( cats );
+    Map<String, Map<String,Integer>> descendants = children( cat, "2g" );
+    String desc                         = description( cat );
+
     System.out.println( wc.size()  + " keywords"); 
     for( Map.Entry<String,Map<String,Integer>> es: wc.entrySet() ){
       System.out.println( es.getKey() + "\n" );
       for( Map.Entry<String,Integer> e: es.getValue().entrySet() )
       System.out.println( e.getKey() + " " + e.getValue() );
     }
+    System.out.println( "\nChildren of " + cat + "::"); 
+    for( Map.Entry<String,Map<String,Integer>> e: descendants.entrySet())
+      System.out.println( e.getKey() );
+    System.out.println( "\nDescription for " + cat + "::"); 
+    System.out.println( desc ); 
   }
   public static void timeTest() throws Exception {
     int COUNT = 1000;
