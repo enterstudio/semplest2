@@ -242,24 +242,7 @@ public class AccountActivationEmailSender
 	}
 	
 	public static void main(final String[] args) throws Exception
-	{/*
-		log.info("Starting process for sending account activation email");
-		log.info("Initializing");		
-		new ClassPathXmlApplicationContext("Service.xml");
-		Object object = new Object();
-		SemplestConfiguration configDB = new SemplestConfiguration(object);
-		Thread configThread = new Thread(configDB);
-		configThread.start();
-		synchronized (object)
-		{
-			object.wait();
-		}*/
-		final String token = "uHZKF9HG53kwjs35uMHjDZATj2crMVq+WndUMT0AHNcz7c2RTe+QJKpiK9OwyrsFPedrvzB+qHKFLkZM0v7vd6Ad4KkKrYJwOFN+bSOpbYA=";
-		final String semplestEncryptionKey = "12345678901234567890123456789044";
-		final AESBouncyCastle aes = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
-		final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, token);
-		System.out.println(decryptedInfo);
-		/*
+	{
 		try
 		{
 			log.info("Starting process for sending account activation email");
@@ -295,6 +278,6 @@ public class AccountActivationEmailSender
 				log.error("Problem sending email with subject [" + subject + "] and content [" + emailBody + "].  Logging, but otherwise continuing processing.", e2);
 			}
 			throw new Exception(errMsg, t);
-		}*/
+		}
 	}
 }
