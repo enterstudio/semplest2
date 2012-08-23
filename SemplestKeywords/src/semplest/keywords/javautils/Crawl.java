@@ -42,7 +42,7 @@ class Crawl {
 
 	private static final Logger logger = Logger.getLogger(Crawl.class);
 	
-  public static void main(String[] args){
+  public static void main(String[] args) throws Exception {
 
     String ss = "http://www.google.com";
     int depth = 1;  
