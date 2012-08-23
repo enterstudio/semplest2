@@ -207,7 +207,7 @@ public class TextUtils {
 
   // Return strings from a url 
   public static String HTMLText( String url ) throws Exception {
-    if( ! isValidUrl( url )) throw new Exception("Invalid Url: " + url ); 
+    if( ! isValidUrl( url )) return ""; 
     String outs = "";
 
     StringBean sb = new StringBean();
