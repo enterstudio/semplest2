@@ -1,0 +1,124 @@
+﻿@using Semplest.Core.Helpers
+@model Semplest.Core.Models.AdModel
+<script src="@Url.Content("~/Scripts/Maps.js?816")" type="text/javascript"> </script>
+<div id="adModel" class="configuration">
+    <span class="infoHead">Create Ads</span><br/>
+    
+    <ul class="options">
+        <li>
+            <h3>
+                Where do you want your ads shown? <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  tabindex="-1" >
+                                                      ?</a> </h3>
+        </li>
+        <li><p><input type="radio" name="group1" value="NATIONALLY" checked="checked" /> Nationally &nbsp;&nbsp;&nbsp;<input type="radio" name="group1" value="STATE" /> Statewide&nbsp;&nbsp;&nbsp;<input type="radio" name="group1" value="GEO_POINT" /> Exact Location</p><br/></li>
+        <li>
+            <fieldset style="padding-bottom: 10px">
+                <legend>Business Address</legend>
+                <table >
+                    <tr>
+                        <td>
+                            <div id="addresses">
+                                @Html.EditorFor(t => t.Addresses)
+                            </div>
+                            <div style="text-align: left; margin-left: 75px; margin-top: -30px;" class ="adLink">
+                                @Html.LinkToAddNestedForm("Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp", "AddBusinessLocationButton")
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </li>
+        
+        <li>
+            <fieldset style="padding-bottom: 10px">
+                <legend>
+                    <label style="width: 68px">
+                        URLs <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  tabindex="-1" >
+                                 ?</a></label></legend>
+                <table>
+                    <tr style="height: 35px;">
+                        <td>
+                            <label style="font-weight: bold;width: 68px; margin-left: 5px;">
+                                Landing</label>
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => m.LandingUrl, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
+                            @Html.ValidationMessageFor(t => t.LandingUrl)
+                        </td>
+                        <td>
+                            <span style=" margin-left: 5px;" class="grey-text">This url is your landing page</span>
+                        </td>
+                    </tr>
+                    <tr style="height: 35px;">
+                        <td>
+                            <label style="font-weight: bold;width: 68px; margin-left: 5px;">
+                                Display</label>
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => m.DisplayUrl, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
+                            @Html.ValidationMessageFor(t => t.DisplayUrl)
+                        </td>
+                        <td> <span style=" margin-left: 5px;" class="grey-text">This url will appears in all of your ads</span>
+                        </td>
+                    </tr>
+                    <tr style="height: 35px;">
+                        <td></td>
+                        <td>
+                            <button type="button" class="additionalLinks k-button">
+                                <span class="k-add k-icon"></span>additional click through options</button>
+                            <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  tabindex="-1" >
+                                ?</a>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </li>
+        <li class="infoHead">
+            <span><h3>Ad Copy</h3><label id="adMessage" for="adMessage">There must be one ad.</label></span>
+        </li>
+        <li>
+            <div id="ads">
+                @Html.EditorFor(t => t.Ads)
+            </div>
+        </li>
+        <li>
+            <div style="margin-left: 77px;">
+                @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp", "CreateAnotherAdButton")
+                
+                
+                
+            </div>
+        </li>
+        <li class="options">
+            <hr class="titlewhitelinebottom" />
+            <div style="text-align: left;">
+                <button class="k-button" id="negativeKeyWords" type="button" style="margin-left: 75px">
+                    <span class="k-add k-icon"></span>Negative Keywords</button>
+                <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  tabindex="-1" style="margin-left:1px; margin-right:20px;" >
+                    ? </a>
+                <button class="k-backbutton" id="back1" type="button">
+                    <span class="k-back k-icon"></span>back</button>
+                <button class="k-button" id="getCategories" type="submit" name="Command" value="GetCategories">
+                    <span class="k-update k-icon"></span>Save And Continue</button>
+            </div>
+        </li>
+        <li class="status"></li>
+    </ul>
+    <style scoped>
+        .k-textboxAd
+        {
+            width: 145px;
+        }
+        .k-textboxAdDescrition
+        {
+            width: 240px;
+        }
+        .k-textboxAd1
+        {
+            width: 250px;
+        }
+    </style>
+</div>
+@{
+    @Html.HiddenFor(t => t.PromotionAddressType);
+}

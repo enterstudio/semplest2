@@ -1,0 +1,27 @@
+﻿@model List<Semplest.SharedResources.Controllers.ErrorModel>
+
+@{
+    Layout = null;
+    ViewBag.Title = "Index";
+}
+<script src="@Url.Content("~/Scripts/jquery-1.7.2.min.js")" type="text/javascript"> </script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("select").change(function () {
+            $('#errorForm').submit();
+        });
+    });
+
+</script>
+@using (Html.BeginForm("ErrorView", "Error", new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "errorResults" },FormMethod.Get, new { id = "errorForm" }))
+{
+    <div class="editor-field">
+        @Html.DropDownList("ddl", ViewData["CreateDate"] as SelectList)  
+    </div>
+}
+    <div id= "errorResults">
+       @Html.Partial("_ErrorView", Model)
+
+    </div>

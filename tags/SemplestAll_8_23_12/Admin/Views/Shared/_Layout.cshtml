@@ -1,0 +1,112 @@
+﻿
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>@ViewBag.Title</title>
+        <link href="@Url.Content("~/Content/leafleft.css")" rel="stylesheet" type="text/css" />
+        <link href="@Url.Content("~/Content/jquery.cluetip.css")" rel="stylesheet" type="text/css" />
+        <link href="@Url.Content("~/Content/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+        <link href="@Url.Content("~/Content/kendo.metro.min.css")" rel="stylesheet" type="text/css" />
+        <script src="@Url.Content("~/Scripts/jquery-1.7.2.min.js")" type="text/javascript"> </script>
+        <script src="@Url.Content("~/Scripts/jquery-ui.min.js")" type="text/javascript"> </script>
+        <script src="@Url.Content("~/Scripts/kendo.all.min.js")" type="text/javascript"> </script>
+        <script src="@Url.Content("~/Scripts/jquery.UiBlock.js")" type="text/javascript"> </script>
+        <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"> </script>
+        <script type="text/jscript">
+@{
+    var appUrl="";
+    if (this.Context.Request.ApplicationPath.Length == 1)
+    { appUrl = "";}
+    else
+    {appUrl = this.Context.Request.ApplicationPath;}
+}
+
+            $(document).ready(function () {
+                var inputs = $(':input');
+                inputs.each(function () {
+                    $.ajax({ type: "GET", url: "@appUrl/Profile/AddRightToDatabase", data: { label: this.name, controllerName: '@ViewContext.RouteData.Values["controller"].ToString()', vAction: '@ViewContext.RouteData.Values["action"].ToString()'} });
+                });
+            });
+    </script> 
+    
+        @*this will inject individual script in the head tags (added by:tudor)*@
+        @RenderSection("headscript", required: false)
+    
+    </head>
+    <body>
+    <div id="wrapper">
+        <div id="header">
+            <div class="floatWrap">
+                <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
+                <ul class="kendo-nav">
+                    <li>@Html.ActionLink("Log Off", "LogIn","Profile")</li>
+                </ul>
+            </div>
+        </div>
+        <div id="sidebar">
+             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+            <div id="panelbar-admin">
+                </div>
+                @RenderSection("Navbar",false)
+        </div>
+        <div id="content">
+            <div class='centerWrap floatWrap widgetOverview' id="mainWrap">
+                <div id="exampleTitleHeader">
+                    <p id="exampleTitle">
+                        @RenderSection("Title", false)<div style="margin-right: 15px; margin-top: -26px;
+                                           text-align: right">
+                                                          @RenderSection("Links", false)</div>
+                    </p>
+                </div>
+                <div id="mainWrapInner">
+                    <div id="main">
+                        <div id="example">@RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            <div class="centerWrap">
+            <table width="100%" style="height: 40px; font-weight:bold;"><tr><td>Copyright &copy; 2012 SEMplest</td><td></td><td style="text-align: -webkit-right;"></td></tr></table>
+            </div>
+        </div>
+    </div>
+    <script>
+        $.getJSON($('#SideBarUrl').val(), {}, function (data) {
+            for (var mainGroup in data) {
+                for (var subitem in data[mainGroup].SubItems) {
+                    var items = [];
+                    for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
+                        items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, url: data[mainGroup].SubItems[subitem].SubItems[subitem1].Url });
+                    }
+                }
+            }
+        });
+        var panelBar = $("#panelbar-images").kendoPanelBar({
+            expandMode: "single"
+        }).data("kendoPanelBar");
+        var treeview = $("#treeview").kendoTreeView().data("kendoTreeView");
+        $("#panelbar-images").on("click", ".k-in", function (e) {
+            treeview.toggle($(e.target).closest(".k-item"));
+        });
+        $("#panelbar-profile").kendoPanelBar({
+            dataSource: [
+            {
+                text: "Home",
+                items: [
+                    { text: "Reporting" },
+                    { text: "Billing" },
+                    { text: "Quick Start Guide" },
+                    { text: "FAQs" },
+                    { text: "Contact Us" }
+                ]
+            }
+        ],
+            expandMode: "single"
+        });
+    </script>
+</body>
+    
+</html>
