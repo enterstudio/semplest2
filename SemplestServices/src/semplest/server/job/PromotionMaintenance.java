@@ -1,7 +1,9 @@
 package semplest.server.job;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,14 +13,20 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import semplest.server.protocol.ApplyPromotionBudgetRequest;
+import semplest.server.protocol.PayType;
 import semplest.server.protocol.PromotionBudget;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.RunMode;
+import semplest.server.protocol.Transaction;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.mail.SemplestMailClient;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
+import semplest.server.service.springjdbc.storedproc.GetSpendForPromotionSP;
 import semplest.util.SemplestUtils;
 
 public class PromotionMaintenance
@@ -30,6 +38,10 @@ public class PromotionMaintenance
 	 * 1) update cycle dates
 	 * 2) refill budget
 	 * 3) setup next budget for invoice transactions 
+	 * 
+	 * 
+	 * Questions
+	 * 1) can a customer switch between credit card and invoice type?
 	 */
 	public void engage(final java.util.Date asOfDate)
 	{
@@ -39,21 +51,21 @@ public class PromotionMaintenance
 		final GetAllPromotionDataSP getPromotionSP = new GetAllPromotionDataSP();
 		final Map<Integer, String> errorMap = new HashMap<Integer, String>();
 		final List<Integer> promotionsProcessed = new ArrayList<Integer>();
+		final GetSpendForPromotionSP getSpendForPromotionSP = new GetSpendForPromotionSP();
 		for (final PromotionBudget budget : budgets)
 		{			
 			try
 			{
-				final Double amountToRefill = budget.getBudgetCarryOverAmount();
-				//final Double spendIncurredThisMonth = getMonthlySpend(...);
-				
-				final Double spendIncurredThisMonth = 5.2;
-				
-				
+				final Integer promotionBudgetID = budget.getPk();
+				final BigDecimal amountToRefill = budget.getBudgetCarryOverAmount();
 				final Integer promotionId = budget.getPromotionFK();
 				final Boolean result = getPromotionSP.execute(promotionId);
 				final PromotionObj promotion = getPromotionSP.getPromotionData();
-				final Double remainingBudget = promotion.getRemainingBudgetInCycle();
-				final Double carryOverAmount = amountToRefill - spendIncurredThisMonth;			
+				final Transaction transaction = budget.getTransaction();
+				final PayType payType = transaction.getPayType();				
+				final Integer promotionID = promotion.getPromotionPK();
+				final Double remainingBudgetDouble = promotion.getRemainingBudgetInCycle();
+				final BigDecimal remainingBudget = BigDecimal.valueOf(remainingBudgetDouble); 						
 				final java.util.Date cycleStartDate = promotion.getCycleStartDate();
 				final Calendar cal = Calendar.getInstance();
 				cal.setTime(cycleStartDate);
@@ -62,10 +74,32 @@ public class PromotionMaintenance
 				final java.util.Date cycleEndDate = promotion.getCycleEndDate();
 				final Calendar c = Calendar.getInstance();
 				c.setTime(cycleEndDate);
-				c.add(Calendar.MONTH, 1);
+				c.add(Calendar.MONTH, 1);				
 				final java.util.Date newCycleEndDate = c.getTime();
-				final Double newRemainingBudget = remainingBudget + amountToRefill;
-				SemplestDB.applyPromotionBudget(promotionId, newCycleStartDate, newCycleEndDate, newRemainingBudget);
+				final java.util.Date budgetToAddDate = budget.getBudgetToAddDate();
+				final Calendar cal2 = Calendar.getInstance();
+				cal2.setTime(budgetToAddDate);
+				cal2.add(Calendar.MONTH, 1);
+				final java.util.Date newBudgetToAddDate = cal2.getTime();
+				final Long spendIncurredThisMonthMicroAmount = getSpendForPromotionSP.execute(promotionId.intValue(), null, cycleStartDate, cycleEndDate);
+				final BigDecimal spendIncurredThisMonth = SemplestUtils.getBigDecimal(spendIncurredThisMonthMicroAmount);						
+				final BigDecimal carryOverAmount = amountToRefill.subtract(spendIncurredThisMonth);		
+				final BigDecimal budgetToAddAmount = budget.getBudgetToAddAmount();
+				final BigDecimal newRemainingBudget = remainingBudget.subtract(amountToRefill);
+				final Integer customerID = transaction.getCustomerFK();				
+				final ApplyPromotionBudgetRequest request = new ApplyPromotionBudgetRequest(promotionID, newCycleStartDate, newCycleEndDate, newRemainingBudget, promotionBudgetID, spendIncurredThisMonth, carryOverAmount, newBudgetToAddDate, budgetToAddAmount, customerID);
+				if (payType == PayType.INVOICE)
+				{
+					SemplestDB.applyInvoicePromotionBudget(request);
+				}
+				else if (payType == PayType.CREDIT_CARD)
+				{
+					SemplestDB.applyCreditCardPromotionBudget(request);
+				}
+				else
+				{
+					throw new Exception("Cannot process request [" + request + "] because encountered unknown PayType [" + payType + "] encountred");
+				}
 				promotionsProcessed.add(promotionId);
 			}
 			catch (Exception e)

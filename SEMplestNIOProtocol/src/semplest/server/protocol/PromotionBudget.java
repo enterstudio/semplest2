@@ -1,25 +1,23 @@
 package semplest.server.protocol;
 
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 public class PromotionBudget
 {
 	private final Integer pk;
-	private final Integer transactionPK;
 	private final Integer promotionFK;
-	private final Double budgetToAddAmount;
+	private final BigDecimal budgetToAddAmount;
 	private final java.util.Date budgetToAddDate;
 	private final Boolean isValid;
 	private final Boolean isAppliedToPromotion;
-	private final Double budgetCarryOverAmount;	
+	private final BigDecimal budgetCarryOverAmount;	
 	private final java.util.Date createDate;
-	private final List<Transaction> transactions;
+	private final Transaction transaction;
 	
-	public PromotionBudget(Integer pk, Integer transactionPK, Integer promotionFK, Double budgetToAddAmount, Date budgetToAddDate, Boolean isValid, Boolean isAppliedToPromotion, Double budgetCarryOverAmount, Date createDate, List<Transaction> transactions)
+	public PromotionBudget(Integer pk, Integer promotionFK, BigDecimal budgetToAddAmount, Date budgetToAddDate, Boolean isValid, Boolean isAppliedToPromotion, BigDecimal budgetCarryOverAmount, Date createDate, Transaction transaction)
 	{
 		this.pk = pk;
-		this.transactionPK = transactionPK;
 		this.promotionFK = promotionFK;
 		this.budgetToAddAmount = budgetToAddAmount;
 		this.budgetToAddDate = budgetToAddDate;
@@ -27,12 +25,12 @@ public class PromotionBudget
 		this.isAppliedToPromotion = isAppliedToPromotion;
 		this.budgetCarryOverAmount = budgetCarryOverAmount;
 		this.createDate = createDate;
-		this.transactions = transactions;
+		this.transaction = transaction;
 	}
 	
-	public List<Transaction> getTransactions()
+	public Transaction getTransaction()
 	{
-		return transactions;
+		return transaction;
 	}
 
 	public Integer getPk()
@@ -40,17 +38,12 @@ public class PromotionBudget
 		return pk;
 	}
 
-	public Integer getTransactionPK()
-	{
-		return transactionPK;
-	}
-
 	public Integer getPromotionFK()
 	{
 		return promotionFK;
 	}
 
-	public Double getBudgetToAddAmount()
+	public BigDecimal getBudgetToAddAmount()
 	{
 		return budgetToAddAmount;
 	}
@@ -70,7 +63,7 @@ public class PromotionBudget
 		return isAppliedToPromotion;
 	}
 
-	public Double getBudgetCarryOverAmount()
+	public BigDecimal getBudgetCarryOverAmount()
 	{
 		return budgetCarryOverAmount;
 	}
@@ -93,8 +86,7 @@ public class PromotionBudget
 		result = prime * result + ((isValid == null) ? 0 : isValid.hashCode());
 		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
 		result = prime * result + ((promotionFK == null) ? 0 : promotionFK.hashCode());
-		result = prime * result + ((transactionPK == null) ? 0 : transactionPK.hashCode());
-		result = prime * result + ((transactions == null) ? 0 : transactions.hashCode());
+		result = prime * result + ((transaction == null) ? 0 : transaction.hashCode());
 		return result;
 	}
 
@@ -164,19 +156,12 @@ public class PromotionBudget
 		}
 		else if (!promotionFK.equals(other.promotionFK))
 			return false;
-		if (transactionPK == null)
+		if (transaction == null)
 		{
-			if (other.transactionPK != null)
+			if (other.transaction != null)
 				return false;
 		}
-		else if (!transactionPK.equals(other.transactionPK))
-			return false;
-		if (transactions == null)
-		{
-			if (other.transactions != null)
-				return false;
-		}
-		else if (!transactions.equals(other.transactions))
+		else if (!transaction.equals(other.transaction))
 			return false;
 		return true;
 	}
@@ -184,8 +169,8 @@ public class PromotionBudget
 	@Override
 	public String toString()
 	{
-		return "PromotionBudget [pk=" + pk + ", transactionPK=" + transactionPK + ", promotionFK=" + promotionFK + ", budgetToAddAmount=" + budgetToAddAmount + ", budgetToAddDate=" + budgetToAddDate + ", isValid=" + isValid + ", isAppliedToPromotion=" + isAppliedToPromotion
-				+ ", budgetCarryOverAmount=" + budgetCarryOverAmount + ", createDate=" + createDate + ", transactions=" + transactions + "]";
+		return "PromotionBudget [pk=" + pk + ", promotionFK=" + promotionFK + ", budgetToAddAmount=" + budgetToAddAmount + ", budgetToAddDate=" + budgetToAddDate + ", isValid=" + isValid + ", isAppliedToPromotion=" + isAppliedToPromotion + ", budgetCarryOverAmount=" + budgetCarryOverAmount
+				+ ", createDate=" + createDate + ", transaction=" + transaction + "]";
 	}
 	
 }

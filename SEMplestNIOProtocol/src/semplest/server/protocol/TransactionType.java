@@ -25,6 +25,19 @@ public enum TransactionType
 		return name;
 	}
 	
+	public static TransactionType fromCode(final Integer code)
+	{
+		final TransactionType[] types = TransactionType.values();
+		for (final TransactionType type : types)
+		{
+			if (type.getPk().equals(code))
+			{
+				return type;
+			}
+		}
+		return null;
+	}
+	
 	public static TransactionType fromName(final String name)
 	{
 		final TransactionType[] types = TransactionType.values();

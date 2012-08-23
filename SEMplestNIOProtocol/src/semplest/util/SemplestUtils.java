@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -394,6 +395,12 @@ public final class SemplestUtils
 		return aes;
 	}
 	
+	public static BigDecimal getBigDecimal(final Long microAmount)
+	{
+		final Double microAmountDouble = microAmount / MICRO_AMOUNT_FACTOR;
+		return BigDecimal.valueOf(microAmountDouble);
+	}
+		
 	public static Integer getIntegerMicroAmount(final Double d)
 	{
 		final Double dMicroDouble = d * SemplestUtils.MICRO_AMOUNT_FACTOR;

@@ -2,6 +2,7 @@ package semplest.server.service.springjdbc;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
+import semplest.server.protocol.ApplyPromotionBudgetRequest;
 import semplest.server.protocol.Credential;
 import semplest.server.protocol.CustomOperation;
 import semplest.server.protocol.CustomerHierarchy;
@@ -35,12 +37,14 @@ import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.EmailType;
 import semplest.server.protocol.Job;
 import semplest.server.protocol.JobName;
+import semplest.server.protocol.PayType;
 import semplest.server.protocol.PromotionBudget;
 import semplest.server.protocol.Transaction;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
+import semplest.server.protocol.TransactionType;
 import semplest.server.protocol.User;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidElement;
@@ -112,13 +116,15 @@ public class SemplestDB extends BaseDB
 	public static final String GET_USER_SQL = "select UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate from Users where UserPK = ?";
 	
 	public static final String GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate > ? and IsAppliedToPromotion = 0 and IsValid = 1";
-	//public static final String GET_TRANSACTION_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate > ? and IsAppliedToPromotion = 0 and IsValid = 1";
+	
+	public static final String GET_TRANSACTION_FOR_MAINTENANCE_SQL = "select TransactionsPK, CustomerFK, PayTypeFK, TransactionTypeFK, CreditCardProfileFK, Amount, CreatedDate, EditedDate from Transactions where TransactionsPK = ?";
 
 	public static final RowMapper<User> USER_ROW_MAPPER;
 	public static final RowMapper<CustomerHierarchy> CUSTOMER_HIERARCHY_ROW_MAPPER;
-	public static final RowMapper<Job> JOB_ROW_MAPPER;
+	public static final RowMapper<Job> JOB_ROW_MAPPER;	
 	public static final RowMapper<PromotionBudget> PROMOTION_BUDGET_ROW_MAPPER;
-
+	public static final RowMapper<Transaction> TRANSACTIONS_ROW_MAPPER;
+	
 	static
 	{
 		USER_ROW_MAPPER = new RowMapper<User>()
@@ -171,6 +177,26 @@ public class SemplestDB extends BaseDB
 			}	
 		};
 		
+		TRANSACTIONS_ROW_MAPPER = new RowMapper<Transaction>()
+		{
+			@Override
+			public Transaction mapRow(final ResultSet rs, final int index) throws SQLException
+			{
+				final Integer transactionPK = rs.getInt("TransactionsPK");				
+				final Integer customerFK = rs.getInt("CustomerFK");
+				final Integer payTypeFK = rs.getInt("PayType");
+				final PayType payType = PayType.fromCode(payTypeFK);				
+				final Integer transactionTypeFK = rs.getInt("TransactionTypeFK");
+				final TransactionType transactionType = TransactionType.fromCode(transactionTypeFK);
+				final Integer creditCardProfileFK = rs.getInt("CreditCardProfileFK");				
+				final BigDecimal amount = rs.getBigDecimal("Amount");				
+				final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
+				final java.util.Date editedDate = rs.getTimestamp("EditedDate");
+				final Transaction transaction = new Transaction(transactionPK, customerFK, payType, transactionType, creditCardProfileFK, amount, createdDate, editedDate);
+				return transaction;
+			}	
+		};
+		
 		PROMOTION_BUDGET_ROW_MAPPER = new RowMapper<PromotionBudget>()
 		{
 			@Override
@@ -178,14 +204,15 @@ public class SemplestDB extends BaseDB
 			{
 				final Integer pk = rs.getInt("PromotionBudgetPK");
 				final Integer transactionPK = rs.getInt("TransactionsFK");
+				final Transaction transaction = SemplestDB.getTransaction(transactionPK);
 				final Integer promotionFK = rs.getInt("PromotionFK");
-				final Double budgetToAddAmount = rs.getDouble("BudgetToAddAmount");
+				final BigDecimal budgetToAddAmount = rs.getBigDecimal("BudgetToAddAmount");
 				final java.util.Date budgetToAddDate = rs.getTimestamp("BudgetToAddDate");
 				final Boolean isValid = rs.getBoolean("IsValid");
 				final Boolean isAppliedToPromotion = rs.getBoolean("IsAppliedToPromotion");
-				final Double budgetCarryOverAmount = rs.getDouble("BudgetCarryOverAmount");
+				final BigDecimal budgetCarryOverAmount = rs.getBigDecimal("BudgetCarryOverAmount");
 				final java.util.Date createDate = rs.getTimestamp("CreatedDate");
-				final PromotionBudget promotionBudget = new PromotionBudget(pk, transactionPK, promotionFK, budgetToAddAmount, budgetToAddDate, isValid, isAppliedToPromotion, budgetCarryOverAmount, createDate, null);
+				final PromotionBudget promotionBudget = new PromotionBudget(pk, promotionFK, budgetToAddAmount, budgetToAddDate, isValid, isAppliedToPromotion, budgetCarryOverAmount, createDate, transaction);
 				return promotionBudget;
 			}	
 		}; 
@@ -321,15 +348,17 @@ public class SemplestDB extends BaseDB
 		}
 	}
 	
+	public static Transaction getTransaction(final Integer transactionID)
+	{
+		logger.info("Will try to Retrieve Transation for TransactionID [" + transactionID + "]");
+		final Transaction transaction = jdbcTemplate.queryForObject(GET_TRANSACTION_FOR_MAINTENANCE_SQL, TRANSACTIONS_ROW_MAPPER, transactionID);
+		return transaction;
+	}
+	
 	public static List<PromotionBudget> getPromotionBudgetsForMaintenance(final java.util.Date asOfDate)
 	{
 		logger.info("Will try to Retrieve Promotion Budgets for Maintenance as of [" + asOfDate + "]");
 		final List<PromotionBudget> budgets = jdbcTemplate.query(GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL, PROMOTION_BUDGET_ROW_MAPPER, asOfDate);
-		for (final PromotionBudget budget : budgets)
-		{
-			final Integer budgetPk = budget.getPk();
-			// TODO: get transactions for the budget
-		}
 		return budgets;
 	}
 
@@ -462,11 +491,30 @@ public class SemplestDB extends BaseDB
 		}
 	}
 	
-	public static void applyPromotionBudget(final Integer promotionID, final java.util.Date newCycleStartDate, final java.util.Date newCycleEndDate, final Double newRemainingBudget) throws Exception
+	public static void applyCreditCardPromotionBudget(final ApplyPromotionBudgetRequest request) throws Exception
 	{
-		final String operationDescription = "update Promotion for PromotionID [" + promotionID + "], NewCycleStartDate [" + newCycleStartDate + "], NewCycleEndDate [" + newCycleEndDate + "], NewRemainingBudget [" + newRemainingBudget + "]";
+		throw new UnsupportedOperationException("Cannot process [" + request + "] because this functionality is not yet implemented");
+	}
+	
+	// TODO: work in progress
+	
+	public static void applyInvoicePromotionBudget(final ApplyPromotionBudgetRequest request) throws Exception
+	{
+		final String operationDescription = "update Promotion using [" + request + "]";
 		logger.info("Will try to " + operationDescription);
-		final int rowcount = jdbcTemplate.update("update Promotion set CycleStartDate = ?, CycleEndDate = ?, RemainingBudgetInCycle = ? where PromotionPK = ?", new Object[]{promotionID, newCycleStartDate, newCycleEndDate, newRemainingBudget});
+		final BigDecimal budgetCarryOverAmount = request.getBudgetCarryOverAmount();
+		final int rowcount = jdbcTemplate.update("begin tran " +
+													"update Promotion set CycleStartDate = ?, CycleEndDate = ?, RemainingBudgetInCycle = ? where PromotionPK = ? " +
+													"update PromotionBudget set IsAppliedToPromotion = 1, BudgetCarryOverAmount = ?  where PromotionBudgetPK = ? " +
+
+													"declare @TRANSACTION_ID integer " + 
+													"insert into Transactions (CustomerFK, PayTypeTransactionTypeFK, CreditCardProfileFK, Amount, CreatedDate, EditedDate) values (?, ?, null, ?, getdate(), getdate()) " +
+													"set @TRANSACTION_ID = @@IDENTITY " + 
+													
+													"insert into PromotionBudget (TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate) " + 
+													"select @TRANSACTION_ID, PromotionFK, ?, 1, 0, 0, ?, getdate() from PromotionBudget where PromotionBudgetPK = ? " + 																																						
+												 "commit tran");//, 
+												 //new Object[]{promotionID, newCycleStartDate, newCycleEndDate, newRemainingBudget});
 		if (rowcount != 1)
 		{
 			throw new Exception("Problem doing " + operationDescription + ".  Rowcount returned from database after doing the update should be 1, but is " + rowcount);

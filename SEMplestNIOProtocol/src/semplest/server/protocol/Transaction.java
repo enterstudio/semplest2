@@ -1,5 +1,6 @@
 package semplest.server.protocol;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Transaction
@@ -9,11 +10,11 @@ public class Transaction
 	private final PayType payType;
 	private final TransactionType transactionType;
 	private final Integer creditCardProfileFK;
-	private final Double amount;
+	private final BigDecimal amount;
 	private final java.util.Date createdDate;
 	private final java.util.Date editedDate;
 	
-	private Transaction(Integer pk, Integer customerFK, PayType payType, TransactionType transactionType, Integer creditCardProfileFK, Double amount, Date createdDate, Date editedDate)
+	public Transaction(Integer pk, Integer customerFK, PayType payType, TransactionType transactionType, Integer creditCardProfileFK, BigDecimal amount, Date createdDate, Date editedDate)
 	{
 		this.pk = pk;
 		this.customerFK = customerFK;
@@ -50,7 +51,7 @@ public class Transaction
 		return creditCardProfileFK;
 	}
 
-	public Double getAmount()
+	public BigDecimal getAmount()
 	{
 		return amount;
 	}
@@ -145,5 +146,6 @@ public class Transaction
 	{
 		return "Transaction [pk=" + pk + ", customerFK=" + customerFK + ", payType=" + payType + ", transactionType=" + transactionType + ", creditCardProfileFK=" + creditCardProfileFK + ", amount=" + amount + ", createdDate=" + createdDate + ", editedDate=" + editedDate + "]";
 	}
+
 	
 }

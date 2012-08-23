@@ -25,6 +25,19 @@ public enum PayType
 		return name;
 	}
 	
+	public static PayType fromCode(final Integer code)
+	{
+		final PayType[] payTypes = PayType.values();
+		for (final PayType payType : payTypes)
+		{
+			if (payType.getPk().equals(code))
+			{
+				return payType;
+			}
+		}
+		return null;
+	}
+	
 	public static PayType fromName(final String name)
 	{
 		final PayType[] payTypes = PayType.values();
