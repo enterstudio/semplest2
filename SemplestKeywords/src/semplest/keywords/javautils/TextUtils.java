@@ -27,8 +27,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.URL;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.log4j.Logger;
 
@@ -37,6 +38,7 @@ public class TextUtils {
   private static final Logger logger = Logger.getLogger( TextUtils.class );
   public static final Set<String> sw = StopWordSet();
   public static final String commonWordString = ",&,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,de,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,la,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,pdf,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your,";
+  public static final String GSUrl = "http://www.google.com/search?q=";
   
 
   // HTML parsing utilities ---------------------
@@ -108,7 +110,17 @@ public class TextUtils {
 		  return "";
 	  return word;
   }
-  
+  // - Google Utilities ----------------------------------
+  // Get text from google page from a google search term
+  public static String gsText( String ststring ) throws Exception {
+    String cstring = ststring.replaceAll( "\\s+", "+");
+    String url = GSUrl + cstring;
+    String res = "";
+    for( URL link : HTMLLinks( url ))
+      res = res + HTMLText( link.toString() ) + " ";
+    return res; 
+  }
+
   //----------------------------
   // recursively process nodes and get text(top level is <html>)
   private static ArrayList<String> getText(Node n, String filter) 
@@ -121,7 +133,8 @@ public class TextUtils {
 
     if( n instanceof TextNode ){            // text
       TextNode tn = (TextNode) n;
-      //      System.out.println( parentTag + ":" + tn.getText().trim());
+            System.out.println( parentTag + ":" + tn.getText().trim());
+            System.out.println( ((TagNode)n).getTagName() );
       if( filter.equals("") || filter.equalsIgnoreCase(parentTag) ){
         String text =  tn.getText().trim();
         text = text.replace( "&nbsp;", " ");   // remove non-breaking spaces 
@@ -139,13 +152,14 @@ public class TextUtils {
   }
 
   //--
-  public static Boolean isValidUrl( String url ){
+  public static Boolean isValidUrl( String url ) throws Exception {
     final int CONNECT_TIMEOUT  = 1000;
     final int READ_TIMEOUT     = 1000;
     try {
       java.net.URLConnection conn = (new java.net.URL( url )).openConnection();
       conn.setConnectTimeout( CONNECT_TIMEOUT );
       conn.setReadTimeout( READ_TIMEOUT );
+      conn.setRequestProperty("User-Agent", "Mozilla");
       java.io.InputStream is = conn.getInputStream();
     } catch (Exception e) {
       logger.error( e.getMessage(), e);
@@ -156,10 +170,15 @@ public class TextUtils {
 
   // Return links from a url 
   // Make sure that the links are fully qualified
-  public static URL[] HTMLLinks( String url ){
+  public static URL[] HTMLLinks( String url ) throws Exception {
     // Get the links
+
+    URLConnection conn = (new java.net.URL( url )).openConnection();
+    conn.setRequestProperty("User-Agent", "Mozilla");
+
     LinkBean sb = new LinkBean();
     sb.setURL( url );
+    sb.setConnection( conn );
     URL[] outlinks = sb.getLinks();
 
     // make links fully qualified
@@ -206,7 +225,7 @@ public class TextUtils {
   
 
   // Return links from a url as a string of space separated urls
-  public static String HTMLLinkString( String url ){
+  public static String HTMLLinkString( String url ) throws Exception {
     URL[] links = HTMLLinks( url );
     String urls = "";
     for( URL link : links) 
@@ -214,7 +233,7 @@ public class TextUtils {
     return urls.trim();
   }
   // Return links from a url as a string of space separated urls
-  public static String HTMLLinkString( String url, String filter ){
+  public static String HTMLLinkString( String url, String filter ) throws Exception {
     URL[] links = HTMLLinks( url );
     String urls = "";
     for( URL link : links){
@@ -226,7 +245,7 @@ public class TextUtils {
   }
 
   // Get a list of all the urls upto <levels> deep within  
-  public static String HTMLLinkString(String root, int level ){
+  public static String HTMLLinkString(String root, int level ) throws Exception {
     String urls = "";
     if( 0 == level) return urls;
     urls = HTMLLinkString( root );
@@ -236,7 +255,8 @@ public class TextUtils {
   } 
   // Get a list of all the urls upto <levels> deep
   // But only the urls that contain the string "filter" 
-  public static String HTMLLinkString(String root, int level, String filter ){
+  public static String HTMLLinkString(String root, int level, String filter ) 
+    throws Exception {
     String urls = "";
     if( 0 == level) return urls;
     urls = HTMLLinkString( root, filter );
@@ -465,6 +485,6 @@ public class TextUtils {
   }
   //-------------------------------------------------------------
   public static void main (String[] args) throws Exception {
-    System.out.println( HTMLText( args[0] ));
+    System.out.println( gsText( args[0] ));
   }
 }
