@@ -152,7 +152,7 @@ public class TextUtils {
   }
 
   //--
-  public static Boolean isValidUrl( String url ) throws Exception {
+  public static Boolean isValidUrl( String url ){
     final int CONNECT_TIMEOUT  = 1000;
     final int READ_TIMEOUT     = 1000;
     try {
