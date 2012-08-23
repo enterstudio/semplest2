@@ -13,7 +13,7 @@ public class TestCrawl2 {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception  {
 		// TODO Auto-generated method stub
 		String ss = "http://www.parishilton.com";
 	    String urls = TextUtils.HTMLLinkString( ss );
