@@ -3308,12 +3308,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			validationErrors.add("User for UserID [" + userID + "] does not have credentials setup");
 		}
 		final String usernameFromDB = credential.getUsername();
-		final String passwordFromDB = credential.getPassword();
+		final String encryptedPasswordFromDB = credential.getEncryptedPassword();
 		if (usernameFromDB == null)
 		{
 			validationErrors.add("Username for UserID [" + userID + "] does not exist in db, so can't compare to the username passed in");
 		}
-		if (passwordFromDB == null)
+		if (encryptedPasswordFromDB == null)
 		{
 			validationErrors.add("Password for UserID [" + userID + "] does not exist in db, so can't compare to the username passed in");
 		}
@@ -3321,9 +3321,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			validationErrors.add("Username for UserID [" + userID + "] in the system [" + usernameFromDB + "] does not match the username passed in [" + username + "]");
 		}
-		if (!passwordFromDB.equals(password))
+		if (!encryptedPasswordFromDB.equals(password))
 		{
-			validationErrors.add("Password for UserID [" + userID + "] in the system [" + passwordFromDB + "] does not match the password passed in [" + password + "]");
+			validationErrors.add("Password for UserID [" + userID + "] in the system [" + encryptedPasswordFromDB + "] does not match the password passed in [" + password + "]");
 		}
 		if (validationErrors.isEmpty())
 		{

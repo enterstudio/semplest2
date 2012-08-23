@@ -29,6 +29,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
+import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.ApplyPromotionBudgetRequest;
 import semplest.server.protocol.Credential;
 import semplest.server.protocol.CustomOperation;
@@ -62,6 +63,7 @@ import semplest.server.protocol.bidding.BiddingParameters;
 import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.msn.MSNGeotargetObject;
+import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
 import semplest.server.service.springjdbc.helper.AllBiddableRSExtractor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
@@ -362,10 +364,11 @@ public class SemplestDB extends BaseDB
 		return budgets;
 	}
 
-	public static Credential getCredential(final Integer userID)
+	public static Credential getCredential(final Integer userID) throws Exception
 	{
-		final Credential credential = jdbcTemplate.queryForObject(
-				"select CredentialPK, UsersFK, Username, Password, RememberMe, SecurityQuestion, SecurityAnswer from Credential where UsersFK = ?",
+		final String semplestEncryptionKey = (String)SemplestConfiguration.configData.get("SemplestEncryptionkey");
+		final AESBouncyCastle aes = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
+		final Credential credential = jdbcTemplate.queryForObject("select CredentialPK, UsersFK, Username, Password, RememberMe, SecurityQuestion, SecurityAnswer from Credential where UsersFK = ?",
 				new RowMapper<Credential>()
 				{
 					@Override
@@ -374,12 +377,20 @@ public class SemplestDB extends BaseDB
 						final Integer credentialPK = rs.getInt("CredentialPK");
 						final Integer usersFK = rs.getInt("UsersFK");
 						final String username = rs.getString("Username");
-						final String password = rs.getString("Password");
+						final String encryptedPassword = rs.getString("Password");
+						final String decryptedPassword;
+						try
+						{
+							decryptedPassword = aes.decrypt(encryptedPassword);
+						}
+						catch (Exception e)
+						{
+							throw new RuntimeException("Problem decrypting passowrd for UserID [" + usersFK + "] and EncryptedPassword [" + encryptedPassword + "]");
+						}
 						final Boolean rememberMe = rs.getBoolean("RememberMe");
 						final String securityQuestion = rs.getString("SecurityQuestion");
 						final String securityAnswer = rs.getString("SecurityAnswer");
-						final Credential credential = new Credential(credentialPK, usersFK, username, password, rememberMe, securityQuestion,
-								securityAnswer);
+						final Credential credential = new Credential(credentialPK, usersFK, username, encryptedPassword, decryptedPassword, rememberMe, securityQuestion,securityAnswer);
 						return credential;
 					}
 				}, userID);

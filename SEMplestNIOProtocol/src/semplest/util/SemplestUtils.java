@@ -388,7 +388,7 @@ public final class SemplestUtils
 		sb.append(SemplestUtils.PASSWORD).append(SemplestUtils.VALUE_DELIMITER).append(password);
 		return sb.toString();
 	}
-	
+		
 	public static AESBouncyCastle getDefaultAESBouncyCastle(final String semplestEncryptionKey) throws Exception
 	{		
 		final AESBouncyCastle aes = AESBouncyCastle.getInstance(semplestEncryptionKey);

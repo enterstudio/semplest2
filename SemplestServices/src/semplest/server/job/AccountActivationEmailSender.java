@@ -99,7 +99,7 @@ public class AccountActivationEmailSender
 		}
 		final Credential credential = SemplestDB.getCredential(userID);
 		final String username = credential.getUsername();
-		final String password = credential.getPassword();
+		final String password = credential.getDecryptedPassword();
 		final java.util.Date now = new java.util.Date();
 		final String link = SemplestUtils.generateEncryptedHtmlLink(aes, reminderEmailUrlPrefix, userID, now, username, password, LINK_NAME);	
 		final String mailToLink = "<a href=\"mailto:" + defaultEmailContactUsEmail + "?subject=Please%20help%20me%20(User%20Name:%20" + username + ")\">" + defaultEmailContactUsEmail + "</a>";
@@ -128,7 +128,7 @@ public class AccountActivationEmailSender
 		}
 		final Credential credential = SemplestDB.getCredential(userID);
 		final String username = credential.getUsername();
-		final String password = credential.getPassword();
+		final String password = credential.getDecryptedPassword();
 		final java.util.Date now = new java.util.Date();
 		final Integer customerID = user.getCustomerFk();
 		final CustomerObj customer = SemplestDB.getCustomer(customerID);
@@ -165,7 +165,8 @@ public class AccountActivationEmailSender
 		}
 		final Credential credential = SemplestDB.getCredential(userID);
 		final String username = credential.getUsername();
-		final String password = credential.getPassword();
+		final String decryptedPassword = credential.getDecryptedPassword();
+		final String encryptedPassword = credential.getEncryptedPassword();
 		final java.util.Date now = new java.util.Date();
 		final Integer customerID = user.getCustomerFk();
 		final CustomerObj customer = SemplestDB.getCustomer(customerID);
@@ -174,12 +175,12 @@ public class AccountActivationEmailSender
 			throw new Exception("Could not refine the email body for account activation email for User [" + user + "] becuase could not it's Customer info");
 		}
 		final String customerName = customer.getName();
-		final String link = SemplestUtils.generateEncryptedHtmlLink(aes, reminderEmailUrlPrefix, userID, now, username, password, LINK_NAME);		
+		final String link = SemplestUtils.generateEncryptedHtmlLink(aes, reminderEmailUrlPrefix, userID, now, username, encryptedPassword, LINK_NAME);		
 		final String refinedEmailBody = rawEmailBody.replaceAll("\\[VendorName\\]", fullName)
 													.replaceAll("\\[CustomerName\\]", "" + customerName)												
 													.replaceAll("\\[INSERT LINK\\]", link)
 													.replaceAll("\\[xxxxxx\\]", username)
-													.replaceAll("\\[xxxxx\\]", password);
+													.replaceAll("\\[xxxxx\\]", decryptedPassword);
 		return refinedEmailBody;
 	}
 	

@@ -5,20 +5,22 @@ public class Credential
 	private final Integer credentialPK;
 	private final Integer usersFK;
 	private final String username;
-	private final String password;
+	private final String encryptedPassword;
+	private final String decryptedPassword;
 	private final Boolean rememberMe;
 	private final String securityQuestion;
 	private final String securityAnswer;
 	
-	public Credential(Integer credentialPK, Integer usersFK, String username, String password, Boolean rememberMe, String securityQuestion, String securityAnswer)
+	public Credential(Integer credentialPK, Integer usersFK, String username, String encryptedPassword, String decryptedPassword, Boolean rememberMe, String securityQuestion, String securityAnswer)
 	{
 		this.credentialPK = credentialPK;
 		this.usersFK = usersFK;
-		this.username = username;
-		this.password = password;
+		this.username = username;		
 		this.rememberMe = rememberMe;
 		this.securityQuestion = securityQuestion;
 		this.securityAnswer = securityAnswer;
+		this.encryptedPassword = encryptedPassword;
+		this.decryptedPassword = decryptedPassword;
 	}
 
 	public Integer getCredentialPK()
@@ -36,9 +38,14 @@ public class Credential
 		return username;
 	}
 
-	public String getPassword()
+	public String getEncryptedPassword()
 	{
-		return password;
+		return encryptedPassword;
+	}
+
+	public String getDecryptedPassword()
+	{
+		return decryptedPassword;
 	}
 
 	public Boolean getRememberMe()
@@ -62,7 +69,8 @@ public class Credential
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((credentialPK == null) ? 0 : credentialPK.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((decryptedPassword == null) ? 0 : decryptedPassword.hashCode());
+		result = prime * result + ((encryptedPassword == null) ? 0 : encryptedPassword.hashCode());
 		result = prime * result + ((rememberMe == null) ? 0 : rememberMe.hashCode());
 		result = prime * result + ((securityAnswer == null) ? 0 : securityAnswer.hashCode());
 		result = prime * result + ((securityQuestion == null) ? 0 : securityQuestion.hashCode());
@@ -88,12 +96,19 @@ public class Credential
 		}
 		else if (!credentialPK.equals(other.credentialPK))
 			return false;
-		if (password == null)
+		if (decryptedPassword == null)
 		{
-			if (other.password != null)
+			if (other.decryptedPassword != null)
 				return false;
 		}
-		else if (!password.equals(other.password))
+		else if (!decryptedPassword.equals(other.decryptedPassword))
+			return false;
+		if (encryptedPassword == null)
+		{
+			if (other.encryptedPassword != null)
+				return false;
+		}
+		else if (!encryptedPassword.equals(other.encryptedPassword))
 			return false;
 		if (rememberMe == null)
 		{
@@ -136,7 +151,8 @@ public class Credential
 	@Override
 	public String toString()
 	{
-		return "Credential [credentialPK=" + credentialPK + ", usersFK=" + usersFK + ", username=" + username + ", password=" + password + ", rememberMe=" + rememberMe + ", securityQuestion=" + securityQuestion + ", securityAnswer=" + securityAnswer + "]";
+		return "Credential [credentialPK=" + credentialPK + ", usersFK=" + usersFK + ", username=" + username + ", encryptedPassword=" + encryptedPassword + ", decryptedPassword=" + decryptedPassword + ", rememberMe=" + rememberMe + ", securityQuestion=" + securityQuestion + ", securityAnswer="
+				+ securityAnswer + "]";
 	}
 	
 }
