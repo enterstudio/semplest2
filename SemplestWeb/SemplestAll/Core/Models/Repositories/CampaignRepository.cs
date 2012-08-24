@@ -410,6 +410,8 @@ namespace Semplest.Core.Models.Repositories
             // populate model from promotions
             if (promo != null)
             {
+                model.ProductGroup.IsAutoBid = promo.IsAutobid;
+                model.ProductGroup.AutoBidMaxCPC = promo.AutoBidMaxCPC;
                 model.ProductGroup.ProductGroupName = promo.ProductGroup.ProductGroupName;
                 model.ProductGroup.ProductPromotionName = promo.PromotionName;
                 model.ProductGroup.Budget = promo.PromotionBudgetAmount;
@@ -501,10 +503,11 @@ namespace Semplest.Core.Models.Repositories
             var queryCustFk = from u in dbcontext.Users where u.UserPK == userid select u.CustomerFK;
             var custobj = from c in dbcontext.Customers
                           where c.CustomerPK == queryCustFk.FirstOrDefault()
-                          select new {c.PercentOfMedia, c.PromotionFeeAmount, c.PromotionFeeOverride};
+                          select new {c.PercentOfMedia, c.PromotionFeeAmount, c.PromotionFeeOverride, c.AllowAutobid};
             var firstOrDefault = custobj.FirstOrDefault();
             if (firstOrDefault != null)
             {
+                model.ProductGroup.AllowAutoBid = firstOrDefault.AllowAutobid;
                 model.PercentMedia = firstOrDefault.PercentOfMedia;
                 model.PromotionFeeOverRide = firstOrDefault.PromotionFeeOverride;
                 model.PromotionFeeOverRideAmount = firstOrDefault.PromotionFeeAmount;
@@ -634,6 +637,8 @@ namespace Semplest.Core.Models.Repositories
                                 IsCompleted = false,
                                 IsLaunched = false,
                                 CreatedDate = DateTime.Now,
+                                IsAutobid = model.ProductGroup.IsAutoBid,
+                                AutoBidMaxCPC = model.ProductGroup.AutoBidMaxCPC
                             };
 
             return promo;
@@ -663,6 +668,8 @@ namespace Semplest.Core.Models.Repositories
                                                  customerDefaultPerCampaignFlatFeeAmount;
             updatePromotion.RemainingBudgetInCycle = model.ProductGroup.Budget -
                                                      customerDefaultPerCampaignFlatFeeAmount;
+            updatePromotion.IsAutobid = model.ProductGroup.IsAutoBid;
+            updatePromotion.AutoBidMaxCPC = model.ProductGroup.AutoBidMaxCPC;
         }
 
         

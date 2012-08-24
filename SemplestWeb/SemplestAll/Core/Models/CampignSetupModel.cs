@@ -142,6 +142,9 @@ namespace Semplest.Core.Models
         public List<AdEngineSelectModel> AdvertisingEngines { get; set; }
         public bool Google { get; set; }
         public bool YahooBing { get; set; }
+        public bool AllowAutoBid { get; set; }
+        public bool IsAutoBid { get; set; }
+        public decimal? AutoBidMaxCPC { get; set; }
     }
 
     public class BillingLaunchModel

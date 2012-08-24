@@ -8,7 +8,7 @@
                     @Model.Configuration.DefaultProductGroupName <a href ="#" class="help-button" id="helpbutton1" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]1" tabindex="-1" >
                                                                      ?</a>
                 </h3>
-                @*                    @Html.TextBoxFor(t => t.ProductGroupName, ViewBag.IsLaunchedAndCompleted ? (object)new { disabled = "true", @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName } : new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName })
+                @*                    @Htmsemplest  sl.TextBoxFor(t => t.ProductGroupName, ViewBag.IsLaunchedAndCompleted ? (object)new { disabled = "true", @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName } : new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName })
 *@                  
                 @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName, @style = "width:200px;" })
             </li>
@@ -58,6 +58,16 @@
                 @Html.TextBoxFor(t => t.EndDate, new { @class = "k-textbox enddate", @validationmessage = "Please select {0}", @placeholder = "End" })
             </li>
             <li>
+                                @{
+                                    if (Model.AllowAutoBid)
+                                    {
+                                        @Html.Label("AutoBid?")
+                                        @Html.CheckBoxFor(t => t.IsAutoBid)
+                                        @Html.Raw("&nbsp; &nbsp;") @Html.TextBoxFor(t => t.AutoBidMaxCPC, new {@class = "k-textbox "})
+                                    }
+                                }
+            </li>
+            <li>
                 <label for="SearchEngines" class="required">
                     Search Engines <a href ="#" class="help-button" id="helpbutton5" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]5 "  tabindex="-1"  >
                                        ?</a>
@@ -65,7 +75,7 @@
                 <br />
                 @Html.CheckBoxListFor(t => t.AdEnginesList, t => t.AdvertisingEngines, t => t.Id, t => t.Name, t => t.ImageUrl, t => t.AdEnginesSelectedList, new { })
                 @Html.ValidationMessageFor(t => t.AdEnginesList)
-            </li>
+                </li>
             <li>
                 <hr class="titlewhitelinebottom" />
                 <div style="text-align: center">

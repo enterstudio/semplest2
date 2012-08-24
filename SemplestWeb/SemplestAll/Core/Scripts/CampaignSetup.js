@@ -81,6 +81,26 @@ $(document).ready(function () {
             }
         }
     });
+    $("#ProductGroup_IsAutoBid").click(function () {
+        if ($("#ProductGroup_IsAutoBid:checked").val() == 'true') {
+            $("#ProductGroup_AutoBidMaxCPC").attr('disabled', false);
+        } else {
+            $("#ProductGroup_AutoBidMaxCPC").attr('disabled', true);
+        }
+    });
+    var prodAuto = $("#ProductGroup_AutoBidMaxCPC").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
+    if (prodAuto != null) {
+        //$("#ProductGroup_IsAutoBid").trigger('click');
+        if ($("#ProductGroup_IsAutoBid:checked").val() != null) {
+            $("#ProductGroup_AutoBidMaxCPC").attr('disabled', false);
+        } else {
+            $("#ProductGroup_AutoBidMaxCPC").attr('disabled', true);
+        }
+        prodAuto.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
+        prodAuto.wrapper.find(".k-link").addClass("k-state-disabled").unbind("keydown");
+        prodAuto.wrapper.find(".k-link").addClass("k-state-disabled").unbind("mousedown");
+    }
+    //$("#ProductGroup_IsAutoBid").trigger();
     var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
     budjet.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
     budjet.wrapper.find(".k-link")
@@ -392,11 +412,14 @@ $(document).ready(function () {
             changeWindow.open();
         }
     });
+
+
+
     for (var i = 0; i < $('.address').length; i++) {
         $('.address')[i].outerHTML = DisableGeoTargetFields($('.address')[i].outerHTML);
     }
 
-});                           //end ready
+});                               //end ready
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
