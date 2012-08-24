@@ -26,6 +26,9 @@ public class ReportActiveCampaigns {
 	
 	MsnCloudServiceImpl msn;
 	PrintStream pr;
+	
+	private final String fileOutputPath = "z:\\nan\\msnActiveAccounts.txt";
+	
 	public static void main(String[] args) throws Exception{
 		ReportActiveCampaigns rep = new ReportActiveCampaigns();
 		rep.getAccountsAndActiveCampaigns();
@@ -45,7 +48,7 @@ public class ReportActiveCampaigns {
 		BasicConfigurator.configure();
 		msn = new MsnCloudServiceImpl();
 		
-		pr = new PrintStream(new FileOutputStream("/semplest/data/msnActiveCampaignsReport2.txt"));
+		pr = new PrintStream(new FileOutputStream(fileOutputPath));
 		
 	}
 	
@@ -75,16 +78,17 @@ public class ReportActiveCampaigns {
 						activeCampaigns.add(camp);
 					}
 				}
-				if(!activeCampaigns.isEmpty()){
+				//if(!activeCampaigns.isEmpty()){
 					pr.println("Account Name: " + acInf[i].getName()+" <-> Number : "+acInf[i].getNumber()+" <-> ID: "+acInf[i].getId());
 					System.out.println("Account Name: " + acInf[i].getName()+" <-> Number : "+acInf[i].getNumber()+" <-> ID: "+acInf[i].getId());
 					for(Campaign camp : activeCampaigns){
 						if(camp.getStatus().getValue().equalsIgnoreCase("active")){
-							pr.print("\tActive Campaign Name:" +camp.getName()+ "(id:"+ camp.getId() +")\n");
+							pr.print("\tActive Campaign Name:" +camp.getName()+ "(id:"+ camp.getId() +")");
+							pr.println();
 							System.out.print("\tActive Campaign Name:" +camp.getName()+ "(id:"+ camp.getId() +")\n");
 						}
 					}
-				}
+				//}
 			}
 		}
 
