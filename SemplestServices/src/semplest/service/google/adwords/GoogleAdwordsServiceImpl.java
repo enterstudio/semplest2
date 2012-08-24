@@ -114,6 +114,7 @@ import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
 import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetDeliveryMethod;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
+import com.google.api.adwords.v201109.cm.BudgetOptimizer;
 import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignCriterion;
 import com.google.api.adwords.v201109.cm.CampaignCriterionOperation;
@@ -2337,15 +2338,23 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String CreateOneCampaignForAccount(String json) throws Exception
 	{
 		logger.debug("call CreateOneAccountService(String json)" + json);
-		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
-		Campaign campaign = CreateOneCampaignForAccount(data.get("accountID"), data.get("campaignName"), CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")), new Long(data.get("microBudgetAmount")));
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String isAutoBidString = data.get("IsAutoBid");
+		final Boolean isAutoBid = Boolean.valueOf(isAutoBidString);
+		Long maxCpcMicroAmount = null;
+		if (isAutoBid)
+		{
+			final String maxCpcStringMicroamount = data.get("MaxCpcMicroAmount");
+			maxCpcMicroAmount = Long.valueOf(maxCpcStringMicroamount);
+		}		
+		final Campaign campaign = CreateOneCampaignForAccount(data.get("accountID"), data.get("campaignName"), CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")), new Long(data.get("microBudgetAmount")), isAutoBid, maxCpcMicroAmount);
 		return gson.toJson(campaign);
 	}
 
 	@Override
-	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount) throws Exception
+	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount, Boolean isAutoBid, final Long maxCpcMicroAmount) throws Exception
 	{
-		logger.info("Will try to Create Campaign for AccountID [" + accountID + "], CampaignName [" + campaignName + "], CampaignStatus [" + campaignStatus + "], BudgetPeriod [" + period + "], MicroBudgetAmount [" + microBudgetAmount + "]");
+		logger.info("Will try to Create Campaign for AccountID [" + accountID + "], CampaignName [" + campaignName + "], CampaignStatus [" + campaignStatus + "], BudgetPeriod [" + period + "], MicroBudgetAmount [" + microBudgetAmount + "], IsAutoBid [" + isAutoBid + "], MaxCpcMicroAmount [" + maxCpcMicroAmount + "]");
 		try
 		{
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -2357,9 +2366,27 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				campaignStatus = CampaignStatus.PAUSED;
 			}
-			campaign.setStatus(campaignStatus);
-			campaign.setBiddingStrategy(new ManualCPC());
+			campaign.setStatus(campaignStatus);			
+			if (isAutoBid)
+			{
+				final BudgetOptimizer strategy = new BudgetOptimizer();
+				final Money money = new Money();				
+				money.setMicroAmount(maxCpcMicroAmount);
+				strategy.setBidCeiling(money);
+				strategy.setEnhancedCpcEnabled(false);
+				campaign.setBiddingStrategy(strategy);
+			}
+			else
+			{
+				campaign.setBiddingStrategy(new ManualCPC());				
+			}
 			final Budget budget = new Budget();
+			budget.setPeriod(period);
+			final Money money = new Money();
+			money.setMicroAmount(microBudgetAmount);
+			budget.setAmount(money);
+			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
+			campaign.setBudget(budget);	
 			/*
 			 * Default network is Google Search ONLY
 			 */
@@ -2369,12 +2396,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			network.setTargetContentNetwork(false);
 			network.setTargetSearchNetwork(false);
 			campaign.setNetworkSetting(network);
-			budget.setPeriod(period);
-			final Money money = new Money();
-			money.setMicroAmount(microBudgetAmount);
-			budget.setAmount(money);
-			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
-			campaign.setBudget(budget);
 			final CampaignOperation operation = new CampaignOperation();
 			operation.setOperand(campaign);
 			operation.setOperator(Operator.ADD);

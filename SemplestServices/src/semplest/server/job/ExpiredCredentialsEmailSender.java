@@ -67,7 +67,7 @@ public class ExpiredCredentialsEmailSender
 		}
 		else
 		{
-			fullName = firstName + " " + middleInitial + "." + lastName;
+			fullName = firstName + " " + middleInitial + " " + lastName;
 		}
 		final Credential credential = SemplestDB.getCredential(userID);
 		final String username = credential.getUsername();

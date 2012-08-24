@@ -44,7 +44,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//management console (mcm)
 	Account CreateOneAccountService(String currencyCode, String dateTimeZone,String companyName, String descriptiveName) throws Exception;
 	//Campaign Data Management (cm)
-	Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount) throws Exception;
+	Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount, Boolean isAutoBid, final Long maxCpcMicroAmount) throws Exception;
 	Boolean deleteCampaign(String accountID, Long campaignID) throws Exception;
 	Boolean changeCampaignsStatus(String accountID, List<Long> campaignIds, CampaignStatus status) throws Exception;
 	Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception;

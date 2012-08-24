@@ -283,17 +283,17 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
-	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,
-			Long microBudgetAmount) throws Exception
+	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount, Boolean isAutoBid, final Long maxCpcMicroAmount) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignName", campaignName);
 		jsonHash.put("campaignStatus", campaignStatus.getValue());
 		jsonHash.put("period", period.getValue());
-		jsonHash.put("microBudgetAmount", String.valueOf(microBudgetAmount));
+		jsonHash.put("microBudgetAmount", String.valueOf(microBudgetAmount));		
+		jsonHash.put("isAutoBid", period.getValue());
+		jsonHash.put("maxCpcMicroAmount", isAutoBid.toString());		
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "CreateOneCampaignForAccount", json,timeoutMS);
 		return gson.fromJson(returnData, Campaign.class);
 	}

@@ -347,8 +347,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					// Create Campaign
 					final Integer daysLeft = (Integer) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingDays");
-					final String accountId = String.valueOf(accountID);
-					final Long campaignID = createCampaign(accountId, PromotionID, customerID, advertisingEngine, monthlyBudget, dailyBudget, getPromoDataSP, daysLeft);
+					final String accountId = String.valueOf(accountID);					
+					final Boolean isAutoBid = promotionData.getIsAutobid();
+					final Double maxCPC = promotionData.getAutoBidMaxCPC();					
+					final Long campaignID = createCampaign(accountId, PromotionID, customerID, advertisingEngine, monthlyBudget, dailyBudget, getPromoDataSP, daysLeft, isAutoBid, maxCPC);
 					emailMessageSB.append("\t").append("Created AdEngine Campaign ID: ").append(campaignID).append("\n");
 					SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, monthlyBudget, dailyBudget);
 					// Create Ad group and Ads
@@ -1112,9 +1114,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	/*
 	 * Assumes Daily budget
 	 */
-	private Long createCampaign(String accountID, Integer promotionID, Integer customerID, AdEngine adEngine, Double monthlyBudgetAmount, Double dailyBudget, GetAllPromotionDataSP getPromoDataSP, Integer remainingDaysInCycle) throws Exception
+	private Long createCampaign(String accountID, Integer promotionID, Integer customerID, AdEngine adEngine, Double monthlyBudgetAmount, Double dailyBudget, GetAllPromotionDataSP getPromoDataSP, Integer remainingDaysInCycle, Boolean isAutoBid, Double maxCPC) throws Exception
 	{
-		logger.info("Will try to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], MonthlyBudgetAmount [" + monthlyBudgetAmount + "], RemainingDaysInCycle [" + remainingDaysInCycle + "]");
+		logger.info("Will try to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], MonthlyBudgetAmount [" + monthlyBudgetAmount + "], RemainingDaysInCycle [" + remainingDaysInCycle + "], IsAutoBid [" + isAutoBid + "], MaxCPC [" + maxCPC + "]");
 		if (monthlyBudgetAmount < 0)
 		{
 			throw new IllegalArgumentException("Cannot process request to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], RemainingDaysInCycle [" + remainingDaysInCycle
@@ -1126,7 +1128,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// assume US dollars US timezone
 			final GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 			final Long dailyBudgetMicroLong = SemplestUtils.getLongMicroAmount(dailyBudget);
-			final Campaign campaign = google.CreateOneCampaignForAccount(accountID, campaignName, com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE, BudgetBudgetPeriod.DAILY, dailyBudgetMicroLong);
+			final Long maxCpcMicroAmount = SemplestUtils.getLongMicroAmount(maxCPC);
+			final Campaign campaign = google.CreateOneCampaignForAccount(accountID, campaignName, com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE, BudgetBudgetPeriod.DAILY, dailyBudgetMicroLong, isAutoBid, maxCpcMicroAmount);
 			return campaign.getId();
 		}
 		else if (adEngine == AdEngine.MSN)
@@ -1335,7 +1338,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
 			// setup the budget for each ad engine
 			Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
-			// call setBidsUpdate
+			// call setBidsUpdate			
 			for (AdEngine adEngine : adEngineList)
 			{
 				Double budget = (Double) remainingBudgetDaysMap.get(adEngine).get("RemainingBudgetInCycle");
@@ -1343,7 +1346,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				BudgetObject budgetData = new BudgetObject();
 				budgetData.setRemainingBudgetInCycle(budget);
 				budgetData.setRemainingDays(daysLeft);
-				bidClient.setBidsUpdate(PromotionID, adEngine, budgetData);
+				final Boolean isAutoBid = promoObj.getIsAutobid();
+				if (adEngine == AdEngine.Google && isAutoBid)
+				{
+					logger.info("For PromotionID [" + PromotionID + "], we're currently processing AdEngine [" + adEngine + "] and IsAutoBid [" + isAutoBid + "], so not calling Bidding Client");
+				}
+				else
+				{
+					bidClient.setBidsUpdate(PromotionID, adEngine, budgetData);
+				}
 			}
 		}
 		catch (Exception e)

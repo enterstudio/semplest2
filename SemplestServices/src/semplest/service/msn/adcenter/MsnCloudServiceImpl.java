@@ -936,6 +936,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			// Campaign newCampaign =
 			// MsnDomainObjects.aNew().campaign().withName(campaignName).with(campaignStatus).with(budgetLimitType).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
 
+			
+			
 			final Campaign newCampaign = new Campaign();
 			newCampaign.setBudgetType(budgetLimitType);
 			newCampaign.setConversionTrackingEnabled(true);
@@ -946,7 +948,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			newCampaign.setMonthlyBudget(monthlyBudget);
 			newCampaign.setName(campaignName);
 			newCampaign.setStatus(campaignStatus);
-			newCampaign.setTimeZone("EasternTimeUSCanada");
+			newCampaign.setTimeZone("EasternTimeUSCanada");				
 
 			final AddCampaignsResponse addCampaigns;
 			final Campaign[] campaign = new Campaign[1];
