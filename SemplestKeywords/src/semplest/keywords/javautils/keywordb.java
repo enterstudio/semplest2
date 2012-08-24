@@ -28,7 +28,7 @@ public class keywordb {
     return resm;
   }
   // keyword-counts for all chidren categories of "cat"
-  public static Map<String,Map<String,Integer>> children( String cat, String db) 
+  public static Map<String,Map<String,Integer>> children(String cat, String db) 
     throws Exception {
     HashMap<String,Map<String,Integer>> resm = 
       new HashMap<String,Map<String,Integer>>();
@@ -36,6 +36,12 @@ public class keywordb {
       resm.put( e.getKey(), ioUtils.toWc( e.getValue() ));
     
     return resm;
+  }
+  public static Map<String,String> getAll( String db) throws Exception {
+    return (bdb.getAll( db ));
+  }
+  public static String[] getKeys( String db) throws Exception {
+    return (bdb.getKeys( db ));
   }
   // dmoz description data for a category
   public static String description( String cat) throws Exception {
@@ -71,7 +77,7 @@ public class keywordb {
   }
   
   // - Private ----------------------------------------------------------------
-  // The keyword databases (2g => 2grams, 3g => 3grams, ..., ac => autocompletes)
+  // The keyword databases (2g => 2grams, 3g => 3grams,., ac => autocompletes)
   // descs => descriptions 
   private static String[] dbs = { "2g","3g","4g","ac"};
   private static String   ddb =   "descs";
@@ -112,13 +118,13 @@ public class keywordb {
     System.out.println( desc ); 
   }
   public static void timeTest() throws Exception {
-    int COUNT = 1000;
-    String[] cats = getCats( COUNT );  
+    String db = "4g";
     long st = System.currentTimeMillis();
-    Map<String,Map<String,Integer>> r = get( cats );
+    Map<String,String> rs = getAll( db );
+    String[] ks = getKeys( db );
     long et = System.currentTimeMillis();
-    int mms = (int)(( et - st ) / COUNT);
-    System.out.println("\n\n" + COUNT + " cats took " + mms + " ms each");
+    System.out.println("\n\n" + (rs.size() + ks.length) + " records took " 
+        + (et - st) + " ms ");
   }
   private static String[] getCats( int num ){
     String FILE = "/semplest/data/dmoz/all.cids";
@@ -131,7 +137,7 @@ public class keywordb {
 
   // ---------------------------------------------------------------------
   public static void main(String[] args) throws Exception {
-    test();
+//    test();
     timeTest();
   }
 }
