@@ -4,6 +4,7 @@ import semplest.keywords.properties.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 import com.sleepycat.je.*;
 
@@ -40,7 +41,8 @@ public class bdb {
     return new DatabaseEntry( s.getBytes("UTF-8") );}
 
   // - Interface ------------------------
-  public static int add( String id, HashMap<String,String> kvs) throws Exception {
+  public static int add( String id, HashMap<String,String> kvs) 
+    throws Exception {
     Environment e   = getEnv( id, false );
     Database    db  = getDB( id, false, e );
     int count = 0;
@@ -85,20 +87,53 @@ public class bdb {
     e.close();
     return rm; 
   }
-  // entries whose keys are children of k
-  // children => greater than k (in the natural ordering of Strings) containing k
-  public static Map<String,String> children(String id, String k) throws Exception {
+  // get all records
+  public static Map<String,String> getAll( String id) throws Exception {
     Environment e   = getEnv( id, false );
     Database    db  = getDB( id, false, e );
-    
+
+    HashMap<String,String> rm = new HashMap<String,String>();
+    DiskOrderedCursor c = db.openCursor( new DiskOrderedCursorConfig() );
+      DatabaseEntry fk = new DatabaseEntry();
+    DatabaseEntry fv = new DatabaseEntry();
+    HashMap<String,String> mm = new HashMap<String,String>();
+    while ( c.getNext( fk, fv, null ) == OperationStatus.SUCCESS )            
+      mm.put( toS( fk ), toS( fv ));
+    c.close();
+    return mm;
+  }
+  // get all keys
+  public static String[] getKeys( String id ) throws Exception {
+    Environment e   = getEnv( id, false );
+    Database    db  = getDB( id, false, e );
+
+    ArrayList<String> res = new ArrayList<String>();
+    DiskOrderedCursor c = db.openCursor( new DiskOrderedCursorConfig() );
+      DatabaseEntry fk = new DatabaseEntry();
+    DatabaseEntry fv = new DatabaseEntry();
+    while ( c.getNext( fk, fv, null ) == OperationStatus.SUCCESS)             
+      res.add(  toS( fk ) );
+    c.close();
+    return res.toArray( new String[]{} );
+  }
+
+  // containing k ntries whose keys are children of k
+  // children => greater than k (in the natural ordering of Strings)
+  public static Map<String,String> children(String id, String k) 
+    throws Exception {
+    Environment e   = getEnv( id, false );
+    Database    db  = getDB( id, false, e );
+
     Cursor c = db.openCursor( null, null );
     DatabaseEntry fk = toDE( k );
     DatabaseEntry fv = new DatabaseEntry();
     HashMap<String,String> mm = new HashMap<String,String>();
-    if( c.getSearchKeyRange( fk, fv, LockMode.DEFAULT ) == OperationStatus.SUCCESS )
+    if( c.getSearchKeyRange( fk, fv, LockMode.DEFAULT ) == 
+        OperationStatus.SUCCESS )
       mm.put( toS( fk ), toS( fv ) );
-    while ( c.getNext( fk, fv, LockMode.DEFAULT ) == OperationStatus.SUCCESS &&
-      toS( fk ).contains( k ))
+    while ( c.getNext( fk, fv, LockMode.DEFAULT ) == 
+        OperationStatus.SUCCESS &&
+        toS( fk ).contains( k ))
       mm.put( toS( fk ), toS( fv ));
     c.close();
     return mm;
@@ -134,9 +169,13 @@ public class bdb {
     String key = "top/news/satire";
     String[] dbs = {"2g","3g","4g","ac","descs"};
 
-    for( Map.Entry<String,String> e: children( "2g", key ).entrySet())
-      System.out.println( e.getKey() );
-    System.out.println( get( "descs", key ));
+    long st = System.currentTimeMillis();
+    Map<String,String> res = getAll("4g");
+    String[] keys = getKeys("4g");
+    long et = System.currentTimeMillis();
+    
+    System.out.println( (res.size() + keys.length) + " records took " + 
+        (et - st) + " ms"  );
 
   }
 }
