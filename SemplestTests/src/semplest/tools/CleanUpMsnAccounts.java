@@ -24,10 +24,11 @@ import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class CleanUpMsnAccounts extends BaseDB{	
 	
-	private static SERVER cleanUpRange = SERVER.DEV; 
+	private final static SERVER cleanUpRange = SERVER.DEV; 
 	private static boolean useReportData = true;	
-	private static String reportListPath = "Z:\\nan\\msnActiveAccounts.txt";
-	private static String whiteListPath = "Z:\\nan\\msnWhiteListedAccounts.txt";
+	private final static String activeAccountsList = "Z:\\nan\\msnActiveAccounts.txt";
+	private final static String whiteList = "Z:\\nan\\msnWhiteListedAccounts.txt";
+	private final static String cleanUpReport = "Z:\\nan\\msnCleanUpReport.txt";
 	
 	private MsnCloudServiceImpl msn;	
 	private static enum SERVER {DEV, TEST};	
@@ -37,23 +38,27 @@ public class CleanUpMsnAccounts extends BaseDB{
 			CleanUpMsnAccounts cleanUp = new CleanUpMsnAccounts();			
 			cleanUp.init();
 			
-			//ArrayList<Long> toDeleteAccounts = cleanUp.getToDeleteAccounts();
-			//cleanUp.deleteAccountsFromMsn(toDeleteAccounts);			
-			cleanUp.getActiveAccounts();	//check with the still-active accounts after the clean up
+			//clean up the accounts on MSN
+			ArrayList<Long> toDeleteAccounts = cleanUp.getToDeleteAccounts();
+			ArrayList<Long> deletedAccounts = cleanUp.deleteAccountsFromMsn(toDeleteAccounts);			
+			List<Long> stillActiveAccounts = cleanUp.getActiveAccounts();	//check with the still-active accounts after the clean up
 						
-			//ArrayList<Integer> promotionIDs = cleanUp.getToDeletePromotions(toDeleteAccounts);
-			//cleanUp.deletePromotionsFromDB(toDeleteAccounts, promotionIDs);
+			//clean up the promotions in DB
+			ArrayList<Integer> toDeletePromotionIDs = cleanUp.getToDeletePromotions(toDeleteAccounts);
+			cleanUp.deletePromotionsFromDB(toDeleteAccounts, toDeletePromotionIDs);
+			
+			cleanUp.writeToReport(deletedAccounts, stillActiveAccounts, toDeletePromotionIDs);
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}		
 	}
 	
-	private void deleteAccountsFromMsn(ArrayList<Long> toDeleteAccounts) throws Exception{	
-				
+	private ArrayList<Long> deleteAccountsFromMsn(ArrayList<Long> toDeleteAccounts) throws Exception{	
+		ArrayList<Long> deletedAccounts = new ArrayList<Long>();		
+		
 		System.out.println("Deleting Active Accounts from MSN...");
 		int i = 0;
-		int numDeletedAccounts = 0;
 		for(Long accountId : toDeleteAccounts){
 			try{
 				System.out.println("# " + i); i++;
@@ -62,16 +67,17 @@ public class CleanUpMsnAccounts extends BaseDB{
 					boolean ret = msn.deleteAccountById(account);
 					if(ret){
 						System.out.println(" - deleted account " + accountId);
-						numDeletedAccounts++;
+						deletedAccounts.add(accountId);
 					}					
 				}				
 			}
 			catch(Exception e){
 				System.out.println(e.getMessage());
 			}
-		}
+		}		
+		System.out.println("# deleted accounts - " + deletedAccounts.size());		
 		
-		System.out.println("# deleted accounts - " + numDeletedAccounts);		
+		return deletedAccounts; 
 	}
 	
 	private void deletePromotionsFromDB(ArrayList<Long> toDeleteAccounts, ArrayList<Integer> promotionIDs) throws Exception{		
@@ -144,7 +150,7 @@ public class CleanUpMsnAccounts extends BaseDB{
 		List<Long> activeAccounts = new ArrayList<Long>();
 		
 		if(useReportData){
-			activeAccounts = readReportFile();
+			activeAccounts = getActiveMsnAccountsFromReport();
 		}
 		else{
 			activeAccounts = msn.getActiveAccountIDs();
@@ -159,9 +165,9 @@ public class CleanUpMsnAccounts extends BaseDB{
 		return activeAccounts;
 	}
 	
-	private ArrayList<Long> readReportFile() throws Exception{
+	private ArrayList<Long> getActiveMsnAccountsFromReport() throws Exception{
 		
-		String filePath = reportListPath;
+		String filePath = activeAccountsList;
 		ArrayList<Long> activeAccounts = new ArrayList<Long>();	
 		BufferedReader in = new BufferedReader(new FileReader(filePath));			
 		
@@ -181,7 +187,7 @@ public class CleanUpMsnAccounts extends BaseDB{
 	
 	private ArrayList<Long> getWhiteListAccounts() throws Exception{		
 		
-		String filePath = whiteListPath;
+		String filePath = whiteList;
 		ArrayList<Long> whiteListAccounts = new ArrayList<Long>();											
 		BufferedReader in = new BufferedReader(new FileReader(filePath));
 			
@@ -200,6 +206,37 @@ public class CleanUpMsnAccounts extends BaseDB{
 	    System.out.println("# accounts on the white list - " + whiteListAccounts.size());
 		
 		return whiteListAccounts;
+	}
+	
+	private void writeToReport(ArrayList<Long> deletedAccounts, List<Long> stillActiveAccounts, ArrayList<Integer> deletedPromotionIDs){
+		try{
+			FileWriter fstream = new FileWriter(cleanUpReport);
+			BufferedWriter out = new BufferedWriter(fstream);
+			
+			out.write("***** Report of Cleaning Up Accounts On MSN *****");
+			out.append("Date: " + new Date());
+			out.append(" ");
+			
+			out.append("Accounts that have been deleted from MSN:");
+			for(Long id : deletedAccounts){
+				out.append("  - " + id);
+			}
+			
+			out.append("Accounts that are still alive on MSN:");
+			for(Long id : stillActiveAccounts){
+				out.append("  - " + id);
+			}
+			
+			out.append("Promotions that have been deleted from the Database of " + cleanUpRange.name() + ":");
+			for(Integer id : deletedPromotionIDs){
+				out.append("  - " + id);
+			}
+			
+			out.close();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	private void init() throws Exception{
