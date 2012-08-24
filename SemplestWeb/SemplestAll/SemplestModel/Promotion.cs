@@ -29,7 +29,7 @@ namespace SemplestModel
             this.Schedules = new HashSet<Schedule>();
             this.SiteLinks = new HashSet<SiteLink>();
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
-            this.PromotionPayments = new HashSet<PromotionPayment>();
+            this.PromotionBudgets = new HashSet<PromotionBudget>();
         }
     
         public int PromotionPK { get; set; }
@@ -53,6 +53,8 @@ namespace SemplestModel
         public bool IsDeleted { get; set; }
         public string TargetCPCLevel { get; set; }
         public string DisplayURL { get; set; }
+        public bool IsAutobid { get; set; }
+        public Nullable<decimal> AutoBidMaxCPC { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
@@ -69,6 +71,6 @@ namespace SemplestModel
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<SiteLink> SiteLinks { get; set; }
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
-        public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
+        public virtual ICollection<PromotionBudget> PromotionBudgets { get; set; }
     }
 }

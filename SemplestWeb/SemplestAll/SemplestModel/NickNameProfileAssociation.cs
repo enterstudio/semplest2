@@ -12,18 +12,14 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class CreditCardNickName
+    public partial class NickNameProfileAssociation
     {
-        public CreditCardNickName()
-        {
-            this.NickNameProfileAssociations = new HashSet<NickNameProfileAssociation>();
-        }
+        public int CreditCardProfileFK { get; set; }
+        public int CreditCardNickNameFK { get; set; }
+        public bool IsMasterProfile { get; set; }
+        public bool IsDeleted { get; set; }
     
-        public int CreditCardNickNamePK { get; set; }
-        public int CustomerFK { get; set; }
-        public string CreditCardNickName1 { get; set; }
-    
-        public virtual Customer Customer { get; set; }
-        public virtual ICollection<NickNameProfileAssociation> NickNameProfileAssociations { get; set; }
+        public virtual CreditCardNickName CreditCardNickName { get; set; }
+        public virtual CreditCardProfile CreditCardProfile { get; set; }
     }
 }

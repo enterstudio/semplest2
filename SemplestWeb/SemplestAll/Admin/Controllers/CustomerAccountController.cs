@@ -100,6 +100,7 @@ namespace Semplest.Admin.Controllers
                {
                    AccountNumber = c.CustomerPK,
                    Customer = c.Name,
+                   AllowAutoBid = c.AllowAutobid,
                    FirstName = u.FirstName,
                    LastName = u.LastName,
                    MiddleInitial = u.MiddleInitial,
@@ -630,6 +631,7 @@ namespace Semplest.Admin.Controllers
             customer.PromotionFeeAmount = m.CustomerAccount.PromotionFeeAmount;
             customer.PromotionFeeOverride = m.CustomerAccount.PromotionFeeOverride;
             customer.CreditLimit = m.CustomerAccount.CreditLimit;
+            customer.AllowAutobid = m.CustomerAccount.AllowAutoBid;
 
 
 

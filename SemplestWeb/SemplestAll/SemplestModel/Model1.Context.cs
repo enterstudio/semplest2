@@ -40,7 +40,6 @@ namespace SemplestModel
         public DbSet<Credential> Credentials { get; set; }
         public DbSet<CreditCardNickName> CreditCardNickNames { get; set; }
         public DbSet<CreditCardProfile> CreditCardProfiles { get; set; }
-        public DbSet<CreditCardTransaction> CreditCardTransactions { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
         public DbSet<CustomerHierarchy> CustomerHierarchies { get; set; }
@@ -57,7 +56,6 @@ namespace SemplestModel
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<GeoTargeting> GeoTargetings { get; set; }
         public DbSet<HelpDefinition> HelpDefinitions { get; set; }
-        public DbSet<InvoiceTransaction> InvoiceTransactions { get; set; }
         public DbSet<Keyword> Keywords { get; set; }
         public DbSet<KeywordBid> KeywordBids { get; set; }
         public DbSet<KeywordCategory> KeywordCategories { get; set; }
@@ -99,9 +97,16 @@ namespace SemplestModel
         public DbSet<vwProductPromotion> vwProductPromotions { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
         public DbSet<vwCreditCardTransactionDetail> vwCreditCardTransactionDetails { get; set; }
-        public DbSet<PromotionPayment> PromotionPayments { get; set; }
         public DbSet<vwPromotionChart> vwPromotionCharts { get; set; }
         public DbSet<KeywordBidData> KeywordBidDatas { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<MSNGeoLocation> MSNGeoLocations { get; set; }
+        public DbSet<NickNameProfileAssociation> NickNameProfileAssociations { get; set; }
+        public DbSet<PayType> PayTypes { get; set; }
+        public DbSet<PromotionBudget> PromotionBudgets { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<TransactionType> TransactionTypes { get; set; }
+        public DbSet<ZipCode> ZipCodes { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

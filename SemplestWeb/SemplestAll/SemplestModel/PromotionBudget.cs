@@ -12,18 +12,19 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class PromotionPayment
+    public partial class PromotionBudget
     {
-        public int PromotionPaymentPK { get; set; }
+        public int PromotionBudgetPK { get; set; }
+        public int TransactionsFK { get; set; }
         public Nullable<int> PromotionFK { get; set; }
         public System.DateTime BudgetToAddDate { get; set; }
         public bool IsValid { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public Nullable<int> CreditCardTransactionFK { get; set; }
         public bool IsAppliedToPromotion { get; set; }
         public decimal BudgetCarryOverAmount { get; set; }
+        public Nullable<decimal> BudgetToAddAmount { get; set; }
+        public System.DateTime CreatedDate { get; set; }
     
-        public virtual CreditCardTransaction CreditCardTransaction { get; set; }
         public virtual Promotion Promotion { get; set; }
+        public virtual Transaction Transaction { get; set; }
     }
 }

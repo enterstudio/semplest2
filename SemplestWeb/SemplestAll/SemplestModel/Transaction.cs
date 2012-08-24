@@ -12,23 +12,25 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class CreditCardTransaction
+    public partial class Transaction
     {
-        public CreditCardTransaction()
+        public Transaction()
         {
-            this.PromotionPayments = new HashSet<PromotionPayment>();
+            this.PromotionBudgets = new HashSet<PromotionBudget>();
         }
     
-        public int CreditCardTransactionPK { get; set; }
+        public int TransactionsPK { get; set; }
+        public int CustomerFK { get; set; }
+        public int PayTypeFK { get; set; }
+        public int TransactionTypeFK { get; set; }
         public Nullable<int> CreditCardProfileFK { get; set; }
-        public string OrderID { get; set; }
         public decimal Amount { get; set; }
         public System.DateTime CreatedDate { get; set; }
-        public decimal SEMplestFee { get; set; }
-        public decimal MediaSpend { get; set; }
-        public bool IsRefund { get; set; }
+        public Nullable<System.DateTime> EditedDate { get; set; }
     
         public virtual CreditCardProfile CreditCardProfile { get; set; }
-        public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
+        public virtual Customer Customer { get; set; }
+        public virtual PayType PayType { get; set; }
+        public virtual ICollection<PromotionBudget> PromotionBudgets { get; set; }
     }
 }

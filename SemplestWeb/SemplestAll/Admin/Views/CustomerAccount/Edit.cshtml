@@ -160,6 +160,10 @@ Edit Customer Account:
                                         @Html.TextBoxFor(model => model.CustomerAccount.Zip, new { @class = "k-textbox zip" })
                                         @Html.ValidationMessageFor(model => model.CustomerAccount.Zip)
                                     </li>
+                                    <li>
+                                        @Html.LabelFor(model => model.CustomerAccount.AllowAutoBid)
+                                        @Html.CheckBoxFor(model => model.CustomerAccount.AllowAutoBid)
+                                    </li>
                                 </ul>
                             </td>
                             <td style="vertical-align: top;">

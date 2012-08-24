@@ -29,7 +29,8 @@ namespace Semplest.Admin.Models.Repositories
                                 PromotionFeeAmount = m.CustomerAccount.PromotionFeeAmount,
                                 CreditLimit=m.CustomerAccount.CreditLimit,
                                 PromotionFeeOverride=m.CustomerAccount.PromotionFeeOverride,
-                                CreatedDate = DateTime.Now 
+                                CreatedDate = DateTime.Now,
+                                AllowAutobid = m.CustomerAccount.AllowAutoBid
                             };
 
                 dbcontext.Customers.Add(c);

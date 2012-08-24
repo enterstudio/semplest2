@@ -28,10 +28,10 @@ namespace SemplestModel
             this.CustomerNotes = new HashSet<CustomerNote>();
             this.EmailTemplates = new HashSet<EmailTemplate>();
             this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
-            this.InvoiceTransactions = new HashSet<InvoiceTransaction>();
             this.Schedules = new HashSet<Schedule>();
             this.WebContents = new HashSet<WebContent>();
             this.Users = new HashSet<User>();
+            this.Transactions = new HashSet<Transaction>();
         }
     
         public int CustomerPK { get; set; }
@@ -47,6 +47,7 @@ namespace SemplestModel
         public Nullable<decimal> CreditLimit { get; set; }
         public bool PromotionFeeOverride { get; set; }
         public Nullable<decimal> PromotionFeeAmount { get; set; }
+        public bool AllowAutobid { get; set; }
     
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
         public virtual BillType BillType { get; set; }
@@ -63,9 +64,9 @@ namespace SemplestModel
         public virtual CustomerStyle CustomerStyle { get; set; }
         public virtual ICollection<EmailTemplate> EmailTemplates { get; set; }
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
-        public virtual ICollection<InvoiceTransaction> InvoiceTransactions { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<WebContent> WebContents { get; set; }
         public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

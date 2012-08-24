@@ -12,16 +12,10 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class InvoiceTransaction
+    public partial class Job
     {
-        public int InvoiceTransactionPK { get; set; }
-        public int CustomerFK { get; set; }
-        public decimal Amount { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public decimal SEMplestFee { get; set; }
-        public decimal MediaSpend { get; set; }
-        public bool IsRefund { get; set; }
-    
-        public virtual Customer Customer { get; set; }
+        public int JobPK { get; set; }
+        public string Name { get; set; }
+        public Nullable<System.DateTime> LastSuccessfulRunTime { get; set; }
     }
 }

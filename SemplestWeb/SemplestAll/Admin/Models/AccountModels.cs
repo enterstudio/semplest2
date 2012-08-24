@@ -216,6 +216,7 @@ namespace Semplest.Admin.Models
         [DisplayName("Password")]
         public string UserPassword { get; set; }
         public int selectedBillTypeid { get; set; }
+        public bool AllowAutoBid { get; set; }
 
 
     }
