@@ -29,7 +29,8 @@ BEGIN TRY
 		p.PromotionBudgetAmount,p.PromotionStartDate, p.PromotionEndDate,bc.BudgetCycle,
 		p.CycleStartDate,
 		p.RemainingBudgetInCycle,p.StartBudgetInCycle,
-		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate, aep.AdvertisingEngineCampaignPK, aep.AdvertisingEngineAdGroupID , aea.AdvertisingEngineAccountPK,aea.AdvertisingEngineAccountNumber, ae.AdvertisingEngine
+		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate, aep.AdvertisingEngineCampaignPK, aep.AdvertisingEngineAdGroupID , 
+		aea.AdvertisingEngineAccountPK,aea.AdvertisingEngineAccountNumber, ae.AdvertisingEngine, p.IsAutobid, p.AutoBidMaxCPC
 
 		from Promotion p 
 		inner join BudgetCycle bc on bc.BudgetCyclePK = p.BudgetCycleFK
