@@ -36,6 +36,8 @@ public class PromotionObj
 	private Long AdvertisingEngineAccountPK; 
 	private String AdvertisingEngine;
 	private String AdvertisingEngineAccountNumber;
+	private Boolean IsAutobid;
+	private Double AutoBidMaxCPC;
 		
 	public Date getCycleEndDate()
 	{
@@ -462,6 +464,22 @@ public class PromotionObj
 				+ PromotionBudgetAmount + ", PromotionStartDate=" + PromotionStartDate + ", PromotionEndDate=" + PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", CycleStartDate=" + CycleStartDate + ", CycleEndDate=" + CycleEndDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle
 				+ ", StartBudgetInCycle=" + StartBudgetInCycle + ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused + ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK=" + AdvertisingEngineCampaignPK
 				+ ", AdvertisingEngineAdGroupID=" + AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + ", AdvertisingEngine=" + AdvertisingEngine + ", AdvertisingEngineAccountNumber=" + AdvertisingEngineAccountNumber + "]";
+	}
+	public Boolean getIsAutobid()
+	{
+		return IsAutobid;
+	}
+	public void setIsAutobid(Boolean isAutobid)
+	{
+		IsAutobid = isAutobid;
+	}
+	public Double getAutoBidMaxCPC()
+	{
+		return AutoBidMaxCPC;
+	}
+	public void setAutoBidMaxCPC(Double autoBidMaxCPC)
+	{
+		AutoBidMaxCPC = autoBidMaxCPC;
 	}
 			
 }
