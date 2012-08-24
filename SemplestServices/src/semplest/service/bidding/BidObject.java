@@ -1537,10 +1537,10 @@ public class BidObject
 			BidObject bidObject = new BidObject();
 
 			
-			AdEngine searchEngine = AdEngine.MSN;
+			AdEngine searchEngine = AdEngine.Google;
 			
 			
-			Integer promotionID = new Integer(2);
+			Integer promotionID = new Integer(200);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
@@ -1550,11 +1550,11 @@ public class BidObject
 
 			
 			//bidObject.resetCampaign(promotionID, searchEngine);
-			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
+			bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 			
 			
-			bidObject.resetCampaign(promotionID, searchEngine);
-			bidObject.setBidsInitialExplore(promotionID, searchEngine, budgetData);
+			//bidObject.resetCampaign(promotionID, searchEngine);
+			//bidObject.setBidsInitialExplore(promotionID, searchEngine, budgetData);
 
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
 
@@ -1616,6 +1616,7 @@ public class BidObject
 			}
 			*/
 			
+			
 //			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
 //			System.out.println(bidData.size());
 //
@@ -1630,9 +1631,9 @@ public class BidObject
 //			cal.setTime(new Date());
 //			cal.add(Calendar.DAY_OF_MONTH, -1);
 //			Date startDate = cal.getTime();
-			
-			
-			
+//			
+//			
+//			
 //			// get report from the database
 //			List<ReportObject> reportObjListYesterday;
 //			try {
@@ -1690,24 +1691,7 @@ public class BidObject
 			
 
 
-			
-//			ReportObject[] reportObjList = null;
-//						
-//			if(searchEngine.equals(AdEngine.Google)){
-//				Date now = new Date();
-//				SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
-//				Calendar cal = Calendar.getInstance();
-//				cal.setTime(now);
-//				cal.add(Calendar.DAY_OF_MONTH, -1);
-//				GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
-//				reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
-//			} else {
-//				MsnCloudServiceImpl msnClient = new MsnCloudServiceImpl();
-//				//reportObjListMSN = msnClient.getKeywordReport(msnAccountID, campaignID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
-//			}
-//
-//			
-//			System.out.println("Number of report entries: "+reportObjList.length);
+	
 			
 			/*
 			System.out.println(SemplestDB.getDefaultBid(promotionID, searchEngine).getDefaultBidEditedDate());

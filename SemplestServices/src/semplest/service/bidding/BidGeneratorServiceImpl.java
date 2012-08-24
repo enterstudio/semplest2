@@ -134,8 +134,9 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		//Boolean res = bidGeneratorObj.setBidsUpdate(promotionID, searchEngine, budgetData);
 		// bidGeneratorObj.setBidsInitial(promotionID, searchEngine, BudgetObject budgetData);
 		//return res;	
-		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"+ " bids update is not doing anything right now.");
-		return true;
+		final BidObject bidObj = new BidObject();
+		final Boolean res = bidObj.setBidsUpdate(promotionID, searchEngine, budgetData);
+		return res;
 	}
 	
 	
