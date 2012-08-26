@@ -13,6 +13,10 @@ import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.filters.*;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -39,6 +43,7 @@ public class TextUtils {
   public static final Set<String> sw = StopWordSet();
   public static final String commonWordString = ",&,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,de,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,la,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,pdf,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your,";
   public static final String GSUrl = "http://www.google.com/search?q=";
+  public static final String GJSUrl = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=";
   
 
   // HTML parsing utilities ---------------------
@@ -111,13 +116,32 @@ public class TextUtils {
 	  return word;
   }
   // - Google Utilities ----------------------------------
+  public static String[] gsUrls( String sstring ) throws Exception {
+    return gsData( sstring, "url");
+  }
+  // field can be one of {"url","title","content"}
+  public static String[] gsData( String sstring, String field ) 
+    throws Exception {
+    URL url = new URL( GJSUrl + sstring.replaceAll( "\\s+", "+"));
+    URLConnection c = url.openConnection();
+    BufferedReader r = new BufferedReader( new InputStreamReader( c.getInputStream()));
+    String l, rs = "";
+    while( (l = r.readLine()) != null)
+      rs = rs + l;
+
+    JSONObject json = (JSONObject) (new JSONParser()).parse( rs );
+    JSONObject resp = (JSONObject) json.get("responseData"); 
+    JSONArray ja = (JSONArray) resp.get("results");
+    String[] surls = new String[ ja.size() ];
+    for( int i=0; i< ja.size(); i++ )
+      surls[i] = getText( (String)( ( (JSONObject)ja.get(i)).get(field)));
+    return surls;
+  }
   // Get text from google page from a google search term
-  public static String gsText( String ststring ) throws Exception {
-    String cstring = ststring.replaceAll( "\\s+", "+");
-    String url = GSUrl + cstring;
+  public static String gsText( String sstring ) throws Exception {
     String res = "";
-    for( URL link : HTMLLinks( url ))
-      res = res + HTMLText( link.toString() ) + " ";
+    for( String s : gsUrls( sstring ) )
+      res = res + HTMLText( s ) + " ";
     return res; 
   }
 
@@ -152,7 +176,7 @@ public class TextUtils {
   }
 
   //--
-  public static Boolean isValidUrl( String url ){
+  public static Boolean isValidUrl( String url ) throws Exception {
     final int CONNECT_TIMEOUT  = 1000;
     final int READ_TIMEOUT     = 1000;
     try {
@@ -221,6 +245,14 @@ public class TextUtils {
       logger.error( e.getMessage(), e);
     }
     return outs;
+  }
+  // returns string from a html string
+  public static String getText( String html ) throws Exception {
+    StringBean sb = new StringBean();
+    sb.setLinks( false );
+    Parser p = Parser.createParser( html, null);
+    p.visitAllNodesWith( sb );
+    return sb.getStrings();
   }
   
 
@@ -485,6 +517,7 @@ public class TextUtils {
   }
   //-------------------------------------------------------------
   public static void main (String[] args) throws Exception {
-    System.out.println( gsText( args[0] ));
+  for( String s :  gsData( args[0], args[1] ))
+    System.out.println(  s );
   }
 }
