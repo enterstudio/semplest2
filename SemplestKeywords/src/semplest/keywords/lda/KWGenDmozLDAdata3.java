@@ -20,7 +20,6 @@ public class KWGenDmozLDAdata3 implements Runnable{
 	public DmozLucene dl; //Index of categories
 	public dictUtils dict;
 	public int numTopics;
-	public String[] catIds;
 	public double userInfoWeight; 
 	public int numKeywordsGoogle; 
 	public int numKeywordsMSN; 
