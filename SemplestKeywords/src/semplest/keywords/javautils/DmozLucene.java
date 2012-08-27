@@ -85,7 +85,14 @@ public class DmozLucene {
     }
     return map;
   }
-
+  public static void loadDescDB(DmozLucene dl) throws Exception{
+		Map<String, String> map = keywordb.getAll("descs");
+		for(String cat: map.keySet()){
+			//logger.info(cat);
+			dl.add( cat, map.get(cat) );
+		}	
+		dl.done();
+ }
 
   // - Test Helpers ---------------
   public static void interactiveTest() throws Exception {
