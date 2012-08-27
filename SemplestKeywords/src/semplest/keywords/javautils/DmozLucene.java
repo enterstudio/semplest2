@@ -1,121 +1,159 @@
 package semplest.keywords.javautils;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.util.*;
-import org.apache.lucene.store.*;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
+import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
+
+import java.io.IOException;
 import java.io.Console;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import semplest.keywords.properties.ProjectProperties;
+import semplest.keywords.properties.*;
 
-// import semplest.keywords.properties.ProjectProperties;
 // Uses Lucene to search the Dmoz description database
 public class DmozLucene {
 
-  final static String LuceneDir = ProjectProperties.lucenedir;
-  final static String DmozDescFile = ProjectProperties.lucenedfile;
+  private static final Logger logger = Logger.getLogger(DmozLucene.class);
+  IndexWriter w;
+  StandardAnalyzer analyzer;
+  Directory index;
 
-  IndexSearcher searcher;
-  QueryParser parser;
-
-  // - Public Interface -------------------------
   // Ctr --------------
   public DmozLucene(){
+    // Specify the analyzer for tokenizing text.
+    // (The same analyzer should be used for indexing and searching)
     try {
-      // analyzer = new StandardAnalyzer( Version.LUCENE_CURRENT );
-      StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
-      Directory directory = FSDirectory.open( new File( LuceneDir ));
-      IndexReader reader = IndexReader.open( directory );
-      searcher = new IndexSearcher( reader );
-      parser = new QueryParser(Version.LUCENE_CURRENT, "desc", analyzer );
+      logger.info("DmozLucene()");
+      analyzer = new StandardAnalyzer(Version.LUCENE_35);
+
+      // 1. create the index
+      index = new RAMDirectory();
+
+      IndexWriterConfig config = new IndexWriterConfig(
+          Version.LUCENE_35, analyzer);
+      w = new IndexWriter(index, config);
     } catch (Exception e ){
-      e.printStackTrace();
+
+      logger.error(e.getMessage(), e);
     }
   }
-  public static void createDescIndex() throws Exception {
-    StandardAnalyzer analyzer = new StandardAnalyzer( Version.LUCENE_CURRENT );
-    Directory directory = FSDirectory.open( new File( LuceneDir ));
-    IndexWriter writer = new IndexWriter( directory, analyzer, true,
-        new IndexWriter.MaxFieldLength( 256000) );
 
-    Map<String,String> map = readDescs( DmozDescFile );
-    for(Map.Entry<String,String> e : map.entrySet())
-      writer.addDocument( mkDoc( e.getKey(), e.getValue() ));
-    writer.close(); 
+  // --------
+  // add the description data to the database
+  void add( String cat, String desc ){
+    try {
+      Document doc = new Document();
+      doc.add(new Field("cat", cat, Field.Store.YES, Field.Index.ANALYZED));
+      doc.add(new Field("desc", desc, Field.Store.YES, Field.Index.ANALYZED));
+      w.addDocument(doc);
+    } catch (Exception e ){
+    	logger.error("Problem", e);
+    }
   }
-  public String[] search(String qs, int nresults ) throws Exception {
-    Query q = parser.parse(qs); 
-    ScoreDoc[] hits = searcher.search(q, null, nresults).scoreDocs;
-    String[] res = new String[ hits.length ];
-    for(int i=0; i < hits.length; i++)
-      res[i] = (searcher.doc( hits[ i ].doc )).get("cat");
+  // done adding words
+  void done(){ 
+    try {
+      w.close(); 
+    } catch (Exception e ){
+    	logger.error("Problem", e);
+    }
+  }
+
+  // ---------
+  public String[] search(String qs ){
+    String[] res = new String[0];
+    try {
+      res = search(qs, 10);
+    } catch (Exception e ){
+    	logger.error("Problem", e);
+    }
     return res;
   }
 
-  // - Privates -------
-  // utilities to add the description data to the database
-  private static Document mkDoc( String cat, String desc ) throws Exception {
-    Document doc = new Document();
-    doc.add(new Field("cat", cat, Field.Store.YES, Field.Index.ANALYZED));
-    doc.add(new Field("desc", desc, Field.Store.YES, Field.Index.ANALYZED));
-    return doc;
-  }
-  private static Map<String,String> readDescs( String f) throws Exception {
-    Map<String,String> map = new HashMap<String,String>();
-    BufferedReader r = new BufferedReader(new FileReader(f));
-    String line;
-    while(( line =  r.readLine()) != null ){
-      String[] cols = line.split(" : ");
-      if( cols.length >= 2 )
-        map.put( cols[0].trim(), cols[1].trim() );
+  // -----
+  public String[] search(String qs, int hitsPerPage){
+
+    String[] res = new String[0];
+    try {
+      // "desc" is the default field to search
+      Query qp = new QueryParser(Version.LUCENE_35,"desc",analyzer).parse(qs); 
+
+      // Search
+      IndexSearcher searcher = new IndexSearcher(index, true);
+      TopScoreDocCollector collector = TopScoreDocCollector.
+        create(hitsPerPage, true);
+      searcher.search(qp, collector);
+      ScoreDoc[] hits = collector.topDocs().scoreDocs;
+
+      res = new String[hits.length];
+      for(int i=0;i<hits.length;++i) {
+        int docId = hits[i].doc;
+        Document d = searcher.doc(docId);
+        res[i] = d.get("cat");
+      }
+      searcher.close();
+    } catch (Exception e ){
+    	logger.error("Problem", e);
     }
-    return map;
+    return res;
   }
-  public static void loadDescDB(DmozLucene dl) throws Exception{
-		Map<String, String> map = keywordb.getAll("descs");
-		for(String cat: map.keySet()){
-			//logger.info(cat);
-			dl.add( cat, map.get(cat) );
-		}	
-		dl.done();
- }
 
-  // - Test Helpers ---------------
-  public static void interactiveTest() throws Exception {
+  // Static Helpers ---------------
+  public static void loadDesc( DmozLucene dl, String f){
+    Map<String,String> map = ioUtils.readDescs( f );
+    for(Map.Entry<String,String> e : map.entrySet())
+      dl.add( e.getKey(), e.getValue() );
+    dl.done();
+  }
+  public static void loadDescDB( DmozLucene dl) throws Exception{
+	    Map<String,String> map = keywordb.getAll("descs");
+	    for(Map.Entry<String,String> e : map.entrySet())
+	      dl.add( e.getKey(), e.getValue() );
+	    dl.done();
+  }
+  public static void interactiveTest(){
+    final String dfile = ProjectProperties.lucenedfile;
+    // final String dfile = "dmoz/all/hCounts.new";
+
     DmozLucene dl = new DmozLucene();
-
+    loadDesc( dl, dfile);
     Console c = System.console();
     while( true ){
       c.printf(" > ");
       String q = c.readLine();
-      if( q.length() > 0 ) {
-        String[] res = dl.search( q, 10 );
+      String sq = TextUtils.stemvString( q );
+      if( sq.length() > 0 ) {
+        String[] res = dl.search( sq );
         for( String re : res )
           c.printf("%s\n", re );
       }
     }
   }
+  // -------------------------------------------------------------------
+  // [Important Note:] Make sure that text and the query are *both* either
+  // o stemmed
+  // o or unstemmed
+  // Search will not work if one is stemmed and the other not.
 
   //-------------------------------
-  public static void main(String[] args) throws Exception {
-    // createDescIndex();
-    DmozLucene dl = new DmozLucene();
-    String[] res = dl.search( args[0], 10 );
-    for( String re : res ) 
-      System.out.printf("%s\n", re );
+  public static void main(String[] args) throws IOException, ParseException {
+    interactiveTest();
   }
 }
