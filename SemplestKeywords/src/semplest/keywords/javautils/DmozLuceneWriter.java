@@ -107,10 +107,10 @@ public class DmozLuceneWriter {
 
   //-------------------------------
   public static void main(String[] args) throws Exception {
-    //    createDescIndex();
+    String query = "wedding dress";
     DmozLuceneWriter dl = new DmozLuceneWriter();
-    String[] res = dl.search( args[0], 10 );
-    System.out.println("Dmoz searcher returned " + res.length + " matches");
+    String[] res = dl.search( query, 10 );
+    System.out.println( query +"Dmoz returned " + res.length + " matches");
     for( String re : res ) 
       System.out.println(re );
   }
