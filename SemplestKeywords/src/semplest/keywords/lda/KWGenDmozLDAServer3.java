@@ -522,6 +522,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface{
 			boolean flag = true;
 			for(int n=0;n<subWrds.length;n++){
 				String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).trim();
+				//Don't include keywords that have the same stem version in the same keywords Eg. "vis a vis"
 				if(!data.dict.commonWord(subWrds[n])){
 					if(!kwstem.contains(subWstem)){
 						if(wordMap.containsKey(subWstem)){
