@@ -11,9 +11,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import scala.actors.threadpool.Arrays;
 
 public class ArticleProcesser {
 	
@@ -22,6 +25,11 @@ public class ArticleProcesser {
 	private final Double weightOfFrequency = 0.5;
 	private final Double weightOfFlexibility = 0.5;	
 	private final String defaultStopList = "c:\\temp\\stoplist.txt";
+	
+	private String[] originalWords;
+	private String[] stoplistWords;
+	private String[] filteredWords;
+	private String[] generatedPhrases;
 	
 	public static void main(String[] args){
 		ArticleProcesser ap = new ArticleProcesser();	
@@ -67,47 +75,65 @@ public class ArticleProcesser {
 		if(stoplistFile == null){
 			stoplistFile = defaultStopList;
 		}
-		ArrayList<String> listOfWords = ReadInContent(content);
-		Set<String> listOfGeneralWords = GetStopListWords(stoplistFile);		
-		ArrayList<String> listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
+		String[] listOfWords = ReadInContent(content);
+		String[] listOfGeneralWords = GetStopListWords(stoplistFile);		
+		String[] listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
 		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
-		ArrayList<String> listOfPhrases = GeneratePhrases(listOfFilteredWords);
-		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(listOfPhrases, probOfAllWords);		
-		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, listOfPhrases);		
-		TreeMap<String, Double> rankedMap = RankPhrases(listOfPhrases, freqOfPhrases, flexOfPhrases);
+		HashMap<String, Set<Integer>> generatedPhrases = GeneratePhrases(listOfFilteredWords);
+		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, probOfAllWords);		
+		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, generatedPhrases);		
+		TreeMap<String, Double> rankedMap = RankPhrases(generatedPhrases, freqOfPhrases, flexOfPhrases);
 		
 		return rankedMap;
 	}
 	
 	public TreeMap<String, Double> ProcessDmozData(String dmozPath, String stopListPath, String category) throws Exception{
-		ArrayList<String> listOfWords = ReadDmozByCategory(dmozPath, category);
-		Set<String> listOfGeneralWords = GetStopListWords(stopListPath);		
-		ArrayList<String> listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
+		System.out.println("start");
+		Long startTime = System.currentTimeMillis();		
+		String[] listOfWords = ReadDmozByCategory(dmozPath, category);
+		System.out.println("ReadDmozByCategory takes " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
+		String[] listOfGeneralWords = GetStopListWords(stopListPath);		
+		System.out.println("GetStopListWords takes " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
+		String[] listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
+		System.out.println("GetFilteredWordList takes " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
 		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
-		ArrayList<String> listOfPhrases = GeneratePhrases(listOfFilteredWords);
-		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(listOfPhrases, probOfAllWords);		
-		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, listOfPhrases);		
-		TreeMap<String, Double> rankedMap = RankPhrases(listOfPhrases, freqOfPhrases, flexOfPhrases);
+		System.out.println("FrequencyOfWords takes " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
+		HashMap<String, Set<Integer>> generatedPhrases = GeneratePhrases(listOfFilteredWords);
+		System.out.println("GeneratePhrases takes " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
+		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, probOfAllWords);		
+		System.out.println("FrequencyOfPhrases takes " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
+		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, generatedPhrases);		
+		System.out.println("FlexibilityOfPhrases takes " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
+		TreeMap<String, Double> rankedMap = RankPhrases(generatedPhrases, freqOfPhrases, flexOfPhrases);
+		System.out.println("RankPhrases takes " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
 		
 		return rankedMap;
 	}
 	
 	public TreeMap<String, Double> ProcessArticles(String targetFile, String baseFile) throws Exception{
-		ArrayList<String> listOfWords = ReadInFile(targetFile);
-		Set<String> listOfGeneralWords = GetGeneralWords(baseFile);		
-		ArrayList<String> listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
+		String[] listOfWords = ReadInFile(targetFile);
+		String[] listOfGeneralWords = GetGeneralWords(baseFile);		
+		String[] listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
 		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
-		ArrayList<String> listOfPhrases = GeneratePhrases(listOfFilteredWords);
-		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(listOfPhrases, probOfAllWords);		
-		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, listOfPhrases);		
-		TreeMap<String, Double> rankedMap = RankPhrases(listOfPhrases, freqOfPhrases, flexOfPhrases);
+		HashMap<String, Set<Integer>> generatedPhrases = GeneratePhrases(listOfFilteredWords);
+		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, probOfAllWords);		
+		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, generatedPhrases);		
+		TreeMap<String, Double> rankedMap = RankPhrases(generatedPhrases, freqOfPhrases, flexOfPhrases);
 		
 		return rankedMap;
 	}
 	
-	public TreeMap<String, Double> RankPhrases(ArrayList<String> listOfPhrases, HashMap<String,Double> frequencyOfPhrases, HashMap<String,Double> flexibilityOfPhrases) throws Exception{
+	public TreeMap<String, Double> RankPhrases(HashMap<String, Set<Integer>> generatedPhrases, HashMap<String,Double> frequencyOfPhrases, HashMap<String,Double> flexibilityOfPhrases) throws Exception{
 		HashMap<String,Double> scoreMap = new HashMap<String,Double>();
-		for(String phrase : listOfPhrases){
+		for(String phrase : generatedPhrases.keySet()){
 			Double prob = frequencyOfPhrases.get(phrase);
 			Double flex = flexibilityOfPhrases.get(phrase);
 			if(!(prob == null) && !(flex == null)){
@@ -120,108 +146,98 @@ public class ArticleProcesser {
 		return rankedMap;
 	}
 	
-	public HashMap<String,Double> FlexibilityOfPhrases(ArrayList<String> listOfWords, ArrayList<String> listOfPhrases) throws Exception{
+	public HashMap<String,Double> FlexibilityOfPhrases(String[] listOfWords, HashMap<String, Set<Integer>> generatedPhrases) throws Exception{
 		HashMap<String,FlexibilityOfWord> flexOfPhrases = new HashMap<String,FlexibilityOfWord>();
 		
-		for(String phrase : listOfPhrases){
-			String[] words = phrase.split(" ");
-			for(int i = 0; i < listOfWords.size(); i++){
-				int count = 0;
-				//find the long tail word in the entire article
-				for(int ptr = 0; ptr < words.length; ptr ++){
-					int current = i + ptr;
-					if(current >= (listOfWords.size() - 1)){
-						break;
-					}
-					if(listOfWords.get(current).equalsIgnoreCase(words[ptr])){
-						count++;
-					}
-					else{
-						break;
-					}
+		for(String phrase : generatedPhrases.keySet()){
+			int numWords = phrase.split(" ").length;
+			Set<Integer> startPoints = generatedPhrases.get(phrase);
+			for(Integer startPoint : startPoints){
+				FlexibilityOfWord flex;
+				if(flexOfPhrases.containsKey(phrase)){
+					flex = flexOfPhrases.get(phrase);
 				}
-				if(count == words.length){
-					//we found one, now calculate the left flexibility and the right flexibility					
-					FlexibilityOfWord flex;
-					if(flexOfPhrases.containsKey(phrase)){
-						flex = flexOfPhrases.get(phrase);
-					}
-					else{
-						flex = new FlexibilityOfWord();
-					}
-					int ptrToTheLeftWord = i - 1;
-					int ptrToTheRightWord = i + count + 1;
-					if(ptrToTheLeftWord >= 0){
-						String leftWord = listOfWords.get(ptrToTheLeftWord);
-						flex.addLeft(leftWord);
-					}
-					if(ptrToTheRightWord < listOfWords.size()){
-						String rightWord = listOfWords.get(ptrToTheRightWord);
-						flex.addRight(rightWord);
-					}
-					flexOfPhrases.put(phrase, flex);
+				else{
+					flex = new FlexibilityOfWord();
 				}
+				int ptrToTheLeftWord = startPoint - 1;
+				int ptrToTheRightWord = startPoint + numWords + 1;
+				if(ptrToTheLeftWord >= 0){
+					String leftWord = listOfWords[ptrToTheLeftWord];
+					flex.addLeft(leftWord);
+				}
+				if(ptrToTheRightWord < listOfWords.length){
+					String rightWord = listOfWords[ptrToTheRightWord];
+					flex.addRight(rightWord);
+				}
+				flexOfPhrases.put(phrase, flex);
 			}
 		}
 		
 		//process the map
 		HashMap<String,Double> finalFlexMap = new HashMap<String,Double>();
 		for(String longTailWord : flexOfPhrases.keySet()){
-			Double flexVal = flexOfPhrases.get(longTailWord).getFlexibility() / listOfWords.size();
+			Double flexVal = flexOfPhrases.get(longTailWord).getFlexibility() / listOfWords.length;
 			finalFlexMap.put(longTailWord, flexVal);
 		}
 		return finalFlexMap;
 	}
 	
-	public HashMap<String,Double> FrequencyOfPhrases(ArrayList<String> listOfPhrases, HashMap<String,Double> probabilityOfAllWords) throws Exception{
+	public HashMap<String,Double> FrequencyOfPhrases(HashMap<String, Set<Integer>> generatedPhrases, HashMap<String,Double> frequencyOfAllWords) throws Exception{
 		HashMap<String,Double> freqOfPhrases = new HashMap<String,Double>();
-		for(String phrase : listOfPhrases){
+		for(String phrase : generatedPhrases.keySet()){
 			String[] words = phrase.trim().split(" ");
-			Double probabilityOfPhrase = 1d;
+			Double frequencyOfPhrase = 1d;
 			for(String word : words){
-				Double probabilityOfWord = probabilityOfAllWords.get(word);				
-				double prob = probabilityOfPhrase.doubleValue();
-				probabilityOfPhrase = prob * probabilityOfWord;	
+				Double frequencyOfWord = frequencyOfAllWords.get(word);				
+				double freq = frequencyOfPhrase.doubleValue();
+				frequencyOfPhrase = freq * frequencyOfWord;	
 				//probabilityOfPhrase = prob + Math.log(probabilityOfWord);
 			}
 			//freqOfPhrases.put(phrase, probabilityOfPhrase);
-			freqOfPhrases.put(phrase, Math.log(probabilityOfPhrase)/words.length);
+			int freqEntirePhrase = generatedPhrases.get(phrase).size();
+			freqOfPhrases.put(phrase, Math.log(frequencyOfPhrase) * freqEntirePhrase / words.length);
 		}
 		return freqOfPhrases;
 	}
 	
-	public ArrayList<String> GeneratePhrases(ArrayList<String> listOfWords) throws Exception{
-		ArrayList<String> phrases = new ArrayList<String>();
-		for(int i = 0 ; i < listOfWords.size(); i++){
-			if(!listOfWords.get(i).isEmpty()){
+	public HashMap<String, Set<Integer>> GeneratePhrases(String[] listOfWords) throws Exception{
+		HashMap<String, Set<Integer>> phrasesMap = new HashMap<String, Set<Integer>>();
+		for(int i = 0 ; i < listOfWords.length; i++){
+			if(!listOfWords[i].isEmpty()){
 				//use it as a start point to form a phrase
 				String phrase = "";
 				int count = 0;
 				for(int ptr = 0 ; ptr < maxWordsOfPhrase; ptr++){
 					int current = i + ptr;
-					if(current > listOfWords.size() - 1){
+					if(current > listOfWords.length - 1){
 						//out of the array
 						break;
 					}
-					if(!listOfWords.get(current).isEmpty()){
-						phrase = phrase + " " + listOfWords.get(current);
+					if(!listOfWords[current].isEmpty()){
+						phrase = phrase + " " + listOfWords[current];
 					}
 					else{
 						break;
 					}
 					count++;
 				}
-				if(count > 1){
-					phrases.add(phrase.trim());
+				if(count > 1){					
+					String newPhrase = phrase.trim();
+					Set<Integer> points = phrasesMap.get(newPhrase);
+					if(points == null){
+						points = new HashSet<Integer>();
+					}
+					points.add(i);
+					phrasesMap.put(newPhrase, points);
 				}
 			}
 		}		
-		return phrases;
+		return phrasesMap;
 	}
 	
-	public ArrayList<String> GetFilteredWordList(ArrayList<String> listOfWords, Set<String> generalWords) throws Exception{
-		ArrayList<String> newListOfWords = new ArrayList<String>();
-		newListOfWords.addAll(listOfWords);
+	public String[] GetFilteredWordList(String[] listOfWords, String[] generalWords) throws Exception{
+		List<String> newListOfWords = Arrays.asList(listOfWords);
 		for(int i = 0; i < newListOfWords.size(); i++){
 			for(String generalWord : generalWords){
 				if(newListOfWords.get(i).equalsIgnoreCase(generalWord)){
@@ -231,10 +247,10 @@ public class ArticleProcesser {
 			}
 		}
 		
-		return newListOfWords;
+		return newListOfWords.toArray(new String[newListOfWords.size()]);
 	}
 	
-	public Set<String> GetStopListWords(String path) throws Exception{
+	public String[] GetStopListWords(String path) throws Exception{
 		Set<String> stopListWords = new HashSet<String>();
 		
 		FileInputStream fstream = new FileInputStream(path);
@@ -246,10 +262,10 @@ public class ArticleProcesser {
 		}
 		in.close();
 		
-		return stopListWords;
+		return stopListWords.toArray(new String[stopListWords.size()]);
 	}
 	
-	public HashMap<String,Double> FrequencyOfWords(ArrayList<String> listOfWords) throws Exception{
+	public HashMap<String,Double> FrequencyOfWords(String[] listOfWords) throws Exception{
 		HashMap<String,Double> freqOfWords = new HashMap<String,Double>();
 		
 		HashMap<String,Integer> countOfWords = CountsOfWords(listOfWords);
@@ -267,7 +283,7 @@ public class ArticleProcesser {
 		return freqOfWords;
 	}
 	
-	public HashMap<String,Integer> CountsOfWords(ArrayList<String> listOfWords) throws Exception{
+	public HashMap<String,Integer> CountsOfWords(String[] listOfWords) throws Exception{
 		HashMap<String,Integer> countsOfWords = new HashMap<String,Integer>();
 		for(String word : listOfWords){			
 			if(!word.isEmpty()){
@@ -281,11 +297,11 @@ public class ArticleProcesser {
 		return countsOfWords;
 	}
 	
-	public Set<String> GetGeneralWords(String path) throws Exception{
-		ArrayList<String> listOfWords = ReadInFile(path);
+	public String[] GetGeneralWords(String path) throws Exception{
+		String[] listOfWords = ReadInFile(path);
 		HashMap<String,Double> probOfWords = FrequencyOfWords(listOfWords);
 		TreeMap<String,Double> sortedMap = SortMap(probOfWords);
-		return sortedMap.descendingKeySet();
+		return sortedMap.descendingKeySet().toArray(new String[sortedMap.size()]);
 	}
 	
 	public TreeMap<String,Double> SortMap(HashMap<String,Double> map) throws Exception{
@@ -295,7 +311,7 @@ public class ArticleProcesser {
         return sorted_map;
 	}
 	
-	public ArrayList<String> ReadInContent(String content) throws Exception{
+	public String[] ReadInContent(String content) throws Exception{
 		ArrayList<String> singleWords = new ArrayList<String>();		
 		
 		String[] words = content.split(seperators);
@@ -303,10 +319,10 @@ public class ArticleProcesser {
 			singleWords.add(s.trim().toLowerCase());
 		}		
 		
-		return singleWords;
+		return singleWords.toArray(new String[singleWords.size()]);
 	}
 	
-	public ArrayList<String> ReadInFile(String path) throws Exception{
+	public String[] ReadInFile(String path) throws Exception{
 		ArrayList<String> singleWords = new ArrayList<String>();
 		
 		FileInputStream fstream = new FileInputStream(path);
@@ -321,10 +337,10 @@ public class ArticleProcesser {
 		}
 		in.close();
 		
-		return singleWords;
+		return singleWords.toArray(new String[singleWords.size()]);
 	}
 	
-	public ArrayList<String> ReadDmozByCategory(String path, String category) throws Exception{
+	public String[] ReadDmozByCategory(String path, String category) throws Exception{
 		ArrayList<String> singleWords = new ArrayList<String>();
 		
 		FileInputStream fstream = new FileInputStream(path);
@@ -349,7 +365,7 @@ public class ArticleProcesser {
 		}
 		in.close();
 		
-		return singleWords;
+		return singleWords.toArray(new String[singleWords.size()]);
 	}
 	
 	private class ValueComparator implements Comparator<String> {
