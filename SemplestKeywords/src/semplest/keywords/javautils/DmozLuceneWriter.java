@@ -46,6 +46,7 @@ public class DmozLuceneWriter {
     }
   }
   public static void createDescIndex() throws Exception {
+    System.out.print("Creating Dmoz Lucene Index...");
     StandardAnalyzer analyzer = new StandardAnalyzer( Version.LUCENE_35 );
     Directory directory = FSDirectory.open( new File( LuceneDir ));
     IndexWriter writer = new IndexWriter( directory, analyzer, true,
@@ -56,6 +57,7 @@ public class DmozLuceneWriter {
     for(Map.Entry<String,String> e : map.entrySet())
       writer.addDocument( mkDoc( e.getKey(), e.getValue() ));
     writer.close(); 
+    System.out.println("...done");
   }
   public String[] search(String qs, int nresults ) throws Exception {
     Query q = parser.parse(qs); 
