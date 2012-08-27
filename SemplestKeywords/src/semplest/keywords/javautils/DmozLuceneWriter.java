@@ -107,7 +107,7 @@ public class DmozLuceneWriter {
 
   //-------------------------------
   public static void main(String[] args) throws Exception {
-    createDescIndex();
+    //    createDescIndex();
     DmozLuceneWriter dl = new DmozLuceneWriter();
     String[] res = dl.search( args[0], 10 );
     System.out.println("Dmoz searcher returned " + res.length + " matches");
