@@ -17,35 +17,29 @@ import java.util.TreeMap;
 
 public class ArticleProcesser {
 	
-	private final boolean useDmoz = true;
-	private final boolean useStopList = true;
 	private final String seperators = "\\W";
 	private final Integer maxWordsOfPhrase = 5;
 	private final Double weightOfFrequency = 0.5;
-	private final Double weightOfFlexibility = 0.5;
-	
-	private final String stoplistFile = "c:\\temp\\stoplist.txt";
+	private final Double weightOfFlexibility = 0.5;	
+	private final String defaultStopList = "c:\\temp\\stoplist.txt";
 	
 	public static void main(String[] args){
-		ArticleProcesser ap = new ArticleProcesser();
-		
-		String category = "top/business/consumer_goods_and_services/home_and_garden/furniture/by_room_or_item/home_entertainment";
+		ArticleProcesser ap = new ArticleProcesser();	
 		
 		String outputFile = "c:\\temp\\rank.txt";	
 		
 		String dmozFile = "C:\\temp\\samples\\business\\dmoz.8-12.1.1";
-		String compareFile1 = "c:\\temp\\samples\\dmoz_health";
-		String compareFile2 = "c:\\temp\\samples\\dmoz_science";
+		String stoplistFile = "c:\\temp\\stoplist.txt";
+		String category = "top/business/consumer_goods_and_services/home_and_garden/furniture/by_room_or_item/home_entertainment";
 		
-		String targetFile = ap.useDmoz ? dmozFile : compareFile1;
-		String baseFile = ap.useStopList ? ap.stoplistFile : compareFile2;		
+		String compareFile1 = "c:\\temp\\samples\\dmoz_health";
+		String compareFile2 = "c:\\temp\\samples\\dmoz_science";		
 				
 		TreeMap<String, Double> rankOfPhrases;
 		try {
-			rankOfPhrases = ap.ProcessArticle(targetFile, baseFile, category);
+			rankOfPhrases = ap.ProcessDmozData(dmozFile, stoplistFile, category);
 			ap.OutputReport(outputFile, rankOfPhrases);	
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
 	}
@@ -69,8 +63,11 @@ public class ArticleProcesser {
 		}		
 	}
 	
-	public TreeMap<String, Double> ProcessContent(String input) throws Exception{
-		ArrayList<String> listOfWords = ReadInContent(input);
+	public TreeMap<String, Double> ProcessContent(String content, String stoplistFile) throws Exception{
+		if(stoplistFile == null){
+			stoplistFile = defaultStopList;
+		}
+		ArrayList<String> listOfWords = ReadInContent(content);
 		Set<String> listOfGeneralWords = GetStopListWords(stoplistFile);		
 		ArrayList<String> listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
 		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
@@ -82,9 +79,22 @@ public class ArticleProcesser {
 		return rankedMap;
 	}
 	
-	public TreeMap<String, Double> ProcessArticle(String targetFile, String baseFile, String category) throws Exception{
-		ArrayList<String> listOfWords = useDmoz ? ReadDmozByCategory(targetFile, category) : ReadInFile(targetFile);
-		Set<String> listOfGeneralWords = useStopList ? GetStopListWords(baseFile) : GetGeneralWords(baseFile);		
+	public TreeMap<String, Double> ProcessDmozData(String dmozPath, String stopListPath, String category) throws Exception{
+		ArrayList<String> listOfWords = ReadDmozByCategory(dmozPath, category);
+		Set<String> listOfGeneralWords = GetStopListWords(stopListPath);		
+		ArrayList<String> listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
+		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
+		ArrayList<String> listOfPhrases = GeneratePhrases(listOfFilteredWords);
+		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(listOfPhrases, probOfAllWords);		
+		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, listOfPhrases);		
+		TreeMap<String, Double> rankedMap = RankPhrases(listOfPhrases, freqOfPhrases, flexOfPhrases);
+		
+		return rankedMap;
+	}
+	
+	public TreeMap<String, Double> ProcessArticles(String targetFile, String baseFile) throws Exception{
+		ArrayList<String> listOfWords = ReadInFile(targetFile);
+		Set<String> listOfGeneralWords = GetGeneralWords(baseFile);		
 		ArrayList<String> listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
 		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
 		ArrayList<String> listOfPhrases = GeneratePhrases(listOfFilteredWords);
@@ -357,7 +367,6 @@ public class ArticleProcesser {
 	private class FlexibilityOfWord{
 		private Set<String> Left;
 		private Set<String> Right;
-		private Double Flexibility;
 		public FlexibilityOfWord(){
 			Left = new HashSet<String>();
 			Right = new HashSet<String>();

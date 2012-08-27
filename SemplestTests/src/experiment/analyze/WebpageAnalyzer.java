@@ -20,7 +20,7 @@ public class WebpageAnalyzer {
 		ArticleProcesser processer = new ArticleProcesser();
 		
 		String content = searcher.getContentOfWebsite(url);
-		TreeMap<String, Double> keywords = processer.ProcessContent(content);
+		TreeMap<String, Double> keywords = processer.ProcessContent(content, null);
 		
 		for(String s : keywords.descendingKeySet()){
 			System.out.println(s);
