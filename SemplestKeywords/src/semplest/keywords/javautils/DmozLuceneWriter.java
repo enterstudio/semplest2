@@ -34,7 +34,7 @@ public class DmozLuceneWriter {
 
   // - Public Interface -------------------------
   // Ctr --------------
-  public DmozLucene(){
+  public DmozLuceneWriter(){
     try {
       StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
       Directory directory = FSDirectory.open( new File( LuceneDir ));
@@ -89,7 +89,7 @@ public class DmozLuceneWriter {
 
   // - Test Helpers ---------------
   public static void interactiveTest() throws Exception {
-    DmozLucene dl = new DmozLucene();
+    DmozLuceneWriter dl = new DmozLuceneWriter();
 
     Console c = System.console();
     while( true ){
