@@ -31,6 +31,7 @@ public class ProjectProperties {
   //for CatUtils
   public static String[] validCat; 
   public static String   catMap;
+  public static String   catIdsPath;
   //for DmozLucene
   public static String lucenedfile;
   //for MalletTopic
@@ -69,6 +70,7 @@ public class ProjectProperties {
     lucenedfile = properties.getProperty("lucenedfile");
     smallhCounts  = properties.getProperty("smallhCounts");
     stoplist      = properties.getProperty("stoplist");
+    catIdsPath    = properties.getProperty("catIdsPath");
     numTopics     = Integer.parseInt(properties.getProperty("numTopics"));
     numThreads      = Integer.parseInt(properties.getProperty("numThreads"));
     numKeywordsGoogle = 
@@ -115,6 +117,7 @@ public class ProjectProperties {
         userInfoWeight);
     nGramsSubC  = getStringArray("SemplestKeywordsnGramsSubC",    nGramsSubC);
     validCat    = getStringArray("SemplestKeywordsvalidcat",      validCat);
+    catIdsPath = getString("SemplestKeywordscatIdsPath", catIdsPath);
 
     logger.info("Properties Update done...");
   }

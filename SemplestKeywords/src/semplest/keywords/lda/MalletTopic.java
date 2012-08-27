@@ -468,7 +468,25 @@ public class MalletTopic {
 		        	i++;
 		        }
 		        //logger.info("instances alphabet size: "+ instances.getAlphabet().size());
-			}
+	}
+	public void CreateInstances(Map<String,String> trainLines){
+		// Creates Instances from a file in SEMplest format
+				
+		        // Begin by importing documents from text to feature sequences
+		        ArrayList<Pipe> pipeList = this.initPipeList();
+		        // Temporal instance were we will transform SEMplest data to Mallet data 
+		        int i=0;
+
+		        instances = new InstanceList (new SerialPipes(pipeList));
+		        //logger.debug("Number of lines: "+lines.size());
+		        for( String line : trainLines.keySet() ){
+		        	logger.debug("Adding Category " + i);
+		        	instances.addThruPipe(new Instance(trainLines.get(line),""+i,line,null));
+		        	i++;
+		        }
+		        //logger.info("instances alphabet size: "+ instances.getAlphabet().size());
+	}
+	
 	
 	/*
 	public void CreateInstancesSEMplestCache(String[] directories) throws Exception {
