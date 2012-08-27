@@ -1,5 +1,6 @@
 package semplest.keywords.javautils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -33,6 +34,7 @@ public class catUtils {
   private static final Logger logger = Logger.getLogger(catUtils.class);
   Map<String,String> smap;        // Map from dmoz to semplest cats
   HashMap<String,String> ismap;       // Inverse ma from semplest to dmoz cats
+  String catIdsPath;
 
   public catUtils (){
     logger.info("catUtils(): loading semplest category map");
@@ -42,6 +44,8 @@ public class catUtils {
     for( Map.Entry<String,String> e: smap.entrySet())
       ismap.put( e.getValue(), e.getKey());
     logger.info("catUtils(): done loading semplest category map");
+    catIdsPath = ProjectProperties.catIdsPath;
+    
   }
   public String code  ( String dcat ){ return smap.get ( dcat ); }
   public String decode( String scat ){ return ismap.get( scat ); }
@@ -220,6 +224,16 @@ public class catUtils {
         lnodes = nodes( longest );
       }
     return longest;
+  }
+  //Get an array of all the category name
+  public String[] getCatIds() throws IOException{
+	  ArrayList<String> cats = new ArrayList<String>();
+	  BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(new FileInputStream(catIdsPath))));
+	  String cat;
+	  while((cat = br.readLine()) !=null){
+		  cats.add(cat);
+	  }
+	 return cats.toArray(new String[cats.size()]);
   }
   // Longest ancestor any three categoires share 
   public static String longestAncestor3( String[] cats ){
