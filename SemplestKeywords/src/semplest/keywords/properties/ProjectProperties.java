@@ -14,7 +14,8 @@ public class ProjectProperties {
 
   public static Properties properties;
 
-  //for bdb
+  //for bdb and Lucene
+  public static String lucenedir;
   public static String bdbdir;
 
   //for dictUtils
@@ -55,6 +56,7 @@ public class ProjectProperties {
       // Note: Logger may not be initialized yet
     }
 
+    lucenedir = properties.getProperty("lucenedir");
     bdbdir    = properties.getProperty("bdbdir");
     dictfile  = properties.getProperty("dictfile");
     docfile   = properties.getProperty("docfile"); 
@@ -89,6 +91,7 @@ public class ProjectProperties {
     logger.info("Updating keyword properties properties from hash...");
     configData = configDataIn;
 
+    lucenedir = getString("SemplestKeywordslucenedir",  lucenedir );
     bdbdir    = getString("SemplestKeywordsbdbdir",  bdbdir );
     dictfile  = getString("SemplestKeywordsdictfile",  dictfile );
     docfile   = getString("SemplestKeywordsdocfile",    docfile); 
