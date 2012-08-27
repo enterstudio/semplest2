@@ -24,7 +24,7 @@ import semplest.util.SemplestUtils;
 public class ExpiredCredentialsEmailSender
 {
 	private static final Logger log = Logger.getLogger(ExpiredCredentialsEmailSender.class);
-	private static final String LINK_NAME = "here";
+	private static final String LINK_NAME = "Click here";
 	
 	private final String defaultEmailContactUsEmail;
 	private final String esbWebServerURL;
