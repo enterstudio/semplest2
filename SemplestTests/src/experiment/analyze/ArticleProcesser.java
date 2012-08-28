@@ -20,16 +20,13 @@ import scala.actors.threadpool.Arrays;
 
 public class ArticleProcesser {
 	
-	private final String seperators = "\\W";
+	//private final String seperators = "\\p{Punct}";
+	private final String seperators = " |\\.|\\,";
 	private final Integer maxWordsOfPhrase = 5;
 	private final Double weightOfFrequency = 0.5;
 	private final Double weightOfFlexibility = 0.5;	
-	private final String defaultStopList = "c:\\temp\\stoplist.txt";
-	
-	private String[] originalWords;
-	private String[] stoplistWords;
-	private String[] filteredWords;
-	private String[] generatedPhrases;
+	private final String defaultWordStoplist = "c:\\temp\\wordstoplist.txt";
+	private final String defaultPhraseStoplist = "c:\\temp\\phrasestoplist.txt";
 	
 	public static void main(String[] args){
 		ArticleProcesser ap = new ArticleProcesser();	
@@ -37,7 +34,6 @@ public class ArticleProcesser {
 		String outputFile = "c:\\temp\\rank.txt";	
 		
 		String dmozFile = "C:\\temp\\samples\\business\\dmoz.8-12.1.1";
-		String stoplistFile = "c:\\temp\\stoplist.txt";
 		String category = "top/business/consumer_goods_and_services/home_and_garden/furniture/by_room_or_item/home_entertainment";
 		
 		String compareFile1 = "c:\\temp\\samples\\dmoz_health";
@@ -45,7 +41,7 @@ public class ArticleProcesser {
 				
 		TreeMap<String, Double> rankOfPhrases;
 		try {
-			rankOfPhrases = ap.ProcessDmozData(dmozFile, stoplistFile, category);
+			rankOfPhrases = ap.ProcessDmozData(dmozFile,category);
 			ap.OutputReport(outputFile, rankOfPhrases);	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,39 +69,35 @@ public class ArticleProcesser {
 	
 	public TreeMap<String, Double> ProcessContent(String content, String stoplistFile) throws Exception{
 		if(stoplistFile == null){
-			stoplistFile = defaultStopList;
+			stoplistFile = defaultWordStoplist;
 		}
 		String[] listOfWords = ReadInContent(content);
-		String[] listOfGeneralWords = GetStopListWords(stoplistFile);		
-		String[] listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
-		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
-		HashMap<String, Set<Integer>> generatedPhrases = GeneratePhrases(listOfFilteredWords);
-		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, probOfAllWords);		
+		String[] listOfStoplistWords = GetStopListWords(stoplistFile);		
+		String[] listOfFilteredWords = GetFilteredWordList(listOfWords, listOfStoplistWords);
+		HashMap<String, Set<Integer>> generatedPhrases = GeneratePhrases(listOfFilteredWords);		
+		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, listOfWords.length);		
 		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, generatedPhrases);		
 		TreeMap<String, Double> rankedMap = RankPhrases(generatedPhrases, freqOfPhrases, flexOfPhrases);
 		
 		return rankedMap;
 	}
 	
-	public TreeMap<String, Double> ProcessDmozData(String dmozPath, String stopListPath, String category) throws Exception{
+	public TreeMap<String, Double> ProcessDmozData(String dmozPath, String category) throws Exception{		
 		System.out.println("start");
 		Long startTime = System.currentTimeMillis();		
 		String[] listOfWords = ReadDmozByCategory(dmozPath, category);
 		System.out.println("ReadDmozByCategory takes " + (System.currentTimeMillis() - startTime));
 		startTime = System.currentTimeMillis();
-		String[] listOfGeneralWords = GetStopListWords(stopListPath);		
+		String[] listOfStoplistWords = GetStopListWords(defaultWordStoplist);		
 		System.out.println("GetStopListWords takes " + (System.currentTimeMillis() - startTime));
 		startTime = System.currentTimeMillis();
-		String[] listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
-		System.out.println("GetFilteredWordList takes " + (System.currentTimeMillis() - startTime));
-		startTime = System.currentTimeMillis();
-		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
-		System.out.println("FrequencyOfWords takes " + (System.currentTimeMillis() - startTime));
+		String[] listOfFilteredWords = GetFilteredWordList(listOfWords, listOfStoplistWords);
+		System.out.println("GetFilteredWordList takes " + (System.currentTimeMillis() - startTime));		
 		startTime = System.currentTimeMillis();
 		HashMap<String, Set<Integer>> generatedPhrases = GeneratePhrases(listOfFilteredWords);
 		System.out.println("GeneratePhrases takes " + (System.currentTimeMillis() - startTime));
 		startTime = System.currentTimeMillis();
-		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, probOfAllWords);		
+		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, listOfWords.length);		
 		System.out.println("FrequencyOfPhrases takes " + (System.currentTimeMillis() - startTime));
 		startTime = System.currentTimeMillis();
 		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, generatedPhrases);		
@@ -122,9 +114,8 @@ public class ArticleProcesser {
 		String[] listOfWords = ReadInFile(targetFile);
 		String[] listOfGeneralWords = GetGeneralWords(baseFile);		
 		String[] listOfFilteredWords = GetFilteredWordList(listOfWords, listOfGeneralWords);
-		HashMap<String,Double> probOfAllWords = FrequencyOfWords(listOfFilteredWords);		
 		HashMap<String, Set<Integer>> generatedPhrases = GeneratePhrases(listOfFilteredWords);
-		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, probOfAllWords);		
+		HashMap<String,Double> freqOfPhrases = FrequencyOfPhrases(generatedPhrases, listOfWords.length);		
 		HashMap<String,Double> flexOfPhrases = FlexibilityOfPhrases(listOfWords, generatedPhrases);		
 		TreeMap<String, Double> rankedMap = RankPhrases(generatedPhrases, freqOfPhrases, flexOfPhrases);
 		
@@ -183,26 +174,19 @@ public class ArticleProcesser {
 		return finalFlexMap;
 	}
 	
-	public HashMap<String,Double> FrequencyOfPhrases(HashMap<String, Set<Integer>> generatedPhrases, HashMap<String,Double> frequencyOfAllWords) throws Exception{
+	public HashMap<String,Double> FrequencyOfPhrases(HashMap<String, Set<Integer>> generatedPhrases, Integer numOfAllWords) throws Exception{
 		HashMap<String,Double> freqOfPhrases = new HashMap<String,Double>();
-		for(String phrase : generatedPhrases.keySet()){
+		for(String phrase : generatedPhrases.keySet()){			
 			String[] words = phrase.trim().split(" ");
-			Double frequencyOfPhrase = 1d;
-			for(String word : words){
-				Double frequencyOfWord = frequencyOfAllWords.get(word);				
-				double freq = frequencyOfPhrase.doubleValue();
-				frequencyOfPhrase = freq * frequencyOfWord;	
-				//probabilityOfPhrase = prob + Math.log(probabilityOfWord);
-			}
-			//freqOfPhrases.put(phrase, probabilityOfPhrase);
-			int freqEntirePhrase = generatedPhrases.get(phrase).size();
-			freqOfPhrases.put(phrase, Math.log(frequencyOfPhrase) * freqEntirePhrase / words.length);
+			Double freqEntirePhrase = generatedPhrases.get(phrase).size() * 1d;			
+			freqOfPhrases.put(phrase, (freqEntirePhrase * words.length / numOfAllWords));
 		}
 		return freqOfPhrases;
 	}
 	
 	public HashMap<String, Set<Integer>> GeneratePhrases(String[] listOfWords) throws Exception{
 		HashMap<String, Set<Integer>> phrasesMap = new HashMap<String, Set<Integer>>();
+		String[] phraseStopList = GetStopListWords(defaultPhraseStoplist);
 		for(int i = 0 ; i < listOfWords.length; i++){
 			if(!listOfWords[i].isEmpty()){
 				//use it as a start point to form a phrase
@@ -224,16 +208,27 @@ public class ArticleProcesser {
 				}
 				if(count > 1){					
 					String newPhrase = phrase.trim();
-					Set<Integer> points = phrasesMap.get(newPhrase);
-					if(points == null){
-						points = new HashSet<Integer>();
-					}
-					points.add(i);
-					phrasesMap.put(newPhrase, points);
+					if(!isPhraseFiltered(newPhrase,phraseStopList)){
+						Set<Integer> points = phrasesMap.get(newPhrase);
+						if(points == null){
+							points = new HashSet<Integer>();
+						}
+						points.add(i);
+						phrasesMap.put(newPhrase, points);
+					}					
 				}
 			}
 		}		
 		return phrasesMap;
+	}
+	
+	public boolean isPhraseFiltered(String phrase, String[] stoplistPhrases) throws Exception{
+		for(String stopPhrase : stoplistPhrases){
+			if(stopPhrase.trim().equalsIgnoreCase(phrase.trim())){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public String[] GetFilteredWordList(String[] listOfWords, String[] generalWords) throws Exception{
