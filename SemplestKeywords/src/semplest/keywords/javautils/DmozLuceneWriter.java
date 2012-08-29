@@ -1,5 +1,6 @@
 package semplest.keywords.javautils;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.analysis.Analyzer;
@@ -20,12 +21,15 @@ import java.io.Console;
 import java.util.HashMap;
 import java.util.Map;
 
+import semplest.keywords.lda.KWGenDmozLDAdata3;
 import semplest.keywords.properties.ProjectProperties;
 
 // import semplest.keywords.properties.ProjectProperties;
 // Uses Lucene to search the Dmoz description database
 public class DmozLuceneWriter {
 
+	private static final Logger logger = Logger.getLogger(DmozLuceneWriter.class);
+	
   final static String LuceneDir = ProjectProperties.lucenedir;
   final static String DmozDescFile = ProjectProperties.lucenedfile;
 
@@ -42,7 +46,9 @@ public class DmozLuceneWriter {
       searcher = new IndexSearcher( reader );
       parser = new QueryParser(Version.LUCENE_CURRENT, "desc", analyzer );
     } catch (Exception e ){
-      e.printStackTrace();
+    	final String errMsg = "Problem setting up the DmozLuceneWriter";
+    	logger.error(errMsg, e);
+    	throw new RuntimeException(errMsg, e);
     }
   }
   public static void createDescIndex() throws Exception {
