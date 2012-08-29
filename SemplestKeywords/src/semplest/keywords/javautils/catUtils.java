@@ -33,7 +33,7 @@ public class catUtils {
   // Note: s == decode( code( s )) is not always true (depends on map file)
   private static final Logger logger = Logger.getLogger(catUtils.class);
   Map<String,String> smap;        // Map from dmoz to semplest cats
-  HashMap<String,String> ismap;       // Inverse ma from semplest to dmoz cats
+  HashMap<String,String> ismap;   // Inverse ma from semplest to dmoz cats
   String catIdsPath;
 
   public catUtils (){
@@ -45,8 +45,8 @@ public class catUtils {
       ismap.put( e.getValue(), e.getKey());
     logger.info("catUtils(): done loading semplest category map");
     catIdsPath = ProjectProperties.catIdsPath;
-    
   }
+
   public String code  ( String dcat ){ return smap.get ( dcat ); }
   public String decode( String scat ){ return ismap.get( scat ); }
   public ArrayList<String> code( ArrayList<String> dcat){
@@ -79,43 +79,7 @@ public class catUtils {
     if( nodes.length == 0) return "";
     return nodes[0];
   }
-  
-  // revert order of nodes in category
-  public static String revert( String cat ){
-    String newCat ="";
-  	String[] nodes = cat.split("/");
-    if( nodes.length == 0) return "";
-    if(nodes.length>0){
-	    for(int i=0; i< nodes.length-1; i++){
-	    	newCat = newCat+nodes[nodes.length-1-i]+"/";
-	    }
-	    newCat = newCat+nodes[0];
-    }
-    	
-    return newCat;
-  }
-  
-  // get all the states in USA in regional
-  public static ArrayList<String> usaStates(String categoryFilePath, String outputFile) throws FileNotFoundException{
-	  ArrayList<String> states = new ArrayList<String>();
-	  HashSet<String> statesSet = new HashSet<String>();
-	  PrintStream pr = new PrintStream(new FileOutputStream(outputFile));
-	  Scanner scan = new Scanner(new FileInputStream(categoryFilePath));
-	  while(scan.hasNextLine()){
-		  String line = scan.nextLine();
-		  if(line.indexOf("top/regional/north_america/united_states/") == 0){
-			  line = line.replaceAll("top/regional/north_america/united_states/","");
-			  String state = head(line);
-			  statesSet.add(state);
-		  }
-	  }
-	  for( String state : statesSet.toArray(new String[statesSet.size()])){
-		  pr.println(state);
-		  states.add(state);
-	  }
-	  return states;
-  }
-  
+
   // returns tail (everything but the head)
   // (/recreation/pets/dogs/breeds/herding_group/welsh_corgi/pembroke/pets)
   public static String tail( String cat ){
@@ -225,15 +189,16 @@ public class catUtils {
       }
     return longest;
   }
-  //Get an array of all the category name
+  //Get an array of all the category names
   public String[] getCatIds() throws IOException{
-	  ArrayList<String> cats = new ArrayList<String>();
-	  BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(new FileInputStream(catIdsPath))));
-	  String cat;
-	  while((cat = br.readLine()) !=null){
-		  cats.add(cat);
-	  }
-	 return cats.toArray(new String[cats.size()]);
+    ArrayList<String> cats = new ArrayList<String>();
+    BufferedReader br = new BufferedReader( new InputStreamReader(
+          new DataInputStream(new FileInputStream(catIdsPath))));
+    String cat;
+    while((cat = br.readLine()) != null){
+      cats.add(cat);
+    }
+    return cats.toArray(new String[cats.size()]);
   }
   // Longest ancestor any three categoires share 
   public static String longestAncestor3( String[] cats ){
@@ -273,6 +238,21 @@ public class catUtils {
   }
   public static String[] children(Map<String,String> cids, String c){
     return descendants( cids, c, 1 ); 
+  }
+  public static String[] siblings(Map<String,String> cids, String c){
+    int s = size( c );
+    String parent = init( c );
+
+    ArrayList<String> res = new ArrayList<String>();
+    for( Map.Entry<String,String> e: cids.entrySet()){
+      String cat = e.getKey();
+      if( init(cat).equals( parent) && size(cat) == s) res.add( cat );
+    }
+    res.remove( c );
+    return res.toArray( new String[]{});
+  }
+  public static String[] siblings( String c){
+    return siblings( catId( ProjectProperties.catIdsPath ), c );
   }
 
 
@@ -339,6 +319,42 @@ public class catUtils {
         omap.put( e.getKey(), e.getValue());
     return omap;
   }
+  
+  // revert order of nodes in category
+  public static String revert( String cat ){
+    String newCat ="";
+    String[] nodes = cat.split("/");
+    if( nodes.length == 0) return "";
+    if(nodes.length>0){
+      for(int i=0; i< nodes.length-1; i++){
+        newCat = newCat+nodes[nodes.length-1-i]+"/";
+      }
+      newCat = newCat+nodes[0];
+    }
+    return newCat;
+  }
+
+  // get all the states in USA in regional
+  public static ArrayList<String> usaStates(String categoryFilePath, String outputFile) throws FileNotFoundException{
+    ArrayList<String> states = new ArrayList<String>();
+    HashSet<String> statesSet = new HashSet<String>();
+    PrintStream pr = new PrintStream(new FileOutputStream(outputFile));
+    Scanner scan = new Scanner(new FileInputStream(categoryFilePath));
+    while(scan.hasNextLine()){
+      String line = scan.nextLine();
+      if(line.indexOf("top/regional/north_america/united_states/") == 0){
+        line = line.replaceAll("top/regional/north_america/united_states/","");
+        String state = head(line);
+        statesSet.add(state);
+      }
+    }
+    for( String state : statesSet.toArray(new String[statesSet.size()])){
+      pr.println(state);
+      states.add(state);
+    }
+    return states;
+  }
+
 
   // ------------
   public static void ctest (){
@@ -357,19 +373,14 @@ public class catUtils {
     System.out.println( a + " : " + la + " : " + la3 );
   }
 
+  public static void cutest(){
+    String cat = "top/arts/animation/anime/collectibles";
+    for( String s: siblings( cat ))
+      System.out.println( s );
+  }
+
   //-------------------------------------------------------------
   public static void main (String[] args){
-    String File = "/semplest/data/dmoz/all.cids";
-    Map<String,String> cid =  catId( File );
-
-    catUtils cu = new catUtils();
-
-    for( Map.Entry<String,String> e: cid.entrySet() ){
-      String oc = e.getKey();
-      String tc = cu.code( oc ); 
-      String rc = cu.decode( tc ); 
-      if( ! oc.equals( rc ) )
-        System.out.println( oc + "(" + rc + ") : " + tc ); 
-    }
+    cutest();
   }
 }
