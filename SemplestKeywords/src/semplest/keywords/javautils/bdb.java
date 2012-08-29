@@ -41,7 +41,7 @@ public class bdb {
     return new DatabaseEntry( s.getBytes("UTF-8") );}
 
   // - Interface ------------------------
-  public static int add( String id, HashMap<String,String> kvs) 
+  public static int add( String id, Map<String,String> kvs) 
     throws Exception {
     Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
