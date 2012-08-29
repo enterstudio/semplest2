@@ -67,6 +67,7 @@ public class ProjectProperties {
     baseMultiWPath = properties.getProperty("baseMultiWPath");
     nGramsC     = properties.getProperty("nGramsC");; 
     catMap      = properties.getProperty("catMap");
+    catIdsPath  = properties.getProperty("catIdsPath");
     lucenedfile = properties.getProperty("lucenedfile");
     smallhCounts  = properties.getProperty("smallhCounts");
     stoplist      = properties.getProperty("stoplist");
@@ -101,6 +102,7 @@ public class ProjectProperties {
     dfile     = getString("SemplestKeywordsdfile",      dfile); 
     nGramsC     = getString("SemplestKeywordsnGramsC",  nGramsC); 
     catMap      = getString("catMap",                   catMap);
+    catIdsPath  = getString("catIdsPath",               catIdsPath);
     lucenedfile = getString("SemplestKeywordslucenedfile",  lucenedfile );
     smallhCounts= getString("SemplestKeywordssmallhCounts", smallhCounts );
     stoplist    = getString("SemplestKeywordsstoplist",     stoplist);
