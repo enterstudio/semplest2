@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -236,9 +237,11 @@ public class catUtils {
       if( size( e ) == cl ) res.add( e );
     return res.toArray( new String[]{});
   }
+
   public static String[] children(Map<String,String> cids, String c){
     return descendants( cids, c, 1 ); 
   }
+
   public static String[] siblings(Map<String,String> cids, String c){
     int s = size( c );
     String parent = init( c );
@@ -253,6 +256,14 @@ public class catUtils {
   }
   public static String[] siblings( String c){
     return siblings( catId( ProjectProperties.catIdsPath ), c );
+  }
+
+  public static String randomCat(Map<String,String> cids ){
+    return cids.keySet().toArray(new String[]{})[ 
+      (new Random()).nextInt( cids.size() )];
+  }
+  public static String randomCat(){
+    return randomCat( catId( ProjectProperties.catIdsPath ) );
   }
 
 
@@ -374,7 +385,8 @@ public class catUtils {
   }
 
   public static void cutest(){
-    String cat = "top/arts/animation/anime/collectibles";
+    String cat = randomCat();
+    System.out.println( cat );
     for( String s: siblings( cat ))
       System.out.println( s );
   }
