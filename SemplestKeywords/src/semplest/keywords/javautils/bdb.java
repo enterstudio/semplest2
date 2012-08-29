@@ -17,7 +17,7 @@ public class bdb {
   //  private static String DIR = "/semplest/data/dmoz/bdb/";
   private static String DIR = ProjectProperties.bdbdir;
 
-  private static Environment getEnv( String id, Boolean ro){
+  private static Environment getEnv( Boolean ro){
     EnvironmentConfig ec = new EnvironmentConfig();
     ec.setAllowCreate( true );
     if( ro ) ec.setReadOnly( true );
@@ -43,7 +43,7 @@ public class bdb {
   // - Interface ------------------------
   public static int add( String id, HashMap<String,String> kvs) 
     throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
     int count = 0;
     for ( Map.Entry<String,String> en: kvs.entrySet()){ 
@@ -58,7 +58,7 @@ public class bdb {
   }
 
   public static String get( String id, String k ) throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
 
     DatabaseEntry key = new DatabaseEntry( k.getBytes("UTF-8"));
@@ -72,7 +72,7 @@ public class bdb {
   }
   public static Map<String,String> get( String id, String[] ks ) 
     throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
     HashMap<String,String> rm = new HashMap<String,String>();
     DatabaseEntry value = new DatabaseEntry();
@@ -89,7 +89,7 @@ public class bdb {
   }
   // get all records
   public static Map<String,String> getAll( String id) throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
 
     HashMap<String,String> rm = new HashMap<String,String>();
@@ -104,7 +104,7 @@ public class bdb {
   }
   // get all keys
   public static String[] getKeys( String id ) throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
 
     ArrayList<String> res = new ArrayList<String>();
@@ -121,7 +121,7 @@ public class bdb {
   // children => greater than k (in the natural ordering of Strings)
   public static Map<String,String> children(String id, String k) 
     throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
 
     Cursor c = db.openCursor( null, null );
@@ -139,7 +139,7 @@ public class bdb {
     return mm;
   }
   public static int delete( String id, String k ) throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
     DatabaseEntry key = new DatabaseEntry( k.getBytes("UTF-8") );
     int res = 0;
@@ -149,14 +149,14 @@ public class bdb {
     return res;
   }
   public static int empty( String id) throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     long cnt = e.truncateDatabase( null, id, true );
     e.close();
     return (int)cnt;
   }
 
   public static int count( String id) throws Exception {
-    Environment e   = getEnv( id, false );
+    Environment e   = getEnv( false );
     Database    db  = getDB( id, false, e );
     long c = db.count();
     db.close();
