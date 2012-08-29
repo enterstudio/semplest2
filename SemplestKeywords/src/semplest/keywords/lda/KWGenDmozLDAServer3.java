@@ -834,7 +834,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface{
 		kwGen.initializeService(null);
 		String[] searchTerm = new String[1];
 		String userInfo1="";
-		PrintStream logging = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/categoriesTime.txt"));
+		PrintStream logging = new PrintStream(new FileOutputStream("data\\test\\categoriesTime.txt"));
 		/*
 		while(true){
 			Long start = System.currentTimeMillis();
@@ -918,7 +918,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface{
 			}
 		
 			PrintStream stdout = System.out;
-			System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/keywordsCrawl2.txt")));
+			System.setOut(new PrintStream(new FileOutputStream("data\\test\\keywordsCrawl2.txt")));
 
 			//System.out.println("\n"+ (n+2)+" word keywords:");
 			for(KeywordProbabilityObject k: kw){

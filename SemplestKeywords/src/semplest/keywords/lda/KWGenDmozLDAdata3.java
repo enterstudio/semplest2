@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import semplest.keywords.javautils.DmozLucene;
+import semplest.keywords.javautils.DmozLuceneWriter;
 import semplest.keywords.javautils.MultiWordCollect;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
@@ -17,7 +18,7 @@ import semplest.keywords.properties.ProjectProperties;
 public class KWGenDmozLDAdata3 implements Runnable{
 	
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdata3.class);
-	public DmozLucene dl; //Index of categories
+	public DmozLuceneWriter dl; //Index of categories
 	public dictUtils dict;
 	public int numTopics;
 	public double userInfoWeight; 
@@ -53,9 +54,9 @@ public class KWGenDmozLDAdata3 implements Runnable{
 			
 			
 			logger.info("create DmozLucene()");
-			dl = new DmozLucene();
-			logger.info("Indexing dmoz description data...");
-			DmozLucene.loadDescDB(dl);
+			dl = new DmozLuceneWriter();
+			//logger.info("Indexing dmoz description data...");
+			//DmozLucene.loadDescDB(dl);
 			logger.info("Data indexed!");
 		
 		}
