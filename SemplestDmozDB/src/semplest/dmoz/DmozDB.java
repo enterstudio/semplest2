@@ -1,8 +1,10 @@
-package semplest.dmoz.springjdbc;
+package semplest.dmoz;
 
 import java.util.List;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import semplest.dmoz.springjdbc.BaseDB;
 
 public class DmozDB extends BaseDB{
 
