@@ -295,7 +295,7 @@
 	  	 	<mkdir dir="${dist}/data"/>
 	  	 	<copydir src="${semplest.keywords.dir}/data"
 	  	 		dest="${dist}/data"
-	  	 	    includes="**/*.*"
+	  	 	    includes="**/*"
 	  	 	/>
 	  	 </then>
 	  	</if>
