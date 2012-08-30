@@ -15,7 +15,8 @@ import com.google.gson.Gson;
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  ///VMJAVA1 23.22.63.111 NY-semplestDev2
+	//private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  ///VMJAVA1 23.22.63.111 NY-semplestDev2
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";  ///VMJAVA1 23.22.63.111 NY-semplestDev2
 	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";  ///VMJAVA1 23.22.63.111 NY-semplestDev2
 	private static String timeoutMS = "60000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
