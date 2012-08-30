@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="lib/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-pool-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/jtds-1.2.5.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
