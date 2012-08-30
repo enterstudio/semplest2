@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import com.sleepycat.je.*;
 
 /* Utilities to store/retrieve key/value tuples in a Berkeley Database
- * Note: Implementation where keys and values are Strings (this need not be the case)
+ * Note: Implementation where keys and values are Strings 
+ * (this need not be the case)
  */
 public class cdb {
 
@@ -44,7 +45,7 @@ public class cdb {
     DatabaseConfig dc = new DatabaseConfig();
     dc.setAllowCreate( true );
     if( ro ) dc.setReadOnly( true );
-    dc.setSortedDuplicates( false );
+    dc.setSortedDuplicates( true );
     dc.setDeferredWrite( true );
     Database d = e.openDatabase( null, id, dc );
     if ( ro ) d.preload( null );
@@ -57,6 +58,14 @@ public class cdb {
     return new DatabaseEntry( s.getBytes("UTF-8") );}
 
   // - Interface ------------------------
+  public int add( String key, String value) throws Exception {
+    if( ro ) return 0;
+    DatabaseEntry k = new DatabaseEntry( key.getBytes("UTF-8"));
+    DatabaseEntry v = new DatabaseEntry( value.getBytes("UTF-8"));
+    if(  db.put( null, k, v) == OperationStatus.SUCCESS ) return 1;
+    return 0;
+  }
+
   public int add( Map<String,String> kvs) throws Exception {
     if( ro ) return 0;
     int count = 0;
@@ -76,6 +85,19 @@ public class cdb {
     if( db.get( null, key, val, null) == OperationStatus.SUCCESS)
       rs = new String( val.getData(), "UTF-8");
     return rs;
+  }
+  public String[] gets( String k ) throws Exception {
+    DatabaseEntry key = new DatabaseEntry( k.getBytes("UTF-8"));
+    DatabaseEntry val = new DatabaseEntry();
+    
+    Cursor c = db.openCursor( null, null );
+    ArrayList<String> al = new ArrayList<String>();
+    OperationStatus rv = c.getSearchKey( key, val, LockMode.DEFAULT );
+    while ( rv == OperationStatus.SUCCESS ){
+      al.add( new String( val.getData(), "UTF-8"));
+      rv = c.getNextDup( key, val, LockMode.DEFAULT );
+    }
+    return al.toArray( new String[]{} );
   }
   public void close(){
     db.close();
@@ -144,7 +166,8 @@ public class cdb {
   }
 
   public int count() throws Exception { return (int) db.count(); }
-  // -------------------------------------------
+
+  // - Tests ------------------------------------------
   public static void createTest( String dir, String dbname) throws Exception {
     String cidfile = "/semplest/data/dmoz/dmoz.8-12.cids";
     Map<String,String> cids = ioUtils.readPair( cidfile );
@@ -166,13 +189,27 @@ public class cdb {
     System.out.println( (res.size() + keys.length) + " records took " + 
         (et - st) + " ms"  );
   }
+  public static void dupTest( String dir, String dbname ) throws Exception {
+    cdb db = new cdb( dir, dbname, false );
+    db.add( "a", "10" );
+    db.add( "a", "20" );
+    db.add( "a", "30" );
+    db.add( "a", "50" );
+    db.close();
+
+    db = new cdb( dir, dbname );
+    for( String s: db.gets( "a" ))
+      System.out.println( s );
+  }
+
 
   // ---------------------------------------------------------------------
   public static void main(String[] args) throws Exception {
     String dir = "/tmp/bdb/";
-    String dbname = "test";
-    createTest( dir, dbname );
-    readTest( dir, dbname );
+    String dbname = "testd";
+  //  createTest( dir, dbname );
+  //  readTest( dir, dbname );
+    dupTest( dir, dbname );
   }
 }
 
