@@ -23,13 +23,13 @@ public class cdb {
   // Read - only
   public cdb( String dir, String id ){
     e     = getEnv( dir, true ); 
-    db    = getDB( id, e, true ); 
+    db    = getDB( id, e, true, false ); 
     dbid  = id; 
   }
-  // Write
-  public cdb( String dir, String id, Boolean read ){
+  // Write, dups
+  public cdb( String dir, String id, Boolean read, Boolean dups ){
     e = getEnv( dir, read ); 
-    db = getDB( id, e, read ); 
+    db = getDB( id, e, read, dups ); 
     ro = false;
   }
 
@@ -37,14 +37,15 @@ public class cdb {
   private Environment getEnv( String dir, Boolean ro){
     EnvironmentConfig ec = new EnvironmentConfig();
     ec.setAllowCreate( true );
-    if( ro ) ec.setReadOnly( true );
+    ec.setReadOnly( ro );
     return new Environment( new java.io.File( dir ), ec );
   }
 
-  private Database getDB( String id, Environment e, Boolean ro ){
+  private Database getDB( String id, Environment e, Boolean ro, Boolean dups ){
     DatabaseConfig dc = new DatabaseConfig();
     dc.setAllowCreate( true );
-    if( ro ) dc.setReadOnly( true );
+    dc.setReadOnly( ro );
+    System.out.println("dups: " + dups );
     dc.setSortedDuplicates( true );
     dc.setDeferredWrite( true );
     Database d = e.openDatabase( null, id, dc );
@@ -172,7 +173,7 @@ public class cdb {
     String cidfile = "/semplest/data/dmoz/dmoz.8-12.cids";
     Map<String,String> cids = ioUtils.readPair( cidfile );
     
-    cdb db = new cdb( dir, dbname, false );
+    cdb db = new cdb( dir, dbname, false, false );
     int ret = db.add( cids );
     db.close();
     System.out.println("Wrote " + ret + " records");
@@ -190,7 +191,7 @@ public class cdb {
         (et - st) + " ms"  );
   }
   public static void dupTest( String dir, String dbname ) throws Exception {
-    cdb db = new cdb( dir, dbname, false );
+    cdb db = new cdb( dir, dbname, false, true );
     db.add( "a", "10" );
     db.add( "a", "20" );
     db.add( "a", "30" );
