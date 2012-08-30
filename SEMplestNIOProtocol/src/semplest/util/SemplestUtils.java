@@ -20,12 +20,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Stack;
 
 import org.apache.axis.types.UnsignedByte;
 
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.CustomerHierarchy;
 import semplest.server.protocol.CustomerType;
+import semplest.server.protocol.DmozEntry;
+import semplest.server.protocol.DmozNode;
+import semplest.server.protocol.DmozTree;
 import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.RegistrationLinkDecryptedInfo;
@@ -149,6 +153,27 @@ public final class SemplestUtils
 	public static final String DATE_TIME = "DATE_TIME";
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
+	
+	private static final Object SEMAPHORE = new Object(); 
+	private static Long DMOZ_NODE_PK = 1L;
+	
+	public static Long getNextDmozNodePK()
+	{
+		synchronized(SEMAPHORE)
+		{
+			return ++DMOZ_NODE_PK;
+		}
+	}
+	
+	public static String getRepeatedString(final String s, final int numTimes)
+	{
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < numTimes; ++i)
+		{
+			sb.append(s);
+		}
+		return sb.toString();
+	}
 	
 	public static <T> List<T> getSubset(final List<T> c, final Integer maxSize)
 	{
@@ -1342,6 +1367,41 @@ public final class SemplestUtils
 		}
 	}
 	
+	public static void getEasilyReadableString(final DmozNode node, int numIndents, final Stack<String> stack)
+	{		
+		final Map<String, DmozNode> children = node.getChildren();
+		if (!children.isEmpty())
+		{
+			++numIndents;
+			final Set<Entry<String, DmozNode>> entrySet = children.entrySet();
+			for (final Entry<String, DmozNode> entry : entrySet)
+			{
+				final DmozNode childNode = entry.getValue();
+				getEasilyReadableString(childNode, numIndents, stack);
+			}			
+		}
+		/*
+			final String indent = SemplestUtils.getRepeatedString("\t", numIndents);
+			final String indentPlus1 = SemplestUtils.getRepeatedString("\t", numIndents + 1);		
+			stack.push(indent + "Children:\n" + SemplestUtils.getEasilyReadableString(children, indentPlus1) + "\n");
+			stack.push(indent + "Entries:\n" + indentPlus1 + node.getEntries() + "\n");
+		*/
+		
+	}
+	
+	public static String getEasilyReadableString(final DmozTree tree)
+	{
+		final DmozNode topNode = tree.getTopNode();
+		final Stack<String> stack = new Stack<String>();
+		getEasilyReadableString(topNode, 0, stack);
+		final StringBuilder sb = new StringBuilder();
+		while(!stack.isEmpty())
+		{
+			sb.append(stack.pop());
+		}
+		return sb.toString();
+	}
+	
 	public static String getEasilyReadableString(final Collection<?> list)
 	{
 		if (list == null)
@@ -1357,6 +1417,25 @@ public final class SemplestUtils
 				sb.append(LINE_SEPARATOR);
 			}
 			sb.append(++counter).append(": ").append(o);
+		}
+		return sb.toString();
+	}
+	
+	public static String getEasilyReadableString(final Map<?, ?> m, final String indent)
+	{
+		if (m == null)
+		{
+			return "";
+		}
+		int counter = 0;
+		final StringBuffer sb = new StringBuffer();
+		for (final Map.Entry<?, ?> mapEntry : m.entrySet())
+		{
+			if (sb.length() != 0)
+			{
+				sb.append(LINE_SEPARATOR);
+			}
+			sb.append(indent).append(++counter).append(": ").append(mapEntry.getKey()).append(" -> ").append(mapEntry.getValue());
 		}
 		return sb.toString();
 	}
