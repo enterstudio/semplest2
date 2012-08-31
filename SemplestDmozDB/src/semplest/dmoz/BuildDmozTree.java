@@ -5,34 +5,46 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
+
+import semplest.util.SemplestUtils;
 
 public class BuildDmozTree {
 	
-	private final static String defaultPath = "C:\\temp\\";
 	private static Long uniqueId = 0L;
 	private static HashMap<String,TreeNode> allNodes = new HashMap<String,TreeNode>();
+	private static HashMap<String,CategoryData> inputData;
+	private static TreeNode topNode;
 	
-	private String categoryDescriptionFile;
-	private String categoryUrlsFile;
+	private static String categoryDescriptionFile = "c:\\dmoz\\dmoz.descs";
+	private static String categoryUrlsFile = "c:\\dmoz\\dmoz.urls";
 	
 	//temp
 	private static Long numOfNodes = 0L;
 	
 	public static void main(String[] args){
-		String path = "C:\\temp\\";
+		String emptyNodesFile = "c:\\dmoz\\EmptyNodes.txt";
 		
-		BuildDmozTree tree = new BuildDmozTree(null, null);
+		BuildDmozTree tree = new BuildDmozTree(categoryDescriptionFile, categoryUrlsFile);
 		
 		try {
-			HashMap<String,CategoryData> inputData = tree.readInData(path);
-			TreeNode topNode = tree.buildTree(inputData);
-			tree.printTree(topNode);
-			
+			tree.buildAndGetAllDmozTreeNodes();			
 			System.out.println(inputData.size());		
-			System.out.println(numOfNodes);
+			System.out.println(allNodes.size());
+			
+			FileWriter writer = new FileWriter("c:\\dmoz\\DmozTree.txt");
+			for(String node : allNodes.keySet()){
+				writer.append(allNodes.get(node).getFullName() + " : " + allNodes.get(node).getCategoryData().toString() + "\n");
+			}
+			writer.close();	
+			
+			//tree.getListOfEmptyNodes(emptyNodesFile);
+			
+			//tree.printTree(topNode);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -45,16 +57,13 @@ public class BuildDmozTree {
 	}
 	
 	public HashMap<String,TreeNode> buildAndGetAllDmozTreeNodes() throws Exception{
-		HashMap<String,CategoryData> inputData = readInData(defaultPath);
+		inputData = readInData();
 		buildTree(inputData);
 		return allNodes;
 	}
 	
-	private HashMap<String,CategoryData> readInData(String path) throws Exception{
-		HashMap<String,CategoryData> allData = new HashMap<String,CategoryData>();
-		
-		String categoryDescription = path + "dmoz.descs";
-		String categoryUrls = path + "dmoz.urls";
+	private HashMap<String,CategoryData> readInData() throws Exception{
+		HashMap<String,CategoryData> allData = new HashMap<String,CategoryData>();		
 		
 		FileInputStream fstream;
 		DataInputStream in;
@@ -62,7 +71,7 @@ public class BuildDmozTree {
 		String strLine;
 		
 		// 1 --load all descriptions
-		fstream = new FileInputStream(categoryDescription);
+		fstream = new FileInputStream(categoryDescriptionFile);
 		in = new DataInputStream(fstream);
 		br = new BufferedReader(new InputStreamReader(in));
 		
@@ -77,14 +86,14 @@ public class BuildDmozTree {
 		in.close();
 		
 		// 2 --load all urls
-		fstream = new FileInputStream(categoryUrls);
+		fstream = new FileInputStream(categoryUrlsFile);
 		in = new DataInputStream(fstream);
 		br = new BufferedReader(new InputStreamReader(in));
 		
 		while ((strLine = br.readLine()) != null){
-			String[] lineContents = strLine.split("\\:");
+			String[] lineContents = strLine.split(" ");
 			String cat = lineContents[0].trim();
-			String[] urls = lineContents[1].trim().split(" ");
+			String[] urls = Arrays.copyOfRange(lineContents, 2, lineContents.length-1);
 			CategoryData catData;
 			if(!allData.containsKey(cat)){
 				catData = new CategoryData();
@@ -101,7 +110,7 @@ public class BuildDmozTree {
 	}
 
 	private TreeNode buildTree(HashMap<String,CategoryData> inputData) throws Exception{					
-		TreeNode topNode = new TreeNode();
+		topNode = new TreeNode();
 		Long topNodeId = getUniqueId();
 		topNode.setNodeID(topNodeId);
 		topNode.setParentID(topNodeId);  //top node's parent is itself
@@ -115,7 +124,7 @@ public class BuildDmozTree {
 			String fullNodeName = "top";
 			
 			//find or create middle nodes						
-			for(int node = 1; node < nodes.length; node++){
+			for(int node = 1; node < nodes.length - 1; node++){
 				String currentNodeName = nodes[node];
 				HashMap<String,TreeNode> currentLevelNodes = currentParent.getChildrenNodes();
 				fullNodeName = fullNodeName + "/" + currentNodeName;
@@ -148,15 +157,15 @@ public class BuildDmozTree {
 		return topNode;		
 	}	
 	
-	public void printTree(TreeNode currentNode){
+	public void printTree(TreeNode currentNode) throws Exception{		
 		HashMap<String,TreeNode> nodes = currentNode.getChildrenNodes();		
 		for(TreeNode node : nodes.values()){
-			System.out.println(node.getName() + " : " + node.getFullName() + " : " + node.getNodeID() + " : " + node.getParentID());
+			System.out.println(node.getName() + " : " + node.getFullName() + " : " + node.getNodeID() + " : " + node.getParentID());			
 			numOfNodes++;
 			if(node.getChildrenNodes() != null && !node.getChildrenNodes().isEmpty()){				
 				printTree(node);
 			}
-		}
+		}		
 	}
 	
 	private Long getUniqueId(){
@@ -164,58 +173,18 @@ public class BuildDmozTree {
 		return uniqueId;
 	}
 	
-	public void getListOfEmptyNodes(String path) throws Exception{
-		HashSet<String> allCats = new HashSet<String>();
+	public void getListOfEmptyNodes(String outputFile) throws Exception{
+		Set<String> allCats = new HashSet<String>();
+		allCats.addAll(allNodes.keySet());
+		for(String cat : inputData.keySet()){
+			allCats.remove(cat.trim());
+		}		
 		
-		String categoryCids = path + "dmoz.cids";
-		String categoryDescription = path + "dmoz.descs";
-		String categoryUrls = path + "dmoz.urls";		
-		
-		FileInputStream fstream;
-		DataInputStream in;
-		BufferedReader br;
-		String strLine;
-		
-		//1
-		fstream = new FileInputStream(categoryCids);
-		in = new DataInputStream(fstream);
-		br = new BufferedReader(new InputStreamReader(in));
-		
-		while ((strLine = br.readLine()) != null){
-			String[] lineContents = strLine.split("\\:");
-			String cat = lineContents[0].trim();
-			allCats.add(cat);
-		}
-		in.close();
-		
-		//2
-		fstream = new FileInputStream(categoryDescription);
-		in = new DataInputStream(fstream);
-		br = new BufferedReader(new InputStreamReader(in));
-		
-		while ((strLine = br.readLine()) != null){
-			String cat = strLine.split("\\:")[0].trim();
-			allCats.remove(cat);
-		}
-		in.close();
-		
-		//3
-		fstream = new FileInputStream(categoryUrls);
-		in = new DataInputStream(fstream);
-		br = new BufferedReader(new InputStreamReader(in));
-		
-		while ((strLine = br.readLine()) != null){
-			String cat = strLine.split("\\:")[0].trim();
-			allCats.remove(cat);
-		}
-		in.close();		
-		
-		FileWriter writer = new FileWriter(path + "EmptyNodes.txt");
+		FileWriter writer = new FileWriter(outputFile);
 		for(String node : allCats){
 			writer.append(node + "\n");
 		}
-		writer.close();
-		
+		writer.close();		
 	}
 	
 }

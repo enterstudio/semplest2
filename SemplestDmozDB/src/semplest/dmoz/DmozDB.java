@@ -14,7 +14,7 @@ import semplest.util.SemplestUtils;
 
 public class DmozDB extends BaseDB{
 
-	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 	
 	public static Integer getParentNodeID(Integer nodeId) throws Exception{		
 		String sql = "SELECT ParentNodeID FROM DMOZ WHERE DmozNodePK = ?";
@@ -65,7 +65,7 @@ public class DmozDB extends BaseDB{
 	public static void loadDmozToDB() throws Exception{
 		//Read property file for dmoz files paths
 		Properties properties = new Properties();
-		FileInputStream in = new FileInputStream("system.properties");
+		FileInputStream in = new FileInputStream("bin/system.properties");
 		properties.load(in);
 		in.close();
 		
@@ -83,12 +83,12 @@ public class DmozDB extends BaseDB{
 			ArrayList<String> batchSql = new ArrayList<String>();
 			for(TreeNode node : batch.values()){
 				String sqlDmoz = "INSERT INTO DMOZ(DmozNodePK,NodeText,ParentNodeID,NodeDescription) " +
-						"VALUES("+ node.getNodeID() +"," + node.getFullName() + "," + node.getParentID() + "," + node.getCategoryData().getDescription() + ");";	
+						"VALUES("+ node.getNodeID() +",'" + node.getFullName().replace("'", "''") + "'," + node.getParentID() + ",'" + node.getCategoryData().getDescription().replace("'", "''") + "');";	
 				
 				String sqlUrlData = "";
 				for(String url : node.getCategoryData().getUrls()){
 					String sqlUrls = "INSERT INTO URLData(DmozNodeFK,URL,Level) " +
-							"VALUES(" + node.getNodeID() + "," + url + "," + 1 + ");";
+							"VALUES(" + node.getNodeID() + ",'" + url.replace("'", "''") + "'," + 1 + ");";
 					
 					sqlUrlData = sqlUrlData + sqlUrls;
 				}

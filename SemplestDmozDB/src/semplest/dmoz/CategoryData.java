@@ -1,5 +1,7 @@
 package semplest.dmoz;
 
+import java.util.Arrays;
+
 public class CategoryData {
 	private String description;
 	private String[] urls;
@@ -16,4 +18,11 @@ public class CategoryData {
 	public void setUrls(String[] urls) {
 		this.urls = urls;
 	}
+	
+	@Override
+	public String toString() {
+		return "CategoryData [description=" + description + ", urls="
+				+ Arrays.toString(urls) + "]";
+	}	
+	
 }
