@@ -121,6 +121,7 @@ public class cdb
       al.add(new String(val.getData(), "UTF-8"));
       rv = c.getNextDup(key, val, LockMode.DEFAULT);
     }
+    c.close();
     return al.toArray(new String[] {});
   }
 

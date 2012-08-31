@@ -35,12 +35,8 @@ public class crawldb
   {
     Map<String, String> uts = new HashMap<String, String>();
     String[] urls = cudb.gets(cat);
-    System.out.println(cat + ":" + urls.length);
     for (String url : urls)
-    {
-      System.out.println(url + ":" + utdb.get(url));
       uts.put(url, utdb.get(url));
-    }
     return uts;
   }
 
@@ -173,11 +169,11 @@ public class crawldb
     // print results
     String rs = "";
     for( String s: uts.values()) rs = rs + s;
-    System.out.println(url + " : " + urlText);
-    System.out.println("cat " + cat );
-    System.out.println("urls: "+uts.size()+", text(chars): "+rs.length());
+    System.out.println( url + " ::: " +  urlText + "\n\n");
+    System.out.println("category :: " + cat );
+    System.out.println("urls: "+uts.size()+", text(chars): "+rs.length()+"\n");
     for (String e : siblings)
-      System.out.println("\tsibling : " + e);
+      System.out.println("sibling : " + e);
     System.out.println("\n\n" + (uts.size() + ruts.size() + siblings.length) + " records took " + (et - st) + " ms ");
   }
 
