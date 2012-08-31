@@ -13,62 +13,70 @@ import javax.mail.internet.MimeMessage;
 import semplest.system.monitor.MonitorObject.SERVER;
 import semplest.system.monitor.MonitorObject.SERVICE;
 
-public class Notification {
-	
+public class Notification
+{
+
 	private static String emailFrom = "devuser@semplest.com";
-	//private static String emailTo = "nan@semplest.com";
+	// private static String emailTo = "nan@semplest.com";
 	private static String emailTo = "development@semplest.com";
-	
-	public static void main(String[] args){
-		sendEmail("test", "devuser@semplest.com","nan@semplest.com","test");
+
+	public static void main(String[] args)
+	{
+		sendEmail("test", "devuser@semplest.com", "nan@semplest.com", "test");
 	}
-	
-	public static void sendNotification(SERVER server, SERVICE service, String errorMsg){
+
+	public static void sendNotification(SERVER server, SERVICE service, String errorMsg)
+	{
 		String downMsg = "[System Monitor] ALERT! " + service.name() + " Service on " + server.name() + " Server is down!";
-		String upMsg = "[System Monitor] " + service.name() + " Service on " + server.name() + " Server is back to normal.";		
-		
-		if(errorMsg != null){
+		String upMsg = "[System Monitor] " + service.name() + " Service on " + server.name() + " Server is back to normal.";
+
+		if (errorMsg != null)
+		{
 			sendEmail(downMsg, emailFrom, emailTo, errorMsg);
 		}
-		else{
+		else
+		{
 			sendEmail(upMsg, emailFrom, emailTo, upMsg);
 		}
 	}
-	
+
 	private static void sendEmail(String subject, String from, String to, String msg)
-	{			
+	{
 		final String username = "devuser@semplest.com";
 		final String password = "SEMplest2012";
- 
+
 		Properties props = new Properties();
 
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
-		props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.port", "465");
-		
-		Session session = Session.getInstance(props,
-		  new javax.mail.Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
+
+		Session session = Session.getInstance(props, new javax.mail.Authenticator()
+		{
+			protected PasswordAuthentication getPasswordAuthentication()
+			{
 				return new PasswordAuthentication(username, password);
 			}
-		  });
- 
-		try {
- 
+		});
+
+		try
+		{
+
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(from));
-			message.setRecipients(Message.RecipientType.TO,
-				InternetAddress.parse(to));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 			message.setSubject(subject);
 			message.setText(msg);
- 
+
 			Transport.send(message);
- 
-		} catch (MessagingException e) {
+
+		}
+		catch (MessagingException e)
+		{
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 }
