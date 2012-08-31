@@ -103,17 +103,17 @@ public class crawldb
 
   // - Private -------------------------------------------------------------
 
-  private static String DMOZ_VERSION = "dmoz.8-12";
+  private static String DMOZ_VERSION  = "dmoz.8-12";
   private static String CRAWL_VERSION = "tl.1";
-  private static String CRAWL_DIR = "/semplest/data/dmoz/shopping/";
-  private static String CRAWL_DB_DIR = "/semplest/data/dmoz/bdb/crawl";
+  private static String CRAWL_DIR     = "/semplest/data/dmoz/shopping/";
+  private static String CRAWL_DB_DIR  = "/semplest/data/dmoz/bdb/crawl";
 
   private cdb utdb;
   private cdb uldb;
   private cdb ctdb;
   private cdb cudb;
 
-  private static String[] dbs = { "urltext", "urllinks", "cattexts", "caturls" };
+  private static String[] dbs = {"urltext","urllinks","cattexts","caturls"};
 
   // parsers to parse crawl text entry
   // cat : url1 ::: text1 ::: link1-1 :: link1-2 :: .. :::: url2 ::: text2
@@ -160,20 +160,22 @@ public class crawldb
     String cat = "top/shopping/flowers/florists/north_america/united_states/indiana";
     String url = "http://www.sitka-flowers.com/";
 
-    crawldb db = new crawldb(); // open db
+    crawldb db = new crawldb();               // open db
 
     long st = System.currentTimeMillis();
-    String urlText = db.get(url); // get text for a url
-    String[] siblings = db.siblings(cat); // get a cat's siblings
+    String urlText = db.get(url);             // get text for a url
+    String[] siblings = db.siblings(cat);     // get a cat's siblings
     Map<String, String> uts = db.getuts(cat); // get links,text for cat
-    Map<String, String> ruts = db.getuts(); // get links,text for random cat
+    Map<String, String> ruts = db.getuts();   // get links,text for random cat
     long et = System.currentTimeMillis();
     db.close();
-
+    
     // print results
+    String rs = "";
+    for( String s: uts.values()) rs = rs + s;
     System.out.println(url + " : " + urlText);
-    for (Map.Entry<String, String> e : uts.entrySet())
-      System.out.println(e.getKey() + " : " + e.getValue());
+    System.out.println("cat " + cat );
+    System.out.println("urls: "+uts.size()+", text(chars): "+rs.length());
     for (String e : siblings)
       System.out.println("\tsibling : " + e);
     System.out.println("\n\n" + (uts.size() + ruts.size() + siblings.length) + " records took " + (et - st) + " ms ");

@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import com.sleepycat.je.*;
 
 /* Utilities to store/retrieve key/value tuples in a Berkeley Database
- * Note: Implementation where keys and values are Strings 
- * (this need not be the case)
+ * This is the object/class version of bdb which is a simpler static version  
+ *
+ * cdb also allows duplicate keys, and allows alternate directories
  */
 public class cdb
 {
@@ -20,8 +21,8 @@ public class cdb
   String dbid;
   Boolean ro = true;
 
-  // - Ctr ----------
-  // Read - only
+  // - Ctr ------------------------------------
+  // Default ctr, Read-only no duplicate keys
   public cdb(String dir, String id)
   {
     e = getEnv(dir, true);
@@ -29,7 +30,7 @@ public class cdb
     dbid = id;
   }
 
-  // Write, dups
+  // Full ctr, allows specifying Write, and duplicate keys
   public cdb(String dir, String id, Boolean read, Boolean dups)
   {
     e = getEnv(dir, read);
@@ -37,7 +38,7 @@ public class cdb
     ro = false;
   }
 
-  // - Privates ------------
+  // - Privates ---------------------------------------
   private Environment getEnv(String dir, Boolean ro)
   {
     EnvironmentConfig ec = new EnvironmentConfig();
@@ -51,7 +52,6 @@ public class cdb
     DatabaseConfig dc = new DatabaseConfig();
     dc.setAllowCreate(true);
     dc.setReadOnly(ro);
-    System.out.println("dups: " + dups);
     dc.setSortedDuplicates(true);
     dc.setDeferredWrite(true);
     Database d = e.openDatabase(null, id, dc);
@@ -71,7 +71,7 @@ public class cdb
     return new DatabaseEntry(s.getBytes("UTF-8"));
   }
 
-  // - Interface ------------------------
+  // - Interface ---------------------------------------
   public int add(String key, String value) throws Exception
   {
     if (ro)
