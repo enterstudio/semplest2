@@ -2,6 +2,7 @@ package semplest.services.client.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -141,7 +142,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 
 	@Override
-	public KeywordProbabilityObject[] getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
+	public KeywordProbabilityObject[] getKeywords(List<String> categories,String companyName,  String[] searchEngines,
 			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String jsonCategories = gson.toJson(categories, ArrayList.class);

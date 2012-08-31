@@ -1,117 +1,115 @@
 package semplest.service.keywords.lda;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 import semplest.keywords.lda.KWGenDmozLDAServer3;
 import semplest.keywords.javautils.catUtils;
-import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
+import semplest.util.SemplestUtils;
 
 public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInterface
 {
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(KeywordGeneratorServiceImpl.class);
-	
 	private static final catUtils cu = new catUtils();
-	
 	private KWGenDmozLDAServer3 kwGen;
-	
+
 	public String getCategories(String json) throws Exception
 	{
 		logger.debug("call  getCategories(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		String companyName = data.get("companyName");
-		String searchTerm = data.get("searchTerm");
-		String description = data.get("description");
-		String[] adds = new String[]{data.get("adds")};
-		String url = data.get("url");
-		ArrayList<String> res = getCategories(companyName,searchTerm,description,adds, url);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String companyName = data.get("companyName");
+		final String searchTerm = data.get("searchTerm");
+		final String description = data.get("description");
+		final String[] adds = new String[] { data.get("adds") };
+		final String url = data.get("url");
+		final List<String> res = getCategories(companyName, searchTerm, description, adds, url);
 		return gson.toJson(res);
 	}
 
 	@Override
-	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception
+	public List<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception
 	{
-		
-		kwGen =  new KWGenDmozLDAServer3(SemplestConfiguration.configData);
-		ArrayList<String> categOpt = kwGen.getCategories(companyName,searchTerm,description,adds, url);
+		kwGen = new KWGenDmozLDAServer3(SemplestConfiguration.configData);
+		List<String> categOpt = kwGen.getCategories(companyName, searchTerm, description, adds, url);
 		if (categOpt == null)
 		{
 			logger.info("No categories found for " + searchTerm);
 			categOpt = new ArrayList<String>();
 		}
-		return cu.code( categOpt );
+		return cu.code(categOpt);
 	}
-
 
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		/*
-		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
-		 */
-		Object object = new Object();
-		SemplestConfiguration configDB = new SemplestConfiguration(object);
-		Thread configThread = new Thread(configDB);
+		final Object object = new Object();
+		final SemplestConfiguration configDB = new SemplestConfiguration(object);
+		final Thread configThread = new Thread(configDB);
 		configThread.start();
 		synchronized (object)
 		{
 			object.wait();
 		}
-		/*
-		 * Init Keyword Data
-		 */
 		logger.info("Initialized Keyword generator...");
-		kwGen =  new KWGenDmozLDAServer3(SemplestConfiguration.configData);
-		//kwGen =  new KWGenDmozLDAServer(null);
+		kwGen = new KWGenDmozLDAServer3(SemplestConfiguration.configData);
 		kwGen.initializeService(null);
 	}
-	
+
 	public String getKeywords(String json) throws Exception
 	{
 		logger.debug("call  getCategories(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		ArrayList<String> categories = gson.fromJson(data.get("categories"), ArrayList.class);
-		String companyName = data.get("companyName");
-		String searchTerm = data.get("searchTerm");
-		String description = data.get("description");
-		String[] adds =  gson.fromJson(data.get("adds"), String[].class);
-		String[] searchEngines =  gson.fromJson(data.get("searchEngines"), String[].class);
-		String url = data.get("url");
-		Integer[] nGrams = gson.fromJson(data.get("nGrams"), Integer[].class);
-		GeoTargetObject[] gt = gson.fromJson(data.get("gt"), GeoTargetObject[].class);
-		KeywordProbabilityObject[] res = getKeywords(categories,companyName, searchEngines, searchTerm, description, adds,  url,  gt,  nGrams);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String categoriesString = data.get("categories");
+		final List<String> categories = gson.fromJson(categoriesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final String companyName = data.get("companyName");
+		final String searchTerm = data.get("searchTerm");
+		final String description = data.get("description");
+		final String addsString = data.get("adds");
+		final String[] adds = gson.fromJson(addsString, String[].class);
+		final String searchEnginesString = data.get("searchEngines");
+		final String[] searchEngines = gson.fromJson(searchEnginesString, String[].class);
+		final String url = data.get("url");
+		final String nGramsString = data.get("nGrams");
+		final Integer[] nGrams = gson.fromJson(nGramsString, Integer[].class);
+		final String geoTargetsString = data.get("gt");
+		final GeoTargetObject[] gt = gson.fromJson(geoTargetsString, GeoTargetObject[].class);
+		final KeywordProbabilityObject[] res = getKeywords(categories, companyName, searchEngines, searchTerm, description, adds, url, gt, nGrams);
 		return gson.toJson(res);
 	}
 
 	@Override
-	public KeywordProbabilityObject[] getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
-			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
-		kwGen =  new KWGenDmozLDAServer3(SemplestConfiguration.configData);
-		KeywordProbabilityObject[] keywords = kwGen.getKeywords( cu.decode( categories),
-				companyName, searchEngines, searchTerm, description, adds, url, gt, nGrams);
+	public KeywordProbabilityObject[] getKeywords(List<String> categories, String companyName, String[] searchEngines, String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception
+	{
+		kwGen = new KWGenDmozLDAServer3(SemplestConfiguration.configData);
+		final List<String> categoriesDecoded = cu.decode(categories);
+		KeywordProbabilityObject[] keywords = kwGen.getKeywords(categoriesDecoded, companyName, searchEngines, searchTerm, description, adds, url, gt, nGrams);
 		if (keywords == null)
 		{
 			logger.info("No categories found for " + searchTerm);
 			keywords = new KeywordProbabilityObject[0];
 		}
 		return keywords;
-	}	
-	
-	public String checkStatus(String json) throws Exception{
+	}
+
+	public String checkStatus(String json) throws Exception
+	{
 		return checkStatus(null, null);
 	}
+
 	@Override
-	public String checkStatus(String input1, String input2) throws Exception {
+	public String checkStatus(String input1, String input2) throws Exception
+	{
 		return ServiceStatus.Up.getServiceStatusValue();
 	}
-	
+
 }
