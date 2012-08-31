@@ -73,22 +73,38 @@ public class DmozDB extends BaseDB{
 		String dmozDescriptionFile = properties.getProperty("dmoz.descriptionFile");
 		
 		//Build DMOZ Tree
+		System.out.println("Get Dmoz tree nodes.");
 		final BuildDmozTree dmozTreeBuilder = new BuildDmozTree(dmozDescriptionFile,dmozUrlFile);
 		HashMap<String,TreeNode> dmozTree = dmozTreeBuilder.buildAndGetAllDmozTreeNodes();
 		
 		//Batch and store the tree to database
-		final List<Map<String,TreeNode>> batches = SemplestUtils.getBatches(dmozTree, 1000);
+		final List<Map<String,TreeNode>> batches = SemplestUtils.getBatches(dmozTree, 10000);
+		System.out.println("Going to store " + batches.size() + " batchs (of 10000 node entries) to DB.");
+		Long counter = 0L;		
 		for (final Map<String,TreeNode> batch : batches)
 		{			
+			Long start = System.currentTimeMillis();
+			System.out.println("Storing batch #" + counter + " to DB...");
 			ArrayList<String> batchSql = new ArrayList<String>();
 			for(TreeNode node : batch.values()){
+				if(node == null){
+					continue;
+				}
+				Long nodeId = node.getNodeID();
+				Long nodeParentId = node.getParentID();
+				String nodeFullName = node.getFullName().replace("'", "''");
+				String nodeDescription = node.getCategoryData() == null? null : (node.getCategoryData().getDescription() == null? null : node.getCategoryData().getDescription().replace("'", "''"));				
+				
 				String sqlDmoz = "INSERT INTO DMOZ(DmozNodePK,NodeText,ParentNodeID,NodeDescription) " +
-						"VALUES("+ node.getNodeID() +",'" + node.getFullName().replace("'", "''") + "'," + node.getParentID() + ",'" + node.getCategoryData().getDescription().replace("'", "''") + "');";	
+						"VALUES("+ nodeId +",'" + nodeFullName + "'," + nodeParentId + ",'" + nodeDescription + "');";	
 				
 				String sqlUrlData = "";
+				if(node.getCategoryData() == null || node.getCategoryData().getUrls() == null){
+					continue;
+				}
 				for(String url : node.getCategoryData().getUrls()){
 					String sqlUrls = "INSERT INTO URLData(DmozNodeFK,URL,Level) " +
-							"VALUES(" + node.getNodeID() + ",'" + url.replace("'", "''") + "'," + 1 + ");";
+							"VALUES(" + nodeId + ",'" + url.replace("'", "''") + "'," + 1 + ");";
 					
 					sqlUrlData = sqlUrlData + sqlUrls;
 				}
@@ -97,6 +113,8 @@ public class DmozDB extends BaseDB{
 				batchSql.add(sqlReq);
 			}
 			jdbcTemplate.batchUpdate(batchSql.toArray(new String[batchSql.size()]));
+			System.out.println("	took " + (System.currentTimeMillis() - start)*1d/1000 + " secs.");
+			counter++;
 		}
 	}	
 	
