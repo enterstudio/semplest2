@@ -153,6 +153,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\RequireRequestValueAttribute.cs" />
+    <Compile Include="Controllers\SmartWordController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -175,8 +176,15 @@
     <Compile Include="Models\ReportIndexModel.cs" />
     <Compile Include="Models\Repositories\CampaignRepository.cs" />
     <Compile Include="Models\Repositories\ICampaignRepository.cs" />
+    <Compile Include="Models\Repositories\IPromotionRepository.cs" />
+    <Compile Include="Models\Repositories\ISmartWordRepository.cs" />
+    <Compile Include="Models\Repositories\IStateRepository.cs" />
+    <Compile Include="Models\Repositories\PromotionRepository.cs" />
+    <Compile Include="Models\Repositories\SmartWordRepository.cs" />
+    <Compile Include="Models\Repositories\StateRepository.cs" />
     <Compile Include="Models\SearchKeywordsModel.cs" />
     <Compile Include="Models\SemplestWebAppContext.cs" />
+    <Compile Include="Models\SmartWordSetupModel.cs" />
     <Compile Include="Modules\Modules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\LogService.svc.cs">
@@ -255,6 +263,8 @@
     <Content Include="Scripts\PanelBar.js" />
     <Content Include="Scripts\Profile.js" />
     <Content Include="Scripts\QuestionMarkHelp.js" />
+    <Content Include="Scripts\SmartWordSetup.js" />
+    <Content Include="Scripts\SmartWordMaps.js" />
     <Content Include="Scripts\tooltip.js" />
     <Content Include="Services\LogService.svc" />
     <Content Include="Web.config">
@@ -397,6 +407,21 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Campaign\AddNewCard.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\Setup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\ProductGroupSmartWords.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\Categories.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\Words.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

@@ -1,0 +1,229 @@
+﻿@using Semplest.Core.Helpers
+@model Semplest.Core.Models.SmartWordSetupModel
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/conditional-validation.js")" type="text/javascript"></script>
+@Html.AntiForgeryToken()
+@{}
+<style>
+    .enddate
+    {
+        display: none;
+        visibility: hidden;
+    }
+    .expand-padding
+    {
+        padding-right: 2px;
+    }
+</style>
+<link href="@Url.Content("~/Content/formStyle.css")"  rel="Stylesheet" />
+@section Title{
+    SmartWords List (@ViewBag.Title)
+}
+@section headscript{
+    <script src="@Url.Content("~/Scripts/jquery.maskedinput-1.3.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/enabledisable.js")" type="text/javascript"></script>
+}
+@section SectionNav{
+    <div id="examplesThemeChooser">
+        Step
+        <button type="button" class="k-button selected" id="btnOne">
+            1</button>
+        <button type="button" class="k-button unselected" id="btnTwo">
+            2</button>
+        <button type="button" class="k-button unselected" id="btnThree">
+            3</button>
+    </div>
+}
+<div>
+    <div id="example">
+        @using (Ajax.BeginForm("Setup", "SmartWord", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", OnBegin = "OnBegin", OnFailure = "OnFailure" }))
+        {
+            @Html.ValidationSummary(true)
+            <div id="tabstrip">
+                <ul>
+                    <li class="k-state-active">Define Product</li>
+                </ul>
+                <div style="overflow: auto;">
+<div id="productGroupModel">
+    <div class="configuration">
+        <span class="infoHead">Tell us about your product or service</span>
+        <ul class="options">
+            <li>
+                <h3>
+                    @Model.Configuration.DefaultProductGroupName <a href ="#" class="help-button" id="helpbutton1" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]1" tabindex="-1" >
+                                                                     ?</a>
+                </h3>
+                @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName, @style = "width:200px;" })
+            </li>
+            <li>
+                <h3>
+                    @Model.Configuration.DefaultProductPromotionName <a href ="#" class="help-button" id="helpbutton2" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]2"  tabindex="-1" >
+                                                                         ?</a>
+                </h3>
+                @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductPromotionName, @style = "width:200px;" })
+            </li>
+            <li>
+                <h3 style="margin-top: 5px;">
+                    Description <a href ="#" class="help-button" id="helpbutton3" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]3"  tabindex="-1" >
+                                    ?</a>
+                </h3>
+                <label for="ProductGroupModel_Words" style="color:grey; margin-top: 5px;">
+                    Please type in several words or phrases that describe your business or what you
+                    sell or are promoting (separated by commas) to help us build your SmartWords list. 
+                    Think about including wordsyour would use in your Ad Copy.
+                </label>
+                <br />
+                @Html.TextAreaFor(t => t.Words, new { @class = "k-textbox1", @required = true, @validationmessage = "Please enter Some Words", @rows = "4", @cols = "110" })
+            </li>
+            <li>
+                <h3>
+                    How are you targeting your ads? <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  tabindex="-1" >
+                                                          ?</a> </h3>
+            </li>
+            <li><p><input type="radio" name="group1" value="NATIONALLY" checked="checked" /> Nationally &nbsp;&nbsp;&nbsp;<input type="radio" name="group1" value="STATE" /> Statewide&nbsp;&nbsp;&nbsp;<input type="radio" name="group1" value="GEO_POINT" /> Exact Location</p><br/></li>
+            <li>
+                <fieldset style="padding-bottom: 10px">
+                    <legend>Business Address</legend>
+                    <table >
+                        <tr>
+                            <td>
+                                <div id="addresses">
+                                    @Html.EditorFor(t => t.Addresses)
+                                </div>
+                                <div style="text-align: left; margin-left: 75px; margin-top: -30px;" class ="adLink">
+                                    @Html.LinkToAddNestedForm("Additional Business Location", "#addresses", ".address", "Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp", "AddBusinessLocationButton")
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </li>
+            <li>     <fieldset style="padding-bottom: 10px">
+                         <table >
+                         <tr style="height: 35px;">
+                             <td colspan = "3">
+                                 <label >
+                                     What URL are you trying to drive traffic to? <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  tabindex="-1" >
+                                                                                      ?</a></label>
+                             </td>
+                         </tr>
+                             <tr style="height: 35px;">
+                                 <td style="width: 68px">&nbsp;</td>
+                                 <td>
+                                     @Html.TextBoxFor(m => m.LandingUrl, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
+                                     @Html.ValidationMessageFor(t => t.LandingUrl)
+                                 </td>
+                                 <td>
+                                     <span style=" margin-left: 5px;" class="grey-text">This url is your landing page</span>
+                                 </td>
+                             </tr></table></fieldset></li>
+                                         <li>
+            <div style="text-align: center">
+                <button class="k-button" id="save1" type="submit" name="Command" value ="Setup">
+                    <span class="k-update k-icon"></span>Save & Continue
+                </button>
+            </div>
+            </li>
+        </ul>
+    </div>
+</div>
+                </div>
+            </div>
+            @*<hr class="titlewhiteline" style="margin-top: -60px; margin-bottom:5px; " />
+            <br style="margin-top:1px;background-color:red;"></br>*@
+            <input type="hidden" id="ViewSelectedKeywordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'/>
+            <input type="hidden" id="ViewSmartWordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["ViewSmartWordsUrl"]'/>
+            <input type="hidden" id="NegativeKeyWordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["NegativeKeyWordsUrl"]'/>
+            <input type="hidden" id="AdditionalSiteLinksUrl" value='@System.Configuration.ConfigurationManager.AppSettings["AdditionalSiteLinksUrl"]'/>
+            <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+            <input type="hidden" id="LogoUrlStr" value='@System.Configuration.ConfigurationManager.AppSettings["LogoUrl"]'/>
+            <input type="hidden" id="BillingLaunchUrl" value='@System.Configuration.ConfigurationManager.AppSettings["BillingLaunchUrl"]'/>
+            <input type="hidden" id="CategoriesUrl" value='@System.Configuration.ConfigurationManager.AppSettings["CategoriesUrl"]'/>
+            <input type="hidden" id="CreateAdsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["CreateAdsUrl"]'/>
+            <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
+            <input type="hidden" id="PromotionAddressType" name="PromotionAddressType" value="@Model.PromotionAddressType"/>
+            <img id="displayBox" style="display: none" />
+            <div id="InvalidDescriptionWindow" style="display: none; text-align: center; font-weight: bold;">
+                <div class="InvalidDescriptionText">
+                </div>
+                <br />
+                <div style="text-align: center">
+                    <input type="button" id="btnCancelInvalid" value="OK" class="k-button" />
+                </div>
+            </div>
+            
+        }
+    </div>
+    
+    <div id="DirtyFormWindow" style="display: none">
+        <form name="hiddenDirtyForm" id="hiddenDirtyForm" action="DirtyForm" method="post">
+            Your data has been modified. If you continue your current keyword selection will be deleted.
+            <div style="text-align: center">
+                <input type="button" id="btnOkDF" value="OK" class="k-button" />
+                <input type="button" id="btnCancelDF" value="Cancel" class="k-button" />
+            </div>
+        </form>
+    </div>
+    
+    
+    
+        <div id="ChangeAddressTypeForm" style="display: none">
+            You are about to remove all of your location settings, do you want to continue?
+            <div style="text-align: center">
+                <input type="button" id="btnOkCAT" value="OK" class="k-button" />
+                <input type="button" id="btnCancelCAT" value="Cancel" class="k-button" />
+            </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    if ($('#currentMode').val() == "True") {
+        $("#btnOne").removeClass('unselected');
+        $("#btnTwo").removeClass('unselected');
+        $("#btnThree").removeClass('unselected');
+        $("#btnOne").addClass('selected');
+        $("#btnTwo").addClass('selected');
+        $("#btnThree").addClass('selected');
+    }
+    $(document).ready(function () {
+        if ($('#AdModelProp_IsNew').val() == 'False') {
+            enableDisable();
+            if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
+                openAllTabs(false);
+            } else if ($('#IsLaunched').val() == 'False') {
+                openAllTabs(true);
+            }
+        }
+        if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
+            $('#ProductGroup_ProductGroupName').attr("readonly", true);
+            $('#ProductGroup_ProductPromotionName').attr("readonly", true);
+            $('#ProductGroup_Words').attr("readonly", true);
+            $('#ProductGroup_Budget').attr("readonly", true);
+            $('#ProductGroup_StartDate').attr("readonly", true);
+            $('#ProductGroup_EndDate').attr("readonly", true);
+            $('input[name*="ProductGroup.AdEnginesList"]').attr("readonly", true);
+        }
+    });
+
+
+    $('#btnCongrats').live("click", function () {
+        $.unblockUI();
+    });
+
+
+    $('input[name*="ProductGroup.AdEnginesList"]').click(function (event) {
+        if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True')
+            event.preventDefault();
+    });
+    $("#btnCancelInvalid").click(function (event) {
+        var pausePromotionWindow = $('#InvalidDescriptionWindow').data("kendoWindow");
+        $('#InvalidDescriptionWindow').hide();
+        pausePromotionWindow.close();
+    });
+
+</script>
+<script src="@Url.Content("~/Scripts/SmartWordSetup.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/AdditionalLinks.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/QuestionMarkHelp.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/SmartWordMaps.js")" type="text/javascript"> </script>

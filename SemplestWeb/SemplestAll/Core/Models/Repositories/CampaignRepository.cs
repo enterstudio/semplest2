@@ -131,26 +131,12 @@ namespace Semplest.Core.Models.Repositories
                                                                                                       : null;
                                                                                        }).ToList();
         }
-        private string SerializeToCommaDlimitedString(List<GeoTargeting> addresses, string valueDelimiter, string listDelimiter)
-        {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            foreach (var geo in addresses)
-            {
-                sb.Append(geo.Latitude != null ? string.Empty : GetStateNameFromDb((int)geo.StateCodeFK));
-                sb.Append(valueDelimiter);
-                sb.Append(geo.Latitude != null ? geo.Latitude.Value.ToString() : string.Empty);
-                sb.Append(valueDelimiter);
-                sb.Append(geo.Longitude != null ? geo.Longitude.Value.ToString() : string.Empty);
-                sb.Append(valueDelimiter);
-                sb.Append(geo.ProximityRadius != null ? geo.ProximityRadius.Value.ToString() : string.Empty);
-                sb.Append(listDelimiter);
-            }
-            return sb.ToString();
-        }
+      
 
         private List<GeoTargetObject> SerializeToGeoTargetObjectArray(CampaignSetupModel model)
         {
             var geoList = new List<GeoTargetObject>();
+            var sr = new StateRepository();
             foreach (var geo in model.AdModelProp.Addresses)
             {
                 if (!geo.IsState && !geo.Delete && !geo.IsCountry)
@@ -158,7 +144,7 @@ namespace Semplest.Core.Models.Repositories
                     var geoTObj = new GeoTargetObject();
                     geoTObj.address = geo.Address;
                     geoTObj.city = geo.City;
-                    if (geo.StateCodeFK != int.MinValue) geoTObj.state = GetStateNameFromDb((int)geo.StateCodeFK);
+                    if (geo.StateCodeFK != int.MinValue) geoTObj.state = sr.GetStateNameFromCode((int)geo.StateCodeFK);
                     geoTObj.zip = geo.Zip;
                     geoTObj.radius = (double?)(geo.ProximityRadius ?? null);
                     geoTObj.latitude = (double?)(geo.Latitude ?? null);
@@ -167,11 +153,6 @@ namespace Semplest.Core.Models.Repositories
                 }
             }
             return geoList;
-        }
-
-        public string GetStateNameFromDb(int stateCode)
-        {
-            return GetStateNameFromCode(stateCode);
         }
 
         public List<string> GetAdEnginesListFromDb()
@@ -554,38 +535,6 @@ namespace Semplest.Core.Models.Repositories
             return null;
 
         }
-
-        public int GetPromotionId(int userid, string prodGroupName, string promotionName)
-        {
-            using (var dbcontext = new SemplestModel.Semplest())
-            {
-                // get the customerfk from userid
-                var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
-                var i = queryCustFk.First();
-                if (i != null)
-                {
-                    var custfk = (int) i;
-
-                    // get ProductGroup
-                    var queryProdGrp = from c in dbcontext.ProductGroups
-                                       where c.CustomerFK == custfk && c.ProductGroupName == prodGroupName
-                                       select c;
-                    // get Promotion
-                    if (queryProdGrp.Any())
-                    {
-                        var prodGrp = queryProdGrp.First();
-                        var queryPromo = prodGrp.Promotions.Where(m => m.PromotionName == promotionName).ToList();
-                        if (queryPromo.Any())
-                        {
-                            var promo = queryPromo.First();
-                            return promo.PromotionPK;
-                        }
-                    }
-                }
-            }
-            return -1;
-        }
-
 
         public int GetBudgetCycleId(string budgetCycleName)
         {
@@ -985,7 +934,7 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        private void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
+        public void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
                                  string productGroupName, string promotionName)
         {
             var stationIds = new DataTable();

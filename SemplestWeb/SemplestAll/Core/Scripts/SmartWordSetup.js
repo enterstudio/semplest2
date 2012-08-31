@@ -10,15 +10,15 @@ var formClean;
 $(document).ready(function () {
     //tabStrip.tabGroup.children('li:contains("Create Ads")').find('a.k-link').data('contentUrl', $('#CreateAdsUrl').val());
     $("#adMessage").css("visibility", "hidden");
-    formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
+    formClean = $('#LandingUrl').serialize() + $('#DisplayUrl').serialize() + $('#Words').serialize();
 
-    var originalValue = $('#AdModelProp_LandingUrl').val();
+    var originalValue = $('#LandingUrl').val();
     if (originalValue.length == 0) {
-        $('#AdModelProp_LandingUrl').val('http://');
+        $('#LandingUrl').val('http://');
     }
     if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
-        $('#AdModelProp_LandingUrl').attr("readonly", true);
-        $('#AdModelProp_DisplayUrl').attr("readonly", true);
+        $('#LandingUrl').attr("readonly", true);
+        $('#DisplayUrl').attr("readonly", true);
     }
 
     //Proximity TextBox To Numeric TextBox
@@ -31,80 +31,74 @@ $(document).ready(function () {
         if (e.keyCode == 10 || e.keyCode == 13)
             e.preventDefault();
     });
-    $('#AdModelProp_LandingUrl').live("keypress", function (e) {
+    $('#LandingUrl').live("keypress", function (e) {
         if (e.keyCode == 38 || e.keyCode == 39)
             e.preventDefault();
     });
-    $('#AdModelProp_DisplayUrl').live("keypress", function (e) {
+    $('#DisplayUrl').live("keypress", function (e) {
         if (e.keyCode == 47 || e.keyCode == 63)
             e.preventDefault();
-        var dispStr = $('#AdModelProp_DisplayUrl').val();
+        var dispStr = $('#DisplayUrl').val();
         if (dispStr.length > 35) {
             dispStr = dispStr.substring(0, 35);
-            $('#AdModelProp_DisplayUrl').val(dispStr);
+            $('#DisplayUrl').val(dispStr);
         }
     });
 
-    $('#AdModelProp_LandingUrl').live("keyup", function (e) {
-        var originalValue = $('#AdModelProp_LandingUrl').val();
+    $('#LandingUrl').live("keyup", function (e) {
+        var originalValue = $('#LandingUrl').val();
         var index = originalValue.indexOf('http://');
         if (index >= 0) {
-            var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
-            //var dispStr = $('#AdModelProp_LandingUrl').val();
+            var dispStr = $('#LandingUrl').val().substring(index + 7);
+            //var dispStr = $('#LandingUrl').val();
             if (dispStr.indexOf('/') >= 0) {
                 dispStr = dispStr.substring(0, dispStr.indexOf('/'));
             }
             if (dispStr.indexOf('?') >= 0) {
                 dispStr = dispStr.substring(0, dispStr.indexOf('?'));
             }
-            $('#AdModelProp_DisplayUrl').val(dispStr);
+            $('#DisplayUrl').val(dispStr);
             if (dispStr.length > 35) {
                 dispStr = dispStr.substring(0, 35);
-                $('#AdModelProp_DisplayUrl').val(dispStr);
+                $('#DisplayUrl').val(dispStr);
             }
 
         }
         else {
-            var landStr = $('#AdModelProp_LandingUrl').val();
+            var landStr = $('#LandingUrl').val();
             if (landStr.indexOf('/') >= 0) {
                 landStr = landStr.substring(0, landStr.indexOf('/'));
             }
             if (landStr.indexOf('?') >= 0) {
                 landStr = landStr.substring(0, landStr.indexOf('?'));
             }
-            $('#AdModelProp_DisplayUrl').val(landStr);
+            $('#DisplayUrl').val(landStr);
             if (landStr.length > 35) {
                 landStr = landStr.substring(0, 35);
-                $('#AdModelProp_DisplayUrl').val(landStr);
+                $('#DisplayUrl').val(landStr);
             }
         }
     });
-    $("#ProductGroup_IsAutoBid").click(function () {
-        if ($("#ProductGroup_IsAutoBid:checked").val() == 'true') {
-            $("#ProductGroup_AutoBidMaxCPC").attr('disabled', false);
+    $("#IsAutoBid").click(function () {
+        if ($("#IsAutoBid:checked").val() == 'true') {
+            $("#AutoBidMaxCPC").attr('disabled', false);
         } else {
-            $("#ProductGroup_AutoBidMaxCPC").attr('disabled', true);
+            $("#AutoBidMaxCPC").attr('disabled', true);
         }
     });
-    var prodAuto = $("#ProductGroup_AutoBidMaxCPC").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
+    var prodAuto = $("#AutoBidMaxCPC").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
     if (prodAuto != null) {
-        //$("#ProductGroup_IsAutoBid").trigger('click');
-        if ($("#ProductGroup_IsAutoBid:checked").val() != null) {
-            $("#ProductGroup_AutoBidMaxCPC").attr('disabled', false);
+        //$("#IsAutoBid").trigger('click');
+        if ($("#IsAutoBid:checked").val() != null) {
+            $("#AutoBidMaxCPC").attr('disabled', false);
         } else {
-            $("#ProductGroup_AutoBidMaxCPC").attr('disabled', true);
+            $("#AutoBidMaxCPC").attr('disabled', true);
         }
         prodAuto.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
         prodAuto.wrapper.find(".k-link").addClass("k-state-disabled").unbind("keydown");
         prodAuto.wrapper.find(".k-link").addClass("k-state-disabled").unbind("mousedown");
     }
-    //$("#ProductGroup_IsAutoBid").trigger();
-    var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
-    budjet.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
-    budjet.wrapper.find(".k-link")
-        .addClass("k-state-disabled").unbind("keydown");
-    budjet.wrapper.find(".k-link")
-        .addClass("k-state-disabled").unbind("mousedown");
+    //$("#IsAutoBid").trigger();
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator({
@@ -112,7 +106,7 @@ $(document).ready(function () {
             minreq: function (input) {
                 if ($.browser.version > "8.0" && $.browser.msie) {
                     if (input.is("[name=ProductGroup.Budget]")) {
-                        if (input.val() < parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val())) {
+                        if (input.val() < parseInt($('#Configuration_CustomerMinOrderAmount').val())) {
                             return false;
                         }
                         status.text("").addClass("valid");
@@ -122,7 +116,7 @@ $(document).ready(function () {
                 }
                 else {
                     if (input.attr("name") == "ProductGroup.Budget") {
-                        if (input.val() < parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val())) {
+                        if (input.val() < parseInt($('#Configuration_CustomerMinOrderAmount').val())) {
                             return false;
                         }
                         status.text("").addClass("valid");
@@ -136,7 +130,7 @@ $(document).ready(function () {
             required: function (e) {
                 return e.attr('name').split('.')[e.attr('name').split('.').length - 1] + " is Requried..";
             },
-            minreq: "Budget must not be less than " + parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val()),
+            minreq: "Budget must not be less than " + parseInt($('#Configuration_CustomerMinOrderAmount').val()),
             min: "{0} should be greater than or equal to {1}",
             max: "{0} should be smaller than or equal to {1}"
         }
@@ -144,7 +138,7 @@ $(document).ready(function () {
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
     $("#save1").click(function (e) {
-
+        return;
         var searchengines = $('input[name="ProductGroup.AdEnginesList"]');
         var prodgrpbudget = $('input[name="ProductGroup.Budget"]');
         if (searchengines[0].checked == true || searchengines[1].checked == true) {
@@ -195,21 +189,21 @@ $(document).ready(function () {
         var dataItem = this.dataItem(e.item.index());
         if (dataItem.text == 'Specific Period') {
             $('#lblbudgetdisplay').html('/ Promotion Total Budget');
-            $("#ProductGroup_EndDate").removeClass("enddate");
-            $("#ProductGroup_EndDate").kendoDatePicker({
+            $("#EndDate").removeClass("enddate");
+            $("#EndDate").kendoDatePicker({
                 //change: endChange
             }).data("kendoDatePicker");
         } else {
             $('#lblbudgetdisplay').html('/ Month');
-            $("#ProductGroup_EndDate").addClass("enddate");
-            $("#ProductGroup_EndDate").val('');
+            $("#EndDate").addClass("enddate");
+            $("#EndDate").val('');
             disposeDatePicker();
         }
 
     };
 
     function disposeDatePicker() {
-        var datepicker = $("#ProductGroup_EndDate").data("kendoDatePicker"),
+        var datepicker = $("#EndDate").data("kendoDatePicker"),
             popup = datepicker.dateView.popup,
             element = popup.wrapper[0] ? popup.wrapper : popup.element;
 
@@ -234,16 +228,7 @@ $(document).ready(function () {
     $("#dropDownPeriodList").kendoDropDownList({
         select: onSelect
     });
-    if ($("#ProductGroup_EndDate").val() == '')
-        $("#dropDownPeriodList").data("kendoDropDownList").select(0);
-    else {
-        $("#dropDownPeriodList").data("kendoDropDownList").select(1);
-        $('#lblbudgetdisplay').html('/ Promotion');
-        $("#ProductGroup_EndDate").removeClass("enddate");
-        $("#ProductGroup_EndDate").kendoDatePicker({
-            //change: endChange
-        }).data("kendoDatePicker");
-    }
+
     // detach select event handler via unbind()
     //dropdownlist.data("dropDownPeriodList").unbind("select", onSelect);
 
@@ -269,28 +254,7 @@ $(document).ready(function () {
             start.max(endDate);
         }
     }
-    var dateArray = $("#ProductGroup_StartDate").val().split("/");
-    var toDay = new Date();
-    if (dateArray.length > 1)
-        toDay = new Date(dateArray[2], parseInt(dateArray[0]) - 1, dateArray[1]);
 
-
-    var start = $("#ProductGroup_StartDate").kendoDatePicker({
-        change: startChange, value: toDay, format: "MM-dd-yyyy"
-    }).data("kendoDatePicker");
-
-
-    //    var end = $("#EndDate").kendoDatePicker({
-    //        change: endChange
-    //    }).data("kendoDatePicker");
-
-    //start.max(end.value());
-    //end.min(start.value());
-    // Tab Activated Event to Change The Color of the Number 1,2,3,4
-
-    // end Enable tabs Region
-
-    //Selected Button Logic
     $("input[type='button']#btnOne").addClass("k-button rounded");
     $("#negativeKeyWords").click(function () {
         var length = tabStrip.items().length;
@@ -312,7 +276,6 @@ $(document).ready(function () {
     });
 
     $("#viewSelectedKeywords").click(function () {
-        alert('in viewSelectedKeywords');
         var length = tabStrip.items().length;
         var isSelectedKeywordsAdded = false;
         for (var item = 0; item < length; item++) {
@@ -337,7 +300,7 @@ $(document).ready(function () {
         tabStrip.remove(tabStrip.tabGroup.children('li:contains("Billing & Launch")'));
         tabStrip.remove(tabStrip.tabGroup.children('li:contains("View Keywords")'));
         tabStrip.select(tabStrip.tabGroup.children('li:contains("Create Ads")'));
-        formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
+        formClean = $('#LandingUrl').serialize() + $('#DisplayUrl').serialize() + $('#Words').serialize();
 
 
         $('#DirtyFormWindow').hide();
@@ -355,7 +318,7 @@ $(document).ready(function () {
         //$("#hiddenDirtyForm").submit();
 
         selectionAddress = $('input[name=group1]:checked').val();
-        $('#AdModelProp_PromotionAddressType').val(selectionAddress);
+        $('#PromotionAddressType').val(selectionAddress);
         $("#AddBusinessLocationButton").attr('disabled', selectionAddress == 'NATIONALLY');
 
         $("div .address button").trigger('click');
@@ -365,16 +328,16 @@ $(document).ready(function () {
             $('#ChangeAddressTypeForm').data("kendoWindow").close();
         }
     });
-    var selectionAddress = $('#AdModelProp_PromotionAddressType').val();
+    var selectionAddress = $('#PromotionAddressType').val();
     if (selectionAddress == '') {
         selectionAddress = 'NATIONALLY';
         $("#AddBusinessLocationButton").attr('disabled', true);
-        $('#AdModelProp_PromotionAddressType').val(selectionAddress);
+        $('#PromotionAddressType').val(selectionAddress);
     }
 
     $('input:radio[value|=' + selectionAddress + ']').attr('checked', true);
     $("#btnCancelCAT").click(function (event) {
-        $('input:radio[value|=' + $('#AdModelProp_PromotionAddressType').val() + ']').attr('checked', true);
+        $('input:radio[value|=' + $('#PromotionAddressType').val() + ']').attr('checked', true);
         var changeWindow = $('#ChangeAddressTypeForm').data("kendoWindow");
         $('#ChangeAddressTypeForm').hide();
         changeWindow.close();
@@ -383,12 +346,12 @@ $(document).ready(function () {
     $("input[name=group1]").change(function (e) {
         var freshForm = true;
         for (var i = 0; i < $('div .address input[name*="Delete"]').length; i++) {
-            if ($('#AdModelProp_Addresses_' + i + '__Delete').val() == 'False') {
-                if ($('#AdModelProp_Addresses_' + i + '__Address').val() != '' ||
-                    $('#AdModelProp_Addresses_' + i + '__City').val() != '' ||
-                        $('#AdModelProp_Addresses_' + i + '__StateCodeFK').val() > 0 ||
-                            $('#AdModelProp_Addresses_' + i + '__Zip').val() != '' ||
-                                $('#AdModelProp_Addresses_' + i + '__ProximityRadius').val() != 5) {
+            if ($('#Addresses_' + i + '__Delete').val() == 'False') {
+                if ($('#Addresses_' + i + '__Address').val() != '' ||
+                    $('#Addresses_' + i + '__City').val() != '' ||
+                        $('#Addresses_' + i + '__StateCodeFK').val() > 0 ||
+                            $('#Addresses_' + i + '__Zip').val() != '' ||
+                                $('#Addresses_' + i + '__ProximityRadius').val() != 5) {
                     freshForm = false;
                     break;
                 }
@@ -417,17 +380,17 @@ $(document).ready(function () {
         $('.address')[i].outerHTML = DisableGeoTargetFields($('.address')[i].outerHTML);
     }
 
-});                                //end ready
+});                                 //end ready
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
-//    if (container == "div.ads") {
-//        if ($container.find('input')[1].value == null || $container.find('input')[1].value == '')
-//            $container.find('input')[1].value = 'deleted';
-//        if ($container.find('input')[2].value == null || $container.find('input')[2].value == '')
-//            $container.find('input')[2].value = 'deleted';
-//        if ($container.find('input')[3].value == null || $container.find('input')[3].value == '')
-//            $container.find('input')[3].value = 'deleted';
+    //    if (container == "div.ads") {
+    //        if ($container.find('input')[1].value == null || $container.find('input')[1].value == '')
+    //            $container.find('input')[1].value = 'deleted';
+    //        if ($container.find('input')[2].value == null || $container.find('input')[2].value == '')
+    //            $container.find('input')[2].value = 'deleted';
+    //        if ($container.find('input')[3].value == null || $container.find('input')[3].value == '')
+    //            $container.find('input')[3].value = 'deleted';
     //    }
     $container.find(deleteElement).val('True');
     $container.hide();
@@ -449,11 +412,11 @@ function addNestedForm(container, counter, ticks, content) {
     var pattern = new RegExp(ticks, "gi");
     content = content.replace(pattern, nextIndex);
     pattern = "UIDVALUE";
-    content = content.replace(pattern, nextIndex+ticks);
+    content = content.replace(pattern, nextIndex + ticks);
     if (container == "#addresses") {
-        content = content.replace("doOptions()", "doOptions('AdModelProp_Addresses_" + nextIndex +
-"__City','AdModelProp_Addresses_" + nextIndex + "__StateCodeFK','AdModelProp_Addresses_" + nextIndex +
-"__Zip','AdModelProp_Addresses_" + nextIndex + "__Proximity')");
+        content = content.replace("doOptions()", "doOptions('Addresses_" + nextIndex +
+"__City','Addresses_" + nextIndex + "__StateCodeFK','Addresses_" + nextIndex +
+"__Zip','Addresses_" + nextIndex + "__Proximity')");
 
         content = content.replace("class=\"map\"", "class=\"map\"" + "id=\"map_" + nextIndex + "\"");
         content.replace(new RegExp('nestedObject', "igm"), ' Addresses_' + nextIndex + '_');
@@ -475,50 +438,50 @@ function addNestedForm(container, counter, ticks, content) {
     if (container == "#ads") {
         $("#adMessage").css("visibility", "hidden");
         $("#getCategories").attr('disabled', false);
-        $("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
+        $("#Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
             id: nextIndex + 1,
-            title: $("#AdModelProp_DisplayUrl").val(),
-            twitter: $("#AdModelProp_Ads_" + nextIndex + "__AdTitle").val(),
-            content: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").val(),
-            content1: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").val()
+            title: $("#DisplayUrl").val(),
+            twitter: $("#Ads_" + nextIndex + "__AdTitle").val(),
+            content: $("#Ads_" + nextIndex + "__AdTextLine1").val(),
+            content1: $("#Ads_" + nextIndex + "__AdTextLine2").val()
         }));
-        $("#AdModelProp_Ads_" + nextIndex + "__AdTitle").attr("data-bind", "events: { change: listener}");
-        $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").attr("data-bind", "events: { change: listener}");
-        $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").attr("data-bind", "events: { change: listener}");
-        kendo.bind($("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_ul"), kendo.observable({
+        $("#Ads_" + nextIndex + "__AdTitle").attr("data-bind", "events: { change: listener}");
+        $("#Ads_" + nextIndex + "__AdTextLine1").attr("data-bind", "events: { change: listener}");
+        $("#Ads_" + nextIndex + "__AdTextLine2").attr("data-bind", "events: { change: listener}");
+        kendo.bind($("#Ads_" + nextIndex + "__PromotionAdsPK_ul"), kendo.observable({
             listener: function (e) {
-                $("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
+                $("#Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
                     id: nextIndex + 1,
-                    title: $("#AdModelProp_DisplayUrl").val(),
-                    twitter: $("#AdModelProp_Ads_" + nextIndex + "__AdTitle").val(),
-                    content: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").val(),
-                    content1: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").val()
+                    title: $("#DisplayUrl").val(),
+                    twitter: $("#Ads_" + nextIndex + "__AdTitle").val(),
+                    content: $("#Ads_" + nextIndex + "__AdTextLine1").val(),
+                    content1: $("#Ads_" + nextIndex + "__AdTextLine2").val()
                 }));
             }
         }));
     }
     if (container == "#addresses") {
-        //$("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
-        //$("#AdModelProp_Addresses_" + nextIndex + "__ProximityRadii").kendoDropDownList();
-        doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
-        $('#AdModelProp_Addresses_' + nextIndex + '__Address').change(function (e) {
-            doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
+        //$("#Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
+        //$("#Addresses_" + nextIndex + "__ProximityRadii").kendoDropDownList();
+        doOptions('Addresses_' + nextIndex + '__Address', 'Addresses_' + nextIndex + '__City', 'Addresses_' + nextIndex + '__StateCodeFK', 'Addresses_' + nextIndex + '__Zip', 'Addresses_' + nextIndex + '__ProximityRadius');
+        $('#Addresses_' + nextIndex + '__Address').change(function (e) {
+            doOptions('Addresses_' + nextIndex + '__Address', 'Addresses_' + nextIndex + '__City', 'Addresses_' + nextIndex + '__StateCodeFK', 'Addresses_' + nextIndex + '__Zip', 'Addresses_' + nextIndex + '__ProximityRadius');
         });
-        $('#AdModelProp_Addresses_' + nextIndex + '__City').change(function (e) {
-            doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
+        $('#Addresses_' + nextIndex + '__City').change(function (e) {
+            doOptions('Addresses_' + nextIndex + '__Address', 'Addresses_' + nextIndex + '__City', 'Addresses_' + nextIndex + '__StateCodeFK', 'Addresses_' + nextIndex + '__Zip', 'Addresses_' + nextIndex + '__ProximityRadius');
         });
-        $('#AdModelProp_Addresses_' + nextIndex + '__StateCodeFK').change(function (e) {
-            doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
+        $('#Addresses_' + nextIndex + '__StateCodeFK').change(function (e) {
+            doOptions('Addresses_' + nextIndex + '__Address', 'Addresses_' + nextIndex + '__City', 'Addresses_' + nextIndex + '__StateCodeFK', 'Addresses_' + nextIndex + '__Zip', 'Addresses_' + nextIndex + '__ProximityRadius');
         });
-        $('#AdModelProp_Addresses_' + nextIndex + '__Zip').change(function (e) {
-            doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
+        $('#Addresses_' + nextIndex + '__Zip').change(function (e) {
+            doOptions('Addresses_' + nextIndex + '__Address', 'Addresses_' + nextIndex + '__City', 'Addresses_' + nextIndex + '__StateCodeFK', 'Addresses_' + nextIndex + '__Zip', 'Addresses_' + nextIndex + '__ProximityRadius');
         });
-        $('#AdModelProp_Addresses_' + nextIndex + '__ProximityRadius').change(function (e) {
-            doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
+        $('#Addresses_' + nextIndex + '__ProximityRadius').change(function (e) {
+            doOptions('Addresses_' + nextIndex + '__Address', 'Addresses_' + nextIndex + '__City', 'Addresses_' + nextIndex + '__StateCodeFK', 'Addresses_' + nextIndex + '__Zip', 'Addresses_' + nextIndex + '__ProximityRadius');
         });
     }
-//    $.validator.unobtrusive.parse('#form0');
-//    $.validate.unobtrusive.parse('#form0');
+    //    $.validator.unobtrusive.parse('#form0');
+    //    $.validate.unobtrusive.parse('#form0');
 }
 
 function DisableGeoTargetFields(content) {
@@ -531,7 +494,7 @@ function DisableGeoTargetFields(content) {
     }
     else if ($('input:radio[name=group1]:checked').val() == "GEO_POINT") {
         content = content.replace('k-state-disabled', '');
-        
+
         content = content.replace(/disabled=\"disabled\"/g, '');
     }
     return content;
@@ -539,8 +502,8 @@ function DisableGeoTargetFields(content) {
 
 var onSelect = function (e) {
 
-    var formDirty = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
-    if (formClean != formDirty && $('#AdModelProp_IsNew').val() != 'True') {
+    var formDirty = $('#LandingUrl').serialize() + $('#DisplayUrl').serialize() + $('#Words').serialize();
+    if (formClean != formDirty && $('#IsNew').val() != 'True') {
         var dirtyFormWindow = $('#DirtyFormWindow').kendoWindow({
             resizable: false,
             modal: true,
@@ -626,16 +589,29 @@ function OnBegin() {
     }
     else
         if ($.browser.version > "8.0") {
-            $.blockUI({
-                message: $('#displayBox'),
-                css: {
-                    top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
-                    left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
-                    width: $('#displayBox')[0].naturalWidth + 'px',
-                    border: '0px solid #aaa'
-                }
-            });
-        } else {
+            if ($('#displayBox')[0].nameProp == "") {
+                $.blockUI({
+                    message: "",
+                    css: {
+                        top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
+                        left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
+                        width: $('#displayBox')[0].naturalWidth + 'px',
+                        border: '0px solid #aaa'
+                    }
+                });
+            }
+            else {
+                $.blockUI({
+                    message: $('#displayBox'),
+                    css: {
+                        top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
+                        left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
+                        width: $('#displayBox')[0].naturalWidth + 'px',
+                        border: '0px solid #aaa'
+                    }
+                });
+            }
+    } else {
             $.blockUI({
                 message: $('#displayBox'),
                 css: {
@@ -646,33 +622,32 @@ function OnBegin() {
                 }
             });
         }
-    }
-    function OnFailure() {
-        $.unblockUI();
-    }
+}
+function OnFailure(event) {
+    $.unblockUI();
+}
 
-    function OnSuccess(id) {
+function OnSuccess(id) {
     if ($('#displayBox').attr('src') != $('#LogoUrlStr').val() + 'congratulations.jpg')
         $.unblockUI();
     var tab;
     //alert(id);
-   if (id == "Create Ads") {
+    if (id == "Create Ads") {
         tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
         tabStrip.select(tab);
-    } else if (id == "Billing & Launch") {
+    } else if (id.name == "ViewSmartWords") {
         if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
             tabStrip.append({
-                text: "Billing & Launch",
-                contentUrl: $('#BillingLaunchUrl').val()
+                text: "View SmartWords",
+                contentUrl: $('#ViewSmartWordsUrl').val()
             }, tabStrip.tabGroup.children("li:last")).select();
-            tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+            tab = tabStrip.tabGroup.children('li:contains("View SmartWords")');
             tabStrip.select(tab);
         } else {
             tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
             tabStrip.select(tab);
         }
-    }
-    else if (id == "NegativeKeywords") {
+    } else if (id == "NegativeKeywords") {
         if ($("#NegativeKeywordsText").val().trim().length < 1) {
             removeCurrentTab();
         }
@@ -680,26 +655,21 @@ function OnBegin() {
         if (id.name == "Keywords") {
             $('#KeywordCount').html(id.count);
             tabStrip.reload(tabStrip.select());
-        }
-        else if (id.name == "Categories") {
+        } else if (id.name == "Categories") {
             $('input[name *= "HasBeenSaved"]').val('True');
-
-            if ($('#IsLaunched').val() == 'False') {
-                if (!tabStrip.tabGroup.children('li:contains("' + id.name + '")').text()) {
-                    tabStrip.append({
-                        text: "Categories",
-                        contentUrl: $('#CategoriesUrl').val()
-                    }, tabStrip.tabGroup.children("li:last")).select();
-                    tab = tabStrip.tabGroup.children('li:contains("' + id.name + '")');
-                    tabStrip.select(tab);
-                } else {
-                    tab = tabStrip.tabGroup.children('li:contains("' + id.name + '")');
-                    tabStrip.select(tab);
-                }
+            if (!tabStrip.tabGroup.children('li:contains("' + id.name + '")').text()) {
+                tabStrip.append({
+                    text: "Categories",
+                    contentUrl: '/SmartWord/Categories'
+                }, tabStrip.tabGroup.children("li:last")).select();
+                tab = tabStrip.tabGroup.children('li:contains("' + id.name + '")');
+                tabStrip.select(tab);
+            } else {
+                tab = tabStrip.tabGroup.children('li:contains("' + id.name + '")');
+                tabStrip.select(tab);
             }
             parseNewIds(id.newKeys);
-        }
-        else if (id.name == "AdditionalLinks") {
+        } else if (id.name == "AdditionalLinks") {
             $('input[name *= "SiteLinksSaved"]').val('True');
             if ($('input[id*="SiteLinks_"]').length < 1) {
                 removeCurrentTab();
@@ -755,8 +725,8 @@ $('#getCategories').click(function () {
     enabledIsLaunched();
     var urlStr = $('#LogoUrlStr').val() + 'reviewing your input.jpg';
     $('#displayBox').attr('src', urlStr);
-    formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
-    $('#AdModelProp_IsNew').val('False');
+    formClean = $('#LandingUrl').serialize() + $('#DisplayUrl').serialize() + $('#Words').serialize();
+    $('#IsNew').val('False');
 });
 
 function removeCurrentTab() {

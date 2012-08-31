@@ -1,4 +1,4 @@
-﻿ $(document).ready(function () {
+﻿$(document).ready(function () {
     $.getJSON($('#SideBarUrl').val(), {}, function (data) {
         for (var mainGroup in data) {
             for (var subitem in data[mainGroup].SubItems) {

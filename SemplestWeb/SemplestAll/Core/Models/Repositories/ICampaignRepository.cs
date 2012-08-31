@@ -15,7 +15,6 @@ namespace Semplest.Core.Models.Repositories
         IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid);
         Promotion GetPromoitionFromCampaign(int customerFK, CampaignSetupModel model);
         List<ProductGroup> GetProductGroupsForUser(int userid);
-        int GetPromotionId(int userid, string prodGroupName, string promotionName);
         int GetBudgetCycleId(string budgetCycleName);
         Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal customerDefaultPerCampaignFlatFeeAmount);
 

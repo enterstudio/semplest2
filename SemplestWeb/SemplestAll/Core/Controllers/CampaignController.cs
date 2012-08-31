@@ -210,7 +210,8 @@ namespace Semplest.Core.Controllers
                     WriteLog(msg, model);
 
                     //var ds = new SemplestDataService();
-                    var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                    var promotionRepository = new PromotionRepository();
+                    var promoId = promotionRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                     model.ProductGroup.ProductPromotionName);
                     _campaignRepository.SaveSelectedCategories(promoId, catList);
 
@@ -401,7 +402,8 @@ namespace Semplest.Core.Controllers
         {
             int userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var sessModel = (CampaignSetupModel)Session["CampaignSetupModel"];
-            var promoid = _campaignRepository.GetPromotionId(userid,sessModel.ProductGroup.ProductGroupName, sessModel.ProductGroup.ProductPromotionName);
+            var promoRepository = new PromotionRepository();
+            var promoid = promoRepository.GetPromotionId(userid, sessModel.ProductGroup.ProductGroupName, sessModel.ProductGroup.ProductPromotionName);
             var campaignModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promoid);
             Session["CampaignSetupModel"] = campaignModel;
             return PartialView("EditorTemplates/AdModel", campaignModel.AdModelProp);
@@ -513,7 +515,8 @@ namespace Semplest.Core.Controllers
                 Session["AllCategories"] = model.AllCategories;
             }
             int userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-            var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+            var promoRepository = new PromotionRepository();
+            var promoId = promoRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                              model.ProductGroup.ProductPromotionName);
             var dbContext = new SemplestModel.Semplest();
             var cats = dbContext.KeywordCategories.Where(x => x.PromotionFK == promoId);
@@ -548,7 +551,8 @@ namespace Semplest.Core.Controllers
             try
             {
                 int userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-                var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                var promoRepository = new PromotionRepository();
+                var promoId = promoRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                                  model.ProductGroup.ProductPromotionName);
                 _campaignRepository.SetKeywordsDeleted(model.KeywordIds, promoId);
                 CampaignSetupModel sessionModel = (CampaignSetupModel) Session["CampaignSetupModel"];

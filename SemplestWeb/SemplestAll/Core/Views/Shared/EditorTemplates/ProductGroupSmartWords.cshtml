@@ -1,0 +1,72 @@
+﻿@using Semplest.Core.Helpers
+@model Semplest.Core.Models.SmartWordSetupModel
+<div id="productGroupModel">
+    <div class="configuration">
+        <span class="infoHead">Tell us about your product or service</span>
+        <ul class="options">
+            <li>
+                <h3>
+                    @Model.Configuration.DefaultProductGroupName <a href ="#" class="help-button" id="helpbutton1" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]1" tabindex="-1" >
+                                                                     ?</a>
+                </h3>
+                @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName, @style = "width:200px;" })
+            </li>
+            <li>
+                <h3>
+                    @Model.Configuration.DefaultProductPromotionName <a href ="#" class="help-button" id="helpbutton2" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]2"  tabindex="-1" >
+                                                                         ?</a>
+                </h3>
+                @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductPromotionName, @style = "width:200px;" })
+            </li>
+            <li>
+                <h3 style="margin-top: 5px;">
+                    Description <a href ="#" class="help-button" id="helpbutton3" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]3"  tabindex="-1" >
+                                    ?</a>
+                </h3>
+                <label for="ProductGroupModel_Words" style="color:grey; margin-top: 5px;">
+                    Please type in several words or phrases that describe your business or what you
+                    sell or are promoting (separated by commas) to help us build your search campaign:
+                </label>
+                <br />
+                @Html.TextAreaFor(t => t.Words, new { @class = "k-textbox1", @required = true, @validationmessage = "Please enter Some Words", @rows = "4", @cols = "110" })
+            </li>
+            <li>
+                <div style="text-align: center">
+                    <button class="k-button" id="save1" type="submit" name="Command" value="SaveProductPromotion">
+                        <span class="k-update k-icon"></span>Save & Continue
+                    </button>
+                </div>
+            </li>
+            <li>
+                <h3>
+                    Where do you want your ads shown? <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  tabindex="-1" >
+                                                          ?</a> </h3>
+            </li>
+            <li><p><input type="radio" name="group1" value="NATIONALLY" checked="checked" /> Nationally &nbsp;&nbsp;&nbsp;<input type="radio" name="group1" value="STATE" /> Statewide&nbsp;&nbsp;&nbsp;<input type="radio" name="group1" value="GEO_POINT" /> Exact Location</p><br/></li>
+            <li>
+                <fieldset style="padding-bottom: 10px">
+                    <legend>Business Address</legend>
+                    <table >
+                        <tr>
+                            <td>
+                                <div id="addresses">
+                                    @Html.EditorFor(t => t.Addresses)
+                                </div>
+                                <div style="text-align: left; margin-left: 75px; margin-top: -30px;" class ="adLink">
+                                    @Html.LinkToAddNestedForm("Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp", "AddBusinessLocationButton")
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </li>
+            <li>
+            <div style="text-align: center">
+                <button class="k-button" id="save1" type="submit" name="Command" value="SaveProductPromotion">
+                    <span class="k-update k-icon"></span>Save & Continue
+                </button>
+            </div>
+            </li>
+        </ul>
+    </div>
+</div>
