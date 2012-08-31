@@ -1,10 +1,16 @@
 package semplest.dmoz;
 
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.dmoz.springjdbc.BaseDB;
+import semplest.util.SemplestUtils;
 
 public class DmozDB extends BaseDB{
 
@@ -56,5 +62,42 @@ public class DmozDB extends BaseDB{
 		return urls;
 	}
 	
+	public static void loadDmozToDB() throws Exception{
+		//Read property file for dmoz files paths
+		Properties properties = new Properties();
+		FileInputStream in = new FileInputStream("system.properties");
+		properties.load(in);
+		in.close();
+		
+		String dmozUrlFile = properties.getProperty("dmoz.urlFile");
+		String dmozDescriptionFile = properties.getProperty("dmoz.descriptionFile");
+		
+		//Build DMOZ Tree
+		final BuildDmozTree dmozTreeBuilder = new BuildDmozTree(dmozDescriptionFile,dmozUrlFile);
+		HashMap<String,TreeNode> dmozTree = dmozTreeBuilder.buildAndGetAllDmozTreeNodes();
+		
+		//Batch and store the tree to database
+		final List<Map<String,TreeNode>> batches = SemplestUtils.getBatches(dmozTree, 1000);
+		for (final Map<String,TreeNode> batch : batches)
+		{			
+			ArrayList<String> batchSql = new ArrayList<String>();
+			for(TreeNode node : batch.values()){
+				String sqlDmoz = "INSERT INTO DMOZ(DmozNodePK,NodeText,ParentNodeID,NodeDescription) " +
+						"VALUES("+ node.getNodeID() +"," + node.getFullName() + "," + node.getParentID() + "," + node.getCategoryData().getDescription() + ");";	
+				
+				String sqlUrlData = "";
+				for(String url : node.getCategoryData().getUrls()){
+					String sqlUrls = "INSERT INTO URLData(DmozNodeFK,URL,Level) " +
+							"VALUES(" + node.getNodeID() + "," + url + "," + 1 + ");";
+					
+					sqlUrlData = sqlUrlData + sqlUrls;
+				}
+				
+				String sqlReq = sqlDmoz + sqlUrlData;
+				batchSql.add(sqlReq);
+			}
+			jdbcTemplate.batchUpdate(batchSql.toArray(new String[batchSql.size()]));
+		}
+	}	
 	
 }

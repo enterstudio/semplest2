@@ -1,4 +1,4 @@
-package semplest.dmoz.test;
+package semplest.dmoz;
 
 public class CategoryData {
 	private String description;

@@ -3,6 +3,7 @@ package semplest.dmoz.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import semplest.dmoz.TreeNode;
 import semplest.dmoz.springjdbc.BaseDB;
 
 public class testTree extends BaseDB {

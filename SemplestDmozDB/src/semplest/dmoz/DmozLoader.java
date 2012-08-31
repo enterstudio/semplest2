@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -173,7 +172,7 @@ public class DmozLoader
 		return dmozEntry;
 	}
 	
-	public void engage() throws Exception
+	public List<DmozEntry> engage() throws Exception
 	{
 		logger.info("Starting processing with DmozIdFile [" + dmozIdFile + "], DmozUrlFile [" + dmozUrlFile + "], DmozDescriptionFile [" + dmozDescriptionFile + "]");
 		final List<DmozEntry> entries = getDmozEntries();
@@ -183,15 +182,9 @@ public class DmozLoader
 		final String treeString = SemplestUtils.getEasilyReadableString(tree);
 		logger.info("Tree:\n" + treeString);
 		//logger.info("Tree:\n" + tree);
-		//System.out.println("Tree:\n" + tree);		
-		final List<List<DmozEntry>> batches = SemplestUtils.getBatches(entries, 100);
-		for (final List<DmozEntry> batch : batches)
-		{			
-			/*
-			TODO
-			saveToDb(batch);
-			*/
-		}
+		//System.out.println("Tree:\n" + tree);	
+		
+		return entries;
 	}
 	
 	public DmozTree getDmozTree(List<DmozEntry> entries)
