@@ -57,7 +57,9 @@ public class BuildDmozTree {
 	}
 	
 	public HashMap<String,TreeNode> buildAndGetAllDmozTreeNodes() throws Exception{
+		System.out.println("Loading Dmoz data...");
 		inputData = readInData();
+		System.out.println("Building Dmoz tree...");
 		buildTree(inputData);
 		return allNodes;
 	}
@@ -93,7 +95,10 @@ public class BuildDmozTree {
 		while ((strLine = br.readLine()) != null){
 			String[] lineContents = strLine.split(" ");
 			String cat = lineContents[0].trim();
-			String[] urls = Arrays.copyOfRange(lineContents, 2, lineContents.length-1);
+			HashSet<String> urls = new HashSet<String>();
+			for(int i = 2; i < lineContents.length; i++){
+				urls.add(lineContents[i]);
+			}
 			CategoryData catData;
 			if(!allData.containsKey(cat)){
 				catData = new CategoryData();
@@ -101,7 +106,7 @@ public class BuildDmozTree {
 			else{
 				catData = allData.get(cat);
 			}
-			catData.setUrls(urls);
+			catData.setUrls(urls.toArray(new String[urls.size()]));
 			allData.put(cat, catData);
 		}
 		in.close();
