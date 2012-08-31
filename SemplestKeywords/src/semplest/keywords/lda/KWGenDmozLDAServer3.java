@@ -95,7 +95,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface{
 			ArrayList<String> categories = this.getCategories(description);
 			return categories;
 		}catch(Exception e){
-			logger.error(e.toString());
+			logger.error(e.toString(), e);
 			throw e;
 		}
 	}
