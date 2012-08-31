@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import scala.collection.immutable.List;
 
 /* 
  * Utilities to read manipulate dmoz keywords 

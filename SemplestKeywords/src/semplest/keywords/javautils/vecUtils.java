@@ -3,7 +3,6 @@ package semplest.keywords.javautils;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.Comparator;
 
 public class vecUtils
 {
