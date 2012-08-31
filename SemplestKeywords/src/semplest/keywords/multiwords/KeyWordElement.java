@@ -1,12 +1,13 @@
 package semplest.keywords.multiwords;
 
+public class KeyWordElement
+{
 
-public class KeyWordElement {
-	
-	private String [] wordList;
-	
-	public KeyWordElement(String s) {
+	private String[] wordList;
+
+	public KeyWordElement(String s)
+	{
 		this.wordList = s.split("\\s+");
 	}
-	
+
 }

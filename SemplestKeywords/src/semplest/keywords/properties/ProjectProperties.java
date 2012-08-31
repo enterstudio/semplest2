@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 public class ProjectProperties {
 
+  //final public static String PROPSFILE =  "C:\\Projects\\java\\workspace\\SemplestKeywords\\data\\SemplestKeywords.properties";
   final public static String PROPSFILE =  "data/SemplestKeywords.properties";
 
   public static Properties properties;
@@ -54,6 +55,7 @@ public class ProjectProperties {
       properties.load( new FileInputStream(PROPSFILE) );
     } catch (Exception e ){
       e.printStackTrace();
+      logger.error("Problem", e);
       // Note: Logger may not be initialized yet
     }
 

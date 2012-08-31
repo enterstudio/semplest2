@@ -38,33 +38,38 @@ import semplest.keywords.scalautils.*;
  */
 
 // ------------
-class Crawl {
+class Crawl
+{
 
 	private static final Logger logger = Logger.getLogger(Crawl.class);
-	
-  public static void main(String[] args) throws Exception {
 
-    String ss = "http://www.google.com";
-    int depth = 1;  
-    String urls = TextUtils.HTMLLinkString( ss, depth, "www.google.com");
+	public static void main(String[] args) throws Exception
+	{
 
-    // start the crawler and add work (with an id to identify the work)
-    Crawler c = new Crawler(); 
-    c.add( "parishilton", urls );
+		String ss = "http://www.google.com";
+		int depth = 1;
+		String urls = TextUtils.HTMLLinkString(ss, depth, "www.google.com");
 
-    try {
-      Thread.sleep( 30000 ); 
-    } catch( Exception e) {
-    	logger.error("Problem", e);
-    }
+		// start the crawler and add work (with an id to identify the work)
+		Crawler c = new Crawler();
+		c.add("parishilton", urls);
 
-    // getch results periodically
-    String[] results = c.fetch();
-    
-    System.out.println("Size of results: "+results.length);
-    
-    // each result is prefixed with the id 
-    for( String res: results)  
-      System.out.println( res );
-  }
+		try
+		{
+			Thread.sleep(30000);
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem", e);
+		}
+
+		// getch results periodically
+		String[] results = c.fetch();
+
+		System.out.println("Size of results: " + results.length);
+
+		// each result is prefixed with the id
+		for (String res : results)
+			System.out.println(res);
+	}
 }

@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Random;
@@ -50,7 +51,9 @@ public class catUtils {
 
   public String code  ( String dcat ){ return smap.get ( dcat ); }
   public String decode( String scat ){ return ismap.get( scat ); }
-  public ArrayList<String> code( ArrayList<String> dcat){
+  
+  public ArrayList<String> code(List<String> dcat)
+  {
     ArrayList<String> ret = new ArrayList<String>( dcat.size() );
     for( String c: dcat)
       if ( code(c ) != null )
@@ -61,7 +64,9 @@ public class catUtils {
     }
     return ret;
   }
-  public ArrayList<String> decode( ArrayList<String> scat){
+
+	public List<String> decode(List<String> scat)
+  {
     ArrayList<String> ret = new ArrayList<String>( scat.size() );
     for( String c: scat) 
       if ( decode( c ) != null )
