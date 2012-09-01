@@ -103,7 +103,9 @@ public class dictUtils
 	public static String isNSW(String word)
 	{
 		if (sw.contains(word))
+		{
 			return "";
+		}
 		return word;
 	}
 
@@ -122,7 +124,9 @@ public class dictUtils
 	{
 		Map<V, K> inv = new HashMap<V, K>();
 		for (Entry<K, V> entry : map.entrySet())
+		{
 			inv.put(entry.getValue(), entry.getKey());
+		}
 		return inv;
 	}
 
@@ -130,17 +134,25 @@ public class dictUtils
 	public static int df(String word)
 	{
 		if (df.containsKey(word))
+		{
 			return df.get(word);
+		}
 		else
+		{
 			return DF_DEFAULT;
+		}
 	}
 
 	public static boolean dfilter(String word)
 	{
 		if (df(word) < DF_THRESHOLD)
+		{
 			return true;
+		}
 		else
+		{
 			return false;
+		}
 	}
 
 	public static int ngdf(String ng)
@@ -148,16 +160,22 @@ public class dictUtils
 		String[] words = ng.split("\\+");
 		int dfsum = 0;
 		for (String w : words)
+		{
 			dfsum += df(w);
+		}
 		return dfsum / words.length;
 	}
 
 	public static boolean ngdfilter(String ng)
 	{
 		if (ngdf(ng) < DF_NG_THRESHOLD)
+		{
 			return true;
+		}
 		else
+		{
 			return false;
+		}
 	}
 
 	// -----------------
@@ -181,6 +199,8 @@ public class dictUtils
 	{
 		System.out.println(dicti.size());
 		for (Entry<String, String> e : docs.entrySet())
+		{
 			System.out.println(e.getKey() + " : " + e.getValue());
+		}
 	}
 }

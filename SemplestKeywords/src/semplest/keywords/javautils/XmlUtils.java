@@ -21,9 +21,9 @@ public class XmlUtils
 
 	// - The interface ----------
 	// Uses Dom parser
-	public static HashMap<String, Integer> autoCompletes(String query)
+	public static Map<String, Integer> autoCompletes(String query)
 	{
-		HashMap<String, Integer> res = new HashMap<String, Integer>();
+		Map<String, Integer> res = new HashMap<String, Integer>();
 		try
 		{
 			DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
@@ -52,9 +52,13 @@ public class XmlUtils
 	{
 		Map<String, Integer> r = autoCompletes(query);
 		if (r.isEmpty())
+		{
 			return 0;
+		}
 		if (r.containsKey(query))
+		{
 			return r.get(query);
+		}
 		String k = java.util.Collections.min(r.keySet(), new Comparator<String>()
 		{
 			public int compare(String a, String b)
@@ -77,12 +81,15 @@ public class XmlUtils
 	public static void main(String[] args)
 	{
 		if (args.length < 1)
+		{
 			return;
+		}
 		// HashMap<String,Integer> res = getSuggestions( args[0] );
-		HashMap<String, Integer> res = autoCompletes(args[0]);
+		Map<String, Integer> res = autoCompletes(args[0]);
 		for (Map.Entry<String, Integer> e : res.entrySet())
+		{
 			System.out.println(e.getKey() + " : " + e.getValue());
-
+		}
 		System.out.println("Num Results for " + args[0] + " : " + getPopularity(args[0]));
 	}
 }

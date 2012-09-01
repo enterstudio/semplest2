@@ -67,7 +67,9 @@ public class DmozLuceneWriter
 		System.out.println(".." + DmozDescFile + "..");
 		Map<String, String> map = readDescs(DmozDescFile);
 		for (Map.Entry<String, String> e : map.entrySet())
+		{
 			writer.addDocument(mkDoc(e.getKey(), e.getValue()));
+		}
 		writer.close();
 		System.out.println("...done");
 	}
@@ -78,7 +80,9 @@ public class DmozLuceneWriter
 		ScoreDoc[] hits = searcher.search(q, null, nresults).scoreDocs;
 		String[] res = new String[hits.length];
 		for (int i = 0; i < hits.length; i++)
+		{
 			res[i] = (searcher.doc(hits[i].doc)).get("cat");
+		}
 		return res;
 	}
 
@@ -101,7 +105,9 @@ public class DmozLuceneWriter
 		{
 			String[] cols = line.split(" : ");
 			if (cols.length >= 2)
+			{
 				map.put(cols[0].trim(), cols[1].trim());
+			}
 		}
 		return map;
 	}
@@ -120,7 +126,9 @@ public class DmozLuceneWriter
 			{
 				String[] res = dl.search(q, 10);
 				for (String re : res)
+				{
 					c.printf("%s\n", re);
+				}
 			}
 		}
 	}
@@ -133,6 +141,8 @@ public class DmozLuceneWriter
 		String[] res = dl.search(query, 10);
 		System.out.println(query + " :: Dmoz returned " + res.length + " matches");
 		for (String re : res)
+		{
 			System.out.println(re);
+		}
 	}
 }

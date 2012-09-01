@@ -20,9 +20,13 @@ public class SimilMeas
 		for (int i = 0; i < p.length; i++)
 		{
 			if (p[i] == 0)
+			{
 				p[i] = Double.MIN_VALUE;
+			}
 			if (q[i] == 0)
+			{
 				q[i] = Double.MIN_VALUE;
+			}
 			DivVal = DivVal + p[i] * ((Math.log(p[i]) - Math.log(q[i])) / Math.log(2));
 		}
 		return DivVal;

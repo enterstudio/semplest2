@@ -24,7 +24,9 @@ class Stemmer
 		{
 			char[] new_b = new char[i + INC];
 			for (int c = 0; c < i; c++)
+			{
 				new_b[c] = b[c];
+			}
 			b = new_b;
 		}
 		b[i++] = ch;
@@ -36,11 +38,15 @@ class Stemmer
 		{
 			char[] new_b = new char[i + wLen + INC];
 			for (int c = 0; c < i; c++)
+			{
 				new_b[c] = b[c];
+			}
 			b = new_b;
 		}
 		for (int c = 0; c < wLen; c++)
+		{
 			b[i++] = w[c];
+		}
 	}
 
 	public void stem()
@@ -99,9 +105,13 @@ class Stemmer
 		while (true)
 		{
 			if (i > j)
+			{
 				return n;
+			}
 			if (!cons(i))
+			{
 				break;
+			}
 			i++;
 		}
 		i++;
@@ -110,9 +120,13 @@ class Stemmer
 			while (true)
 			{
 				if (i > j)
+				{
 					return n;
+				}
 				if (cons(i))
+				{
 					break;
+				}
 				i++;
 			}
 			i++;
@@ -120,9 +134,13 @@ class Stemmer
 			while (true)
 			{
 				if (i > j)
+				{
 					return n;
+				}
 				if (!cons(i))
+				{
 					break;
+				}
 				i++;
 			}
 			i++;
@@ -134,8 +152,12 @@ class Stemmer
 	{
 		int i;
 		for (i = 0; i <= j; i++)
+		{
 			if (!cons(i))
+			{
 				return true;
+			}
+		}
 		return false;
 	}
 
@@ -143,20 +165,28 @@ class Stemmer
 	private final boolean doublec(int j)
 	{
 		if (j < 1)
+		{
 			return false;
+		}
 		if (b[j] != b[j - 1])
+		{
 			return false;
+		}
 		return cons(j);
 	}
 
 	private final boolean cvc(int i)
 	{
 		if (i < 2 || !cons(i) || cons(i - 1) || !cons(i - 2))
+		{
 			return false;
+		}
 		{
 			int ch = b[i];
 			if (ch == 'w' || ch == 'x' || ch == 'y')
+			{
 				return false;
+			}
 		}
 		return true;
 	}
@@ -166,10 +196,16 @@ class Stemmer
 		int l = s.length();
 		int o = k - l + 1;
 		if (o < 0)
+		{
 			return false;
+		}
 		for (int i = 0; i < l; i++)
+		{
 			if (b[o + i] != s.charAt(i))
+			{
 				return false;
+			}
+		}
 		j = k - l;
 		return true;
 	}
@@ -179,14 +215,18 @@ class Stemmer
 		int l = s.length();
 		int o = j + 1;
 		for (int i = 0; i < l; i++)
+		{
 			b[o + i] = s.charAt(i);
+		}
 		k = j + l;
 	}
 
 	private final void r(String s)
 	{
 		if (m() > 0)
+		{
 			setto(s);
+		}
 	}
 
 	// ----------------------
@@ -195,50 +235,72 @@ class Stemmer
 		if (b[k] == 's')
 		{
 			if (ends("sses"))
+			{
 				k -= 2;
+			}
 			else if (ends("ies"))
+			{
 				setto("i");
+			}
 			else if (b[k - 1] != 's')
+			{
 				k--;
+			}
 		}
 		if (ends("eed"))
 		{
 			if (m() > 0)
+			{
 				k--;
+			}
 		}
 		else if ((ends("ed") || ends("ing")) && vowelinstem())
 		{
 			k = j;
 			if (ends("at"))
+			{
 				setto("ate");
+			}
 			else if (ends("bl"))
+			{
 				setto("ble");
+			}
 			else if (ends("iz"))
+			{
 				setto("ize");
+			}
 			else if (doublec(k))
 			{
 				k--;
 				{
 					int ch = b[k];
 					if (ch == 'l' || ch == 's' || ch == 'z')
+					{
 						k++;
+					}
 				}
 			}
 			else if (m() == 1 && cvc(k))
+			{
 				setto("e");
+			}
 		}
 	}
 
 	private final void step2()
 	{
 		if (ends("y") && vowelinstem())
+		{
 			b[k] = 'i';
+		}
 	}
 
 	private final void step3()
 	{
 		if (k == 0)
+		{
 			return;
+		}
 		switch (b[k - 1])
 		{
 			case 'a':
@@ -417,76 +479,118 @@ class Stemmer
 	private final void step5()
 	{
 		if (k == 0)
+		{
 			return; /* for Bug 1 */
+		}
 		switch (b[k - 1])
 		{
 			case 'a':
 				if (ends("al"))
+				{
 					break;
+				}
 				return;
 			case 'c':
 				if (ends("ance"))
+				{
 					break;
+				}
 				if (ends("ence"))
+				{
 					break;
+				}
 				return;
 			case 'e':
 				if (ends("er"))
+				{
 					break;
+				}
 				return;
 			case 'i':
 				if (ends("ic"))
+				{
 					break;
+				}
 				return;
 			case 'l':
 				if (ends("able"))
+				{
 					break;
+				}
 				if (ends("ible"))
+				{
 					break;
+				}
 				return;
 			case 'n':
 				if (ends("ant"))
+				{
 					break;
+				}
 				if (ends("ement"))
+				{
 					break;
+				}
 				if (ends("ment"))
+				{
 					break;
+				}
 				if (ends("ent"))
+				{
 					break;
+				}
 				return;
 			case 'o':
 				if (ends("ion") && j >= 0 && (b[j] == 's' || b[j] == 't'))
+				{
 					break;
+				}
 				if (ends("ou"))
+				{
 					break;
+				}
 				return;
 			case 's':
 				if (ends("ism"))
+				{
 					break;
+				}
 				return;
 			case 't':
 				if (ends("ate"))
+				{
 					break;
+				}
 				if (ends("iti"))
+				{
 					break;
+				}
 				return;
 			case 'u':
 				if (ends("ous"))
+				{
 					break;
+				}
 				return;
 			case 'v':
 				if (ends("ive"))
+				{
 					break;
+				}
 				return;
 			case 'z':
 				if (ends("ize"))
+				{
 					break;
+				}
 				return;
 			default:
 				return;
 		}
 		if (m() > 1)
+		{
 			k = j;
+		}
 	}
 
 	private final void step6()
@@ -496,16 +600,22 @@ class Stemmer
 		{
 			int a = m();
 			if (a > 1 || a == 1 && !cvc(k - 1))
+			{
 				k--;
+			}
 		}
 		if (b[k] == 'l' && doublec(k) && m() > 1)
+		{
 			k--;
+		}
 	}
 
 	public String stem(String s)
 	{
 		for (int j = 0; j < s.length(); j++)
+		{
 			add(s.charAt(j));
+		}
 		stem();
 		return toString();
 	}
@@ -515,7 +625,8 @@ class Stemmer
 	{
 		Stemmer stemmer = new Stemmer();
 		for (int i = 0; i < args.length; i++)
+		{
 			System.out.println(stemmer.stem(args[i]));
-
+		}
 	}
 }

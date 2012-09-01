@@ -77,12 +77,11 @@ public class JSoupUtils
 	public static List<String> getLinks(Element element)
 	{
 		Set<String> linkSet = getLinksMap(element).keySet();
-		return Arrays.asList(linkSet.toArray(new String[linkSet.size()]));
+		return new ArrayList<String>(linkSet);
 	}
 
 	public static List<String> getLinks(String url) throws IOException
 	{
-		JSoupUtils jSoup = new JSoupUtils();
 		Document doc = Jsoup.connect(url).get();
 		return getLinks(doc);
 	}
@@ -103,7 +102,6 @@ public class JSoupUtils
 
 	public static Map<String, String> getLinksMap(String url) throws IOException
 	{
-		JSoupUtils jSoup = new JSoupUtils();
 		Document doc = Jsoup.connect(url).get();
 		return getLinksMap(doc);
 	}
@@ -117,9 +115,13 @@ public class JSoupUtils
 		for (Element src : media)
 		{
 			if (src.tagName().equals("img"))
+			{
 				print(" * %s: <%s> %sx%s (%s)", src.tagName(), src.attr("abs:src"), src.attr("width"), src.attr("height"), trim(src.attr("alt"), 20));
+			}
 			else
+			{
 				print(" * %s: <%s>", src.tagName(), src.attr("abs:src"));
+			}
 			mediaL.add(src.attr("abs:src"));
 		}
 		return mediaL;
@@ -127,7 +129,6 @@ public class JSoupUtils
 
 	public static List<String> getMediaSource(String url) throws IOException
 	{
-		JSoupUtils jSoup = new JSoupUtils();
 		Document doc = Jsoup.connect(url).get();
 		return getMediaSource(doc);
 	}
@@ -141,7 +142,6 @@ public class JSoupUtils
 		for (Element link : imports)
 		{
 			print(" * %s <%s> (%s)", link.tagName(), link.attr("abs:href"), link.attr("rel"));
-			String text = link.text();
 			importL.add(link.attr("abs:href"));
 		}
 		return importL;
@@ -149,7 +149,6 @@ public class JSoupUtils
 
 	public static List<String> getImportsSource(String url) throws IOException
 	{
-		JSoupUtils jSoup = new JSoupUtils();
 		Document doc = Jsoup.connect(url).get();
 		return getImportsSource(doc);
 	}
@@ -160,13 +159,11 @@ public class JSoupUtils
 		FormattingVisitor formatter = new FormattingVisitor();
 		NodeTraversor traversor = new NodeTraversor(formatter);
 		traversor.traverse(element); // walk the DOM, and call .head() and .tail() for each node
-
 		return formatter.toString();
 	}
 
 	public static String getPlainText(String url) throws IOException
 	{
-		JSoupUtils jSoup = new JSoupUtils();
 		Document doc = Jsoup.connect(url).get();
 		return getPlainText(doc);
 	}
@@ -182,7 +179,6 @@ public class JSoupUtils
 
 	public static Map<String, List<String>> getTagContent(String url) throws IOException
 	{
-		JSoupUtils jSoup = new JSoupUtils();
 		Document doc = Jsoup.connect(url).get();
 		return getTagContent(doc);
 	}
@@ -195,9 +191,13 @@ public class JSoupUtils
 	private static String trim(String s, int width)
 	{
 		if (s.length() > width)
+		{
 			return s.substring(0, width - 1) + ".";
+		}
 		else
+		{
 			return s;
+		}
 	}
 
 	// the formatting rules, implemented in a depth-first DOM traverse
@@ -233,7 +233,9 @@ public class JSoupUtils
 				String txt = ((TextNode) node).text();
 				txt = txt.trim();
 				if (txt.length() > 1)
+				{
 					lineL.add(((TextNode) node).text());
+				}
 			}
 			stack.push(lineL);
 		}
@@ -267,15 +269,18 @@ public class JSoupUtils
 	private static class FormattingVisitor implements NodeVisitor
 	{
 		private StringBuilder accum = new StringBuilder(); // holds the accumulated text
-
 		// hit when the node is first seen
 		public void head(Node node, int depth)
 		{
 			String name = node.nodeName();
 			if (node instanceof TextNode)
+			{
 				append(((TextNode) node).text()); // TextNodes carry all user-readable text in the DOM.
+			}
 			else if (name.equals("li"))
+			{
 				append("\n");
+			}
 		}
 
 		// hit when all of the node's children (if any) have been visited
@@ -283,19 +288,26 @@ public class JSoupUtils
 		{
 			String name = node.nodeName();
 			if (name.equals("br"))
+			{
 				append("\n");
+			}
 			else if (StringUtil.in(name, "p", "h1", "h2", "h3", "h4", "h5"))
+			{
 				append("\n\n");
+			}
 		}
 
 		// appends text to the string builder with a simple word wrap method
 		private void append(String text)
 		{
 			if (text.startsWith("\n"))
+			{
 				if (text.equals(" ") && (accum.length() == 0 || StringUtil.in(accum.substring(accum.length() - 1), " ", "\n")))
+				{
 					return; // don't accumulate long runs of empty spaces
+				}
+			}
 			accum.append(text);
-
 		}
 
 		public String toString()

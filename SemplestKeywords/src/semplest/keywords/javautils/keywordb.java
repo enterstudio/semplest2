@@ -3,6 +3,7 @@ package semplest.keywords.javautils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.HashSet;
+import java.util.Set;
 
 /*
  * Utilities to store/retrieve semplest keywords/descriptions in a Berkeley Database
@@ -22,11 +23,11 @@ public class keywordb
 	public static Map<String, Map<String, Integer>> get(String[] cats, String db) throws Exception
 	{
 		Map<String, String> res = bdb.get(db, cats);
-
 		HashMap<String, Map<String, Integer>> resm = new HashMap<String, Map<String, Integer>>();
 		for (Map.Entry<String, String> e : res.entrySet())
+		{
 			resm.put(e.getKey(), ioUtils.toWc(e.getValue()));
-
+		}
 		return resm;
 	}
 
@@ -35,8 +36,9 @@ public class keywordb
 	{
 		HashMap<String, Map<String, Integer>> resm = new HashMap<String, Map<String, Integer>>();
 		for (Map.Entry<String, String> e : bdb.children(db, cat).entrySet())
+		{
 			resm.put(e.getKey(), ioUtils.toWc(e.getValue()));
-
+		}
 		return resm;
 	}
 
@@ -60,7 +62,7 @@ public class keywordb
 	// combine word-counts from all the databases (2g, 3g, 4g, ac)
 	public static Map<String, Integer> get(String cat) throws Exception
 	{
-		HashMap<String, Integer> resm = new HashMap<String, Integer>();
+		Map<String, Integer> resm = new HashMap<String, Integer>();
 		for (String db : dbs)
 		{
 			Map<String, Integer> wc = ioUtils.toWc(bdb.get(db, cat));
@@ -75,16 +77,21 @@ public class keywordb
 
 	public static Map<String, Map<String, Integer>> get(String[] cats) throws Exception
 	{
-		HashMap<String, Map<String, Integer>> resm = new HashMap<String, Map<String, Integer>>();
-
+		Map<String, Map<String, Integer>> resm = new HashMap<String, Map<String, Integer>>();
 		for (String db : dbs)
 		{
 			Map<String, Map<String, Integer>> wcs = get(cats, db);
 			for (Map.Entry<String, Map<String, Integer>> e : wcs.entrySet())
+			{
 				if (resm.containsKey(e.getKey()))
+				{
 					resm.put(e.getKey(), cWc(e.getValue(), resm.get(e.getKey())));
+				}
 				else
+				{
 					resm.put(e.getKey(), e.getValue());
+				}
+			}
 		}
 		return resm;
 	}
@@ -99,8 +106,8 @@ public class keywordb
 	// Combine word-counts by using the maximum-count
 	private static Map<String, Integer> cWc(Map<String, Integer> a, Map<String, Integer> b)
 	{
-		HashMap<String, Integer> res = new HashMap<String, Integer>();
-		HashSet<String> abkeys = new HashSet<String>();
+		Map<String, Integer> res = new HashMap<String, Integer>();
+		Set<String> abkeys = new HashSet<String>();
 		abkeys.addAll(a.keySet());
 		abkeys.addAll(b.keySet());
 		for (String k : abkeys)
@@ -120,17 +127,20 @@ public class keywordb
 		Map<String, Map<String, Integer>> wc = get(cats);
 		Map<String, Map<String, Integer>> descendants = children(cat, "2g");
 		String desc = description(cat);
-
 		System.out.println(wc.size() + " keywords");
 		for (Map.Entry<String, Map<String, Integer>> es : wc.entrySet())
 		{
 			System.out.println(es.getKey() + "\n");
 			for (Map.Entry<String, Integer> e : es.getValue().entrySet())
+			{
 				System.out.println(e.getKey() + " " + e.getValue());
+			}
 		}
 		System.out.println("\nChildren of " + cat + "::");
 		for (Map.Entry<String, Map<String, Integer>> e : descendants.entrySet())
+		{
 			System.out.println(e.getKey());
+		}
 		System.out.println("\nDescription for " + cat + "::");
 		System.out.println(desc);
 	}
@@ -151,7 +161,9 @@ public class keywordb
 		String[] lines = ioUtils.readLines(FILE, num);
 		String[] res = new String[num];
 		for (int i = 0; i < num; i++)
+		{
 			res[i] = lines[i].substring(0, lines[i].indexOf(":") - 1);
+		}
 		return res;
 	}
 

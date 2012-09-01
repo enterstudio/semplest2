@@ -70,6 +70,8 @@ class Crawl
 
 		// each result is prefixed with the id
 		for (String res : results)
+		{
 			System.out.println(res);
+		}
 	}
 }

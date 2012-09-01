@@ -7,23 +7,21 @@ package semplest.keywords.javautils;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import semplest.keywords.classification.Document;
 
-;
-
 public class TreeNode
 {
-
 	private static final Logger logger = Logger.getLogger(TreeNode.class);
 
 	private int level; // 0 for Top, then incrementally added
 	private String name; // Photography
 	private String path; // will have the complete path e.g., /Top/Arts/Visual_Arts/Photography
 
-	private ArrayList<TreeNode> children;
+	private List<TreeNode> children;
 
 	private TreeNode parent;
 
@@ -36,7 +34,6 @@ public class TreeNode
 		path = "/Top";
 		children = new ArrayList<TreeNode>();
 		parent = null;
-
 	}
 
 	public TreeNode(TreeNode parent, String name)
@@ -78,7 +75,7 @@ public class TreeNode
 		children.add(node);
 	}
 
-	public ArrayList<TreeNode> getChildren()
+	public List<TreeNode> getChildren()
 	{
 		return children;
 	}
@@ -93,8 +90,9 @@ public class TreeNode
 		System.out.println(path);
 
 		if (children.isEmpty())
+		{
 			return;
-
+		}
 		for (TreeNode t : children)
 		{
 			t.dft();
@@ -104,8 +102,9 @@ public class TreeNode
 	public void dftGenGraph(BufferedWriter file)
 	{ // depth first traversal
 		if (children.isEmpty())
+		{
 			return;
-
+		}
 		for (TreeNode t : children)
 		{
 			try

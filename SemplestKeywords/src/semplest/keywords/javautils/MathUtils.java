@@ -37,27 +37,31 @@ public class MathUtils
 		{
 			for (int j = 0; j < minElemlength; j++)
 			{
-
 				if (vect[i] <= minElem[1][j])
 				{
 					minElemaux = copy2Darray(minElem);
 					if (j == 0)
+					{
 						length = 0;
+					}
 					else
+					{
 						length = j - 1;
+					}
 					System.arraycopy(minElemaux[0], 0, minElem[0], 0, length);
 					System.arraycopy(minElemaux[1], 0, minElem[1], 0, length);
 					minElem[0][j] = i;
 					minElem[1][j] = vect[i];
 					if (minElemlength < N)
+					{
 						minElemlength++;
+					}
 					System.arraycopy(minElemaux[0], j, minElem[0], j + 1, minElemlength - j - 1);
 					System.arraycopy(minElemaux[1], j, minElem[1], j + 1, minElemlength - j - 1);
 					break;
 				}
 			}
 		}
-
 		return minElem;
 	}
 
@@ -65,7 +69,9 @@ public class MathUtils
 	{
 		double[][] newarray = new double[original.length][];
 		for (int i = 0; i < original.length; i++)
+		{
 			newarray[i] = original[i].clone();
+		}
 		return newarray;
 	}
 

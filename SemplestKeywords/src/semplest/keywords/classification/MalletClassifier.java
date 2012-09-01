@@ -2,6 +2,7 @@ package semplest.keywords.classification;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import semplest.keywords.javautils.*;
@@ -22,31 +23,29 @@ public class MalletClassifier
 	public void CreateInstancesSEMplest(String[] directories) throws Exception
 	{
 		// Creates Instances from a file in SEMplest format
-
 		// Begin by importing documents from text to feature sequences
-		ArrayList<Pipe> pipeList = this.initPipeList();
+		final List<Pipe> pipeList = initPipeList();
 		// Temporal instance were we will transform SEMplest data to Mallet data
-
 		instances = new InstanceList(new SerialPipes(pipeList));
-
 		String file = "/semplest/data/dmoz/small/hCounts.txt";
 		if (directories.length > 0)
+		{
 			file = directories[0];
-		ArrayList<String> lines = ioUtils.readFile(file);
+		}
+		final List<String> lines = ioUtils.readFile(file);
 		System.out.println("Number of lines: " + lines.size());
 		for (String line : lines)
 		{
 			// System.out.println("Adding Category " + i);
-			ArrayList<String> tokens = ioUtils.malletizeLine(line);
+			List<String> tokens = ioUtils.malletizeLine(line);
 			instances.addThruPipe(new Instance(tokens.get(2), tokens.get(0), tokens.get(1), null));
 		}
-
 	}
 
-	public ArrayList<Pipe> initPipeList()
+	public List<Pipe> initPipeList()
 	{
 		// Creates the list of pipes that will be used in all the InstanceList across the object
-		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
+		final List<Pipe> pipeList = new ArrayList<Pipe>();
 
 		// Pipes: lowercase, tokenize, remove stopwords, map to features
 		pipeList.add(new CharSequenceLowercase());

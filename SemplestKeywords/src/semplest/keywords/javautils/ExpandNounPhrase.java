@@ -43,13 +43,11 @@ public class ExpandNounPhrase
 		{
 			System.out.println(w);
 		}
-
 	}
 
 	public ExpandNounPhrase(HashMap<String, Object> configData) throws IOException
 	{
 		db = new DataBuffer(configData);
-
 	}
 
 	// Select noun phrases from text that contain a multi word from selected categories
@@ -64,17 +62,21 @@ public class ExpandNounPhrase
 		for (String multWStem : multWStemL)
 		{
 			if (multWStem.contains("antiqu engl"))
+			{
 				System.currentTimeMillis();
+			}
 			for (int i = 0; i < nounPL.size(); i++)
+			{
 				if (!ret.contains(nounPL.get(i)) && cleanWhite(nounPLStem.get(i)).contains(cleanWhite(multWStem)))
 				{
 					nounPLStem.remove(i);
 					ret.add(nounPL.remove(i).toLowerCase());
 					i--;
 				}
+			}
 		}
 		logger.info("time for expanding noun phrases : " + (System.currentTimeMillis() - start));
-		return Arrays.asList(ret.toArray(new String[ret.size()]));
+		return new ArrayList<String>(ret);
 	}
 
 	private void cleanNP(List<String> nounPL, List<String> nounPLStem)
@@ -87,7 +89,6 @@ public class ExpandNounPhrase
 				nounPL.remove(i);
 				i--;
 			}
-
 		}
 	}
 
@@ -102,7 +103,9 @@ public class ExpandNounPhrase
 		{
 			List<List<String>> sent = nlp.getNounBlocksFromText(line, 1);
 			for (List<String> subL : sent)
+			{
 				ret.addAll(subL);
+			}
 		}
 		return ret;
 	}
@@ -121,9 +124,13 @@ public class ExpandNounPhrase
 			}
 			nw = nw.trim();
 			if (!nw.isEmpty() && nw.split("\\s+").length > 1)
+			{
 				ret.add(nw);
+			}
 			else
+			{
 				ret.add("");
+			}
 		}
 		return ret;
 	}
@@ -137,13 +144,19 @@ public class ExpandNounPhrase
 		{
 			String aux = word.replaceAll("\\+", " ");
 			if (!aux.isEmpty())
+			{
 				ret.add(aux);
+			}
 		}
-		List<String> stemList = stemList(Arrays.asList(ret.toArray(new String[ret.size()])));
+		List<String> stemList = stemList(new ArrayList<String>(ret));
 		List<String> retL = new ArrayList<String>();
 		for (String stem : stemList)
+		{
 			if (!stem.isEmpty())
+			{
 				retL.add(stem);
+			}
+		}
 		return retL;
 	}
 
@@ -171,7 +184,7 @@ public class ExpandNounPhrase
 			return map;
 		}
 
-		DataBuffer(HashMap<String, Object> configData) throws IOException
+		DataBuffer(Map<String, Object> configData) throws IOException
 		{
 			pr = new ProjectProperties(configData);
 			mWords = new HashMap<String, MultiWordCollect[]>();
@@ -217,11 +230,12 @@ public class ExpandNounPhrase
 			for (int i = 0; i < pr.nGramsSubC.length; i++)
 			{
 				if (catUtils.take(categ, 2).contains(pr.nGramsSubC[i]))
+				{
 					return i;
+				}
 			}
 			return -1;
 		}
-
 	}
 
 }

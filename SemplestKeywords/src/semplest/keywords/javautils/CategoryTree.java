@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -12,7 +13,6 @@ import semplest.keywords.classification.Document;
 
 public class CategoryTree
 {
-
 	private static final Logger logger = Logger.getLogger(CategoryTree.class);
 
 	private TreeNode root;
@@ -34,10 +34,9 @@ public class CategoryTree
 		String[] splitPath = path.split("/");
 		TreeNode presentParent = root;
 		int level = splitPath.length, i = 1;
-
 		while (i < level)
 		{
-			ArrayList<TreeNode> presentChildren = presentParent.getChildren();
+			List<TreeNode> presentChildren = presentParent.getChildren();
 			boolean foundNextLevel = false;
 			for (TreeNode t : presentChildren)
 			{
@@ -72,10 +71,9 @@ public class CategoryTree
 		String[] splitPath = path.split("/");
 		TreeNode presentParent = root;
 		int level = splitPath.length, i = 1;
-
 		while (i < level)
 		{
-			ArrayList<TreeNode> presentChildren = presentParent.getChildren();
+			List<TreeNode> presentChildren = presentParent.getChildren();
 			boolean foundNextLevel = false;
 			for (TreeNode t : presentChildren)
 			{

@@ -1,15 +1,5 @@
 package semplest.keywords.javautils;
 
-import java.io.File;
-import java.io.IOError;
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.TreeMap;
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
-
 public class LSA
 {
 
@@ -29,7 +19,9 @@ public class LSA
 		assert (d.length == svd.ssDim);
 		double[] dists = new double[svd.docDim];
 		for (int i = 0; i < svd.docDim; i++)
+		{
 			dists[i] = vecUtils.ncdist(d, svd.dmat[i]);
+		}
 		return dists;
 	}
 
@@ -39,7 +31,9 @@ public class LSA
 		assert (t.length == svd.ssDim);
 		double[] dists = new double[svd.termDim];
 		for (int i = 0; i < svd.termDim; i++)
+		{
 			dists[i] = vecUtils.ncdist(t, svd.tmat[i]);
+		}
 		return dists;
 	}
 
@@ -66,7 +60,9 @@ public class LSA
 	{
 		int[] mci = new int[svd.mci.length];
 		for (int r = 0; r < mci.length; r++)
+		{
 			mci[r] = svd.mci[r][di];
+		}
 		return mci;
 	}
 
@@ -86,6 +82,8 @@ public class LSA
 	{
 		LSA lsa;
 		if (args.length > 0)
+		{
 			lsa = new LSA(args[0]);
+		}
 	}
 }

@@ -107,10 +107,10 @@ public class look4Categories
 			/*
 			 * sorted_opt.putAll(categMap); Set<String> keys = sorted_opt.keySet(); in = new DataInputStream(new FileInputStream(wordsFile)); br = new
 			 * BufferedReader(new InputStreamReader(in)); String[] lines = new String[maxtopresults]; //Read File Line By Line while ((strLine =
-			 * br.readLine()) != null) { String[] splitline = strLine.split(":"); topresults =0; splitline[0]=splitline[0].replaceAll("_","");
-			 * for(String key:keys){ if (key.equals(splitline[0])){ lines[topresults] = strLine; } topresults++; //System.out.println("key"+key);
-			 * //System.out.println("category "+splitline[0]); //System.out.println("line "+strLine); if (topresults>=maxtopresults) break; } } for
-			 * (int v=0;v<lines.length;v++){
+			 * br.readLine()) != null) { String[] splitline = strLine.split(":"); topresults =0; splitline[0]=splitline[0].replaceAll("_",""); for(String
+			 * key:keys){ if (key.equals(splitline[0])){ lines[topresults] = strLine; } topresults++; //System.out.println("key"+key);
+			 * //System.out.println("category "+splitline[0]); //System.out.println("line "+strLine); if (topresults>=maxtopresults) break; } } for (int
+			 * v=0;v<lines.length;v++){
 			 * 
 			 * System.out.println(lines[v]); } System.out.println("\n\n");
 			 */

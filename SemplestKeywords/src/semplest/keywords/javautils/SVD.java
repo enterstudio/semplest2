@@ -123,7 +123,9 @@ public class SVD
 	public static void setColumn(Matrix m, int index, int[] values)
 	{
 		for (int r = 0; r < values.length; r++)
+		{
 			m.set(r, index, values[r]);
+		}
 	}
 
 	public static void setColumn(Matrix m, int index, double[] values)
@@ -134,7 +136,9 @@ public class SVD
 	public static void loadMatrix(Matrix m, int[][] arr)
 	{
 		for (int i = 0; i < arr.length; i++)
+		{
 			setColumn(m, i, arr[i]);
+		}
 	}
 
 	public static Matrix[] calcSVD(double[][] M, int dim)
@@ -147,7 +151,9 @@ public class SVD
 	{
 		double[] col = new double[val.length];
 		for (int r = 0; r < val.length; r++)
+		{
 			col[r] = val[r][cindex];
+		}
 		return col;
 	}
 
@@ -233,8 +239,9 @@ public class SVD
 
 		File matrixFile = new File(ifile);
 		if (!matrixFile.exists())
+		{
 			return;
-
+		}
 		try
 		{
 			Matrix[] usv = SvdlibjDriver.svd(matrixFile, inputFormat, dim);
@@ -293,7 +300,9 @@ public class SVD
 		{
 			double ival = 0;
 			for (int j = 0; j < docDim; j++)
+			{
 				ival += t[j] * dmat[j][i];
+			}
 			res[i] = ival / smat[i][i];
 		}
 		return res;
@@ -309,8 +318,12 @@ public class SVD
 		{
 			double ival = 0;
 			for (int j = 0; j < termDim; j++)
+			{
 				if (d[j] != 0)
+				{
 					ival += d[j] * tmat[i][j];
+				}
+			}
 			res[i] = ival / smat[i][i];
 		}
 		return res;
@@ -338,7 +351,9 @@ public class SVD
 		assert (t1.length == ssDim && t2.length == ssDim);
 		double sum = 0;
 		for (int i = 0; i < ssDim; i++)
+		{
 			sum += smat[i][i] * smat[i][i] * t1[i] * t2[i];
+		}
 		return sum;
 	}
 
@@ -348,7 +363,9 @@ public class SVD
 	{
 		double count = 0;
 		for (int i = 0; i < ssDim; i++)
+		{
 			count += tmat[i][wi] * smat[i][i] * dmat[di][i];
+		}
 		return count;
 	}
 
@@ -357,7 +374,9 @@ public class SVD
 	{
 		int[] doc = new int[termDim];
 		for (int i = 0; i < termDim; i++)
+		{
 			doc[i] = (int) Math.round(wordCount(i, di));
+		}
 		return doc;
 	}
 
@@ -367,8 +386,12 @@ public class SVD
 		assert (d.length == ssDim);
 		int mag = 0;
 		for (int i = 0; i < termDim; i++)
+		{
 			for (int j = 0; j < ssDim; j++)
+			{
 				mag += tmat[j][i] * smat[j][j] * d[j];
+			}
+		}
 		return mag;
 	}
 
@@ -378,8 +401,12 @@ public class SVD
 		assert (t.length == ssDim);
 		int mag = 0;
 		for (int i = 0; i < docDim; i++)
+		{
 			for (int j = 0; j < ssDim; j++)
+			{
 				mag += dmat[i][j] * smat[j][j] * t[j];
+			}
+		}
 		return mag;
 	}
 
@@ -391,7 +418,9 @@ public class SVD
 		assert (v1.length == ssDim && v2.length == ssDim);
 		double dist = 0;
 		for (int i = 0; i < ssDim; i++)
+		{
 			dist += (v1[i] * v2[i] * smat[i][i] * smat[i][i]);
+		}
 		dist = dist > 1 ? 1 : dist;
 		dist = dist < -1 ? -1 : dist;
 		return Math.acos(dist);
@@ -405,8 +434,9 @@ public class SVD
 		// dictUtils.loadDict( "/semplest/data/dmoz/test/stemwords.txt");
 
 		if (args.length > 0)
+		{
 			file = args[0];
-
+		}
 		SVD svd = new SVD();
 		int lines = svd.readFileSem(file);
 		System.out.printf("Read %d lines from %s\n", lines, file);

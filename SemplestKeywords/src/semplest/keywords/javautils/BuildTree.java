@@ -6,20 +6,21 @@ import semplest.keywords.classification.Document;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class BuildTree
 {
-
 	public static CategoryTree buildYahoo(String catLinkFile)
 	{
 		CategoryTree cTree = new CategoryTree();
-
-		ArrayList<String> lines = ioUtils.readFile(catLinkFile);// semplest.keywords.javautils.readFile( catLinkFile );
+		List<String> lines = ioUtils.readFile(catLinkFile);// semplest.keywords.javautils.readFile( catLinkFile );
 
 		// ArrayList<String> listOfCategories = new ArrayList<String>();
 
-		HashSet<String> setOfCategories = new HashSet<String>();
-		HashMap<String, String> mapOfCategories = new HashMap<String, String>();
+		Set<String> setOfCategories = new HashSet<String>();
+		Map<String, String> mapOfCategories = new HashMap<String, String>();
 
 		String pattern = ".*dir.yahoo.com/(\\S+).*(anchor: )(.*)(\\S)";
 
@@ -66,11 +67,11 @@ public class BuildTree
 	{
 		CategoryTree cTree = new CategoryTree();
 
-		ArrayList<String> lines = ioUtils.readFile(catLinkFile);// semplest.keywords.javautils.readFile( catLinkFile );
+		List<String> lines = ioUtils.readFile(catLinkFile);// semplest.keywords.javautils.readFile( catLinkFile );
 
-		HashSet<String> setOfCategories = new HashSet<String>();
-		HashMap<String, String> mapOfCategories = new HashMap<String, String>();
-		HashMap<String, String> mapOfText = new HashMap<String, String>();
+		Set<String> setOfCategories = new HashSet<String>();
+		Map<String, String> mapOfCategories = new HashMap<String, String>();
+		Map<String, String> mapOfText = new HashMap<String, String>();
 
 		int i = 0;
 		for (String line : lines)
@@ -100,7 +101,7 @@ public class BuildTree
 				{
 					String text = mapOfText.get(path);
 					String[] wordFreq = text.split("\\s+");
-					HashMap<String, Integer> wordFreqHash = new HashMap<String, Integer>();
+					Map<String, Integer> wordFreqHash = new HashMap<String, Integer>();
 					for (String s : wordFreq)
 					{
 						String[] tuple = s.split(":");
@@ -108,7 +109,6 @@ public class BuildTree
 					}
 					cTree.addNode(path, new Document(wordFreqHash));
 				}
-
 			}
 		}
 

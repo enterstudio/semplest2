@@ -6,13 +6,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class look4URL
 {
 
 	/**
-	 * This class will take a URL as an input, and it will try to find it in the dmoz database, if it succeeds, it will return a list of categories
-	 * that contain it. args[0] : URL
+	 * This class will take a URL as an input, and it will try to find it in the dmoz database, if it succeeds, it will return a list of categories that
+	 * contain it. args[0] : URL
 	 * 
 	 * @param args
 	 * @throws IOException
@@ -25,8 +26,7 @@ public class look4URL
 		String url = "-- http://www.laserblazers.com ";
 		String[] urlparts = url.split("/");
 		String mainURL = url;
-		ArrayList<String> categories;
-
+		List<String> categories;
 		for (String part : urlparts)
 		{
 			if (!part.contains("http:") && part.length() != 0)

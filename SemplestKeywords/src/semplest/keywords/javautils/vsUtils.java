@@ -43,11 +43,15 @@ public class vsUtils
 	public static Map<String, Integer> cNormalize(Map<String, Integer> wc)
 	{
 		if (null == wc)
+		{
 			return null;
+		}
 		Map<String, Integer> omap = new HashMap<String, Integer>();
 		Double w = cNorm(wc);
 		for (Map.Entry<String, Integer> e : wc.entrySet())
+		{
 			omap.put(e.getKey(), (int) Math.round(e.getValue() * w));
+		}
 		return omap;
 	}
 
@@ -61,7 +65,9 @@ public class vsUtils
 		Set<String> common = na.keySet();
 		common.retainAll(nb.keySet());
 		for (String w : common)
+		{
 			dotp += na.get(w) * nb.get(w);
+		}
 		return Math.acos(dotp / (UNIT * UNIT * 1.0));
 	}
 
@@ -71,8 +77,12 @@ public class vsUtils
 	{
 		Map<String, Integer> omap = new HashMap<String, Integer>();
 		for (Map.Entry<String, Map<String, Integer>> wc : wcs.entrySet())
+		{
 			for (Map.Entry<String, Integer> e : wc.getValue().entrySet())
+			{
 				omap.put(e.getKey(), (omap.containsKey(e.getKey()) ? omap.get(e.getKey()) : 0) + e.getValue());
+			}
+		}
 		return omap;
 	}
 
@@ -81,7 +91,9 @@ public class vsUtils
 	{
 		Map<String, Integer> omap = new HashMap<String, Integer>();
 		for (Map.Entry<String, Map<String, Integer>> wc : wcs.entrySet())
+		{
 			for (Map.Entry<String, Integer> e : wc.getValue().entrySet())
+			{
 				if (wts.containsKey(e.getKey()))
 				{
 					Double wt = wts.get(e.getKey());
@@ -89,6 +101,8 @@ public class vsUtils
 					Integer nv = cv + (int) Math.round(e.getValue() * wts.get(e.getKey()));
 					omap.put(e.getKey(), nv);
 				}
+			}
+		}
 		return omap;
 	}
 
@@ -119,16 +133,23 @@ public class vsUtils
 			System.out.printf("%s :: wt: %.3f Wc sizes(cat,ref) :: (%d,%d)\n", wc.getKey(), w * 100.0, swc.size(), rv.size());
 			Map<String, Integer> nwc = cNormalize(wc.getValue());
 			for (Map.Entry<String, Integer> e : nwc.entrySet())
+			{
 				if (omap.containsKey(e.getKey()))
+				{
 					omap.put(e.getKey(), omap.get(e.getKey()) + e.getValue() * w);
+				}
 				else
+				{
 					omap.put(e.getKey(), e.getValue() * w);
+				}
+			}
 		}
 		// convert to int, normalize, return
 		Map<String, Integer> rmap = new HashMap<String, Integer>();
 		for (Map.Entry<String, Double> e : omap.entrySet())
+		{
 			rmap.put(e.getKey(), (int) Math.round(e.getValue()));
-
+		}
 		return cNormalize(rmap);
 	}
 
@@ -155,11 +176,13 @@ public class vsUtils
 	{
 		Map<String, Integer> omap = new HashMap<String, Integer>();
 		for (Map.Entry<String, Integer> e : ngwcs.entrySet())
+		{
 			for (String w : e.getKey().split("\\+"))
 			{
 				int cur = omap.containsKey(w) ? omap.get(w) : 0;
 				omap.put(w, cur + e.getValue());
 			}
+		}
 		return omap;
 	}
 
@@ -192,10 +215,16 @@ public class vsUtils
 	{
 		Integer res = 0;
 		for (Map.Entry<String, Integer> e : wc.entrySet())
+		{
 			if (e != null && e.getValue() != null)
+			{
 				res += e.getValue() * e.getValue();
+			}
 			else
+			{
 				System.out.print(".");
+			}
+		}
 		return res;
 	}
 
@@ -208,7 +237,9 @@ public class vsUtils
 		for (Map.Entry<String, Integer> e : rv)
 		{
 			if (count > n)
+			{
 				break;
+			}
 			System.out.printf("%s:%d, ", e.getKey(), e.getValue());
 			count++;
 		}
@@ -220,7 +251,9 @@ public class vsUtils
 	{
 		Map<String, Integer> rv = new HashMap<String, Integer>();
 		for (String w : words)
+		{
 			rv.put(w, (rv.get(w) == null ? 0 : rv.get(w)) + 1);
+		}
 		return rv;
 	}
 
@@ -239,7 +272,6 @@ public class vsUtils
 		cs.put("b0.0", cWc("a+f b+g c+g+o d+o+h"));
 		cs.put("c1.0", cWc("c+o d+h e+y"));
 		cs.put("d1.5", cWc("e+i f+h g+j"));
-
 		Map<String, Integer> cc = cCombine(cs, rv);
 		System.out.println(cc);
 	}
@@ -263,7 +295,7 @@ public class vsUtils
 	}
 
 	// ------------
-	public static String[] generateNgrams(String basePath, String extension, ArrayList<String> categories, String data, int numKw)
+	public static String[] generateNgrams(String basePath, String extension, List<String> categories, String data, int numKw)
 	{
 		// read in categories from file and pick out those with categories selected
 		Map<String, Map<String, Integer>> wcs = new HashMap<String, Map<String, Integer>>();

@@ -53,7 +53,6 @@ public class DmozLucene
 		}
 		catch (Exception e)
 		{
-
 			logger.error(e.getMessage(), e);
 		}
 	}
@@ -140,7 +139,9 @@ public class DmozLucene
 	{
 		Map<String, String> map = ioUtils.readDescs(f);
 		for (Map.Entry<String, String> e : map.entrySet())
+		{
 			dl.add(e.getKey(), e.getValue());
+		}
 		dl.done();
 	}
 
@@ -148,7 +149,9 @@ public class DmozLucene
 	{
 		Map<String, String> map = keywordb.getAll("descs");
 		for (Map.Entry<String, String> e : map.entrySet())
+		{
 			dl.add(e.getKey(), e.getValue());
+		}
 		dl.done();
 	}
 
@@ -169,7 +172,9 @@ public class DmozLucene
 			{
 				String[] res = dl.search(sq);
 				for (String re : res)
+				{
 					c.printf("%s\n", re);
+				}
 			}
 		}
 	}

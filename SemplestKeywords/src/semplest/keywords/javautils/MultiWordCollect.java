@@ -2,6 +2,7 @@ package semplest.keywords.javautils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class MultiWordCollect
@@ -11,19 +12,19 @@ public class MultiWordCollect
 	 */
 	private String id;
 	private HashMap<String, Integer> categories;
-	private ArrayList<ArrayList<String>> wordsInCategories;
+	private List<List<String>> wordsInCategories;
 
 	public MultiWordCollect(String name, String filePath)
 	{
 		// Read a file and load all words and names of categories
 		id = name;
 		categories = new HashMap<String, Integer>();
-		wordsInCategories = new ArrayList<ArrayList<String>>();
-		ArrayList<String> lines = ioUtils.readFile(filePath);
+		wordsInCategories = new ArrayList<List<String>>();
+		List<String> lines = ioUtils.readFile(filePath);
 		int i = 0;
 		for (String line : lines)
 		{
-			ArrayList<String> tokens = ioUtils.line2ArrayList(line);
+			List<String> tokens = ioUtils.line2ArrayList(line);
 			categories.put(tokens.remove(0), new Integer(i));
 			wordsInCategories.add(tokens);
 			i++;
@@ -36,21 +37,25 @@ public class MultiWordCollect
 		for (String key : keys)
 		{
 			if (categories.get(key).equals(new Integer(index)))
+			{
 				return key;
+			}
 		}
 		return null;
 	}
 
-	public ArrayList<String> getwordsInCateg(int index)
+	public List<String> getwordsInCateg(int index)
 	{
 		return wordsInCategories.get(index);
 	}
 
-	public ArrayList<String> getwordsInCateg(String categ)
+	public List<String> getwordsInCateg(String categ)
 	{
 		Integer aux = categories.get(categ);
 		if (aux == null)
+		{
 			return null;
+		}
 		return wordsInCategories.get(categories.get(categ));
 	}
 

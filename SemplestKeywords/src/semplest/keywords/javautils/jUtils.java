@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 public class jUtils
 {
 	private static final Logger logger = Logger.getLogger(jUtils.class);
-	
+
 	// - Collection utils --------------------------
 	// first n entries
 	public static <K, V> Map<K, V> take(Map<K, V> m, Integer n)
@@ -28,7 +28,9 @@ public class jUtils
 		for (Map.Entry<K, V> e : m.entrySet())
 		{
 			if (counter >= n)
+			{
 				break;
+			}
 			res.put(e.getKey(), e.getValue());
 			counter++;
 		}
@@ -42,7 +44,9 @@ public class jUtils
 		for (Map.Entry<K, V> e : s)
 		{
 			if (counter < n)
+			{
 				res.put(e.getKey(), e.getValue());
+			}
 			counter++;
 		}
 		return res;
@@ -55,7 +59,9 @@ public class jUtils
 		for (Map.Entry<K, V> e : m.entrySet())
 		{
 			if (counter < n)
+			{
 				System.out.println(e.getKey() + " : " + e.getValue());
+			}
 			counter++;
 		}
 	}
@@ -91,9 +97,13 @@ public class jUtils
 			{
 				int compare = m.get(k2).compareTo(m.get(k1));
 				if (compare == 0)
+				{
 					return 1;
+				}
 				else
+				{
 					return compare;
+				}
 			}
 		});
 		svmap.putAll(m);

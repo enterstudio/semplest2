@@ -29,18 +29,25 @@ public class lsaTests
 	public void vPrint(double[] v)
 	{
 		for (int i = 0; i < v.length; i++)
+		{
 			System.out.printf("%3d:%5.6f\t", i, v[i]);
+		}
 		System.out.println(v.length);
 	}
 
 	public void vPrint(double[] v1, double[] v2)
 	{
 		if (v1.length != v2.length)
+		{
 			return;
+		}
 		for (int i = 0; i < v1.length; i++)
-			if (i < 100)
-				if (v1[i] != v2[i])
-					System.out.printf("%3d : %10.8f, %10.8f\n", i, v1[i], v2[i]);
+		{
+			if (i < 100 && v1[i] != v2[i])
+			{
+				System.out.printf("%3d : %10.8f, %10.8f\n", i, v1[i], v2[i]);
+			}
+		}
 	}
 
 	public int matchDistance(int doci, int n)
@@ -48,7 +55,9 @@ public class lsaTests
 		int[] bestDocs = lsa.similarDocs(ioUtils.docVector(file, doci));
 		int dsum = 0;
 		for (int i = 0; i < n; i++)
+		{
 			dsum += Math.abs(doci - bestDocs[i]) - i;
+		}
 		return (dsum / n);
 	}
 
@@ -81,7 +90,9 @@ public class lsaTests
 		int[] topWi = vecUtils.sortIndices(doc);
 		String os = "";
 		for (int i = topWi.length - 1; i > topWi.length - no; i--)
+		{
 			os = os + dictUtils.dictwi.get(topWi[i]) + ",";
+		}
 		return os;
 	}
 
@@ -90,11 +101,14 @@ public class lsaTests
 	{
 		int[] doc = ioUtils.docVector(file, di);
 		for (int i = 0; i < 100; i++)
+		{
 			if (doc[i] != 0)
+			{
 				System.out.printf("%d,%d  ", i, doc[i]);
+			}
+		}
 		ioUtils.printVec(lsa.svd.toSSDoc(doc));
 		ioUtils.printVec(lsa.svd.dmat[di]);
-
 		double dist = vecUtils.ncdist(lsa.svd.toSSDoc(doc), lsa.svd.dmat[di]);
 		return dist;
 	}
@@ -116,6 +130,7 @@ public class lsaTests
 		}
 		double osum = 0, ssum = 0;
 		for (int i = 0; i < no; i++)
+		{
 			for (int j = 0; j < no; j++)
 			{
 				double dd = vecUtils.ncdist(d[i], d[j]);
@@ -124,6 +139,7 @@ public class lsaTests
 				ssum += sd;
 				// System.out.printf("%d,%d : %8.2f, %8.2f\n", i,j, dd, sd );
 			}
+		}
 		return Math.abs(osum - ssum) / (no * no * 1.0);
 	}
 
@@ -161,8 +177,9 @@ public class lsaTests
 	{
 		String file = dipath;
 		if (args.length > 0)
+		{
 			file = args[0];
-
+		}
 		lsaTests t = new lsaTests(file);
 		// t.lsa.svd.tfIdf();
 
@@ -170,7 +187,9 @@ public class lsaTests
 		t.printCCE(num);
 		// t.printWCE( num );
 		for (int i = 0; i < 2; i++)
+		{
 			t.printMatches(t.lsa.randomDoc(), num);
-		// t.printMatches( i, num );
+		  // t.printMatches( i, num );
+		}		
 	}
 }

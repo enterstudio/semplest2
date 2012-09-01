@@ -12,48 +12,46 @@ public class AOLKeywordGenerator
 	/**
 	 * This class reads the AOL search data files and classifies keywords into categories
 	 */
-
 	private static final Logger logger = Logger.getLogger(AOLKeywordGenerator.class);
 	private String dmozUrlPath = "/semplest/data/dmoz/all.urls";
 	private String[] categories = { "arts", "business", "computers", "games", "health", "home", "news", "recreation", "reference", "science", "shopping", "society", "sports", "regional" };
 
 	public static void main(String[] args) throws IOException
 	{
-		String urlKwMapPath = "/semplest/data/aolData/urlKwMap.all";
-		String categoriesKwMapPath = "/semplest/data/aolData/categoriesKwMap.all";
-		String categoriesUrlMapPath = "/semplest/data/aolData/categoriesDomainMap.all";
-		String categoriesKwMapBasePath = "/home/lluis/Documents/aol/categoriesKw_";
+		final String urlKwMapPath = "/semplest/data/aolData/urlKwMap.all";
+		final String categoriesKwMapPath = "/semplest/data/aolData/categoriesKwMap.all";
+		final String categoriesUrlMapPath = "/semplest/data/aolData/categoriesDomainMap.all";
+		final String categoriesKwMapBasePath = "/home/lluis/Documents/aol/categoriesKw_";
 		BasicConfigurator.configure();
-		AOLKeywordGenerator aol = new AOLKeywordGenerator();
-
+		final AOLKeywordGenerator aol = new AOLKeywordGenerator();
 		/*
-		 * // Create a Hashmap of url to keywords and save to file HashMap<String,ArrayList<String>> urlKwMap = new
-		 * HashMap<String,ArrayList<String>>(); String basePath = "/semplest/data/aolData/AOL-user-ct-collection/user-ct-test-collection-0"; for(int
-		 * i=1; i<10; i++){ String path = basePath+i+".txt"; urlKwMap = aol.createUrlKwMap(path, urlKwMap); } urlKwMap =
+		 * // Create a Hashmap of url to keywords and save to file HashMap<String,ArrayList<String>> urlKwMap = new HashMap<String,ArrayList<String>>();
+		 * String basePath = "/semplest/data/aolData/AOL-user-ct-collection/user-ct-test-collection-0"; for(int i=1; i<10; i++){ String path =
+		 * basePath+i+".txt"; urlKwMap = aol.createUrlKwMap(path, urlKwMap); } urlKwMap =
 		 * aol.createUrlKwMap("/semplest/data/aolData/AOL-user-ct-collection/user-ct-test-collection-10.txt", urlKwMap); aol.saveHashMap(urlKwMap,
 		 * urlKwMapPath);
 		 * 
 		 * 
 		 * 
-		 * //Read in a hashmap of url to keyword and convert into hashMap of categories to keyword finding urls in dmoz
-		 * HashMap<String,ArrayList<String>> urlKwMap = aol.loadUrlHashMap(urlKwMapPath); HashMap<String,ArrayList<String>> categoriesKwMap =
-		 * aol.createCategoriesUrlMap(urlKwMap); aol.saveHashMap(categoriesKwMap, categoriesKwMapPath);
+		 * //Read in a hashmap of url to keyword and convert into hashMap of categories to keyword finding urls in dmoz HashMap<String,ArrayList<String>>
+		 * urlKwMap = aol.loadUrlHashMap(urlKwMapPath); HashMap<String,ArrayList<String>> categoriesKwMap = aol.createCategoriesUrlMap(urlKwMap);
+		 * aol.saveHashMap(categoriesKwMap, categoriesKwMapPath);
 		 */
 
 		// Load categories to url and url to kw maps and create multiword file per category
-		HashMap<String, ArrayList<String>> urlKwMap = aol.loadUrlHashMap(urlKwMapPath);
-		HashMap<String, ArrayList<String>> categoriesUrlMap = aol.loadHashMap(categoriesUrlMapPath);
+		final Map<String, List<String>> urlKwMap = aol.loadUrlHashMap(urlKwMapPath);
+		final Map<String, List<String>> categoriesUrlMap = aol.loadHashMap(categoriesUrlMapPath);
 		aol.saveCategoriesKwMap(categoriesUrlMap, urlKwMap, categoriesKwMapBasePath);
 	}
 
-	public void saveHashMap(HashMap<String, ArrayList<String>> hMap, String filePath) throws FileNotFoundException
+	public void saveHashMap(Map<String, List<String>> hMap, String filePath) throws FileNotFoundException
 	{
 		// Saves a HashMap into a file
-		PrintStream ps2 = new PrintStream(new FileOutputStream(new File(filePath)));
+		final PrintStream ps2 = new PrintStream(new FileOutputStream(new File(filePath)));
 		this.saveHashMap(hMap, ps2);
 	}
 
-	public void saveHashMap(HashMap<String, ArrayList<String>> hMap, PrintStream ps2) throws FileNotFoundException
+	public void saveHashMap(Map<String, List<String>> hMap, PrintStream ps2) throws FileNotFoundException
 	{
 		// Saves a HashMap into PrintStream (appending to printStream)
 		int i = 0;
@@ -70,62 +68,56 @@ public class AOLKeywordGenerator
 		}
 	}
 
-	public HashMap<String, ArrayList<String>> loadHashMap(String filePath) throws IOException
+	public Map<String, List<String>> loadHashMap(String filePath) throws IOException
 	{
 		// Loads any hashMap that has been saved with the saveHashMap method
 		logger.info("Reading in HashMap");
-		HashMap<String, ArrayList<String>> hMap = new HashMap<String, ArrayList<String>>();
-
-		DataInputStream in = new DataInputStream(new FileInputStream(new File(filePath)));
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		final Map<String, List<String>> hMap = new HashMap<String, List<String>>();
+		final DataInputStream in = new DataInputStream(new FileInputStream(new File(filePath)));
+		final BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String line;
 		int i = 0;
 		while ((line = br.readLine()) != null)
 		{
 
 			logger.info("reading line " + i);
-			String fields[] = line.split(": ");
-			String[] kw = fields[1].split(",");
-			List<String> kwList = Arrays.asList(kw);
+			final String fields[] = line.split(": ");
+			final String[] kw = fields[1].split(",");
+			final List<String> kwList = Arrays.asList(kw);
 			hMap.put(fields[0], new ArrayList<String>(kwList));
 			i++;
 		}
-
 		return hMap;
 	}
 
-	public HashMap<String, ArrayList<String>> loadUrlHashMap(String filePath) throws IOException
+	public Map<String, List<String>> loadUrlHashMap(String filePath) throws IOException
 	{
 		// loads a url to keyword hashMap but extracting only the domain in the url as a key
 		logger.info("Reading in HashMap");
-		HashMap<String, ArrayList<String>> hMap = new HashMap<String, ArrayList<String>>();
-
-		DataInputStream in = new DataInputStream(new FileInputStream(new File(filePath)));
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		final Map<String, List<String>> hMap = new HashMap<String, List<String>>();
+		final DataInputStream in = new DataInputStream(new FileInputStream(new File(filePath)));
+		final BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String line;
 		int i = 0;
 		while ((line = br.readLine()) != null)
 		{
-
 			logger.info("reading line " + i);
-			String fields[] = line.split(": ");
-			String[] kw = fields[1].split(",");
-			List<String> kwList = Arrays.asList(kw);
+			final String fields[] = line.split(": ");
+			final String[] kw = fields[1].split(",");
+			final List<String> kwList = Arrays.asList(kw);
 			hMap.put(this.getMainUrl(fields[0]), new ArrayList<String>(kwList));
 			i++;
 		}
-
 		return hMap;
 	}
 
-	public HashMap<String, ArrayList<String>> createUrlKwMap(String pathIn, HashMap<String, ArrayList<String>> mapUrlKw) throws IOException
+	public Map<String, List<String>> createUrlKwMap(String pathIn, Map<String, List<String>> mapUrlKw) throws IOException
 	{
 		// Obtain a HashMap of url and keywords that generated clicks for that url, extending the input map
-		DataInputStream in = new DataInputStream(new FileInputStream(new File(pathIn)));
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		final DataInputStream in = new DataInputStream(new FileInputStream(new File(pathIn)));
+		final BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String line;
-
-		ArrayList<String> nonClickKw = new ArrayList<String>();
+		final List<String> nonClickKw = new ArrayList<String>();
 		int i = 0;
 		while ((line = br.readLine()) != null)
 		{
@@ -133,7 +125,9 @@ public class AOLKeywordGenerator
 			if (fields.length < 4)
 			{
 				if (!nonClickKw.contains(fields[1]))
+				{
 					nonClickKw.add(fields[1]);
+				}
 			}
 			else
 			{
@@ -143,7 +137,7 @@ public class AOLKeywordGenerator
 				}
 				else
 				{
-					ArrayList<String> arrAux = new ArrayList<String>();
+					List<String> arrAux = new ArrayList<String>();
 					arrAux.add(fields[1]);
 					mapUrlKw.put(fields[4], arrAux);
 				}
@@ -154,17 +148,15 @@ public class AOLKeywordGenerator
 		return mapUrlKw;
 	}
 
-	public HashMap<String, ArrayList<String>> createCategoriesUrlMap(HashMap<String, ArrayList<String>> urlKwMap) throws IOException
+	public Map<String, List<String>> createCategoriesUrlMap(Map<String, List<String>> urlKwMap) throws IOException
 	{
 		// given a url to keywords map, generate a categories to url Map only using urls that contain keywords.
 		// url will contain only the domain part
 		// Relatively fast speed
-
-		FileInputStream fstream = new FileInputStream(dmozUrlPath);
-		DataInputStream in = new DataInputStream(fstream);
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-		HashMap<String, ArrayList<String>> categoriesKwMap = new HashMap<String, ArrayList<String>>();
+		final FileInputStream fstream = new FileInputStream(dmozUrlPath);
+		final DataInputStream in = new DataInputStream(fstream);
+		final BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		final Map<String, List<String>> categoriesKwMap = new HashMap<String, List<String>>();
 		String strLine;
 		String[] lineParts;
 		// Read File Line By Line
@@ -174,21 +166,22 @@ public class AOLKeywordGenerator
 			long start = System.currentTimeMillis();
 			logger.info("processing category" + j);
 			lineParts = strLine.split(" : ");
-			String[] urls = lineParts[1].split("\\s+");
+			final String[] urls = lineParts[1].split("\\s+");
 			for (String url : urls)
 			{
-				String mainUrl = this.getMainUrl(url);
+				final String mainUrl = this.getMainUrl(url);
 				if (urlKwMap.containsKey(mainUrl))
 				{
-
 					if (categoriesKwMap.containsKey(lineParts[0]))
 					{
 						if (!categoriesKwMap.get(lineParts[0]).contains(mainUrl))
+						{
 							categoriesKwMap.get(lineParts[0]).add(mainUrl);
+						}
 					}
 					else
 					{
-						ArrayList<String> aux2 = new ArrayList<String>();
+						final List<String> aux2 = new ArrayList<String>();
 						aux2.add(mainUrl);
 						categoriesKwMap.put(lineParts[0], aux2);
 					}
@@ -201,23 +194,21 @@ public class AOLKeywordGenerator
 		return categoriesKwMap;
 	}
 
-	public void saveCategoriesKwMap(HashMap<String, ArrayList<String>> categoriesUrlMap, HashMap<String, ArrayList<String>> urlKwMap, String baseSavePath) throws FileNotFoundException
+	public void saveCategoriesKwMap(Map<String, List<String>> categoriesUrlMap, Map<String, List<String>> urlKwMap, String baseSavePath) throws FileNotFoundException
 	{
 		// Takes a HashMap of categories to urls containing keywords and creates a file with the categories
 		// and the keywords associated to its categories
 		// The file has a multiword file format
 
 		// Create different printstreams for the different subcategories
-		PrintStream[] ps = new PrintStream[categories.length];
+		final PrintStream[] ps = new PrintStream[categories.length];
 		int j = 0;
-
 		for (String cat : categories)
 		{
-			String filePath = baseSavePath + cat + ".aol";
+			final String filePath = baseSavePath + cat + ".aol";
 			ps[j] = new PrintStream(new FileOutputStream(new File(filePath)));
 			j++;
 		}
-
 		for (String cat : categoriesUrlMap.keySet())
 		{
 			logger.info("Saving category " + cat);
@@ -225,21 +216,23 @@ public class AOLKeywordGenerator
 			for (n = 0; n <= categories.length; n++)
 			{
 				if (cat.contains("top/" + categories[n]))
+				{
 					break;
+				}
 			}
 			ps[n].print(cat + ":0 ");
 			for (String domain : categoriesUrlMap.get(cat))
 			{
 				if (domain != null && domain.length() > 2)
 				{
-					ArrayList<String> aux3 = urlKwMap.get(domain.replaceAll("\\s+", ""));
+					final List<String> aux3 = urlKwMap.get(domain.replaceAll("\\s+", ""));
 					if (aux3.size() < 1000)
 					{
 						for (String kw : urlKwMap.get(domain.replaceAll("\\s+", "")))
 						{
 							if (kw != null && kw.length() > 1)
 							{
-								String multiwrd = kw.replaceAll("\\s+", "\\+").replaceAll("^\\+", "").replace("\\+$", "");
+								final String multiwrd = kw.replaceAll("\\s+", "\\+").replaceAll("^\\+", "").replace("\\+$", "");
 								ps[n].print(multiwrd + ":0 ");
 							}
 						}
@@ -248,24 +241,19 @@ public class AOLKeywordGenerator
 			}
 			ps[n].print("\n");
 		}
-
 	}
 
-	public HashMap<String, ArrayList<String>> createCategoriesKwMap(HashMap<String, ArrayList<String>> urlKwMap) throws IOException
+	public Map<String, List<String>> createCategoriesKwMap(Map<String, List<String>> urlKwMap) throws IOException
 	{
-
 		// Warning: really slow
 		// given a url to keywords map, generate a categories to kw Map based on the urls contained in dmoz
-
-		FileInputStream fstream = new FileInputStream(dmozUrlPath);
-		DataInputStream in = new DataInputStream(fstream);
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-		Set<String> keySet = urlKwMap.keySet();
-		HashMap<String, ArrayList<String>> categoriesKwMap = new HashMap<String, ArrayList<String>>();
-
-		ArrayList<String> mainUrls = new ArrayList<String>();
-		ArrayList<String> urls = new ArrayList<String>();
+		final FileInputStream fstream = new FileInputStream(dmozUrlPath);
+		final DataInputStream in = new DataInputStream(fstream);
+		final BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		final Set<String> keySet = urlKwMap.keySet();
+		final Map<String, List<String>> categoriesKwMap = new HashMap<String, List<String>>();
+		final List<String> mainUrls = new ArrayList<String>();
+		final List<String> urls = new ArrayList<String>();
 		for (String url : keySet)
 		{
 			mainUrls.add(this.getMainUrl(url));
@@ -274,8 +262,7 @@ public class AOLKeywordGenerator
 		String strLine;
 		String[] lineParts;
 		// Read File Line By Line
-
-		HashMap<String, String> caturlMap = new HashMap<String, String>();
+		final Map<String, String> caturlMap = new HashMap<String, String>();
 		int j = 0;
 		while ((strLine = br.readLine()) != null)
 		{
@@ -284,7 +271,6 @@ public class AOLKeywordGenerator
 			caturlMap.put(lineParts[0], lineParts[1]);
 			j++;
 		}
-
 		for (int i = 0; i < mainUrls.size(); i++)
 		{
 			logger.info("Processing ulr : " + i);
@@ -308,13 +294,12 @@ public class AOLKeywordGenerator
 			}
 
 		}
-
 		return categoriesKwMap;
 	}
 
 	public String getMainUrl(String url)
 	{
-		String[] urlparts = url.split("/");
+		final String[] urlparts = url.split("/");
 		String mainURL = url;
 		for (String part : urlparts)
 		{

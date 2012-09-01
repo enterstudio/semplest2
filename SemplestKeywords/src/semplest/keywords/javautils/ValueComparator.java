@@ -32,7 +32,7 @@ public class ValueComparator implements Comparator
 	public static void main(String[] args)
 	{
 
-		HashMap<String, Double> map = new HashMap<String, Double>();
+		Map<String, Double> map = new HashMap<String, Double>();
 		ValueComparator bvc = new ValueComparator(map);
 		TreeMap<String, Double> sorted_map = new TreeMap(bvc);
 

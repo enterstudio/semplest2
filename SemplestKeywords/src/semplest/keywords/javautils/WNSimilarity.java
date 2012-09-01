@@ -31,9 +31,9 @@ public class WNSimilarity
 
 	private static ILexicalDatabase db = new NictWordNet();
 	private static RelatednessCalculator rcs;/*
-											 * {new HirstStOnge(db), new LeacockChodorow(db), new Lesk(db), new WuPalmer(db), new Resnik(db), new
-											 * JiangConrath(db), new Lin(db), new Path(db) };
-											 */
+																						 * {new HirstStOnge(db), new LeacockChodorow(db), new Lesk(db), new WuPalmer(db), new Resnik(db), new
+																						 * JiangConrath(db), new Lin(db), new Path(db) };
+																						 */
 
 	public WNSimilarity()
 	{
@@ -124,9 +124,13 @@ public class WNSimilarity
 			for (String key : wMap.keySet())
 			{
 				if (i < 50)
+				{
 					pr.println(key + " : " + wMap.get(key));
+				}
 				else
+				{
 					break;
+				}
 				i++;
 			}
 			pr.println("-------------------------------------------------------------------------------------------------------");

@@ -1,12 +1,12 @@
 package semplest.keywords.classification;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Document
 {
-	private HashMap<String, Integer> list;
+	private final Map<String, Integer> list;
 
-	public Document(HashMap<String, Integer> list)
+	public Document(Map<String, Integer> list)
 	{
 		this.list = list;
 	}

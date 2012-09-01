@@ -62,13 +62,17 @@ public class WordNetUtils
 				for (NounSynset hyponym : hyponyms)
 				{
 					for (String wordForm : hyponym.getWordForms())
+					{
 						System.out.println("hyponim: " + wordForm);
+					}
 				}
 				NounSynset[] hyperonims = nounSynset.getHypernyms();
 				for (NounSynset hyperonim : hyperonims)
 				{
 					for (String wordForm : hyperonim.getWordForms())
+					{
 						System.out.println("hyperonim: " + wordForm);
+					}
 				}
 			}
 			if (synset instanceof AdjectiveSynset)
@@ -78,7 +82,9 @@ public class WordNetUtils
 				for (AdjectiveSynset rel : relatedAdj)
 				{
 					for (String wordForm : rel.getWordForms())
+					{
 						System.out.println("related: " + wordForm);
+					}
 				}
 			}
 		}

@@ -25,23 +25,18 @@ public class MultiWords
 		return buff.toString();
 	}
 
-	public static ArrayList<String> getMultiWords(String in, int[] n, int minCount)
+	public static List<String> getMultiWords(String in, int[] n, int minCount)
 	{
-
-		ArrayList<String> list = new ArrayList<String>();
-
+		List<String> list = new ArrayList<String>();
 		in = in.replaceAll("   ", " ");
 		in = in.replaceAll("  ", " ");
 		String[] words = in.split(" ");
 		// String [] words = in.split("\\s+");
-
 		for (int i = 0; i < n.length; i++)
 		{
-
 			StringBuilder out = new StringBuilder();
 			String key;
-			HashMap<String, Integer> indexMap = new HashMap<String, Integer>();
-
+			Map<String, Integer> indexMap = new HashMap<String, Integer>();
 			String[] buffer = new String[n[i]];
 			int j = 0;
 			for (String s : words)
@@ -96,8 +91,9 @@ public class MultiWords
 				}
 			}
 			if (out.length() > 0) // if there is anything written at all!
+			{
 				out.setLength(out.length() - 1); // delete the last
-
+			}
 			// list.add(out.toString());
 			list.add(k + " " + out.toString()); // changed for crawl level 2
 

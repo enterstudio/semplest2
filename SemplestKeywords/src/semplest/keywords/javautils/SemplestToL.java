@@ -1,4 +1,3 @@
-
 // written by: Subhojit Som (subhojit@semplest.com)
 
 package semplest.keywords.javautils;
@@ -8,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -21,21 +22,19 @@ public class SemplestToL
 	 * Converts semplest format data to LDA format data.
 	 * 
 	 * @param inFile
-	 *            input filename with semplest format data
+	 *          input filename with semplest format data
 	 * @param outFile
-	 *            output filename where the LDA format data will be written
+	 *          output filename where the LDA format data will be written
 	 * @param vocabFile
-	 *            vocabulary filename
+	 *          vocabulary filename
 	 * @param startIdx
-	 *            index of the first word in the LDA format file (e.g., 0 or 1)
+	 *          index of the first word in the LDA format file (e.g., 0 or 1)
 	 */
 	public static void convert(String inFile, String outFile, String vocabFile, int startIdx)
 	{
-
 		int idx = startIdx;
-		ArrayList<String> lines = ioUtils.readFile(inFile);
-
-		HashMap<String, Integer> hashWords = new HashMap<String, Integer>();
+		List<String> lines = ioUtils.readFile(inFile);
+		Map<String, Integer> hashWords = new HashMap<String, Integer>();
 
 		// LDA format word count write
 		try
@@ -70,7 +69,6 @@ public class SemplestToL
 					out.write(value + ":" + tuple[1] + " ");
 				}
 				out.write("\n");
-
 			}
 			out.close();
 		}
@@ -91,7 +89,9 @@ public class SemplestToL
 		{
 			BufferedWriter vocab = new BufferedWriter(new FileWriter(vocabFile));
 			for (int i = 0; i < wordList.length; i++)
+			{
 				vocab.write(wordList[i] + "\n");
+			}
 			vocab.close();
 		}
 		catch (IOException e)
@@ -104,25 +104,35 @@ public class SemplestToL
 
 	public static void main(String[] args)
 	{
-
 		String inFile, outFile, vocabFile;
 		int startIdx = 1;
+		
 		if (args.length == 0)
+		{
 			inFile = new String("/semplest/data/dmoz/business/hCounts.txt");
+		}
 		else
+		{
 			inFile = args[0];
-
+		}
+		
 		if (args.length == 2)
+		{
 			outFile = args[1];
+		}
 		else
+		{
 			outFile = inFile + ".l";
-
+		}
+		
 		if (args.length == 3)
+		{
 			vocabFile = args[2];
+		}
 		else
+		{
 			vocabFile = inFile + ".vocab";
-
+		}
 		SemplestToL.convert(inFile, outFile, vocabFile, startIdx);
-
 	}
 }

@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,7 +40,6 @@ public class look4CategoriesFromFile
 		HashMap<String, Double> categMap = new HashMap<String, Double>();
 		ValueComparator bvcAux = new ValueComparator(categMap);
 		TreeMap<String, Double> sorted_opt = new TreeMap<String, Double>(bvcAux);
-		;
 		int results = 100; // number of results to obtain from dmoz search
 		int maxiter = 10; // maximum number of iterations
 		int maxtopresults = 10; // Maximum number of results to report
@@ -122,14 +123,16 @@ public class look4CategoriesFromFile
 					}
 				}
 				if (topresults >= maxtopresults)
+				{
 					break;
+				}
 			}
 			// --------------------------------------------------------------------------------------------------------
 			// Train LDA for top 5 categories and return sorted keywords
 
 			// Create ArrayList with data for training from top categories
 			System.out.println("\nTraining data for LDA:");
-			ArrayList<String> trainLines = new ArrayList<String>();
+			List<String> trainLines = new ArrayList<String>();
 			topresults = 0;
 
 			for (String key : keys)
@@ -149,7 +152,9 @@ public class look4CategoriesFromFile
 					}
 				}
 				if (topresults >= maxtopresults)
+				{
 					break;
+				}
 				in.close();
 				br.close();
 			}
@@ -177,12 +182,16 @@ public class look4CategoriesFromFile
 			Scanner scanFile = new Scanner(System.in);
 			System.setOut(testlog);
 			String userInfo1 = scanFile.nextLine();
-			ArrayList<String> words1;
+			List<String> words1;
 
 			if (userInfo1.contains(".clean"))
+			{
 				words1 = TextUtils.validTextWords(userInfo1);
+			}
 			else
+			{
 				words1 = TextUtils.validHtmlWords(userInfo1);
+			}
 
 			String data1 = "";
 			for (String s : words1)
@@ -207,14 +216,16 @@ public class look4CategoriesFromFile
 			for (String keys2 : keyS)
 			{
 				if (i >= 50)
+				{
 					break;
+				}
 				System.out.print(" " + keys2 + ",");
 				i++;
 			}
 
 			// --------------------------------------------------------------------------------------------------------
 			// Select repeated patterns
-			ArrayList<String> optList = selectOptions(optInitial, 20);
+			List<String> optList = selectOptions(optInitial, 20);
 			System.out.println("\nSorted general options:");
 			for (String opt : optList)
 			{
@@ -225,22 +236,20 @@ public class look4CategoriesFromFile
 			System.in.read();
 			System.setOut(testlog);
 			System.out.println("*******************************************************************************************************\n");
-
 		}
 		testlog.close();
 		inResults.close();
 		brResults.close();
-
 	}
 
-	private static ArrayList<String> selectOptions(ArrayList<String> optKeys, int numNEval) throws IOException
+	private static List<String> selectOptions(List<String> optKeys, int numNEval) throws IOException
 	{
 		// Selects patterns from top categories list to generate options for the user based on pre-defined crieteria
 		// Criteria to select subcategories:
 		// 1- # of nodes between 2 and 4, more than 1 repetition
 		// 2- More than 4 nodes, at least 1 repetition
 
-		HashMap<String, Double> optList = new HashMap<String, Double>();
+		Map<String, Double> optList = new HashMap<String, Double>();
 		ValueComparator bvcAux = new ValueComparator(optList);
 		TreeMap<String, Double> sorted_opt = new TreeMap<String, Double>(bvcAux);
 
@@ -268,7 +277,7 @@ public class look4CategoriesFromFile
 
 		sorted_opt.putAll(optList);
 
-		HashMap<String, Double> optList2 = new HashMap<String, Double>();
+		Map<String, Double> optList2 = new HashMap<String, Double>();
 		ValueComparator bvcAux2 = new ValueComparator(optList2);
 		TreeMap<String, Double> sorted_opt2 = new TreeMap<String, Double>(bvcAux2);
 		Double numrepeat;
@@ -289,15 +298,12 @@ public class look4CategoriesFromFile
 			}
 		}
 		sorted_opt2.putAll(optList2);
-
 		Set<String> sorted_optKeys2 = sorted_opt2.keySet();
-		ArrayList<String> arrayOpt = new ArrayList<String>();
+		List<String> arrayOpt = new ArrayList<String>();
 		for (String key : sorted_optKeys2)
 		{
 			arrayOpt.add(key);
 		}
 		return arrayOpt;
-
 	}
-
 }
