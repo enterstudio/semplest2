@@ -3,6 +3,7 @@ package semplest.system.tester;
 import java.util.ArrayList;
 import java.util.List;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.services.client.api.KeywordLDAServiceClient;
@@ -77,10 +78,10 @@ public class KeywordServiceTest implements SemplestKeywordLDAServiceInterface
 	}
 
 	@Override
-	public KeywordProbabilityObject[] getKeywords(List<String> categories, String companyName, String[] searchEngines, String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception
+	public KeywordProbabilityObject[] getKeywords(List<String> categories, String companyName, AdEngine[] searchEngines, String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception
 	{
 		SystemTestFunc.PrintLineSeperator();
-		ArrayList<String> selectCateg = new ArrayList<String>();
+		List<String> selectCateg = new ArrayList<String>();
 		selectCateg.add(retCategories.get(1));
 		System.out.println("Selected:" + retCategories.get(1));
 		KeywordProbabilityObject[] kw = null;

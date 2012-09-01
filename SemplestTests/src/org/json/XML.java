@@ -73,7 +73,7 @@ public class XML
 	 * </pre>
 	 * 
 	 * @param string
-	 *            The string to be escaped.
+	 *          The string to be escaped.
 	 * @return The escaped string.
 	 */
 	public static String escape(String string)
@@ -132,11 +132,11 @@ public class XML
 	 * Scan the content following the named tag, attaching it to the context.
 	 * 
 	 * @param x
-	 *            The XMLTokener containing the source string.
+	 *          The XMLTokener containing the source string.
 	 * @param context
-	 *            The JSONObject that will include the new material.
+	 *          The JSONObject that will include the new material.
 	 * @param name
-	 *            The tag name.
+	 *          The tag name.
 	 * @return true if the close tag is processed.
 	 * @throws JSONException
 	 */
@@ -362,7 +362,7 @@ public class XML
 	 * points.
 	 * 
 	 * @param string
-	 *            A String.
+	 *          A String.
 	 * @return A simple JSON value.
 	 */
 	public static Object stringToValue(String string)
@@ -431,14 +431,14 @@ public class XML
 	}
 
 	/**
-	 * Convert a well-formed (but not necessarily valid) XML string into a JSONObject. Some information may be lost in this transformation because
-	 * JSON is a data format and XML is a document format. XML uses elements, attributes, and content text, while JSON uses unordered collections of
-	 * name/value pairs and arrays of values. JSON does not does not like to distinguish between elements and attributes. Sequences of similar
-	 * elements are represented as JSONArrays. Content text may be placed in a "content" member. Comments, prologs, DTDs, and <code>&lt;[ [ ]]></code>
-	 * are ignored.
+	 * Convert a well-formed (but not necessarily valid) XML string into a JSONObject. Some information may be lost in this transformation because JSON
+	 * is a data format and XML is a document format. XML uses elements, attributes, and content text, while JSON uses unordered collections of
+	 * name/value pairs and arrays of values. JSON does not does not like to distinguish between elements and attributes. Sequences of similar elements
+	 * are represented as JSONArrays. Content text may be placed in a "content" member. Comments, prologs, DTDs, and <code>&lt;[ [ ]]></code> are
+	 * ignored.
 	 * 
 	 * @param string
-	 *            The source string.
+	 *          The source string.
 	 * @return A JSONObject containing the structured data from the XML string.
 	 * @throws JSONException
 	 */
@@ -457,7 +457,7 @@ public class XML
 	 * Convert a JSONObject into a well-formed, element-normal XML string.
 	 * 
 	 * @param object
-	 *            A JSONObject.
+	 *          A JSONObject.
 	 * @return A string.
 	 * @throws JSONException
 	 */
@@ -470,9 +470,9 @@ public class XML
 	 * Convert a JSONObject into a well-formed, element-normal XML string.
 	 * 
 	 * @param object
-	 *            A JSONObject.
+	 *          A JSONObject.
 	 * @param tagName
-	 *            The optional name of the enclosing tag.
+	 *          The optional name of the enclosing tag.
 	 * @return A string.
 	 * @throws JSONException
 	 */

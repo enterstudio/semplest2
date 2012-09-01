@@ -7,6 +7,7 @@ import java.util.List;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.EmailType;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.google.GoogleAddAdRequest;
@@ -90,7 +91,7 @@ public class SystemTestDataModel
 	public static final String keyword_SearchTerm = "rugby sale balls and gloves";
 	public static final String keyword_Description = "rugby sale balls and gloves";
 	public static final String keyword_LandingPage = "http://www.planetrugby.com";
-	public static final String[] keyword_AdEngineList = { "Google", "MSN" };
+	public static final AdEngine[] keyword_AdEngineList = { AdEngine.Google, AdEngine.MSN };
 	public static final Integer[] keyword_nGramsList = { 300, 100, 100 };
 
 	// Bidding Service Variables
@@ -133,12 +134,11 @@ public class SystemTestDataModel
 		return "SystemTestDataModel [semplestCustomerId=" + semplestCustomerId + ", semplestProductGroupId=" + semplestProductGroupId + ", productGroupIds=" + productGroupIds + ", semplestPromotionId=" + semplestPromotionId + ", semplestPromotionName=" + semplestPromotionName + ", adEngineList="
 				+ adEngineList + ", promotionDescription=" + promotionDescription + ", googleAccountId=" + googleAccountId + ", googleCampaignId=" + googleCampaignId + ", googleAdGroupId=" + googleAdGroupId + ", msnAccountId=" + msnAccountId + ", msnCustomerId=" + msnCustomerId + ", msnCampaignId="
 				+ msnCampaignId + ", msnAdGroupId=" + msnAdGroupId + ", ad1=" + ad1 + ", ad2=" + ad2 + ", promotionAds=" + promotionAds + ", promotionAdIds=" + promotionAdIds + ", ad3=" + ad3 + ", promotionAds2=" + promotionAds2 + ", promotionAdIds2=" + promotionAdIds2 + ", keywords=" + keywords
-				+ ", keywordIds=" + keywordIds + ", keywords2=" + keywords2 + ", keywordIds2=" + keywordIds2 + ", negKeywords=" + negKeywords + ", negKeywordIds=" + negKeywordIds + ", keywordIdRemoveOppositePairs=" + keywordIdRemoveOppositePairs + ", negKeywords2=" + negKeywords2
-				+ ", negKeywordIds2=" + negKeywordIds2 + ", keywordIdRemoveOppositePairs2=" + keywordIdRemoveOppositePairs2 + ", address=" + address + ", city=" + city + ", stateCode=" + stateCode + ", zipCode=" + zipCode + ", longitude=" + longitude + ", latitude=" + latitude + ", radius="
-				+ radius + ", siteLink1=" + siteLink1 + ", siteLink2=" + siteLink2 + ", sitelinks=" + sitelinks + ", adEngine_ChangeInBudget=" + adEngine_ChangeInBudget + ", adEngine_ValidateUrl1=" + adEngine_ValidateUrl1 + ", adEngine_ValidateUrl2=" + adEngine_ValidateUrl2
-				+ ", keyword_SearchTerm=" + keyword_SearchTerm + ", keyword_Description=" + keyword_Description + ", keyword_LandingPage=" + keyword_LandingPage + ", bidding_TotalMonthlyBudget=" + bidding_TotalMonthlyBudget + ", bidding_BudgetData=" + bidding_BudgetData + ", mail_subject="
-				+ mail_subject + ", mail_from=" + mail_from + ", mail_recipient=" + mail_recipient + ", mail_msgTxt=" + mail_msgTxt + ", mail_msgType=" + mail_msgType + ", reportName=" + reportName + ", adEngineErrors=" + adEngineErrors + ", biddingErrors=" + biddingErrors + ", keywordErrors="
-				+ keywordErrors + ", mailErrors=" + mailErrors + "]";
+				+ ", keywordIds=" + keywordIds + ", keywords2=" + keywords2 + ", keywordIds2=" + keywordIds2 + ", negKeywords=" + negKeywords + ", negKeywordIds=" + negKeywordIds + ", keywordIdRemoveOppositePairs=" + keywordIdRemoveOppositePairs + ", negKeywords2=" + negKeywords2 + ", negKeywordIds2="
+				+ negKeywordIds2 + ", keywordIdRemoveOppositePairs2=" + keywordIdRemoveOppositePairs2 + ", address=" + address + ", city=" + city + ", stateCode=" + stateCode + ", zipCode=" + zipCode + ", longitude=" + longitude + ", latitude=" + latitude + ", radius=" + radius + ", siteLink1=" + siteLink1
+				+ ", siteLink2=" + siteLink2 + ", sitelinks=" + sitelinks + ", adEngine_ChangeInBudget=" + adEngine_ChangeInBudget + ", adEngine_ValidateUrl1=" + adEngine_ValidateUrl1 + ", adEngine_ValidateUrl2=" + adEngine_ValidateUrl2 + ", keyword_SearchTerm=" + keyword_SearchTerm
+				+ ", keyword_Description=" + keyword_Description + ", keyword_LandingPage=" + keyword_LandingPage + ", bidding_TotalMonthlyBudget=" + bidding_TotalMonthlyBudget + ", bidding_BudgetData=" + bidding_BudgetData + ", mail_subject=" + mail_subject + ", mail_from=" + mail_from
+				+ ", mail_recipient=" + mail_recipient + ", mail_msgTxt=" + mail_msgTxt + ", mail_msgType=" + mail_msgType + ", reportName=" + reportName + ", adEngineErrors=" + adEngineErrors + ", biddingErrors=" + biddingErrors + ", keywordErrors=" + keywordErrors + ", mailErrors=" + mailErrors + "]";
 	}
 
 }

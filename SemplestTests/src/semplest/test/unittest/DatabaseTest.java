@@ -105,17 +105,16 @@ public class DatabaseTest extends BaseDB
 			 * PromotionBudgetAmount = 700.00; int BudgetCycleFK = 3; Double StartBudgetInCycle = 500.00; Date CreatedDate = new Date(); String sql =
 			 * "INSERT Promotion(ProductGroupFK, PromotionName, PromotionDescription, PromotionStartDate, LandingPageURL, " +
 			 * "PromotionBudgetAmount, BudgetCycleFK, StartBudgetInCycle, CreatedDate) " + "VALUES(?,?,?,?,?,?,?,?,?)"; jdbcTemplate.update(sql, new
-			 * Object[] {ProductGroupFK, PromotionName, PromotionDescription, PromotionStartDate, LandingPageURL, PromotionBudgetAmount,
-			 * BudgetCycleFK, StartBudgetInCycle, CreatedDate}); sql =
-			 * "SELECT p.PromotionPK from Promotion p WHERE p.PromotionName = ? and p.CreatedDate = ?"; int vret = jdbcTemplate.queryForInt(sql,
-			 * PromotionName, CreatedDate); promotionID = vret; System.out.println("Created test promotion. PromotionPK = " + vret);
-			 * System.out.println(" "); } catch(Exception e){ e.printStackTrace(); errorHandler(new
+			 * Object[] {ProductGroupFK, PromotionName, PromotionDescription, PromotionStartDate, LandingPageURL, PromotionBudgetAmount, BudgetCycleFK,
+			 * StartBudgetInCycle, CreatedDate}); sql = "SELECT p.PromotionPK from Promotion p WHERE p.PromotionName = ? and p.CreatedDate = ?"; int vret =
+			 * jdbcTemplate.queryForInt(sql, PromotionName, CreatedDate); promotionID = vret; System.out.println("Created test promotion. PromotionPK = " +
+			 * vret); System.out.println(" "); } catch(Exception e){ e.printStackTrace(); errorHandler(new
 			 * Exception("Failed to create a test promotion. Exit the test now." + eol + e.getMessage())); return 1; }
 			 */
 
 			/*
-			 * Test_PromotionData(); Test_DefaultBid(); Test_KeywordDataObject(); Test_BidObject(); Test_TargetedDailyBudget();
-			 * Test_TrafficEstimatorData(); Test_ReportData(); Test_Other();
+			 * Test_PromotionData(); Test_DefaultBid(); Test_KeywordDataObject(); Test_BidObject(); Test_TargetedDailyBudget(); Test_TrafficEstimatorData();
+			 * Test_ReportData(); Test_Other();
 			 */
 
 			ArrayList<KeywordDataObject> kdo = new ArrayList<KeywordDataObject>();
@@ -795,9 +794,8 @@ public class DatabaseTest extends BaseDB
 			 * List<Map<String, Object>> accs = db.getAdEngineAccount(customerID, adEngine); System.out.println("OK");
 			 * 
 			 * //--- verification int i = 0; for(Map<String, Object> m : accs){ System.out.println("#"+i+" ---------------------------------------");
-			 * System.out.println("AccountID = " + m.get("AccountID")); System.out.println("CustomerName = " + m.get("CustomerName")); i++; }
-			 * if(accs.size() == 0){ errorHandler(new Exception(vmsg + "No campaign returned.")); } } catch(Exception e){ e.printStackTrace();
-			 * errorHandler(e); }
+			 * System.out.println("AccountID = " + m.get("AccountID")); System.out.println("CustomerName = " + m.get("CustomerName")); i++; } if(accs.size()
+			 * == 0){ errorHandler(new Exception(vmsg + "No campaign returned.")); } } catch(Exception e){ e.printStackTrace(); errorHandler(e); }
 			 */
 
 			try
@@ -879,11 +877,10 @@ public class DatabaseTest extends BaseDB
 			/* ******************************************************************************************* */
 			// *** get all customer data from the Customer table
 			/*
-			 * List<CustomerObj> ret = db.getAllCustomers(); int i = 0; for(CustomerObj c : ret){
-			 * System.out.println("#"+i+"----------------------------"); System.out.println("name = " + c.getName());
-			 * System.out.println("customerPK = " + c.getCustomerPK()); System.out.println("billType = " + c.getBillType());
-			 * System.out.println("campaignCycleType = " + c.getCampaignCycleType()); System.out.println("cycleInDays = " + c.getCycleInDays());
-			 * System.out.println("totalTargetCycleBudget = " + c.getTotalTargetCycleBudget()); System.out.println("createdDate = " +
+			 * List<CustomerObj> ret = db.getAllCustomers(); int i = 0; for(CustomerObj c : ret){ System.out.println("#"+i+"----------------------------");
+			 * System.out.println("name = " + c.getName()); System.out.println("customerPK = " + c.getCustomerPK()); System.out.println("billType = " +
+			 * c.getBillType()); System.out.println("campaignCycleType = " + c.getCampaignCycleType()); System.out.println("cycleInDays = " +
+			 * c.getCycleInDays()); System.out.println("totalTargetCycleBudget = " + c.getTotalTargetCycleBudget()); System.out.println("createdDate = " +
 			 * c.getCreatedDate()); i++; }
 			 */
 
@@ -923,16 +920,15 @@ public class DatabaseTest extends BaseDB
 			 * retpromo.getPromotionData(); System.out.println("Promotions: -------------------");
 			 * System.out.println(ReflectionToStringBuilder.toString(pd)); List<AdsObject> ads = retpromo.getAds();
 			 * System.out.println("Ads: -------------------"); for(AdsObject a : ads){ System.out.println(ReflectionToStringBuilder.toString(a)); }
-			 * List<GeoTargetObject> gts = retpromo.getGeoTargets(); System.out.println("GeoTargets: -------------------"); for(GeoTargetObject g :
-			 * gts){ System.out.println(ReflectionToStringBuilder.toString(g)); }
+			 * List<GeoTargetObject> gts = retpromo.getGeoTargets(); System.out.println("GeoTargets: -------------------"); for(GeoTargetObject g : gts){
+			 * System.out.println(ReflectionToStringBuilder.toString(g)); }
 			 */
 
 			/* ******************************************************************************************* */
 			// *** Test UpdateRemainingBudgetInCycleSP(). Update Remaining Budget In Cycle to the database.
 			/*
-			 * UpdateRemainingBudgetInCycleSP updbudget = new UpdateRemainingBudgetInCycleSP(); Calendar cal = Calendar.getInstance(); cal.set(2011,
-			 * 1, 1); Date start = cal.getTime(); cal.set(2012, 06, 01); Date end = cal.getTime(); Integer ret = updbudget.execute(promotionID, start,
-			 * end);
+			 * UpdateRemainingBudgetInCycleSP updbudget = new UpdateRemainingBudgetInCycleSP(); Calendar cal = Calendar.getInstance(); cal.set(2011, 1, 1);
+			 * Date start = cal.getTime(); cal.set(2012, 06, 01); Date end = cal.getTime(); Integer ret = updbudget.execute(promotionID, start, end);
 			 */
 
 			/* ******************************************************************************************* */

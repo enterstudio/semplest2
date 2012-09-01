@@ -90,9 +90,9 @@ public class AdengineServiceTest extends BaseDB
 			 */
 			AddPromotionToAdEngine(method); // google, msn, manual verify onGoingBidding
 			/*
-			 * PausePromotion(method); //google,msn UpdateGeoTargeting(method); //google,msn UpdateBudget(method); //google,msn AddAds(method);
-			 * //google,msn UpdateAds(method); //google,msn DeleteAds(method); //google,msn AddKeywords(method); //google,msn DeleteKeywords(method);
-			 * //google,msn PauseProductGroups(method); //google,msn RefreshSiteLinks(method); //google AddNegativeKeywords(method); //google
+			 * PausePromotion(method); //google,msn UpdateGeoTargeting(method); //google,msn UpdateBudget(method); //google,msn AddAds(method); //google,msn
+			 * UpdateAds(method); //google,msn DeleteAds(method); //google,msn AddKeywords(method); //google,msn DeleteKeywords(method); //google,msn
+			 * PauseProductGroups(method); //google,msn RefreshSiteLinks(method); //google AddNegativeKeywords(method); //google
 			 * DeleteNegativeKeywords(method); //google ExecuteBidProcess(method); //can't verify result without real report data
 			 */
 			/*
@@ -383,10 +383,10 @@ public class AdengineServiceTest extends BaseDB
 				 * System.out.println(" -longtitude = " + mLongitude); System.out.println(" -radius = " + mRadius);
 				 * 
 				 * if(!mLongitude.equals(testData.longitude)){ errorHandler(new Exception(vMsg + "Longitude doesn't match. Value in database = " +
-				 * testData.longitude + ". Value on msn = " + mLongitude + ".")); } if(!mLatitude.equals(testData.latitude)){ errorHandler(new
-				 * Exception(vMsg + "Latitude doesn't match. Value in database = " + testData.latitude + ". Value on msn = " + mLatitude + ".")); }
-				 * if(mRadius != testData.radius.intValue()){ errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " +
-				 * testData.radius + ". Value on msn = " + mRadius + "(double to int).")); }
+				 * testData.longitude + ". Value on msn = " + mLongitude + ".")); } if(!mLatitude.equals(testData.latitude)){ errorHandler(new Exception(vMsg
+				 * + "Latitude doesn't match. Value in database = " + testData.latitude + ". Value on msn = " + mLatitude + ".")); } if(mRadius !=
+				 * testData.radius.intValue()){ errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + testData.radius +
+				 * ". Value on msn = " + mRadius + "(double to int).")); }
 				 */
 
 			}
@@ -548,10 +548,9 @@ public class AdengineServiceTest extends BaseDB
 
 						/*
 						 * if(!gLongitude.equals(testData.newLongitude * 1000000)){ errorHandler(new Exception(vMsg +
-						 * "Longitude doesn't match. Value in database = " + testData.newLongitude + ". Value on google = " + gLongitude +
-						 * "(in micro).")); } if(!gLatitude.equals(testData.newLatitude * 1000000)){ errorHandler(new Exception(vMsg +
-						 * "Latitude doesn't match. Value in database = " + testData.newLatitude + ". Value on google = " + gLatitude +
-						 * "(in micro).")); }
+						 * "Longitude doesn't match. Value in database = " + testData.newLongitude + ". Value on google = " + gLongitude + "(in micro).")); }
+						 * if(!gLatitude.equals(testData.newLatitude * 1000000)){ errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = "
+						 * + testData.newLatitude + ". Value on google = " + gLatitude + "(in micro).")); }
 						 */
 						if (!gRadius.equals(testData.newRadius))
 						{
@@ -1404,8 +1403,7 @@ public class AdengineServiceTest extends BaseDB
 				}
 				if (negKeywords2.size() != numExpectedOutputNegKeywords)
 				{
-					errorHandler(new Exception(vMsg + "The num of Negative Keywords in database and the num of Negative Keywords put on google don't match. " + "Num of Negative Keywords in database: " + numExpectedOutputNegKeywords + ". Num of Negative Keywords existing to google: "
-							+ negKeywords2.size()));
+					errorHandler(new Exception(vMsg + "The num of Negative Keywords in database and the num of Negative Keywords put on google don't match. " + "Num of Negative Keywords in database: " + numExpectedOutputNegKeywords + ". Num of Negative Keywords existing to google: " + negKeywords2.size()));
 				}
 				if (match != 3)
 				{
@@ -2130,12 +2128,12 @@ public class AdengineServiceTest extends BaseDB
 		public String toString()
 		{
 			return "TestDataModel [semplestCustomerId=" + semplestCustomerId + ", semplestProductGroupId=" + semplestProductGroupId + ", semplestPromotionId=" + semplestPromotionId + ", semplestPromotionName=" + semplestPromotionName + ", adEngineList=" + adEngineList + ", googleAccountId="
-					+ googleAccountId + ", googleCampaignId=" + googleCampaignId + ", googleAdGroupId=" + googleAdGroupId + ", msnAccountId=" + msnAccountId + ", msnCustomerId=" + msnCustomerId + ", msnCampaignId=" + msnCampaignId + ", msnAdGroupId=" + msnAdGroupId + ", promotionAdIds="
-					+ promotionAdIds + ", newAdIds=" + newAdIds + ", productGroupIds=" + productGroupIds + ", presetPromoId=" + presetPromoId + ", presetGoogleAccountId=" + presetGoogleAccountId + ", presetGoogleCampaignId=" + presetGoogleCampaignId + ", presetGoogleAdgroupId="
-					+ presetGoogleAdgroupId + ", keywords=" + keywords + ", keywordIds=" + keywordIds + ", newKeywords=" + newKeywords + ", newKeywordIds=" + newKeywordIds + ", negKeywords=" + negKeywords + ", negKeywordIds=" + negKeywordIds + ", posKeywords=" + posKeywords + ", posKeywordIds="
-					+ posKeywordIds + ", newNegKeywords=" + newNegKeywords + ", newNegKeywordIds=" + newNegKeywordIds + ", posToNegKeywords=" + posToNegKeywords + ", posToNegKeywordIds=" + posToNegKeywordIds + ", keywordIdRemoveOppositePairs=" + keywordIdRemoveOppositePairs + ", address=" + address
-					+ ", city=" + city + ", stateCode=" + stateCode + ", zipCode=" + zipCode + ", longitude=" + longitude + ", latitude=" + latitude + ", radius=" + radius + ", newAddress=" + newAddress + ", newCity=" + newCity + ", newStateCode=" + newStateCode + ", newZipCode=" + newZipCode
-					+ ", newLongitude=" + newLongitude + ", newLatitude=" + newLatitude + ", newRadius=" + newRadius + ", sitelinks=" + sitelinks + "]";
+					+ googleAccountId + ", googleCampaignId=" + googleCampaignId + ", googleAdGroupId=" + googleAdGroupId + ", msnAccountId=" + msnAccountId + ", msnCustomerId=" + msnCustomerId + ", msnCampaignId=" + msnCampaignId + ", msnAdGroupId=" + msnAdGroupId + ", promotionAdIds=" + promotionAdIds
+					+ ", newAdIds=" + newAdIds + ", productGroupIds=" + productGroupIds + ", presetPromoId=" + presetPromoId + ", presetGoogleAccountId=" + presetGoogleAccountId + ", presetGoogleCampaignId=" + presetGoogleCampaignId + ", presetGoogleAdgroupId=" + presetGoogleAdgroupId + ", keywords="
+					+ keywords + ", keywordIds=" + keywordIds + ", newKeywords=" + newKeywords + ", newKeywordIds=" + newKeywordIds + ", negKeywords=" + negKeywords + ", negKeywordIds=" + negKeywordIds + ", posKeywords=" + posKeywords + ", posKeywordIds=" + posKeywordIds + ", newNegKeywords="
+					+ newNegKeywords + ", newNegKeywordIds=" + newNegKeywordIds + ", posToNegKeywords=" + posToNegKeywords + ", posToNegKeywordIds=" + posToNegKeywordIds + ", keywordIdRemoveOppositePairs=" + keywordIdRemoveOppositePairs + ", address=" + address + ", city=" + city + ", stateCode=" + stateCode
+					+ ", zipCode=" + zipCode + ", longitude=" + longitude + ", latitude=" + latitude + ", radius=" + radius + ", newAddress=" + newAddress + ", newCity=" + newCity + ", newStateCode=" + newStateCode + ", newZipCode=" + newZipCode + ", newLongitude=" + newLongitude + ", newLatitude="
+					+ newLatitude + ", newRadius=" + newRadius + ", sitelinks=" + sitelinks + "]";
 		}
 
 	}

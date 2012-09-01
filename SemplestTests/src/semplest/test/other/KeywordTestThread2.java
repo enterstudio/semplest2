@@ -3,8 +3,10 @@ package semplest.test.other;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.services.client.api.KeywordLDAServiceClient;
 
@@ -47,15 +49,15 @@ public class KeywordTestThread2 implements Runnable
 				String url = wordList.get(k);
 				System.out.println("-> " + k + " -> " + url);
 
-				ArrayList<String> res = client.getCategories(null, k, k, null, null);
+				List<String> res = client.getCategories(null, k, k, null, null);
 				double sec = (double) (System.currentTimeMillis() - start) / 1000.0;
 				// System.out.println("categories took " + sec + " seconds");
 
 				start = System.currentTimeMillis();
-				ArrayList<String> selectCateg = new ArrayList<String>();
+				List<String> selectCateg = new ArrayList<String>();
 				selectCateg.add(res.get(5));
 
-				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg, null, new String[] { "Google", "MSN" }, k, k, null, url, null, new Integer[] { 50, 50 });
+				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg, null, new AdEngine[] { AdEngine.Google, AdEngine.MSN }, k, k, null, url, null, new Integer[] { 50, 50 });
 				sec = (double) (System.currentTimeMillis() - start) / 1000.0;
 				// System.out.println("keywords took " + sec + " seconds");
 

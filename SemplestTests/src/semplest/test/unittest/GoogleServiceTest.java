@@ -128,14 +128,14 @@ public class GoogleServiceTest
 			System.out.println("TransactionDate = " + r.getTransactionDate());
 
 			/*
-			 * for(ReportObject r : ret){ System.out.println("->"); System.out.println("AccountID = " + r.getAccountID());
-			 * System.out.println("keyword = " + r.getKeyword()); System.out.println("ApprovalStatus = " + r.getApprovalStatus());
-			 * System.out.println("BidMatchType = " + r.getBidMatchType()); System.out.println("AverageCPC = " + r.getAverageCPC());
-			 * System.out.println("AveragePosition = " + r.getAveragePosition()); System.out.println("CampaignID = " + r.getCampaignID());
-			 * System.out.println("FirstPageCPC = " + r.getFirstPageCPC()); System.out.println("MicroBidAmount = " + r.getMicroBidAmount());
-			 * System.out.println("MicroCost = " + r.getMicroCost()); System.out.println("NumberClick = " + r.getNumberClick());
-			 * System.out.println("NumberImpressions = " + r.getNumberImpressions()); System.out.println("QualityScore = " + r.getQualityScore());
-			 * System.out.println("CreatedDate = " + r.getCreatedDate()); System.out.println("TransactionDate = " + r.getTransactionDate()); }
+			 * for(ReportObject r : ret){ System.out.println("->"); System.out.println("AccountID = " + r.getAccountID()); System.out.println("keyword = " +
+			 * r.getKeyword()); System.out.println("ApprovalStatus = " + r.getApprovalStatus()); System.out.println("BidMatchType = " +
+			 * r.getBidMatchType()); System.out.println("AverageCPC = " + r.getAverageCPC()); System.out.println("AveragePosition = " +
+			 * r.getAveragePosition()); System.out.println("CampaignID = " + r.getCampaignID()); System.out.println("FirstPageCPC = " +
+			 * r.getFirstPageCPC()); System.out.println("MicroBidAmount = " + r.getMicroBidAmount()); System.out.println("MicroCost = " + r.getMicroCost());
+			 * System.out.println("NumberClick = " + r.getNumberClick()); System.out.println("NumberImpressions = " + r.getNumberImpressions());
+			 * System.out.println("QualityScore = " + r.getQualityScore()); System.out.println("CreatedDate = " + r.getCreatedDate());
+			 * System.out.println("TransactionDate = " + r.getTransactionDate()); }
 			 */
 
 		}
@@ -300,8 +300,8 @@ public class GoogleServiceTest
 			 * accountID + ", " + campaignID + ", " + CampaignStatus.ACTIVE.getValue() + ")"); boolean ret = test.changeCampaignStatus(accountID,
 			 * campaignID, CampaignStatus.ACTIVE); System.out.println("***OK"); System.out.println("successful = " + ret);
 			 * 
-			 * //verify result ArrayList<HashMap<String, String>> cps = test.getCampaignsByAccountId(accountID, false); for(HashMap<String, String>
-			 * map : cps){ if(Long.valueOf(map.get("Id")) == campaignID) if(!map.get("Status").equalsIgnoreCase(CampaignStatus.ACTIVE.getValue()))
+			 * //verify result ArrayList<HashMap<String, String>> cps = test.getCampaignsByAccountId(accountID, false); for(HashMap<String, String> map :
+			 * cps){ if(Long.valueOf(map.get("Id")) == campaignID) if(!map.get("Status").equalsIgnoreCase(CampaignStatus.ACTIVE.getValue()))
 			 * errorHandler(new Exception(vMsg + "Campaign status not updated.")); } } catch(Exception e){ e.printStackTrace(); errorHandler(e); }
 			 * Thread.sleep(sleepTime);
 			 */
@@ -599,11 +599,10 @@ public class GoogleServiceTest
 			 * 
 			 * for(String s:ret.getListOfKeywords()){ System.out.println("keyword = " + s); if(ret.getBidList(s, MatchType.Broad.getValue()) == null){
 			 * System.out.println("no estimate for the keyword"); } else{ for(Long b:ret.getBidList(s, MatchType.Broad.getValue())){
-			 * System.out.println("bidAmount = " + b); System.out.println("AveClickPerDay = " + ret.getAveClickPerDay(s, MatchType.Broad.getValue(),
-			 * b)); System.out.println("AveCPC = " + ret.getAveCPC(s, MatchType.Broad.getValue(), b)); System.out.println("AvePosition = " +
-			 * ret.getAvePosition(s, MatchType.Broad.getValue(), b)); System.out.println("AveTotalDailyMicroCost = " +
-			 * ret.getAveTotalDailyMicroCost(s, MatchType.Broad.getValue(), b)); } } } } catch(Exception e){ e.printStackTrace(); errorHandler(e); }
-			 * Thread.sleep(sleepTime);
+			 * System.out.println("bidAmount = " + b); System.out.println("AveClickPerDay = " + ret.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
+			 * System.out.println("AveCPC = " + ret.getAveCPC(s, MatchType.Broad.getValue(), b)); System.out.println("AvePosition = " +
+			 * ret.getAvePosition(s, MatchType.Broad.getValue(), b)); System.out.println("AveTotalDailyMicroCost = " + ret.getAveTotalDailyMicroCost(s,
+			 * MatchType.Broad.getValue(), b)); } } } } catch(Exception e){ e.printStackTrace(); errorHandler(e); } Thread.sleep(sleepTime);
 			 */
 
 			// getBidLandscapeForKeyword
@@ -697,8 +696,7 @@ public class GoogleServiceTest
 			 * System.out.println("MicroBidAmount = " + r.getMicroBidAmount()); System.out.println("MicroCost = " + r.getMicroCost());
 			 * System.out.println("NumberClick = " + r.getNumberClick()); System.out.println("NumberImpressions = " + r.getNumberImpressions());
 			 * System.out.println("QualityScore = " + r.getQualityScore()); System.out.println("CreatedDate = " + r.getCreatedDate());
-			 * System.out.println("TransactionDate = " + r.getTransactionDate()); } } } catch(Exception e){ errorHandler(e); }
-			 * Thread.sleep(sleepTime);
+			 * System.out.println("TransactionDate = " + r.getTransactionDate()); } } } catch(Exception e){ errorHandler(e); } Thread.sleep(sleepTime);
 			 */
 
 			// ---Methods not ready. to be implemented.

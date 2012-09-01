@@ -859,10 +859,10 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 
 					/*
 					 * if(!gLongitude.equals(new Double(SystemTestDataModel.longitude * 1000000).intValue())){
-					 * SystemTestFunc.ErrorHandler("Longitude doesn't match. Value in database = " + SystemTestDataModel.longitude +
-					 * ". Value on google = " + gLongitude + "(in micro)."); } if(!gLatitude.equals(new Double(SystemTestDataModel.latitude *
-					 * 1000000).intValue())){ SystemTestFunc.ErrorHandler("Latitude doesn't match. Value in database = " +
-					 * SystemTestDataModel.latitude + ". Value on google = " + gLatitude + "(in micro)."); }
+					 * SystemTestFunc.ErrorHandler("Longitude doesn't match. Value in database = " + SystemTestDataModel.longitude + ". Value on google = " +
+					 * gLongitude + "(in micro)."); } if(!gLatitude.equals(new Double(SystemTestDataModel.latitude * 1000000).intValue())){
+					 * SystemTestFunc.ErrorHandler("Latitude doesn't match. Value in database = " + SystemTestDataModel.latitude + ". Value on google = " +
+					 * gLatitude + "(in micro)."); }
 					 */
 					if (!gRadius.equals(SystemTestDataModel.radius))
 					{
@@ -962,12 +962,11 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 			 * mLocation.getCountryTarget().getBids()[0].getCountryAndRegion()); System.out.println(" -latitude = " + mLatitude);
 			 * System.out.println(" -longtitude = " + mLongitude); System.out.println(" -radius = " + mRadius);
 			 * 
-			 * if(!mLongitude.equals(SystemTestDataModel.longitude)){ errorHandler(new Exception(vMsg +
-			 * "Longitude doesn't match. Value in database = " + SystemTestDataModel.longitude + ". Value on msn = " + mLongitude + ".")); }
-			 * if(!mLatitude.equals(SystemTestDataModel.latitude)){ errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " +
-			 * SystemTestDataModel.latitude + ". Value on msn = " + mLatitude + ".")); } if(mRadius != SystemTestDataModel.radius.intValue()){
-			 * errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + SystemTestDataModel.radius + ". Value on msn = " +
-			 * mRadius + "(double to int).")); }
+			 * if(!mLongitude.equals(SystemTestDataModel.longitude)){ errorHandler(new Exception(vMsg + "Longitude doesn't match. Value in database = " +
+			 * SystemTestDataModel.longitude + ". Value on msn = " + mLongitude + ".")); } if(!mLatitude.equals(SystemTestDataModel.latitude)){
+			 * errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + SystemTestDataModel.latitude + ". Value on msn = " +
+			 * mLatitude + ".")); } if(mRadius != SystemTestDataModel.radius.intValue()){ errorHandler(new Exception(vMsg +
+			 * "Latitude doesn't match. Value in database = " + SystemTestDataModel.radius + ". Value on msn = " + mRadius + "(double to int).")); }
 			 */
 
 		}

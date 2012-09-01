@@ -46,10 +46,10 @@ public class CDL
 	 * Get the next value. The value can be wrapped in quotes. The value can be empty.
 	 * 
 	 * @param x
-	 *            A JSONTokener of the source text.
+	 *          A JSONTokener of the source text.
 	 * @return The value string, or null if empty.
 	 * @throws JSONException
-	 *             if the quoted string is badly formed.
+	 *           if the quoted string is badly formed.
 	 */
 	private static String getValue(JSONTokener x) throws JSONException
 	{
@@ -96,7 +96,7 @@ public class CDL
 	 * Produce a JSONArray of strings from a row of comma delimited values.
 	 * 
 	 * @param x
-	 *            A JSONTokener of the source text.
+	 *          A JSONTokener of the source text.
 	 * @return A JSONArray of strings.
 	 * @throws JSONException
 	 */
@@ -135,9 +135,9 @@ public class CDL
 	 * Produce a JSONObject from a row of comma delimited text, using a parallel JSONArray of strings to provides the names of the elements.
 	 * 
 	 * @param names
-	 *            A JSONArray of names. This is commonly obtained from the first row of a comma delimited text file using the rowToJSONArray method.
+	 *          A JSONArray of names. This is commonly obtained from the first row of a comma delimited text file using the rowToJSONArray method.
 	 * @param x
-	 *            A JSONTokener of the source text.
+	 *          A JSONTokener of the source text.
 	 * @return A JSONObject combining the names and values.
 	 * @throws JSONException
 	 */
@@ -148,11 +148,10 @@ public class CDL
 	}
 
 	/**
-	 * Produce a comma delimited text row from a JSONArray. Values containing the comma character will be quoted. Troublesome characters may be
-	 * removed.
+	 * Produce a comma delimited text row from a JSONArray. Values containing the comma character will be quoted. Troublesome characters may be removed.
 	 * 
 	 * @param ja
-	 *            A JSONArray of strings.
+	 *          A JSONArray of strings.
 	 * @return A string ending in NEWLINE.
 	 */
 	public static String rowToString(JSONArray ja)
@@ -196,7 +195,7 @@ public class CDL
 	 * Produce a JSONArray of JSONObjects from a comma delimited text string, using the first row as a source of names.
 	 * 
 	 * @param string
-	 *            The comma delimited text.
+	 *          The comma delimited text.
 	 * @return A JSONArray of JSONObjects.
 	 * @throws JSONException
 	 */
@@ -209,7 +208,7 @@ public class CDL
 	 * Produce a JSONArray of JSONObjects from a comma delimited text string, using the first row as a source of names.
 	 * 
 	 * @param x
-	 *            The JSONTokener containing the comma delimited text.
+	 *          The JSONTokener containing the comma delimited text.
 	 * @return A JSONArray of JSONObjects.
 	 * @throws JSONException
 	 */
@@ -222,9 +221,9 @@ public class CDL
 	 * Produce a JSONArray of JSONObjects from a comma delimited text string using a supplied JSONArray as the source of element names.
 	 * 
 	 * @param names
-	 *            A JSONArray of strings.
+	 *          A JSONArray of strings.
 	 * @param string
-	 *            The comma delimited text.
+	 *          The comma delimited text.
 	 * @return A JSONArray of JSONObjects.
 	 * @throws JSONException
 	 */
@@ -237,9 +236,9 @@ public class CDL
 	 * Produce a JSONArray of JSONObjects from a comma delimited text string using a supplied JSONArray as the source of element names.
 	 * 
 	 * @param names
-	 *            A JSONArray of strings.
+	 *          A JSONArray of strings.
 	 * @param x
-	 *            A JSONTokener of the source text.
+	 *          A JSONTokener of the source text.
 	 * @return A JSONArray of JSONObjects.
 	 * @throws JSONException
 	 */
@@ -271,7 +270,7 @@ public class CDL
 	 * JSONObject.
 	 * 
 	 * @param ja
-	 *            A JSONArray of JSONObjects.
+	 *          A JSONArray of JSONObjects.
 	 * @return A comma delimited text.
 	 * @throws JSONException
 	 */
@@ -293,9 +292,9 @@ public class CDL
 	 * Produce a comma delimited text from a JSONArray of JSONObjects using a provided list of names. The list of names is not included in the output.
 	 * 
 	 * @param names
-	 *            A JSONArray of strings.
+	 *          A JSONArray of strings.
 	 * @param ja
-	 *            A JSONArray of JSONObjects.
+	 *          A JSONArray of JSONObjects.
 	 * @return A comma delimited text.
 	 * @throws JSONException
 	 */

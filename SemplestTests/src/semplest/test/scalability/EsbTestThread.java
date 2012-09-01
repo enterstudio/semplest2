@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import org.joda.time.DateTime;
@@ -253,7 +254,7 @@ public class EsbTestThread implements Runnable
 					{
 						KeywordLDAServiceClient client = new KeywordLDAServiceClient(testUrl);
 						long start = System.currentTimeMillis();
-						ArrayList<String> res = client.getCategories(null, "rugby sale balls and gloves", "rugby sale balls and gloves", null, null);
+						List<String> res = client.getCategories(null, "rugby sale balls and gloves", "rugby sale balls and gloves", null, null);
 						long latency = System.currentTimeMillis() - start;
 						return latency;
 					}
@@ -380,8 +381,8 @@ public class EsbTestThread implements Runnable
 		}
 		finally
 		{/*
-		 * try { writer.close(); } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); }
-		 */
+			 * try { writer.close(); } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); }
+			 */
 		}
 		return -1;
 	}

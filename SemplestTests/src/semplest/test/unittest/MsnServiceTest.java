@@ -147,9 +147,9 @@ public class MsnServiceTest
 
 			/*
 			 * //print out original report data -- if you need to look at the original report data that msn gives back String ret1 =
-			 * MsnService.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Daily); //getReportData Map<String,
-			 * String[]> ret2 = MsnService.getReportData(ret1, 1617082L); for(String s: ret2.keySet()){ System.out.println(s); String[] data =
-			 * ret2.get(s); for(String d: data){ System.out.println(d); } System.out.println("============="); }
+			 * MsnService.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Daily); //getReportData Map<String, String[]> ret2
+			 * = MsnService.getReportData(ret1, 1617082L); for(String s: ret2.keySet()){ System.out.println(s); String[] data = ret2.get(s); for(String d:
+			 * data){ System.out.println(d); } System.out.println("============="); }
 			 */
 
 		}
@@ -619,12 +619,11 @@ public class MsnServiceTest
 			}
 
 			/*
-			 * //===Use this test to get format of City string and MetroArea string. (need to set things up on the website before run this) Target
-			 * ret2 = test.getAdGroupTargets(1595249L, 13061731L, 754813047L); StateTargetBid[] bids = ret2.getLocation().getStateTarget().getBids();
-			 * for(StateTargetBid b:bids){ logger.info("state = " + b.getState()); } CityTargetBid[] bids1 =
-			 * ret2.getLocation().getCityTarget().getBids(); for(CityTargetBid b:bids1){ logger.info("city = " + b.getCity()); } MetroAreaTargetBid[]
-			 * bids2 = ret2.getLocation().getMetroAreaTarget().getBids(); for(MetroAreaTargetBid b:bids2){ logger.info("MetroArea = " +
-			 * b.getMetroArea()); }
+			 * //===Use this test to get format of City string and MetroArea string. (need to set things up on the website before run this) Target ret2 =
+			 * test.getAdGroupTargets(1595249L, 13061731L, 754813047L); StateTargetBid[] bids = ret2.getLocation().getStateTarget().getBids();
+			 * for(StateTargetBid b:bids){ logger.info("state = " + b.getState()); } CityTargetBid[] bids1 = ret2.getLocation().getCityTarget().getBids();
+			 * for(CityTargetBid b:bids1){ logger.info("city = " + b.getCity()); } MetroAreaTargetBid[] bids2 =
+			 * ret2.getLocation().getMetroAreaTarget().getBids(); for(MetroAreaTargetBid b:bids2){ logger.info("MetroArea = " + b.getMetroArea()); }
 			 */
 
 			// setAdGroupStateTargets
@@ -1234,12 +1233,12 @@ public class MsnServiceTest
 			 * System.out.println("test accountId is " + test_accountId); System.out.println("test campaignId is " + test_campaignId);
 			 * 
 			 * if(kwreport == null){ System.out.println("no keyword history for the campaign"); } else{ for(ReportObject t: kwreport){
-			 * System.out.println("->"); System.out.println("Keyword = " + t.getKeyword()); System.out.println("BidAmount = " +
-			 * t.getMicroBidAmount()); System.out.println("BidMatchType = " + t.getBidMatchType()); System.out.println("NumberImpressions = " +
-			 * t.getNumberImpressions()); System.out.println("NumberClick = " + t.getNumberClick()); System.out.println("AveragePosition = " +
-			 * t.getAveragePosition()); System.out.println("QualityScore = " + t.getQualityScore()); System.out.println("AverageCPC = " +
-			 * t.getAverageCPC()); System.out.println("CreatedDate = " + t.getTransactionDate()); } } } catch(RemoteException e){ errorHandler(e); }
-			 * catch(Exception e){ errorHandler(e); }
+			 * System.out.println("->"); System.out.println("Keyword = " + t.getKeyword()); System.out.println("BidAmount = " + t.getMicroBidAmount());
+			 * System.out.println("BidMatchType = " + t.getBidMatchType()); System.out.println("NumberImpressions = " + t.getNumberImpressions());
+			 * System.out.println("NumberClick = " + t.getNumberClick()); System.out.println("AveragePosition = " + t.getAveragePosition());
+			 * System.out.println("QualityScore = " + t.getQualityScore()); System.out.println("AverageCPC = " + t.getAverageCPC());
+			 * System.out.println("CreatedDate = " + t.getTransactionDate()); } } } catch(RemoteException e){ errorHandler(e); } catch(Exception e){
+			 * errorHandler(e); }
 			 */
 
 		}

@@ -53,7 +53,7 @@ public class JSONTokener
 	 * Construct a JSONTokener from a Reader.
 	 * 
 	 * @param reader
-	 *            A reader.
+	 *          A reader.
 	 */
 	public JSONTokener(Reader reader)
 	{
@@ -78,7 +78,7 @@ public class JSONTokener
 	 * Construct a JSONTokener from a string.
 	 * 
 	 * @param s
-	 *            A source string.
+	 *          A source string.
 	 */
 	public JSONTokener(String s)
 	{
@@ -105,7 +105,7 @@ public class JSONTokener
 	 * Get the hex value of a character (base16).
 	 * 
 	 * @param c
-	 *            A character between '0' and '9' or between 'A' and 'F' or between 'a' and 'f'.
+	 *          A character between '0' and '9' or between 'A' and 'F' or between 'a' and 'f'.
 	 * @return An int between 0 and 15, or -1 if c was not a hex digit.
 	 */
 	public static int dehexchar(char c)
@@ -199,10 +199,10 @@ public class JSONTokener
 	 * Consume the next character, and check that it matches a specified character.
 	 * 
 	 * @param c
-	 *            The character to match.
+	 *          The character to match.
 	 * @return The character.
 	 * @throws JSONException
-	 *             if the character does not match.
+	 *           if the character does not match.
 	 */
 	public char next(char c) throws JSONException
 	{
@@ -218,10 +218,10 @@ public class JSONTokener
 	 * Get the next n characters.
 	 * 
 	 * @param n
-	 *            The number of characters to take.
+	 *          The number of characters to take.
 	 * @return A string of n characters.
 	 * @throws JSONException
-	 *             Substring bounds error if there are not n characters remaining in the source string.
+	 *           Substring bounds error if there are not n characters remaining in the source string.
 	 */
 	public String next(int n) throws JSONException
 	{
@@ -264,15 +264,14 @@ public class JSONTokener
 	}
 
 	/**
-	 * Return the characters up to the next close quote character. Backslash processing is done. The formal JSON format does not allow strings in
-	 * single quotes, but an implementation is allowed to accept them.
+	 * Return the characters up to the next close quote character. Backslash processing is done. The formal JSON format does not allow strings in single
+	 * quotes, but an implementation is allowed to accept them.
 	 * 
 	 * @param quote
-	 *            The quoting character, either <code>"</code>&nbsp;<small>(double quote)</small> or <code>'</code>&nbsp;<small>(single
-	 *            quote)</small>.
+	 *          The quoting character, either <code>"</code>&nbsp;<small>(double quote)</small> or <code>'</code>&nbsp;<small>(single quote)</small>.
 	 * @return A String.
 	 * @throws JSONException
-	 *             Unterminated string.
+	 *           Unterminated string.
 	 */
 	public String nextString(char quote) throws JSONException
 	{
@@ -333,7 +332,7 @@ public class JSONTokener
 	 * Get the text up but not including the specified character or the end of line, whichever comes first.
 	 * 
 	 * @param delimiter
-	 *            A delimiter character.
+	 *          A delimiter character.
 	 * @return A string.
 	 */
 	public String nextTo(char delimiter) throws JSONException
@@ -358,7 +357,7 @@ public class JSONTokener
 	 * Get the text up but not including one of the specified delimiter characters or the end of line, whichever comes first.
 	 * 
 	 * @param delimiters
-	 *            A set of delimiter characters.
+	 *          A set of delimiter characters.
 	 * @return A string, trimmed.
 	 */
 	public String nextTo(String delimiters) throws JSONException
@@ -384,7 +383,7 @@ public class JSONTokener
 	 * Get the next value. The value can be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
 	 * 
 	 * @throws JSONException
-	 *             If syntax error.
+	 *           If syntax error.
 	 * 
 	 * @return An object.
 	 */
@@ -407,8 +406,8 @@ public class JSONTokener
 		}
 
 		/*
-		 * Handle unquoted text. This could be the values true, false, or null, or it can be a number. An implementation (such as this one) is allowed
-		 * to also accept non-standard forms.
+		 * Handle unquoted text. This could be the values true, false, or null, or it can be a number. An implementation (such as this one) is allowed to
+		 * also accept non-standard forms.
 		 * 
 		 * Accumulate characters until we reach the end of the text or a formatting character.
 		 */
@@ -433,7 +432,7 @@ public class JSONTokener
 	 * Skip characters until the next character is the requested character. If the requested character is not found, no characters are skipped.
 	 * 
 	 * @param to
-	 *            A character to skip to.
+	 *          A character to skip to.
 	 * @return The requested character, or zero if the requested character is not found.
 	 */
 	public char skipTo(char to) throws JSONException
@@ -472,7 +471,7 @@ public class JSONTokener
 	 * Make a JSONException to signal a syntax error.
 	 * 
 	 * @param message
-	 *            The error message.
+	 *          The error message.
 	 * @return A JSONException object, suitable for throwing
 	 */
 	public JSONException syntaxError(String message)

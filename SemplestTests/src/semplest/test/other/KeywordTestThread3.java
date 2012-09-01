@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.services.client.api.KeywordLDAServiceClient;
 
@@ -65,7 +67,7 @@ public class KeywordTestThread3 implements Runnable
 					writer.flush();
 
 					long start = System.currentTimeMillis();
-					ArrayList<String> res = client.getCategories(null, k, k, null, null);
+					List<String> res = client.getCategories(null, k, k, null, null);
 					long latency = System.currentTimeMillis() - start;
 
 					writer.append("time get categories = " + String.valueOf(latency));
@@ -76,11 +78,11 @@ public class KeywordTestThread3 implements Runnable
 					writer.append('\n');
 					writer.flush();
 
-					ArrayList<String> selectCateg = new ArrayList<String>();
+					List<String> selectCateg = new ArrayList<String>();
 					selectCateg.add(res.get(5));
 
 					start = System.currentTimeMillis();
-					KeywordProbabilityObject[] kw = client.getKeywords(selectCateg, null, new String[] { "Google", "MSN" }, k, k, null, url, null, new Integer[] { 50, 50 });
+					KeywordProbabilityObject[] kw = client.getKeywords(selectCateg, null, new AdEngine[] { AdEngine.Google, AdEngine.MSN }, k, k, null, url, null, new Integer[] { 50, 50 });
 					latency = System.currentTimeMillis() - start;
 
 					writer.append("time get keywords = " + String.valueOf(latency));

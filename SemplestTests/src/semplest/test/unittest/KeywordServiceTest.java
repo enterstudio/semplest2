@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.service.keywords.lda.KeywordGeneratorServiceImpl;
@@ -26,7 +27,7 @@ public class KeywordServiceTest
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getCategories:");
 			long start = System.currentTimeMillis();
-			ArrayList<String> res = client.getCategories(null, "rugby sale balls and gloves", "rugby sale balls and gloves", null, null);
+			List<String> res = client.getCategories(null, "rugby sale balls and gloves", "rugby sale balls and gloves", null, null);
 			double sec = (double) (System.currentTimeMillis() - start) / 1000.0;
 			System.out.println("categories took " + sec + " seconds");
 			for (int i = 0; i < res.size(); i++)
@@ -92,7 +93,7 @@ public class KeywordServiceTest
 				System.out.println("------------------------------------------------------------");
 				System.out.println("getKeywords:");
 				long start = System.currentTimeMillis();
-				KeywordProbabilityObject[] kw = service.getKeywords(selectCateg, null, new String[] { "Google", "MSN" }, "rugby sale balls and gloves", "rugby sale balls and gloves", null, "http://www.planetrugby.com", null, new Integer[] { 50, 50 });
+				KeywordProbabilityObject[] kw = service.getKeywords(selectCateg, null, new AdEngine[] { AdEngine.Google, AdEngine.MSN }, "rugby sale balls and gloves", "rugby sale balls and gloves", null, "http://www.planetrugby.com", null, new Integer[] { 50, 50 });
 
 				double sec = (double) (System.currentTimeMillis() - start) / 1000.0;
 				System.out.println("keywords took " + sec + " seconds");
@@ -143,7 +144,7 @@ public class KeywordServiceTest
 		{
 			KeywordLDAServiceClient client = new KeywordLDAServiceClient(serviceURL);
 
-			ArrayList<String> res = null;
+			List<String> res = null;
 			try
 			{
 				System.out.println("------------------------------------------------------------");
@@ -162,7 +163,7 @@ public class KeywordServiceTest
 				errorHandler(e);
 			}
 
-			ArrayList<String> selectCateg = new ArrayList<String>();
+			List<String> selectCateg = new ArrayList<String>();
 			selectCateg.add(res.get(0));
 			System.out.println("Selected:" + res.get(1));
 
@@ -171,7 +172,7 @@ public class KeywordServiceTest
 				System.out.println("------------------------------------------------------------");
 				System.out.println("getKeywords:");
 				long start = System.currentTimeMillis();
-				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg, null, new String[] { "Google", "MSN" }, "rugby sale balls and gloves", "rugby sale balls and gloves", null, "http://www.planetrugby.com", null, new Integer[] { 50, 50 });
+				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg, null, new AdEngine[] { AdEngine.Google, AdEngine.MSN }, "rugby sale balls and gloves", "rugby sale balls and gloves", null, "http://www.planetrugby.com", null, new Integer[] { 50, 50 });
 
 				double sec = (double) (System.currentTimeMillis() - start) / 1000.0;
 				System.out.println("keywords took " + sec + " seconds");

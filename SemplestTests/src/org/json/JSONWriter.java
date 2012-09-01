@@ -99,10 +99,10 @@ public class JSONWriter
 	 * Append a value.
 	 * 
 	 * @param string
-	 *            A string value.
+	 *          A string value.
 	 * @return this
 	 * @throws JSONException
-	 *             If the value is out of sequence.
+	 *           If the value is out of sequence.
 	 */
 	private JSONWriter append(String string) throws JSONException
 	{
@@ -140,8 +140,8 @@ public class JSONWriter
 	 * 
 	 * @return this
 	 * @throws JSONException
-	 *             If the nesting is too deep, or if the object is started in the wrong place (for example as a key or after the end of the outermost
-	 *             array or object).
+	 *           If the nesting is too deep, or if the object is started in the wrong place (for example as a key or after the end of the outermost
+	 *           array or object).
 	 */
 	public JSONWriter array() throws JSONException
 	{
@@ -159,12 +159,12 @@ public class JSONWriter
 	 * End something.
 	 * 
 	 * @param mode
-	 *            Mode
+	 *          Mode
 	 * @param c
-	 *            Closing character
+	 *          Closing character
 	 * @return this
 	 * @throws JSONException
-	 *             If unbalanced.
+	 *           If unbalanced.
 	 */
 	private JSONWriter end(char mode, char c) throws JSONException
 	{
@@ -190,7 +190,7 @@ public class JSONWriter
 	 * 
 	 * @return this
 	 * @throws JSONException
-	 *             If incorrectly nested.
+	 *           If incorrectly nested.
 	 */
 	public JSONWriter endArray() throws JSONException
 	{
@@ -202,7 +202,7 @@ public class JSONWriter
 	 * 
 	 * @return this
 	 * @throws JSONException
-	 *             If incorrectly nested.
+	 *           If incorrectly nested.
 	 */
 	public JSONWriter endObject() throws JSONException
 	{
@@ -213,10 +213,10 @@ public class JSONWriter
 	 * Append a key. The key will be associated with the next value. In an object, every value must be preceded by a key.
 	 * 
 	 * @param string
-	 *            A key string.
+	 *          A key string.
 	 * @return this
 	 * @throws JSONException
-	 *             If the key is out of place. For example, keys do not belong in arrays or if the key is null.
+	 *           If the key is out of place. For example, keys do not belong in arrays or if the key is null.
 	 */
 	public JSONWriter key(String string) throws JSONException
 	{
@@ -253,8 +253,8 @@ public class JSONWriter
 	 * 
 	 * @return this
 	 * @throws JSONException
-	 *             If the nesting is too deep, or if the object is started in the wrong place (for example as a key or after the end of the outermost
-	 *             array or object).
+	 *           If the nesting is too deep, or if the object is started in the wrong place (for example as a key or after the end of the outermost
+	 *           array or object).
 	 */
 	public JSONWriter object() throws JSONException
 	{
@@ -277,9 +277,9 @@ public class JSONWriter
 	 * Pop an array or object scope.
 	 * 
 	 * @param c
-	 *            The scope to close.
+	 *          The scope to close.
 	 * @throws JSONException
-	 *             If nesting is wrong.
+	 *           If nesting is wrong.
 	 */
 	private void pop(char c) throws JSONException
 	{
@@ -300,9 +300,9 @@ public class JSONWriter
 	 * Push an array or object scope.
 	 * 
 	 * @param c
-	 *            The scope to open.
+	 *          The scope to open.
 	 * @throws JSONException
-	 *             If nesting is too deep.
+	 *           If nesting is too deep.
 	 */
 	private void push(JSONObject jo) throws JSONException
 	{
@@ -319,7 +319,7 @@ public class JSONWriter
 	 * Append either the value <code>true</code> or the value <code>false</code>.
 	 * 
 	 * @param b
-	 *            A boolean.
+	 *          A boolean.
 	 * @return this
 	 * @throws JSONException
 	 */
@@ -332,10 +332,10 @@ public class JSONWriter
 	 * Append a double value.
 	 * 
 	 * @param d
-	 *            A double.
+	 *          A double.
 	 * @return this
 	 * @throws JSONException
-	 *             If the number is not finite.
+	 *           If the number is not finite.
 	 */
 	public JSONWriter value(double d) throws JSONException
 	{
@@ -346,7 +346,7 @@ public class JSONWriter
 	 * Append a long value.
 	 * 
 	 * @param l
-	 *            A long.
+	 *          A long.
 	 * @return this
 	 * @throws JSONException
 	 */
@@ -359,11 +359,10 @@ public class JSONWriter
 	 * Append an object value.
 	 * 
 	 * @param object
-	 *            The object to append. It can be null, or a Boolean, Number, String, JSONObject, or JSONArray, or an object that implements
-	 *            JSONString.
+	 *          The object to append. It can be null, or a Boolean, Number, String, JSONObject, or JSONArray, or an object that implements JSONString.
 	 * @return this
 	 * @throws JSONException
-	 *             If the value is out of sequence.
+	 *           If the value is out of sequence.
 	 */
 	public JSONWriter value(Object object) throws JSONException
 	{

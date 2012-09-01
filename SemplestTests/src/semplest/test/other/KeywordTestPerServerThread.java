@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.services.client.api.KeywordLDAServiceClient;
 import semplest.test.scalability.EsbTestThread.SERVICE_INDEX;
@@ -105,21 +107,22 @@ public class KeywordTestPerServerThread implements Runnable
 
 					// Round robin keywords
 					if (++nWord > (numKeywords - 1))
+					{
 						nWord = 0;
-
+					}
 					writer.append(k);
 					writer.append(',');
 					writer.flush();
 
 					long start = System.currentTimeMillis();
-					ArrayList<String> res = client.getCategories(null, k, k, null, null);
+					List<String> res = client.getCategories(null, k, k, null, null);
 					long latency = System.currentTimeMillis() - start;
 
 					writer.append(String.valueOf(latency));
 					writer.append(',');
 					writer.append(String.valueOf(res.size()));
 
-					ArrayList<String> selectCateg = new ArrayList<String>();
+					List<String> selectCateg = new ArrayList<String>();
 
 					// select 5 categories
 					selectCateg.add(res.get(1));
@@ -135,7 +138,7 @@ public class KeywordTestPerServerThread implements Runnable
 
 					start = System.currentTimeMillis();
 
-					KeywordProbabilityObject[] kw = client.getKeywords(selectCateg, null, new String[] { "Google", "MSN" }, k, k, null, url, null, new Integer[] { 300, 300, 100 });
+					KeywordProbabilityObject[] kw = client.getKeywords(selectCateg, null, new AdEngine[] { AdEngine.Google, AdEngine.MSN }, k, k, null, url, null, new Integer[] { 300, 300, 100 });
 					/*
 					 * KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"}, k, k, null, url, null ,new
 					 * Integer[]{50,50});
