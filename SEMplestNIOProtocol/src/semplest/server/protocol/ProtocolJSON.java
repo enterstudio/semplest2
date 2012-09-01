@@ -3,6 +3,7 @@ package semplest.server.protocol;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -70,7 +71,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 				throw e;
 			}
 	}
-	public <T,S> String createJSONHashmap(HashMap<T,S> map) 
+	public <T,S> String createJSONHashmap(Map<T,S> map) 
 	{
 		try
 		{
