@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 import semplest.keywords.lda.KWGenDmozLDAServer3;
 import semplest.keywords.javautils.catUtils;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
@@ -78,17 +79,24 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		final String[] adds = gson.fromJson(addsString, String[].class);
 		final String searchEnginesString = data.get("searchEngines");
 		final String[] searchEngines = gson.fromJson(searchEnginesString, String[].class);
+		final List<AdEngine> adEngines = new ArrayList<AdEngine>();
+		for (final String searchEngine : searchEngines)
+		{
+			final AdEngine adEngine = AdEngine.valueOf(searchEngine);
+			adEngines.add(adEngine);
+		}
+		final AdEngine[] adEngineArray = adEngines.toArray(new AdEngine[adEngines.size()]);
 		final String url = data.get("url");
 		final String nGramsString = data.get("nGrams");
 		final Integer[] nGrams = gson.fromJson(nGramsString, Integer[].class);
 		final String geoTargetsString = data.get("gt");
 		final GeoTargetObject[] gt = gson.fromJson(geoTargetsString, GeoTargetObject[].class);
-		final KeywordProbabilityObject[] res = getKeywords(categories, companyName, searchEngines, searchTerm, description, adds, url, gt, nGrams);
+		final KeywordProbabilityObject[] res = getKeywords(categories, companyName, adEngineArray, searchTerm, description, adds, url, gt, nGrams);
 		return gson.toJson(res);
 	}
 
 	@Override
-	public KeywordProbabilityObject[] getKeywords(List<String> categories, String companyName, String[] searchEngines, String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception
+	public KeywordProbabilityObject[] getKeywords(List<String> categories, String companyName, AdEngine[] searchEngines, String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception
 	{
 		kwGen = new KWGenDmozLDAServer3(SemplestConfiguration.configData);
 		final List<String> categoriesDecoded = cu.decode(categories);
