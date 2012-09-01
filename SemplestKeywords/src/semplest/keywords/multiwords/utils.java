@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -16,7 +17,7 @@ public class utils
 
 	public static void tmpToSemplest(String inFileName, String outFileName)
 	{
-		ArrayList<String> lines = ioUtils.readFile(inFileName);
+		List<String> lines = ioUtils.readFile(inFileName);
 		String[] tuples;
 		StringBuilder buffer2, buffer3, buffer4, buffer5;
 		int count2, count3, count4, count5;

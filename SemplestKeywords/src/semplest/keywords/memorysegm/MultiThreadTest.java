@@ -3,6 +3,7 @@ package semplest.keywords.memorysegm;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -31,7 +32,7 @@ public class MultiThreadTest implements Runnable
 				logger.info("Iterating thread " + threadCount);
 				String[] cats = splitter.getAllCats();
 				int[] randInd = CatSplitter.randIndexArray(3, cats.length - 100);
-				ArrayList<String> categories = new ArrayList<String>();
+				List<String> categories = new ArrayList<String>();
 				for (int i = 0; i < 100; i++)
 				{
 					categories.add(cats[i + randInd[0]]);

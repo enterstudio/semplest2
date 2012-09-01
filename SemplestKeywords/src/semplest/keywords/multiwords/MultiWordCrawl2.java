@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -34,9 +36,9 @@ public class MultiWordCrawl2
 			BufferedWriter out = new BufferedWriter(fstreamW);
 
 			String strLine;
-			ArrayList<String> list = null;
+			List<String> list = null;
 
-			HashSet<String> categorySet = new HashSet<String>();
+			Set<String> categorySet = new HashSet<String>();
 			// int i=0;
 			while ((strLine = br.readLine()) != null)
 			{

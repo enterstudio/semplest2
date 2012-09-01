@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -18,7 +20,6 @@ import semplest.keywords.scalautils.*;
 
 public class ExtTextFetcherDmoz
 {
-
 	private static final Logger logger = Logger.getLogger(ExtTextFetcherDmoz.class);
 
 	private String inFileName;
@@ -44,8 +45,8 @@ public class ExtTextFetcherDmoz
 
 		Crawler c = new Crawler();
 
-		ArrayList<String> lines = ioUtils.readFile(inFileName);
-		HashSet<String> tags = new HashSet<String>();
+		List<String> lines = ioUtils.readFile(inFileName);
+		Set<String> tags = new HashSet<String>();
 		String urls, tag;
 
 		String[] results;
@@ -56,7 +57,7 @@ public class ExtTextFetcherDmoz
 		FileWriter fstream2;
 		BufferedWriter out2;
 
-		ArrayList<String> list = null;
+		List<String> list = null;
 
 		int totalJobs, doneSoFar = 0;
 
@@ -73,7 +74,6 @@ public class ExtTextFetcherDmoz
 		}
 		else
 		{
-
 			// int k=0;
 			for (String line : lines)
 			{
@@ -113,7 +113,6 @@ public class ExtTextFetcherDmoz
 		// continue until all are done
 		while (!tags.isEmpty())
 		{
-
 			try
 			{ // try:sleep
 				Thread.sleep(3000);
@@ -143,9 +142,7 @@ public class ExtTextFetcherDmoz
 						tag = results[i].replaceAll(" .*", "");
 						out.write(tag);
 						list = MultiWords.getMultiWords(results[i], n, minCount);
-
 						out2.write(results[i] + "\n");
-
 						for (int j = 0; j < n.length; j++)
 						{
 							out.write(" ** " + list.get(j));
@@ -155,10 +152,8 @@ public class ExtTextFetcherDmoz
 						tags.remove(tag);
 						System.out.println("MultiWordExtraction: " + doneSoFar + " out of " + totalJobs + " done so far. Waiting for " + tags.size() + " jobs to complete.");
 					}
-
 					out.close();
 					out2.close();
-
 				}
 				catch (IOException e)
 				{
@@ -167,8 +162,9 @@ public class ExtTextFetcherDmoz
 
 			}
 			else
+			{
 				System.out.println("I am sad. I didn't find anything....... still waiting for " + tags.size() + " jobs.");
-
+			}
 		} // while
 
 	}
@@ -178,9 +174,9 @@ public class ExtTextFetcherDmoz
 
 		Crawler c = new Crawler();
 
-		ArrayList<String> lines = ioUtils.readFile(inFileName);
+		List<String> lines = ioUtils.readFile(inFileName);
 
-		HashSet<String> tags = new HashSet<String>();
+		Set<String> tags = new HashSet<String>();
 
 		String urls, tag;
 
@@ -192,15 +188,15 @@ public class ExtTextFetcherDmoz
 		FileWriter fstream2;
 		BufferedWriter out2;
 
-		ArrayList<String> doneLines = ioUtils.readFile(outFileName);
-		HashSet<String> doneTags = new HashSet<String>();
+		List<String> doneLines = ioUtils.readFile(outFileName);
+		Set<String> doneTags = new HashSet<String>();
 		for (String line : doneLines)
 		{
 			line = line.replaceAll(" .*$", "");
 			doneTags.add(line);
 		}
 
-		ArrayList<String> list = null;
+		List<String> list = null;
 
 		int totalJobs, doneSoFar = 0;
 
@@ -296,23 +292,21 @@ public class ExtTextFetcherDmoz
 
 			}
 			else
+			{
 				System.out.println("I am sad. I didn't find anything....... still waiting for " + tags.size() + " jobs.");
-
+			}
 		} // while
 
 	}
 
 	public void MultiWordsNoFetch(int[] n, int minCount)
 	{
-
 		// ArrayList<String> lines = ioUtils.readFile(inFileName);
-
 		String text = "", tag = "";
 		FileWriter fstream;
 		BufferedWriter out = null;
-		ArrayList<String> list = null;
+		List<String> list = null;
 		int count = 0;
-
 		try
 		{ // try: IO
 

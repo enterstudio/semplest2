@@ -4,147 +4,166 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-public class ProjectProperties {
+public class ProjectProperties
+{
 
-  //final public static String PROPSFILE =  "C:\\Projects\\java\\workspace\\SemplestKeywords\\data\\SemplestKeywords.properties";
-  final public static String PROPSFILE =  "data/SemplestKeywords.properties";
+	// final public static String PROPSFILE = "C:\\Projects\\java\\workspace\\SemplestKeywords\\data\\SemplestKeywords.properties";
+	final public static String PROPSFILE = "data/SemplestKeywords.properties";
 
-  public static Properties properties;
+	public static Properties properties;
 
-  //for bdb and Lucene
-  public static String lucenedir;
-  public static String bdbdir;
+	// for bdb and Lucene
+	public static String lucenedir;
+	public static String bdbdir;
 
-  //for dictUtils
-  public static String dictfile; 
-  public static String docfile; 
-  public static String twfile;
-  public static String dffile;
-  //for KWGenDmozLDAServer
-  public static String dfile;
-  public static String baseMultiWPath;
-  public static String[] nGramsSubC; 
-  public static String nGramsC; 
-  //for CatUtils
-  public static String[] validCat; 
-  public static String   catMap;
-  public static String   catIdsPath;
-  //for DmozLucene
-  public static String lucenedfile;
-  //for MalletTopic
-  public static String smallhCounts;
-  public static String stoplist;
-  //for KWGenDmozLDAServer
-  public static int numTopics;
-  public static double userInfoWeight;
-  public static int numKeywordsGoogle;
-  public static int numKeywordsMSN;
-  public static int numThreads;
-  private static final Logger logger = Logger.getLogger(ProjectProperties.class);
-  private static HashMap<String,Object> configData;
+	// for dictUtils
+	public static String dictfile;
+	public static String docfile;
+	public static String twfile;
+	public static String dffile;
+	// for KWGenDmozLDAServer
+	public static String dfile;
+	public static String baseMultiWPath;
+	public static String[] nGramsSubC;
+	public static String nGramsC;
+	// for CatUtils
+	public static String[] validCat;
+	public static String catMap;
+	public static String catIdsPath;
+	// for DmozLucene
+	public static String lucenedfile;
+	// for MalletTopic
+	public static String smallhCounts;
+	public static String stoplist;
+	// for KWGenDmozLDAServer
+	public static int numTopics;
+	public static double userInfoWeight;
+	public static int numKeywordsGoogle;
+	public static int numKeywordsMSN;
+	public static int numThreads;
+	private static final Logger logger = Logger.getLogger(ProjectProperties.class);
+	private static Map<String, Object> configData;
 
-  // statics should be initialized in a static constructor block
-  // Read in data from properties file
-  static {
-    properties = new Properties();
-    try {
-      properties.load( new FileInputStream(PROPSFILE) );
-    } catch (Exception e ){
-      e.printStackTrace();
-      logger.error("Problem", e);
-      // Note: Logger may not be initialized yet
-    }
+	// statics should be initialized in a static constructor block
+	// Read in data from properties file
+	static
+	{
+		properties = new Properties();
+		try
+		{
+			properties.load(new FileInputStream(PROPSFILE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			logger.error("Problem", e);
+			// Note: Logger may not be initialized yet
+		}
 
-    lucenedir = properties.getProperty("lucenedir");
-    bdbdir    = properties.getProperty("bdbdir");
-    dictfile  = properties.getProperty("dictfile");
-    docfile   = properties.getProperty("docfile"); 
-    twfile    = properties.getProperty("twfile"); 
-    dffile    = properties.getProperty("dffile"); 
-    dfile     = properties.getProperty("dfile"); 
-    baseMultiWPath = properties.getProperty("baseMultiWPath");
-    nGramsC     = properties.getProperty("nGramsC");; 
-    catMap      = properties.getProperty("catMap");
-    catIdsPath  = properties.getProperty("catIdsPath");
-    lucenedfile = properties.getProperty("lucenedfile");
-    smallhCounts  = properties.getProperty("smallhCounts");
-    stoplist      = properties.getProperty("stoplist");
-    numTopics     = Integer.parseInt(properties.getProperty("numTopics"));
-    numThreads      = Integer.parseInt(properties.getProperty("numThreads"));
-    numKeywordsGoogle = 
-      Integer.parseInt(properties.getProperty("numKeywordsGoogle"));
-    numKeywordsMSN  = 
-      Integer.parseInt( properties.getProperty("numKeywordsMSN"));
-    userInfoWeight = Double.parseDouble(properties.getProperty("userInfoWeight"));
-    validCat    = loadStringArrayfromfile("validcat");
-    nGramsSubC  = loadStringArrayfromfile("nGramsSubC");
-  }
+		lucenedir = properties.getProperty("lucenedir");
+		bdbdir = properties.getProperty("bdbdir");
+		dictfile = properties.getProperty("dictfile");
+		docfile = properties.getProperty("docfile");
+		twfile = properties.getProperty("twfile");
+		dffile = properties.getProperty("dffile");
+		dfile = properties.getProperty("dfile");
+		baseMultiWPath = properties.getProperty("baseMultiWPath");
+		nGramsC = properties.getProperty("nGramsC");
+		catMap = properties.getProperty("catMap");
+		catIdsPath = properties.getProperty("catIdsPath");
+		lucenedfile = properties.getProperty("lucenedfile");
+		smallhCounts = properties.getProperty("smallhCounts");
+		stoplist = properties.getProperty("stoplist");
+		numTopics = Integer.parseInt(properties.getProperty("numTopics"));
+		numThreads = Integer.parseInt(properties.getProperty("numThreads"));
+		numKeywordsGoogle = Integer.parseInt(properties.getProperty("numKeywordsGoogle"));
+		numKeywordsMSN = Integer.parseInt(properties.getProperty("numKeywordsMSN"));
+		userInfoWeight = Double.parseDouble(properties.getProperty("userInfoWeight"));
+		validCat = loadStringArrayfromfile("validcat");
+		nGramsSubC = loadStringArrayfromfile("nGramsSubC");
+	}
 
-  // null ctr not needed, but there to keep code from breaking 
-  public ProjectProperties() throws IOException { this(null); }
-  // if data is provided from database (as hash), override file properties
-  public ProjectProperties( HashMap<String,Object> configDataIn) 
-    throws IOException{
+	// null ctr not needed, but there to keep code from breaking
+	public ProjectProperties() throws IOException
+	{
+		this(null);
+	}
 
-    if( configDataIn == null) return;
+	// if data is provided from database (as hash), override file properties
+	public ProjectProperties(Map<String, Object> configDataIn) throws IOException
+	{
 
-    logger.info("Updating keyword properties properties from hash...");
-    configData = configDataIn;
+		if (configDataIn == null)
+		{
+			return;
+		}
+		logger.info("Updating keyword properties properties from hash...");
+		configData = configDataIn;
 
-    lucenedir = getString("SemplestKeywordslucenedir",  lucenedir );
-    bdbdir    = getString("SemplestKeywordsbdbdir",  bdbdir );
-    dictfile  = getString("SemplestKeywordsdictfile",  dictfile );
-    docfile   = getString("SemplestKeywordsdocfile",    docfile); 
-    twfile    = getString("SemplestKeywordstwfile",     twfile); 
-    dffile    = getString("SemplestKeywordsdffile",     dffile); 
-    dfile     = getString("SemplestKeywordsdfile",      dfile); 
-    nGramsC     = getString("SemplestKeywordsnGramsC",  nGramsC); 
-    catMap      = getString("catMap",                   catMap);
-    catIdsPath  = getString("catIdsPath",               catIdsPath);
-    lucenedfile = getString("SemplestKeywordslucenedfile",  lucenedfile );
-    smallhCounts= getString("SemplestKeywordssmallhCounts", smallhCounts );
-    stoplist    = getString("SemplestKeywordsstoplist",     stoplist);
-    baseMultiWPath = getString("SemplestKeywordsbaseMultiWPath",
-        baseMultiWPath);
-    numTopics   = getInteger("SemplestKeywordsnumTopics",   numTopics);
-    numKeywordsGoogle = getInteger("SemplestKeywordsnumKeywordsGoogle", 
-        numKeywordsGoogle);
-    numKeywordsMSN    = getInteger("SemplestKeywordsnumKeywordsMSN",
-        numKeywordsMSN);
-    numThreads        = getInteger("SemplestKeywordsnumThreads",  numThreads);
-    userInfoWeight    = getDouble("SemplestKeywordsuserInfoWeight",
-        userInfoWeight);
-    nGramsSubC  = getStringArray("SemplestKeywordsnGramsSubC",    nGramsSubC);
-    validCat    = getStringArray("SemplestKeywordsvalidcat",      validCat);
- 
+		lucenedir = getString("SemplestKeywordslucenedir", lucenedir);
+		bdbdir = getString("SemplestKeywordsbdbdir", bdbdir);
+		dictfile = getString("SemplestKeywordsdictfile", dictfile);
+		docfile = getString("SemplestKeywordsdocfile", docfile);
+		twfile = getString("SemplestKeywordstwfile", twfile);
+		dffile = getString("SemplestKeywordsdffile", dffile);
+		dfile = getString("SemplestKeywordsdfile", dfile);
+		nGramsC = getString("SemplestKeywordsnGramsC", nGramsC);
+		catMap = getString("catMap", catMap);
+		catIdsPath = getString("catIdsPath", catIdsPath);
+		lucenedfile = getString("SemplestKeywordslucenedfile", lucenedfile);
+		smallhCounts = getString("SemplestKeywordssmallhCounts", smallhCounts);
+		stoplist = getString("SemplestKeywordsstoplist", stoplist);
+		baseMultiWPath = getString("SemplestKeywordsbaseMultiWPath", baseMultiWPath);
+		numTopics = getInteger("SemplestKeywordsnumTopics", numTopics);
+		numKeywordsGoogle = getInteger("SemplestKeywordsnumKeywordsGoogle", numKeywordsGoogle);
+		numKeywordsMSN = getInteger("SemplestKeywordsnumKeywordsMSN", numKeywordsMSN);
+		numThreads = getInteger("SemplestKeywordsnumThreads", numThreads);
+		userInfoWeight = getDouble("SemplestKeywordsuserInfoWeight", userInfoWeight);
+		nGramsSubC = getStringArray("SemplestKeywordsnGramsSubC", nGramsSubC);
+		validCat = getStringArray("SemplestKeywordsvalidcat", validCat);
 
-    logger.info("Properties Update done...");
-  }
+		logger.info("Properties Update done...");
+	}
 
-  // - private helpers ----------------
-  private String getString( String prop, String def ) {
-    return configData.get(prop) != null ? (String)configData.get(prop) : def; 
-  }
-  private Integer getInteger( String prop, Integer def ) {
-    return configData.get(prop) != null ? (Integer)configData.get(prop) : def; 
-  }
-  private Double getDouble( String prop, Double def ) {
-    return configData.get(prop) != null ? (Double)configData.get(prop) : def; 
-  }
-  private static String[] getStringArray(String prop, String[] def){
-    if( configData.get(prop) != null ){
-      String aux = (String) configData.get(prop);
-      aux = aux.replaceAll("\\s", "");
-      return aux.split(",");
-    } else return def;
-  }
-  private static String[] loadStringArrayfromfile(String prop){
-    String aux = (String) properties.getProperty(prop);
-    aux =aux.replaceAll("\\s", "");
-    return aux.split(",");
-  }
+	// - private helpers ----------------
+	private String getString(String prop, String def)
+	{
+		return configData.get(prop) != null ? (String) configData.get(prop) : def;
+	}
+
+	private Integer getInteger(String prop, Integer def)
+	{
+		return configData.get(prop) != null ? (Integer) configData.get(prop) : def;
+	}
+
+	private Double getDouble(String prop, Double def)
+	{
+		return configData.get(prop) != null ? (Double) configData.get(prop) : def;
+	}
+
+	private static String[] getStringArray(String prop, String[] def)
+	{
+		if (configData.get(prop) != null)
+		{
+			String aux = (String) configData.get(prop);
+			aux = aux.replaceAll("\\s", "");
+			return aux.split(",");
+		}
+		else
+		{
+			return def;
+		}
+	}
+
+	private static String[] loadStringArrayfromfile(String prop)
+	{
+		String aux = (String) properties.getProperty(prop);
+		aux = aux.replaceAll("\\s", "");
+		return aux.split(",");
+	}
 }

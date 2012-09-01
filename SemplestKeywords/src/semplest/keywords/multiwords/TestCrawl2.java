@@ -36,7 +36,9 @@ public class TestCrawl2
 
 		String[] results = c.fetch();
 		for (String res : results)
+		{
 			System.out.println(res);
+		}
 	}
 
 }

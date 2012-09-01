@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -34,7 +35,7 @@ public class SeedGenerator
 
 	public void genSeeds()
 	{
-		ArrayList<String> lines = ioUtils.readFile(inFileName);
+		List<String> lines = ioUtils.readFile(inFileName);
 		String[] webLinks;
 		try
 		{

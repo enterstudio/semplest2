@@ -2,6 +2,8 @@ package semplest.keywords.multiwords;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 //import java.util.HashSet;
 //import java.util.Iterator;
 //import java.util.Set;
@@ -12,10 +14,9 @@ import semplest.keywords.javautils.dictUtils;
 
 public class MultiWord
 {
-
-	private HashMap<String, Integer> indexMap;
+	private Map<String, Integer> indexMap;
 	private int[] n; // max gram (for unigram n=[1], for bigram n=[2], for both n=[1,2])
-	private ArrayList<String> finalList;
+	private List<String> finalList;
 
 	public MultiWord(int[] n)
 	{
@@ -40,7 +41,7 @@ public class MultiWord
 
 	public void BuildNutch(String inFile)
 	{ // for the time being nutch format
-		ArrayList<String> lines = ioUtils.readFile(inFile);
+		List<String> lines = ioUtils.readFile(inFile);
 
 		String splitPattern = "[^a-z^0-9]";
 		String[] words;

@@ -58,16 +58,17 @@ public class CatSplitter implements Serializable
 
 	public void loadAllCats(String inputFile) throws FileNotFoundException
 	{
-		ArrayList<String> allCatsList = new ArrayList<String>();
+		List<String> allCatsList = new ArrayList<String>();
 		Scanner sc = new Scanner(new FileInputStream(inputFile));
 		logger.info("loading all categories...");
 		long start = System.currentTimeMillis();
-
 		while (sc.hasNext())
 		{
 			String[] split = sc.nextLine().split(":");
 			if (split[0].indexOf("top/") == 0)
+			{
 				allCatsList.add(split[0]);
+			}
 		}
 		allCats = allCatsList.toArray(new String[allCatsList.size()]);
 		Arrays.sort(allCats);
@@ -100,7 +101,9 @@ public class CatSplitter implements Serializable
 
 		Scanner sc = new Scanner(new FileInputStream(inputFile));
 		if (allCats == null)
+		{
 			loadAllCats(inputFile);
+		}
 		int catsPerFile = (int) Math.ceil(1.0 * allCats.length / numSubFiles);
 		// Read line by line
 		logger.info("generating subfiles...");
@@ -125,13 +128,13 @@ public class CatSplitter implements Serializable
 		closeAllOutputFiles(outputs);
 	}
 
-	public ArrayList<String> getCatData(ArrayList<String> categories) throws FileNotFoundException
+	public List<String> getCatData(List<String> categories) throws FileNotFoundException
 	{
 		logger.info("retrieving category information from files...");
 		long start = System.currentTimeMillis();
 		int catsPerFile = (int) Math.ceil(1.0 * allCats.length / numSubFiles);
-		ArrayList<String> outData = new ArrayList<String>(categories.size());
-		HashMap<Integer, HashSet<String>> indexCatMap = new HashMap<Integer, HashSet<String>>(numSubFiles);
+		List<String> outData = new ArrayList<String>(categories.size());
+		Map<Integer, Set<String>> indexCatMap = new HashMap<Integer, Set<String>>(numSubFiles);
 		for (String cat : categories)
 		{
 			int indexCat = Arrays.binarySearch(allCats, cat);
@@ -150,7 +153,7 @@ public class CatSplitter implements Serializable
 		Set<Integer> keySet = indexCatMap.keySet();
 		for (int key : keySet)
 		{
-			HashSet<String> catSet = indexCatMap.get(key);
+			Set<String> catSet = indexCatMap.get(key);
 			String line, cat;
 			String[] split;
 			Scanner sc = new Scanner(new FileInputStream(destinFolder + outputFileName + "_" + key + extension));
@@ -174,7 +177,7 @@ public class CatSplitter implements Serializable
 
 	public void splitCatFile2HashMap(String inputFile, int catsPerFile) throws FileNotFoundException
 	{
-		HashMap<String, String> cat2fileMap = new HashMap<String, String>();
+		Map<String, String> cat2fileMap = new HashMap<String, String>();
 		Scanner sc = new Scanner(new FileInputStream(inputFile));
 		int catCount = 0;
 		int fileCount = 0;
