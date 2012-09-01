@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -30,9 +31,9 @@ public class GenerateKeywords
 		File pipeIOModel = new File("trainedmodelDescAll700.modl");
 		File pipeIOInstance = new File("trainedInstancesDescAll700.inst");
 		int numCateg = 6; // Number of categories to consider when generating Keyword Lists
-		ArrayList<TreeMap<String, Double>> wordMap = new ArrayList<TreeMap<String, Double>>();
-		ArrayList<Set<String>> keySet = new ArrayList<Set<String>>();
-		ArrayList<java.util.Iterator<String>> itArray = new ArrayList<java.util.Iterator<String>>();
+		List<TreeMap<String, Double>> wordMap = new ArrayList<TreeMap<String, Double>>();
+		List<Set<String>> keySet = new ArrayList<Set<String>>();
+		List<java.util.Iterator<String>> itArray = new ArrayList<java.util.Iterator<String>>();
 		TreeMap<String, Double> wordM;
 		Set<String> keyS;
 		String[] key = new String[numCateg + 1];
@@ -45,7 +46,7 @@ public class GenerateKeywords
 		String data = "";
 		double[][] categInd;
 		// Create data from URL
-		ArrayList<String> words = TextUtils.validHtmlStems(url);
+		List<String> words = TextUtils.validHtmlStems(url);
 		System.out.println("Words from URL " + words.size());
 		// Create a new MalletTopic object to load from file
 		MalletTopic lda = new MalletTopic();
@@ -103,13 +104,19 @@ public class GenerateKeywords
 		while (itArray.get(0).hasNext() && i < numWords)
 		{
 			for (int j = 0; j < numCateg + 1; j++)
+			{
 				key[j] = itArray.get(j).next();
+			}
 			for (int j = 0; j < numCateg + 1; j++)
 			{
 				if (key[j].length() <= 7)
+				{
 					System.out.print(wordMap.get(0).get(key[j]) + "\t\t" + key[j] + "\t\t");
+				}
 				else
+				{
 					System.out.print(wordMap.get(0).get(key[j]) + "\t\t" + key[j] + "\t");
+				}
 			}
 			System.out.print("\n");
 			i++;
@@ -152,26 +159,34 @@ public class GenerateKeywords
 			for (int j = 0; j < numCateg + 1; j++)
 			{
 				if (itArray.get(j).hasNext())
+				{
 					key[j] = itArray.get(j).next();
+				}
 				else
+				{
 					key[j] = null;
+				}
 			}
 			for (int j = 0; j < numCateg + 1; j++)
 			{
 				if (key[j] != null && key[j].length() <= 7)
+				{
 					System.out.print(wordMap.get(j).get(key[j]) + "\t\t" + key[j] + "\t\t");
+				}
 				else
 				{
 					if (key[j] != null)
+					{
 						System.out.print(wordMap.get(j).get(key[j]) + "\t\t" + key[j] + "\t");
+					}
 					else
+					{
 						System.out.print("null\t\t" + "\t\t" + key[j] + "\t\t");
+					}
 				}
 			}
 			System.out.print("\n");
 			i++;
 		}
-
 	}
-
 }

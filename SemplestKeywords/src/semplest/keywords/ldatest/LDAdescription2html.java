@@ -15,7 +15,7 @@ public class LDAdescription2html
 	 * Given the description of a website in mallet format, infer the html related to it
 	 * 
 	 * @param args
-	 *            args[0] : Description file to infer args[1] : Path to report file args[2] : Number of iterations to calculate fscore
+	 *          args[0] : Description file to infer args[1] : Path to report file args[2] : Number of iterations to calculate fscore
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception

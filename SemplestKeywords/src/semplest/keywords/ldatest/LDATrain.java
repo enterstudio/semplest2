@@ -8,8 +8,8 @@ public class LDATrain
 {
 
 	/**
-	 * Trains model based on dataset and saves model and instances to default file Arguments args[0] : path to training data file ( IN MALLET
-	 * FORMAT!!) args[1] : Number of topics args[2] : Number of Gibbs iterations args[3] : alpha value args[4] : beta value
+	 * Trains model based on dataset and saves model and instances to default file Arguments args[0] : path to training data file ( IN MALLET FORMAT!!)
+	 * args[1] : Number of topics args[2] : Number of Gibbs iterations args[3] : alpha value args[4] : beta value
 	 * 
 	 * @throws Exception
 	 */

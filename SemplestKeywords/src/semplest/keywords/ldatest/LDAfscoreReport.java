@@ -9,8 +9,8 @@ public class LDAfscoreReport
 {
 
 	/**
-	 * Calculates fscore for classification of trained data for different number of topics a creates a report args[0] path to training file args[1]
-	 * path to report args[2] number of instances to evaluate in each iteration
+	 * Calculates fscore for classification of trained data for different number of topics a creates a report args[0] path to training file args[1] path
+	 * to report args[2] number of instances to evaluate in each iteration
 	 * 
 	 * @param args
 	 * @throws Exception

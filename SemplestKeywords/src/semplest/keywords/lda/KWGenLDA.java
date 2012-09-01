@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -42,11 +44,11 @@ public class KWGenLDA
 	String[] topCat; // Array of the top numCateg categories classified
 	private TreeMap<String, Double> wordMap; // sorted map of keywords and probabilities for last run of getKW
 	private boolean ready4kw, genericMade; // Final list of categories has been generated.
-	private ArrayList<String> optList;
+	private List<String> optList;
 	private String data; // Input data for the kwgenerator;
 	private InstanceList inferInst; // Instance of the input data;
 	private double[] probDistInf; // Probability distribution of the last inferInst;
-	private HashMap<String, Double> options; // Map of repeated patterns and counts
+	private Map<String, Double> options; // Map of repeated patterns and counts
 	private int indexFinCat; // index of the final subcategory selected
 
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -90,7 +92,7 @@ public class KWGenLDA
 	}
 
 	// -------------------------------------------------------------------------------------------------------------
-	public ArrayList<String> getCateg(String indata) throws Exception
+	public List<String> getCateg(String indata) throws Exception
 	{
 
 		data = indata;
@@ -113,7 +115,7 @@ public class KWGenLDA
 	}
 
 	// -------------------------------------------------------------------------------------------------------------
-	public ArrayList<String> getCateg(int index) throws Exception
+	public List<String> getCateg(int index) throws Exception
 	{
 		// Get categories after the main subcategory has been selected
 		String finalCat;
@@ -139,7 +141,9 @@ public class KWGenLDA
 		for (int i = 0; i < trainHtml.length; i++)
 		{
 			if (trainHtml[i].equals(finalCat))
+			{
 				indexFinCat = i;
+			}
 		}
 		TreeMap<String, Double> sorted_opt = this.inferFromData(subModl[indexFinCat]);
 
@@ -174,12 +178,13 @@ public class KWGenLDA
 		{
 			aux = model.getInstanceLabel((int) categInd[0][j]);
 			// System.out.println(aux);
-			if (catUtils.take(aux, 2).equals("top/regional"))
-				;
+			if (catUtils.take(aux, 2).equals("top/regional"));
 			else
 			{
 				if (i >= numCateg)
+				{
 					break;
+				}
 				topCat[i] = aux;
 				System.out.println(aux);
 				i++;
@@ -281,30 +286,33 @@ public class KWGenLDA
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
-	public ArrayList<String> getKw(int[] indexInt, int numkw) throws Exception
+	public List<String> getKw(int[] indexInt, int numkw) throws Exception
 	{
 		int numNod;
 		String instLabel, cataux;
-		ArrayList<Integer> auxList;
-		ArrayList<String> keywords = new ArrayList<String>();
+		List<Integer> auxList;
+		List<String> keywords = new ArrayList<String>();
 		if (ready4kw == true)
 		{
 			// Create a Hashtable that contains the options selected and the indexes of the instances that satisfy those options
-			Hashtable<String, ArrayList<Integer>> optCateg = new Hashtable<String, ArrayList<Integer>>();
-			;
+			Hashtable<String, List<Integer>> optCateg = new Hashtable<String, List<Integer>>();
 			for (int m = 0; m < subModl[indexFinCat].getInstances().size(); m++)
 			{
 				instLabel = subModl[indexFinCat].getInstanceLabel(m);
 				for (int n = 0; n < indexInt.length; n++)
 				{
 					if (indexInt[n] == -1)
+					{
 						throw new Exception("Not enough information");
+					}
 					cataux = optList.get(indexInt[n]);
 					numNod = catUtils.nodes(cataux);
 					if (catUtils.take(instLabel, numNod).equals(catUtils.take(cataux, numNod)))
 					{
 						if (!optCateg.containsKey(cataux))
+						{
 							optCateg.put(cataux, new ArrayList<Integer>());
+						}
 						auxList = optCateg.get(cataux);
 						auxList.add(new Integer(m));
 						optCateg.put(cataux, auxList);
@@ -313,8 +321,7 @@ public class KWGenLDA
 			}
 			/*
 			 * Uncomment if you want to print for(String optKey: optCateg.keySet()){ java.util.Iterator<Integer> it= optCateg.get(optKey).iterator();
-			 * System.out.println("Categories for option :" +optKey); while(it.hasNext()){ System.out.println("\t\t"+lda.getInstanceLabel(it.next()));
-			 * } }
+			 * System.out.println("Categories for option :" +optKey); while(it.hasNext()){ System.out.println("\t\t"+lda.getInstanceLabel(it.next())); } }
 			 */
 
 			// **************************************************************************************
@@ -350,9 +357,13 @@ public class KWGenLDA
 			while (i < numkw)
 			{
 				if (iterator.hasNext())
+				{
 					keyword = iterator.next();
+				}
 				else
+				{
 					keyword = null;
+				}
 				keywords.add(keyword);
 				i++;
 			}
@@ -377,7 +388,7 @@ public class KWGenLDA
 		Scanner scanUrl = new Scanner(System.in);
 		String url = scanUrl.nextLine();
 		String data = "";
-		ArrayList<String> words, keywords, categories;
+		List<String> words, keywords, categories;
 		String index, mySentence;
 		Scanner scan;
 		String[] indexes;
@@ -456,7 +467,5 @@ public class KWGenLDA
 			scanUrl = new Scanner(System.in);
 			url = scanUrl.nextLine();
 		}
-
 	}
-
 }

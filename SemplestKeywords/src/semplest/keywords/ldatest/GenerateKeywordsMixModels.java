@@ -3,6 +3,8 @@ package semplest.keywords.ldatest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -18,11 +20,11 @@ public class GenerateKeywordsMixModels
 
 	/**
 	 * Third version of the generate Keyword program When initializing program, it will load the general description/all.modl into memory and all the
-	 * rest of the models for the subcategories of the html data (business, shopping...) Then it finds the top 10 categories closest to the url that
-	 * we want to classify and based on repetition of the top two nodes, it will select which model of the subcateogories should be used for the final
+	 * rest of the models for the subcategories of the html data (business, shopping...) Then it finds the top 10 categories closest to the url that we
+	 * want to classify and based on repetition of the top two nodes, it will select which model of the subcateogories should be used for the final
 	 * classification. In case of uncertainity, ask user. Once the subcategory has been selected it will perform the same operation with the html data
-	 * of the subcategory selected and present the top categories selected to the user. User will select which is the one that best fits his campain
-	 * and it will generate set of keywords based on input.
+	 * of the subcategory selected and present the top categories selected to the user. User will select which is the one that best fits his campain and
+	 * it will generate set of keywords based on input.
 	 * 
 	 * @param args
 	 * @throws Exception
@@ -64,7 +66,7 @@ public class GenerateKeywordsMixModels
 
 		int numCateg = 10; // Number of categories to consider when generating options for user
 		// Map to sort options by relevance (relevance will be number of pair of the common nodes)
-		HashMap<String, Double> options;
+		Map<String, Double> options;
 		ValueComparator bvcAux;
 		TreeMap<String, Double> sorted_opt;
 		InstanceList inferInst;
@@ -79,7 +81,7 @@ public class GenerateKeywordsMixModels
 
 		String data = "";
 		double[][] categInd;
-		ArrayList<String> stemwords, words, optList;
+		List<String> stemwords, words, optList;
 		Set<String> optKeys;
 		double timetest1;
 		int i, n, numNodes, numNod;
@@ -91,8 +93,8 @@ public class GenerateKeywordsMixModels
 		String[] index;
 		int[] indexInt;
 
-		ArrayList<Integer> auxList;
-		Hashtable<String, ArrayList<Integer>> optCateg;
+		List<Integer> auxList;
+		Hashtable<String, List<Integer>> optCateg;
 
 		TreeMap<String, Double> wordMap;
 		Set<String> keySet;
@@ -137,12 +139,13 @@ public class GenerateKeywordsMixModels
 			{
 				aux = descModl.getInstanceLabel((int) categInd[0][j]);
 				// System.out.println(aux);
-				if (catUtils.take(aux, 2).equals("top/regional"))
-					;
+				if (catUtils.take(aux, 2).equals("top/regional"));
 				else
 				{
 					if (i >= numCateg)
+					{
 						break;
+					}
 					topCat[i] = aux;
 					System.out.println(aux);
 					i++;
@@ -217,9 +220,9 @@ public class GenerateKeywordsMixModels
 				}
 			}
 			/*
-			 * //if no category has been found we weaken our criteria if (optList.size()==0){ for(String optKey:optKeys){ numNodes =
-			 * catUtils.nodes(optKey); numrepeat = options.get(optKey); if(numNodes>=2 && numrepeat >=1){ if(!optList.contains(catUtils.take(optKey,
-			 * 2))){ optList.add(catUtils.take(optKey, 2)); System.out.println(n+"- "+catUtils.take(optKey, 2)); n++; } } } }
+			 * //if no category has been found we weaken our criteria if (optList.size()==0){ for(String optKey:optKeys){ numNodes = catUtils.nodes(optKey);
+			 * numrepeat = options.get(optKey); if(numNodes>=2 && numrepeat >=1){ if(!optList.contains(catUtils.take(optKey, 2))){
+			 * optList.add(catUtils.take(optKey, 2)); System.out.println(n+"- "+catUtils.take(optKey, 2)); n++; } } } }
 			 */
 			// System.out.println("Options for user created in :"+TextUtils.timeElapsed(System.currentTimeMillis()-timetest1));
 
@@ -258,7 +261,9 @@ public class GenerateKeywordsMixModels
 			else
 			{
 				if (optList.size() != 0)
+				{
 					mySentence = "1";
+				}
 				else
 				{
 					optList = new ArrayList<String>();
@@ -291,7 +296,9 @@ public class GenerateKeywordsMixModels
 			for (i = 0; i < trainHtml.length; i++)
 			{
 				if (trainHtml[i].equals(finalCat))
+				{
 					indexFinCat = i;
+				}
 			}
 			auxEndT = System.currentTimeMillis();
 			System.out.println("Time to select subcategory: " + TextUtils.timeElapsed(auxEndT - auxStartT));
@@ -321,12 +328,13 @@ public class GenerateKeywordsMixModels
 			{
 				aux = subModl[indexFinCat].getInstanceLabel((int) categInd[0][j]);
 
-				if (catUtils.take(aux, 2).equals("top/regional"))
-					;
+				if (catUtils.take(aux, 2).equals("top/regional"));
 				else
 				{
 					if (i >= numCateg)
+					{
 						break;
+					}
 					topCat[i] = aux;
 					System.out.println(aux);
 					i++;
@@ -406,7 +414,7 @@ public class GenerateKeywordsMixModels
 			mySentence = scan.nextLine();
 			index = mySentence.split(",");
 			indexInt = new int[index.length];
-			optCateg = new Hashtable<String, ArrayList<Integer>>();
+			optCateg = new Hashtable<String, List<Integer>>();
 			for (int m = 0; m < index.length; m++)
 			{
 				indexInt[m] = Integer.parseInt(index[m]) - 1;
@@ -423,7 +431,9 @@ public class GenerateKeywordsMixModels
 					if (catUtils.take(instLabel, numNod).equals(catUtils.take(cataux, numNod)))
 					{
 						if (!optCateg.containsKey(cataux))
+						{
 							optCateg.put(cataux, new ArrayList<Integer>());
+						}
 						auxList = optCateg.get(cataux);
 						auxList.add(new Integer(m));
 						optCateg.put(cataux, auxList);
@@ -432,8 +442,7 @@ public class GenerateKeywordsMixModels
 			}
 			/*
 			 * Uncoment if you want to print for(String optKey: optCateg.keySet()){ java.util.Iterator<Integer> it= optCateg.get(optKey).iterator();
-			 * System.out.println("Categories for option :" +optKey); while(it.hasNext()){ System.out.println("\t\t"+lda.getInstanceLabel(it.next()));
-			 * } }
+			 * System.out.println("Categories for option :" +optKey); while(it.hasNext()){ System.out.println("\t\t"+lda.getInstanceLabel(it.next())); } }
 			 */
 
 			// **************************************************************************************
@@ -470,13 +479,21 @@ public class GenerateKeywordsMixModels
 			while (i < numWords)
 			{
 				if (iterator.hasNext())
+				{
 					keyword = iterator.next();
+				}
 				else
+				{
 					keyword = null;
+				}
 				if (keyword != null)
+				{
 					System.out.print(wordMap.get(keyword) + "\t\t" + keyword + "\t");
+				}
 				else
+				{
 					System.out.print("null\t\t" + "\t\t" + keyword + "\t\t");
+				}
 				System.out.print("\n");
 				i++;
 			}

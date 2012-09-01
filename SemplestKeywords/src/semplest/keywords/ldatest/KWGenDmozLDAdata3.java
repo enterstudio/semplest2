@@ -2,6 +2,7 @@ package semplest.keywords.ldatest;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -23,7 +24,7 @@ public class KWGenDmozLDAdata3 implements Runnable
 
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdata3.class);
 	public DmozLucene dl; // Index of categories
-	public HashMap<String, String> TrainingData;
+	public Map<String, String> TrainingData;
 	public dictUtils dict;
 	private static String dfile;
 	private static String baseMultiWPath;
@@ -35,10 +36,10 @@ public class KWGenDmozLDAdata3 implements Runnable
 	public double userInfoWeight;
 	public int numKeywordsGoogle;
 	public int numKeywordsMSN;
-	public HashMap<String, String> states;
+	public Map<String, String> states;
 	public static ProjectProperties pr;
 
-	public KWGenDmozLDAdata3(HashMap<String, Object> configData) throws IOException
+	public KWGenDmozLDAdata3(Map<String, Object> configData) throws IOException
 	{
 		/*
 		 * //Load property file if necessary for paths if(SEMplestService.properties==null){ String PROPSFILE =
@@ -121,7 +122,9 @@ public class KWGenDmozLDAdata3 implements Runnable
 		for (int i = 0; i < nGramsSubC.length; i++)
 		{
 			if (catUtils.take(categ, 2).contains(nGramsSubC[i]))
+			{
 				return i;
+			}
 		}
 		return -1;
 	}

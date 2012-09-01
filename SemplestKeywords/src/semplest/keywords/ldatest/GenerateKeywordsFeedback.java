@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -22,8 +24,8 @@ public class GenerateKeywordsFeedback
 {
 
 	/**
-	 * Second version of the generate Keyword program Will infer topic probabilities from URL and will find closest trained instances Then will
-	 * generate a list of general categories for the user to select and will restrict the alphabets to keywords from the industry selected by the user
+	 * Second version of the generate Keyword program Will infer topic probabilities from URL and will find closest trained instances Then will generate
+	 * a list of general categories for the user to select and will restrict the alphabets to keywords from the industry selected by the user
 	 * 
 	 * @param args
 	 * @throws Exception
@@ -38,7 +40,7 @@ public class GenerateKeywordsFeedback
 		int numCateg = 10; // Number of categories to consider when generating options for user
 		String[] key = new String[numCateg + 1];
 		// Map to sort options by relevance (relevance will be number of pair of the common nodes)
-		HashMap<String, Double> options = new HashMap<String, Double>();
+		Map<String, Double> options = new HashMap<String, Double>();
 		ValueComparator bvcAux = new ValueComparator(options);
 		TreeMap<String, Double> sorted_opt = new TreeMap<String, Double>(bvcAux);
 
@@ -59,7 +61,7 @@ public class GenerateKeywordsFeedback
 		System.out.println("Number of topics: " + lda.getNumTopics());
 
 		// Create data from URL
-		ArrayList<String> words = TextUtils.validHtmlStems(url);
+		List<String> words = TextUtils.validHtmlStems(url);
 		System.out.println("Stems from URL: " + words.size());
 		// for(int j=0;j<50;j++){words.add("tv");words.add("screen");}
 		for (String s : words)
@@ -86,12 +88,13 @@ public class GenerateKeywordsFeedback
 		{
 			aux = lda.getInstanceLabel((int) categInd[0][j]);
 
-			if (catUtils.take(aux, 2).equals("Top/Regional"))
-				;
+			if (catUtils.take(aux, 2).equals("Top/Regional"));
 			else
 			{
 				if (i >= numCateg)
+				{
 					break;
+				}
 				topCat[i] = aux;
 				// System.out.println(aux);
 				i++;
@@ -225,13 +228,21 @@ public class GenerateKeywordsFeedback
 		while (i < numWords)
 		{
 			if (iterator.hasNext())
+			{
 				keyword = iterator.next();
+			}
 			else
+			{
 				keyword = null;
+			}
 			if (keyword != null)
+			{
 				System.out.print(wordMap.get(keyword) + "\t\t" + keyword + "\t");
+			}
 			else
+			{
 				System.out.print("null\t\t" + "\t\t" + keyword + "\t\t");
+			}
 			System.out.print("\n");
 			i++;
 		}

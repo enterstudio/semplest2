@@ -39,7 +39,7 @@ public class Test
 	 * Format an Element to plain-text
 	 * 
 	 * @param element
-	 *            the root element to format
+	 *          the root element to format
 	 * @return formatted text
 	 */
 	public String getPlainText(Element element)
@@ -63,9 +63,13 @@ public class Test
 		{
 			String name = node.nodeName();
 			if (node instanceof TextNode)
+			{
 				append(((TextNode) node).text()); // TextNodes carry all user-readable text in the DOM.
+			}
 			else if (name.equals("li"))
+			{
 				append("\n * ");
+			}
 		}
 
 		// hit when all of the node's children (if any) have been visited
@@ -73,21 +77,30 @@ public class Test
 		{
 			String name = node.nodeName();
 			if (name.equals("br"))
+			{
 				append("\n");
+			}
 			else if (StringUtil.in(name, "p", "h1", "h2", "h3", "h4", "h5"))
+			{
 				append("\n\n");
+			}
 			else if (name.equals("a"))
+			{
 				append(String.format(" <%s>", node.absUrl("href")));
+			}
 		}
 
 		// appends text to the string builder with a simple word wrap method
 		private void append(String text)
 		{
 			if (text.startsWith("\n"))
+			{
 				width = 0; // reset counter if starts with a newline. only from formats above, not in natural text
+			}
 			if (text.equals(" ") && (accum.length() == 0 || StringUtil.in(accum.substring(accum.length() - 1), " ", "\n")))
+			{
 				return; // don't accumulate long runs of empty spaces
-
+			}
 			if (text.length() + width > maxWidth)
 			{ // won't fit, needs to wrap
 				String words[] = text.split("\\s+");
@@ -96,7 +109,9 @@ public class Test
 					String word = words[i];
 					boolean last = i == words.length - 1;
 					if (!last) // insert a space if not the last word
+					{
 						word = word + " ";
+					}
 					if (word.length() + width > maxWidth)
 					{ // wrap and reset counter
 						accum.append("\n").append(word);

@@ -2,6 +2,7 @@ package semplest.keywords.ldatest;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -17,7 +18,7 @@ public class KWGenDmozLDAdataTest implements Runnable
 
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdataTest.class);
 	public DmozLucene dl; // Index of categories
-	public HashMap<String, String> TrainingData;
+	public Map<String, String> TrainingData;
 	public dictUtils dict;
 	private static String dfile = ProjectProperties.dfile;
 	private static String baseMultiWPath = ProjectProperties.baseMultiWPath;
@@ -78,7 +79,9 @@ public class KWGenDmozLDAdataTest implements Runnable
 		for (int i = 0; i < nGramsSubC.length; i++)
 		{
 			if (catUtils.take(categ, 2).contains(nGramsSubC[i]))
+			{
 				return i;
+			}
 		}
 		return -1;
 	}

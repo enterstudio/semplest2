@@ -10,8 +10,8 @@ public class LDAInferFromFile
 {
 
 	/**
-	 * Infer topic distribution for an input category list from the latest dataset trained. find 6 closest trained category and their distances
-	 * args[0] : path input category list file
+	 * Infer topic distribution for an input category list from the latest dataset trained. find 6 closest trained category and their distances args[0]
+	 * : path input category list file
 	 * 
 	 * @throws Exception
 	 */

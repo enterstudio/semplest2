@@ -2,6 +2,7 @@ package semplest.keywords.lda;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -28,7 +29,7 @@ public class KWGenDmozLDAdata3 implements Runnable
 	public catUtils cu;
 	dictUtils du;
 
-	public KWGenDmozLDAdata3(HashMap<String, Object> configData) throws IOException
+	public KWGenDmozLDAdata3(Map<String, Object> configData) throws IOException
 	{
 		/*
 		 * //Load property file if necessary for paths if(SEMplestService.properties==null){ String PROPSFILE =

@@ -225,7 +225,9 @@ public class MalletTopic
 		FeatureSequence instFeat = (FeatureSequence) instaux.getData();
 		String instString = instFeat.toString();
 		if (instaux.isLocked())
+		{
 			instaux.unLock();
+		}
 		instaux.setData(instString);
 		return instaux;
 	}
@@ -240,9 +242,9 @@ public class MalletTopic
 		Alphabet dataAlphabet = instances.getDataAlphabet(); // Full data alphabet
 
 		// Get an array of sorted sets of word ID/count pairs
-		ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
+		List<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
 		// System.out.println(dataAlphabet.size());
-		HashMap<String, Double> wordMap = new HashMap<String, Double>(dataAlphabet.size());
+		Map<String, Double> wordMap = new HashMap<String, Double>(dataAlphabet.size());
 		ValueComparator bvc = new ValueComparator(wordMap);
 		TreeMap<String, Double> sorted_map = new TreeMap(bvc);
 		double wordProb;
@@ -250,9 +252,7 @@ public class MalletTopic
 		// Show top numwords words in topics with proportions for the instIndex document
 		for (int topic = 0; topic < numTopics; topic++)
 		{
-
 			Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
-
 			double topicProb = topicDistribution[topic];
 			double sum = 0;
 			// System.out.println(topicDistribution.length + "\t"+topicProb);
@@ -262,7 +262,9 @@ public class MalletTopic
 				idCountPair = iterator.next();
 				word = (String) dataAlphabet.lookupObject(idCountPair.getID());
 				if (specdataAlphabet.contains(word))
+				{
 					sum = sum + idCountPair.getWeight();
+				}
 			}
 			Iterator<IDSorter> iterator2 = topicSortedWords.get(topic).iterator();
 			// System.out.println("Size of Topic Sorted words :"+topicSortedWords.get(topic).size());
@@ -291,7 +293,7 @@ public class MalletTopic
 		return sorted_map;
 	}
 
-	public HashMap<String, Double> inferWordprob(double[] topicDistribution, Alphabet specdataAlphabet, boolean tag)
+	public Map<String, Double> inferWordprob(double[] topicDistribution, Alphabet specdataAlphabet, boolean tag)
 	{
 		// Calculates the probability of each word in the specdataAlphabet to belong to the instIndex Instance of the
 		// inferInst InstanceList.
@@ -301,9 +303,9 @@ public class MalletTopic
 		Alphabet dataAlphabet = instances.getDataAlphabet(); // Full data alphabet
 
 		// Get an array of sorted sets of word ID/count pairs
-		ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
+		List<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
 		// logger.debug(dataAlphabet.size());
-		HashMap<String, Double> wordMap = new HashMap<String, Double>(dataAlphabet.size());
+		Map<String, Double> wordMap = new HashMap<String, Double>(dataAlphabet.size());
 		// ValueComparator bvc = new ValueComparator(wordMap);
 		// TreeMap<String,Double> sorted_map = new TreeMap(bvc);
 		double wordProb;
@@ -311,9 +313,7 @@ public class MalletTopic
 		// Show top numwords words in topics with proportions for the instIndex document
 		for (int topic = 0; topic < numTopics; topic++)
 		{
-
 			Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
-
 			double topicProb = topicDistribution[topic];
 			double sum = 0;
 			// logger.debug(topicDistribution.length + "\t"+topicProb);
@@ -323,7 +323,9 @@ public class MalletTopic
 				idCountPair = iterator.next();
 				word = (String) dataAlphabet.lookupObject(idCountPair.getID());
 				if (specdataAlphabet.contains(word))
+				{
 					sum = sum + idCountPair.getWeight();
+				}
 			}
 			Iterator<IDSorter> iterator2 = topicSortedWords.get(topic).iterator();
 			// logger.debug("Size of Topic Sorted words :"+topicSortedWords.get(topic).size());
@@ -364,16 +366,15 @@ public class MalletTopic
 		return sorted_map;
 	}
 
-	public HashMap<String, Double> inferWordprob(InstanceList inferInst, int instIndex, boolean tag)
+	public Map<String, Double> inferWordprob(InstanceList inferInst, int instIndex, boolean tag)
 	{
 		// Calculates the probability of each word in the full alphabet to belong to the instIndex Instance of the
 		// inferInst InstanceList.
 		// A sorted TreeMap with all the words and the infered probabilities is returned
 		Alphabet dataAlphabet = instances.getDataAlphabet();
 		logger.info("Alphabet size " + dataAlphabet.size());
-		HashMap<String, Double> map;
+		Map<String, Double> map;
 		map = this.inferWordprob(inferInst, instIndex, dataAlphabet, true);
-
 		return map;
 	}
 
@@ -391,7 +392,7 @@ public class MalletTopic
 		return sorted_map;
 	}
 
-	public HashMap<String, Double> inferWordprob(InstanceList inferInst, int instIndex, Alphabet specdataAlphabet, boolean flag)
+	public Map<String, Double> inferWordprob(InstanceList inferInst, int instIndex, Alphabet specdataAlphabet, boolean flag)
 	{
 		// Calculates the probability of each word in the specdataAlphabet to belong to the instIndex Instance of the
 		// inferInst InstanceList.
@@ -399,7 +400,7 @@ public class MalletTopic
 		// Takes any alphabet to compute the word probability
 
 		double[] topicDistribution = this.InferFromTestInstance(inferInst, instIndex);
-		HashMap<String, Double> map;
+		Map<String, Double> map;
 		map = this.inferWordprob(topicDistribution, specdataAlphabet, true);
 
 		return map;
@@ -477,12 +478,9 @@ public class MalletTopic
 
 	public void CreateInstances(String[] directories) throws Exception
 	{
-
 		// Begin by importing documents from text to feature sequences
-		ArrayList<Pipe> pipeList = this.initPipeList();
-
+		List<Pipe> pipeList = this.initPipeList();
 		instances = new InstanceList(new SerialPipes(pipeList));
-
 		Reader fileReader = new InputStreamReader(new FileInputStream(new File(directories[0])), "UTF-8");
 		instances.addThruPipe(new CsvIterator(fileReader, Pattern.compile("^(\\S*)[\\s,]*(\\S*)[\\s,]*(.*)$"), 3, 2, 1)); // data, label, name fields
 	}
@@ -492,42 +490,40 @@ public class MalletTopic
 		// Creates Instances from a file in SEMplest format with file containing traning data in directories[0]
 		String file = ProjectProperties.smallhCounts;
 		if (directories.length > 0)
+		{
 			file = directories[0];
-		ArrayList<String> lines = ioUtils.readFile(file);
-		this.CreateInstancesSEMplest(lines);
-
+		}
+		List<String> lines = ioUtils.readFile(file);
+		CreateInstancesSEMplest(lines);
 	}
 
-	public void CreateInstancesSEMplest(ArrayList<String> lines)
+	public void CreateInstancesSEMplest(List<String> lines)
 	{
 		// Creates Instances from a file in SEMplest format
 
 		// Begin by importing documents from text to feature sequences
-		ArrayList<Pipe> pipeList = this.initPipeList();
+		List<Pipe> pipeList = this.initPipeList();
 		// Temporal instance were we will transform SEMplest data to Mallet data
 		int i = 0;
-
 		instances = new InstanceList(new SerialPipes(pipeList));
 		logger.debug("Number of lines: " + lines.size());
 		for (String line : lines)
 		{
 			logger.debug("Adding Category " + i);
 			logger.debug(line);
-			ArrayList<String> tokens = ioUtils.malletizeLine(line);
+			List<String> tokens = ioUtils.malletizeLine(line);
 			instances.addThruPipe(new Instance(tokens.get(2), tokens.get(0), tokens.get(1), null));
 			i++;
 		}
 	}
 
-	public void CreateInstances(ArrayList<String> lines)
+	public void CreateInstances(List<String> lines)
 	{
 		// Creates Instances from a file in SEMplest format
-
 		// Begin by importing documents from text to feature sequences
-		ArrayList<Pipe> pipeList = this.initPipeList();
+		List<Pipe> pipeList = this.initPipeList();
 		// Temporal instance were we will transform SEMplest data to Mallet data
 		int i = 0;
-
 		instances = new InstanceList(new SerialPipes(pipeList));
 		// logger.debug("Number of lines: "+lines.size());
 		for (String line : lines)
@@ -544,12 +540,10 @@ public class MalletTopic
 	public void CreateInstances(Map<String, String> trainLines)
 	{
 		// Creates Instances from a file in SEMplest format
-
 		// Begin by importing documents from text to feature sequences
-		ArrayList<Pipe> pipeList = this.initPipeList();
+		List<Pipe> pipeList = this.initPipeList();
 		// Temporal instance were we will transform SEMplest data to Mallet data
 		int i = 0;
-
 		instances = new InstanceList(new SerialPipes(pipeList));
 		// logger.debug("Number of lines: "+lines.size());
 		for (String line : trainLines.keySet())
@@ -573,31 +567,31 @@ public class MalletTopic
 	 * 
 	 * }
 	 * 
-	 * public void CreateInstancesSEMplestCache2(String[] directories) throws Exception { // Creates Instances from a file in SEMplest format uses
-	 * less memory than version 1
+	 * public void CreateInstancesSEMplestCache2(String[] directories) throws Exception { // Creates Instances from a file in SEMplest format uses less
+	 * memory than version 1
 	 * 
-	 * // Begin by importing documents from text to feature sequences ArrayList<Pipe> pipeList = this.initPipeList(); // Temporal instance were we
-	 * will transform SEMplest data to Mallet data int i=0;
+	 * // Begin by importing documents from text to feature sequences ArrayList<Pipe> pipeList = this.initPipeList(); // Temporal instance were we will
+	 * transform SEMplest data to Mallet data int i=0;
 	 * 
-	 * instances = new InstanceListCache (new SerialPipes(pipeList)); String file = "/semplest/data/dmoz/small/hCounts.txt"; if ( directories.length >
-	 * 0 ) file = directories[0]; InputStream fis = new FileInputStream(file); BufferedReader br = new BufferedReader(new InputStreamReader(fis,
+	 * instances = new InstanceListCache (new SerialPipes(pipeList)); String file = "/semplest/data/dmoz/small/hCounts.txt"; if ( directories.length > 0
+	 * ) file = directories[0]; InputStream fis = new FileInputStream(file); BufferedReader br = new BufferedReader(new InputStreamReader(fis,
 	 * Charset.forName("UTF-8"))); String line; while ((line = br.readLine()) != null) { System.out.println("Adding Category " + i); ArrayList<String>
 	 * tokens = ioUtils.malletizeLine( line ); instances.addThruPipe(new Instance(tokens.get(2),tokens.get(0),tokens.get(1),null)); i++; }
 	 * 
 	 * }
 	 */
 	/*
-	 * public void CreateInstancesSEMplestCacheMultiThread(String[] directories, int numThreads) throws Exception { // Creates Instances from a file
-	 * in SEMplest format using MultiThread
+	 * public void CreateInstancesSEMplestCacheMultiThread(String[] directories, int numThreads) throws Exception { // Creates Instances from a file in
+	 * SEMplest format using MultiThread
 	 * 
 	 * // Begin by importing documents from text to feature sequences ArrayList<Pipe> pipeList = initPipeList();
 	 * 
 	 * // Temporal instance were we will transform SEMplest data to Mallet data instances = new InstanceListCache (new SerialPipes(pipeList)); String
-	 * file = "/semplest/data/dmoz/small/hCounts.txt"; if ( directories.length > 0 ) file = directories[0]; ArrayList<String> lines =
-	 * ioUtils.readFile( file ); int numLinesIter = lines.size()/numThreads; // Create multiple threads to import all the lines; for( int i=0;
-	 * i<numThreads; i++ ){ if( i==numThreads-1){ MalletThreadObj threadObj = new MalletThreadObj(instances, 0, i*numLinesIter,
-	 * (i+1)*numLinesIter+(lines.size()%numThreads)-1, lines); new Thread(threadObj).start(); } else { MalletThreadObj threadObj = new
-	 * MalletThreadObj(instances, 0, i*numLinesIter, (i+1)*numLinesIter-1, lines); new Thread(threadObj).start(); } }
+	 * file = "/semplest/data/dmoz/small/hCounts.txt"; if ( directories.length > 0 ) file = directories[0]; ArrayList<String> lines = ioUtils.readFile(
+	 * file ); int numLinesIter = lines.size()/numThreads; // Create multiple threads to import all the lines; for( int i=0; i<numThreads; i++ ){ if(
+	 * i==numThreads-1){ MalletThreadObj threadObj = new MalletThreadObj(instances, 0, i*numLinesIter, (i+1)*numLinesIter+(lines.size()%numThreads)-1,
+	 * lines); new Thread(threadObj).start(); } else { MalletThreadObj threadObj = new MalletThreadObj(instances, 0, i*numLinesIter,
+	 * (i+1)*numLinesIter-1, lines); new Thread(threadObj).start(); } }
 	 * 
 	 * }
 	 */
@@ -606,7 +600,6 @@ public class MalletTopic
 		FeatureSequence tokens = (FeatureSequence) instList.get(instIndex).getData();
 		Alphabet dataAlphabet = instList.getDataAlphabet();
 		String[] words = new String[tokens.getLength()];
-
 		for (int position = 0; position < tokens.getLength(); position++)
 		{
 			words[position] = (String) dataAlphabet.lookupObject(tokens.getIndexAtPosition(position));
@@ -656,7 +649,9 @@ public class MalletTopic
 		// for real applications, use 1000 to 2000 iterations)
 		model.setNumIterations(numIter);
 		if (numThreads > 1)
+		{
 			model.setNumThreads(numThreads);
+		}
 		logger.info("Estimating Model...");
 		model.estimate();
 	}
@@ -695,7 +690,7 @@ public class MalletTopic
 	public InstanceList CreateInferInstfromTopic(int topicIndex) throws Exception
 	{
 		// Create a new test instance set with high probability of topic topicIndex
-		ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
+		List<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
 		StringBuilder topicIndexText = new StringBuilder();
 		Iterator<IDSorter> iterator = topicSortedWords.get(0).iterator();
 		Alphabet dataAlphabet = instances.getDataAlphabet();
@@ -714,19 +709,17 @@ public class MalletTopic
 		return testing;
 	}
 
-	public ArrayList<Pipe> initPipeList()
+	public List<Pipe> initPipeList()
 	{
 		// Creates the list of pipes that will be used in all the InstanceList across the object
-		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
+		List<Pipe> pipeList = new ArrayList<Pipe>();
 		String stoplist = ProjectProperties.stoplist;
 		// Pipes: lowercase, tokenize, remove stopwords, map to features
 		pipeList.add(new CharSequenceLowercase());
 		pipeList.add(new CharSequence2TokenSequence(Pattern.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}")));
 		pipeList.add(new TokenSequenceRemoveStopwords(new File(stoplist), "UTF-8", false, false, false));
 		pipeList.add(new TokenSequence2FeatureSequence());
-
 		return pipeList;
-
 	}
 
 	// ----------------------- File Managing Methods---------------------------------------------
@@ -782,14 +775,14 @@ public class MalletTopic
 	}
 
 	/*
-	 * public void loadLDAInstCache(File serializedFile) throws ClassNotFoundException { try{ //Loads current instance based on Cache implementation
-	 * of InstanceListCache // Creates Instances from a file in SEMplest format
+	 * public void loadLDAInstCache(File serializedFile) throws ClassNotFoundException { try{ //Loads current instance based on Cache implementation of
+	 * InstanceListCache // Creates Instances from a file in SEMplest format
 	 * 
 	 * 
 	 * ArrayList<Pipe> pipeList = this.initPipeList();
 	 * 
-	 * InstanceList instListAux = new InstanceListCache (new SerialPipes(pipeList)); instances = instListAux; Instance instAux; ObjectInputStream ois
-	 * = new ObjectInputStream (new FileInputStream(serializedFile)); int i=0;
+	 * InstanceList instListAux = new InstanceListCache (new SerialPipes(pipeList)); instances = instListAux; Instance instAux; ObjectInputStream ois =
+	 * new ObjectInputStream (new FileInputStream(serializedFile)); int i=0;
 	 * 
 	 * while((instAux = (Instance) ois.readObject()) != null){ instances.add(instAux); System.out.println("Loading Instance "+i); i++; } }catch
 	 * (IOException ioE){ System.out.println("Instances Loaded"); }
@@ -799,8 +792,8 @@ public class MalletTopic
 	 * public void loadLDAInstCacheMultiThread(File serializedFile) throws ClassNotFoundException { try{ //Loads current instance based on Cache
 	 * implementation of InstanceListCache // Creates Instances from a file in SEMplest format ArrayList<Pipe> pipeList = this.initPipeList();
 	 * 
-	 * InstanceList instListAux = new InstanceListCache (new SerialPipes(pipeList)); instances = instListAux; Instance instAux; ObjectInputStream ois
-	 * = new ObjectInputStream (new FileInputStream(serializedFile)); int i=0;
+	 * InstanceList instListAux = new InstanceListCache (new SerialPipes(pipeList)); instances = instListAux; Instance instAux; ObjectInputStream ois =
+	 * new ObjectInputStream (new FileInputStream(serializedFile)); int i=0;
 	 * 
 	 * while((instAux = (Instance) ois.readObject()) != null){ instances.add(instAux); System.out.println("Loading Instance "+i); i++; } }catch
 	 * (IOException ioE){ System.out.println("Instances Loaded"); }
@@ -832,7 +825,9 @@ public class MalletTopic
 	{
 		// Shows the words and topics in between category(instance) instIndex[0] and instIndex[1]
 		for (int i = 0; i < (instIndexes[1] - instIndexes[0]); i++)
+		{
 			this.LDAprintTrainedInst(i + instIndexes[0]);
+		}
 	}
 
 	public void LDAprintNkeywordsperTopic(int instIndex, int numwords) throws Exception
@@ -843,7 +838,7 @@ public class MalletTopic
 		double[] topicDistribution = model.getTopicProbabilities(instIndex);
 
 		// Get an array of sorted sets of word ID/count pairs
-		ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
+		List<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
 		Formatter out = new Formatter(new StringBuilder(), Locale.US);
 		Alphabet dataAlphabet = instances.getDataAlphabet();
 
@@ -851,7 +846,6 @@ public class MalletTopic
 		for (int topic = 0; topic < numTopics; topic++)
 		{
 			Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
-
 			out = new Formatter(new StringBuilder(), Locale.US);
 			out.format("%d\t%.3f\t", topic, topicDistribution[topic]);
 			int rank = 0;

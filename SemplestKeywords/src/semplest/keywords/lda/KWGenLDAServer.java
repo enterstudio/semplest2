@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -44,7 +46,7 @@ public class KWGenLDAServer
 	private MultiWordCollect[] biGrams; // Collection of bigrams for each subcategory sorted by categories
 	private MultiWordCollect[] triGrams; // Collection of trigrams for each subcategory sorted by categories
 
-	private HashMap<String, KWGenLDAStatus> GenQueue; // Structure that contains all the active queries
+	private Map<String, KWGenLDAStatus> GenQueue; // Structure that contains all the active queries
 
 	/*
 	 * private int numCateg = 10; // Number of categories to consider when generating options for user String[] topCat; //Array of the top numCateg
@@ -110,16 +112,20 @@ public class KWGenLDAServer
 	}
 
 	// -------------------------------------------------------------------------------------------------------------
-	public ArrayList<String> getCateg(String indata) throws Exception
+	public List<String> getCateg(String indata) throws Exception
 	{
 		String id = "-1";
 		if (GenQueue.size() >= maxQueries)
+		{
 			throw new Exception("Too many queries for this Server");
+		}
 		for (int v = 0; v < maxQueries; v++)
 		{
 			id = new Integer(v).toString();
 			if (!GenQueue.containsKey(id))
+			{
 				break;
+			}
 		}
 		KWGenLDAStatus newQuery = new KWGenLDAStatus(id);
 		newQuery.data = indata;
@@ -137,15 +143,15 @@ public class KWGenLDAServer
 		}
 		if (newQuery.optList.size() == 1)
 		{
-			newQuery.optList = this.getCateg(0, id);
+			newQuery.optList = getCateg(0, id);
 			return newQuery.optList;
 		}
-		return this.appendID(newQuery.optList, id);
+		return appendID(newQuery.optList, id);
 
 	}
 
 	// -------------------------------------------------------------------------------------------------------------
-	public ArrayList<String> getCateg(int index, String id) throws Exception
+	public List<String> getCateg(int index, String id) throws Exception
 	{
 		// Get categories after the main subcategory has been selected
 		// id corresponds to the ID of the query
@@ -190,13 +196,13 @@ public class KWGenLDAServer
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
-	public ArrayList<String> getKw(int[] indexInt, int numkw, String id) throws Exception
+	public List<String> getKw(int[] indexInt, int numkw, String id) throws Exception
 	{
 		int numNod;
 		KWGenLDAStatus query = GenQueue.get(id);
 		String instLabel, cataux;
-		ArrayList<Integer> auxList;
-		ArrayList<String> keywords = new ArrayList<String>();
+		List<Integer> auxList;
+		List<String> keywords = new ArrayList<String>();
 		for (int n = 0; n < indexInt.length; n++)
 		{
 			System.out.println("Selected: " + query.optList.get(indexInt[n]));
@@ -204,20 +210,24 @@ public class KWGenLDAServer
 		if (query.ready4kw == true)
 		{
 			// Create a Hashtable that contains the options selected and the indexes of the instances that satisfy those options
-			Hashtable<String, ArrayList<Integer>> optCateg = new Hashtable<String, ArrayList<Integer>>();
+			Hashtable<String, List<Integer>> optCateg = new Hashtable<String, List<Integer>>();
 			for (int m = 0; m < subModl[query.indexFinCat].getInstances().size(); m++)
 			{
 				instLabel = subModl[query.indexFinCat].getInstanceLabel(m);
 				for (int n = 0; n < indexInt.length; n++)
 				{
 					if (indexInt[n] == -1)
+					{
 						throw new Exception("Not enough information");
+					}
 					cataux = query.optList.get(indexInt[n]);
 					numNod = catUtils.nodes(cataux);
 					if (catUtils.take(instLabel, numNod).equals(catUtils.take(cataux, numNod)))
 					{
 						if (!optCateg.containsKey(cataux))
+						{
 							optCateg.put(cataux, new ArrayList<Integer>());
+						}
 						auxList = optCateg.get(cataux);
 						auxList.add(new Integer(m));
 						optCateg.put(cataux, auxList);
@@ -226,8 +236,7 @@ public class KWGenLDAServer
 			}
 			/*
 			 * Uncomment if you want to print for(String optKey: optCateg.keySet()){ java.util.Iterator<Integer> it= optCateg.get(optKey).iterator();
-			 * System.out.println("Categories for option :" +optKey); while(it.hasNext()){ System.out.println("\t\t"+lda.getInstanceLabel(it.next()));
-			 * } }
+			 * System.out.println("Categories for option :" +optKey); while(it.hasNext()){ System.out.println("\t\t"+lda.getInstanceLabel(it.next())); } }
 			 */
 
 			// **************************************************************************************
@@ -263,13 +272,17 @@ public class KWGenLDAServer
 			while (i < numkw)
 			{
 				if (iterator.hasNext())
+				{
 					keyword = iterator.next();
+				}
 				else
+				{
 					keyword = null;
+				}
 				keywords.add(keyword);
 				i++;
 			}
-			return this.appendID(keywords, id);
+			return appendID(keywords, id);
 		}
 		else
 		{
@@ -278,15 +291,15 @@ public class KWGenLDAServer
 
 	}
 
-	public ArrayList<String> getKwMulti(int[] indexInt, int numkw, String id, int nGrams) throws Exception
+	public List<String> getKwMulti(int[] indexInt, int numkw, String id, int nGrams) throws Exception
 	{
 		// Generates keywords with nGrams words
 		int numNod;
 		MultiWordCollect[] nGramsA = biGrams;
 		KWGenLDAStatus query = GenQueue.get(id);
 		String instLabel, cataux;
-		ArrayList<Integer> auxList;
-		ArrayList<String> keywords = new ArrayList<String>();
+		List<Integer> auxList;
+		List<String> keywords = new ArrayList<String>();
 		// Select bigrams or trigrams based on nGrams value
 		switch (nGrams)
 		{
@@ -312,25 +325,33 @@ public class KWGenLDAServer
 			for (int i = 0; i < nGramsA.length; i++)
 			{
 				if (nGramsA[i].getID().equals(trainHtml[query.indexFinCat]))
+				{
 					mIndex = i;
+				}
 			}
 			if (mIndex == -1)
+			{
 				throw new Exception("No nGrams available for this subcategory");
+			}
 
-			Hashtable<String, ArrayList<Integer>> optCateg = new Hashtable<String, ArrayList<Integer>>();
+			Hashtable<String, List<Integer>> optCateg = new Hashtable<String, List<Integer>>();
 			for (int m = 0; m < nGramsA[mIndex].size(); m++)
 			{
 				instLabel = nGramsA[mIndex].getCategName(m);
 				for (int n = 0; n < indexInt.length; n++)
 				{
 					if (indexInt[n] == -1)
+					{
 						throw new Exception("Not enough information");
+					}
 					cataux = query.optList.get(indexInt[n]);
 					numNod = catUtils.nodes(cataux);
 					if (catUtils.take(instLabel, numNod).equals(catUtils.take(cataux, numNod)))
 					{
 						if (!optCateg.containsKey(cataux))
+						{
 							optCateg.put(cataux, new ArrayList<Integer>());
+						}
 						auxList = optCateg.get(cataux);
 						auxList.add(new Integer(m));
 						optCateg.put(cataux, auxList);
@@ -346,7 +367,7 @@ public class KWGenLDAServer
 			int i = 0;
 			Set<String> keySet;
 			java.util.Iterator<String> iterator;
-			ArrayList<String> mWords = new ArrayList<String>();
+			List<String> mWords = new ArrayList<String>();
 			String[] subWrds;
 			String kwrd;
 			double wProb;
@@ -386,7 +407,9 @@ public class KWGenLDAServer
 							kwrd = kwrd + subWrds[n] + " ";
 						}
 						if (!in)
+						{
 							multWMap.put(kwrd, wProb);
+						}
 					}
 				}
 			}
@@ -404,9 +427,13 @@ public class KWGenLDAServer
 			while (i < numkw)
 			{
 				if (iterator.hasNext())
+				{
 					keyword = iterator.next();
+				}
 				else
+				{
 					keyword = null;
+				}
 				keywords.add(keyword);
 				i++;
 			}
@@ -427,11 +454,12 @@ public class KWGenLDAServer
 	}
 
 	// -------------------------------------------------------------------------------------------------------------
-	private ArrayList<String> appendID(ArrayList<String> list, String id)
+	private List<String> appendID(List<String> list, String id)
 	{
 		// Generates a new ArrayList that contains the QueryID in the first element
-		ArrayList<String> returnList;
-		returnList = (ArrayList<String>) list.clone();
+		List<String> returnList;
+		final ArrayList tempList = new ArrayList<String>();
+		returnList = (ArrayList<String>) tempList.clone();
 		returnList.add(0, id);
 		return returnList;
 	}
@@ -467,7 +495,9 @@ public class KWGenLDAServer
 			else
 			{
 				if (i >= query.numCateg)
+				{
 					break;
+				}
 				query.topCat[i] = aux;
 				System.out.println(aux);
 				i++;
@@ -577,12 +607,12 @@ public class KWGenLDAServer
 		// ----------------------------------------------------------------------------
 		/*
 		 * //-----------------------URL2--------------------------------------------------
-		 * System.out.println("Please, introduce your landing page for query 2 (type \"exit\" to close) :"); scanUrl = new Scanner(System.in); String
-		 * url2 = scanUrl.nextLine();
+		 * System.out.println("Please, introduce your landing page for query 2 (type \"exit\" to close) :"); scanUrl = new Scanner(System.in); String url2
+		 * = scanUrl.nextLine();
 		 */
 		// -----------------------------------------------------------------------------------
 		String data1, data2;
-		ArrayList<String> words1, words2, keywords1, keywords2, bikwords1, trikwords1, categories1, categories2;
+		List<String> words1, words2, keywords1, keywords2, bikwords1, trikwords1, categories1, categories2;
 		String index, mySentence, id1, id2;
 		Scanner scan;
 		String[] indexes;
@@ -610,7 +640,7 @@ public class KWGenLDAServer
 			 * //System.out.print(s+"  "); } //Infer options for user input categories2=kwGenerator.getCateg(data2); id2=categories2.remove(0);
 			 * System.out.println("Query ID2 : "+id2);
 			 */// --------------------------------------------------------------------------
-				// ---------------------- URL1-----------------------------------------------
+					// ---------------------- URL1-----------------------------------------------
 			while (!kwGenerator.ready4kw(id1))
 			{
 				// We did not have enough information to infer the final set of options for the user
@@ -640,13 +670,12 @@ public class KWGenLDAServer
 			// ------------------------------------------------------------------------------------------------------
 
 			/*
-			 * //--------------------------------URL 2-------------------------------------------------------- while(!kwGenerator.ready4kw(id2)){ //We
-			 * did not have enough information to infer the final set of options for the user //We present the user a preliminary version of
-			 * categories to select the main subcategory
-			 * System.out.print("\nPlease, type one index of the following category that best fits your product 2:\n");
+			 * //--------------------------------URL 2-------------------------------------------------------- while(!kwGenerator.ready4kw(id2)){ //We did
+			 * not have enough information to infer the final set of options for the user //We present the user a preliminary version of categories to
+			 * select the main subcategory System.out.print("\nPlease, type one index of the following category that best fits your product 2:\n");
 			 * System.out.println("(Type -1 if none are acceptable)"); for (int i=0; i<categories2.size();i++){
-			 * System.out.println(i+" - "+categories2.get(i)); } //Get index from user scanUrl = new Scanner(System.in); index = scanUrl.nextLine();
-			 * try{ categories2=kwGenerator.getCateg(Integer.parseInt(index),id2); id2=categories2.remove(0); System.out.println("Query ID2 : "+id2);
+			 * System.out.println(i+" - "+categories2.get(i)); } //Get index from user scanUrl = new Scanner(System.in); index = scanUrl.nextLine(); try{
+			 * categories2=kwGenerator.getCateg(Integer.parseInt(index),id2); id2=categories2.remove(0); System.out.println("Query ID2 : "+id2);
 			 * }catch(Exception e){ System.out.println(e); break; } }
 			 */// ---------------------------------------------------------------------------------------------------------
 
@@ -680,11 +709,17 @@ public class KWGenLDAServer
 					bikwords1.remove(0);
 					trikwords1.remove(0);
 					for (String kw : trikwords1)
+					{
 						System.out.println(kw);
+					}
 					for (String kw : bikwords1)
+					{
 						System.out.println(kw);
+					}
 					for (String kw : keywords1)
+					{
 						System.out.println(kw);
+					}
 				}
 				catch (Exception e)
 				{
@@ -695,8 +730,8 @@ public class KWGenLDAServer
 			// ---------------------------------------------------------------------------------------------------------
 
 			/*
-			 * //------------------------------URL 2---------------------------------------------------------------------- //User is ready to select
-			 * the final set of categories to generate keywords if(kwGenerator.ready4kw(id2)){
+			 * //------------------------------URL 2---------------------------------------------------------------------- //User is ready to select the
+			 * final set of categories to generate keywords if(kwGenerator.ready4kw(id2)){
 			 * System.out.print("\nPlease, type indexes of the following categories that best fits your product 2 separated by ',':\n");
 			 * System.out.println("(Type -1 if none are acceptable)"); for (int i=0; i<categories2.size();i++){
 			 * System.out.println(i+" - "+categories2.get(i)); } //Get indexes from user scan = new Scanner(System.in); mySentence = scan.nextLine();

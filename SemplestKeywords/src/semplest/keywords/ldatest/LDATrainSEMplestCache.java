@@ -20,16 +20,16 @@ public class LDATrainSEMplestCache
 		 * 
 		 * // Conditional statement to acomodate existance of arguments switch (args.length) { default: throw new Exception(); case 5: beta =
 		 * Double.parseDouble(args[4]); case 4: alpha = Double.parseDouble(args[3]); case 3: numiter = Integer.parseInt(args[2]); case 2:
-		 * lda.setNumTopics(Integer.parseInt(args[1])); case 1: //Create instances for each category
-		 * System.out.println("Creating Training Instances..."); lda.CreateInstancesSEMplestCache2(args);
+		 * lda.setNumTopics(Integer.parseInt(args[1])); case 1: //Create instances for each category System.out.println("Creating Training Instances...");
+		 * lda.CreateInstancesSEMplestCache2(args);
 		 * 
 		 * //Create instances for each category multithreaded System.out.println("Creating Training Instances...");
 		 * lda.CreateInstancesSEMplestCacheMultiThread(args, 8);
 		 * 
 		 * //Train model from Instances System.out.println("Saving Instances..."); lda.saveLDAInstCache(pipeIOInstance);
 		 * System.out.println("Training Model..."); lda.LDAcreateModel(alpha, beta, numiter); //Writing to file System.out.println("Saving Model...");
-		 * lda.saveLDAModel(pipeIOModel); System.out.println("Model successfuly created"); //System.out.println("" + alpha + " " + beta + " " +
-		 * numiter ); }
+		 * lda.saveLDAModel(pipeIOModel); System.out.println("Model successfuly created"); //System.out.println("" + alpha + " " + beta + " " + numiter );
+		 * }
 		 * 
 		 * //Optional printing of results int InstInd = 0; System.out.println("Printing Words and Topics from Category " + InstInd);
 		 * lda.LDAprintTrainedInst(InstInd); System.out.println("Show top 10 words in topics with proportions for Category " + InstInd);

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 import semplest.keywords.javautils.ioUtils;
 import cc.mallet.types.Instance;
@@ -24,9 +25,9 @@ public class MalletThreadObj implements Runnable
 	private int threadAction;
 	private int startLine;
 	private int finishLine;
-	private ArrayList<String> lines;
+	private List<String> lines;
 
-	public MalletThreadObj(InstanceList inst, int action, int strtline, int fnishline, ArrayList<String> lin)
+	public MalletThreadObj(InstanceList inst, int action, int strtline, int fnishline, List<String> lin)
 	{
 		instances = inst;
 		threadAction = action;
@@ -54,7 +55,7 @@ public class MalletThreadObj implements Runnable
 		{
 			line = lines.get(i);
 			System.out.println("Adding Category " + i);
-			ArrayList<String> tokens = ioUtils.malletizeLine(line);
+			List<String> tokens = ioUtils.malletizeLine(line);
 			instances.addThruPipe(new Instance(tokens.get(2), tokens.get(0), tokens.get(1), null));
 			i++;
 		}

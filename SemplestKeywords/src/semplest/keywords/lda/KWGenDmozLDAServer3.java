@@ -57,28 +57,10 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer3.class);
 	private static KWGenDmozLDAdata3 data;
-	private static HashMap<String, Object> configData;
+	private static Map<String, Object> configData;
 	SemplestMailServiceImpl mail;
 
-	private static enum SearchEngine
-	{
-		Google, MSN;
-		boolean equalsSE(SearchEngine e)
-		{
-			return equalsSE(e.toString());
-		}
-
-		boolean equalsSE(String e)
-		{
-			if (e.equalsIgnoreCase(this.toString()))
-			{
-				return true;
-			}
-			return false;
-		}
-	}
-
-	public KWGenDmozLDAServer3(HashMap<String, Object> configDataIn) throws Exception
+	public KWGenDmozLDAServer3(Map<String, Object> configDataIn) throws Exception
 	{
 		try
 		{
@@ -233,11 +215,10 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 	}
 
 	@Override
-	public KeywordProbabilityObject[] getKeywords(List<String> categories, String companyName, String[] searchEngines, String productPromotion, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception
+	public KeywordProbabilityObject[] getKeywords(List<String> categories, String companyName, AdEngine[] searchEngines, String productPromotion, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception
 	{
 		try
 		{
-			List<SearchEngine> srchE = new ArrayList<SearchEngine>();
 			if (productPromotion != null && productPromotion.length() >= 0)
 			{
 				productPromotion = productPromotion.toLowerCase().replaceAll("\\p{Punct}", " ");
@@ -248,21 +229,6 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 			}
 			description = description.toLowerCase().replaceAll("\\p{Punct}", " ");
 			// Check Search Engines and decide number of kw per Search Engine
-			for (int i = 0; i < searchEngines.length; i++)
-			{
-				for (SearchEngine se : SearchEngine.values())
-				{
-					if (se.equalsSE(searchEngines[i]))
-					{
-						srchE.add(se);
-					}
-				}
-				if (srchE.size() < 1)
-				{
-					throw new Exception(searchEngines[i] + " not a valid Search Engine");
-				}
-			}
-
 			if (categories == null || categories.size() == 0)
 			{
 				throw new Exception("No categories provided");
@@ -280,16 +246,16 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 			}
 			String stemdata1 = stemvStringNoFilter(data1, data.dict);
 			int numkw = 0;
-			for (SearchEngine se : srchE)
+			for (AdEngine se : searchEngines)
 			{
-				if (se.equalsSE(SearchEngine.Google))
+				if (se == AdEngine.Google)
 				{
 					if (data.numKeywordsGoogle > numkw)
 					{
 						numkw = data.numKeywordsGoogle;
 					}
 				}
-				if (se.equalsSE(SearchEngine.MSN))
+				if (se == AdEngine.MSN)
 				{
 					if (data.numKeywordsMSN > numkw)
 					{
@@ -298,6 +264,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 				}
 			}
 			// Get keywords sorted by probability
+			final List<AdEngine> srchE = Arrays.asList(searchEngines);
 			List<KeywordProbabilityObject> keywords = getKeywordsSorted(categories, description, stemdata1, srchE, nGrams, numkw);
 			return keywords.toArray(new KeywordProbabilityObject[keywords.size()]);
 		}
@@ -326,14 +293,14 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		return retMap;
 	}
 
-	private List<KeywordProbabilityObject> getKeywordsSorted(List<String> categories, String description, String data1, List<SearchEngine> srchE, Integer[] nGrams, int numKw) throws Exception
+	private List<KeywordProbabilityObject> getKeywordsSorted(List<String> categories, String description, String data1, List<AdEngine> srchE, Integer[] nGrams, int numKw) throws Exception
 	{
 		try
 		{
 			// Create a List of the categories that satisfy options selected by the user and ArrayList
 			// with data form those categories
 			Map<String, String> trainMap = getCatChildsAndData(categories);
-			List<String> optCateg = Arrays.asList(trainMap.keySet().toArray(new String[trainMap.size()]));
+			List<String> optCateg = new ArrayList<String>(trainMap.keySet());
 			logger.info("Number of categories to add " + trainMap.size());
 			// Train LDA for categories selected and return sorted keywords
 			// and obtain word probability
@@ -345,16 +312,16 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 			List<KeywordProbabilityObject> keywords = sortKeywords(kwNOTSorted, numKw);
 			// Disable the necessary SE flags
 			int j = 0;
-			for (SearchEngine se : srchE)
+			for (AdEngine se : srchE)
 			{
-				if (se.equalsSE(SearchEngine.Google) && data.numKeywordsGoogle < keywords.size())
+				if (se == AdEngine.Google && data.numKeywordsGoogle < keywords.size())
 				{
 					for (int i = data.numKeywordsGoogle; i < keywords.size(); i++)
 					{
 						keywords.get(i).setIsTargetGoogle(false);
 					}
 				}
-				if (se.equalsSE(SearchEngine.MSN) && data.numKeywordsMSN < keywords.size())
+				if (se == AdEngine.MSN && data.numKeywordsMSN < keywords.size())
 				{
 					for (int i = data.numKeywordsGoogle; i < keywords.size(); i++)
 					{
@@ -447,7 +414,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		return max;
 	}
 
-	private List<KeywordProbabilityObject> getKwMultiCombined(List<String> optCateg, String searchTerms, Integer[] nGrams, Map<String, Double> wordMap, Double defaultProb, int nGramsmax, List<SearchEngine> srchE) throws Exception
+	private List<KeywordProbabilityObject> getKwMultiCombined(List<String> optCateg, String searchTerms, Integer[] nGrams, Map<String, Double> wordMap, Double defaultProb, int nGramsmax, List<AdEngine> srchE) throws Exception
 	{
 		List<KeywordProbabilityObject> ngrams = new ArrayList<KeywordProbabilityObject>();
 		List<KeywordProbabilityObject> googleSug = getGoogleSug(searchTerms, srchE, wordMap, defaultProb, 1000);
@@ -487,7 +454,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		return results;
 	}
 
-	private List<KeywordProbabilityObject> getGoogleSug(String searchTerms, List<SearchEngine> srchE, Map<String, Double> wordMap, Double defaultProb, int numberResults) throws Exception
+	private List<KeywordProbabilityObject> getGoogleSug(String searchTerms, List<AdEngine> srchE, Map<String, Double> wordMap, Double defaultProb, int numberResults) throws Exception
 	{
 		List<KeywordProbabilityObject> kwProb = new ArrayList<KeywordProbabilityObject>();
 		List<String> bigrams = generateNgramsFromString(searchTerms, 2, false);
@@ -543,15 +510,15 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		return kwProbMap2KwProbList(kwProbMap, srchE, numberResults);
 	}
 
-	private List<KeywordProbabilityObject> kwProbMap2KwProbList(Map<String, Double> kwProbMap, List<SearchEngine> srchE, int numKw)
+	private List<KeywordProbabilityObject> kwProbMap2KwProbList(Map<String, Double> kwProbMap, List<AdEngine> srchE, int numKw)
 	{
 		List<KeywordProbabilityObject> kwProb = new ArrayList<KeywordProbabilityObject>();
 		boolean isGT = false, isMSNT = false;
-		if (srchE.contains(SearchEngine.Google))
+		if (srchE.contains(AdEngine.Google))
 		{
 			isGT = true;
 		}
-		if (srchE.contains(SearchEngine.MSN))
+		if (srchE.contains(AdEngine.MSN))
 		{
 			isMSNT = true;
 		}
@@ -573,7 +540,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		return kwProb;
 	}
 
-	private List<KeywordProbabilityObject> getKwMulti(String searchTerms, List<String> optCateg, int numkw, Map<String, Double> wordMap, Double defaultProb, List<SearchEngine> srchE) throws Exception
+	private List<KeywordProbabilityObject> getKwMulti(String searchTerms, List<String> optCateg, int numkw, Map<String, Double> wordMap, Double defaultProb, List<AdEngine> srchE) throws Exception
 	{
 		// **************************************************************************************
 		// Now that we have generated a selection of categories that we want to use to generate our alphabet,
@@ -844,22 +811,6 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		SemplestUtils.filterOutDeletedKeywords(keywordList);
 
 		// Check Search Engines and decide number of kw per Search Engine
-		List<SearchEngine> srchE = new ArrayList<SearchEngine>();
-		final Map<AdEngine, AdEngineID> adEngineInfo = getPromoDataSP.getPromotionAdEngineID(promotionID);
-		for (AdEngine adE : adEngineInfo.keySet())
-		{
-			for (SearchEngine se : SearchEngine.values())
-			{
-				if (se.equalsSE(adE.name()))
-				{
-					srchE.add(se);
-				}
-			}
-			if (srchE.size() < 1)
-			{
-				throw new Exception(adE.name() + " not a valid Search Engine");
-			}
-		}
 		List<String> categories = new ArrayList<String>(SemplestDB.getPromotionCategory(promotionID));
 		categories = data.cu.decode(categories);
 		if (categories == null || categories.size() == 0)
@@ -922,16 +873,16 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		sortedMap.putAll(wordMap);
 		final String[] words = sortedMap.keySet().toArray(new String[sortedMap.size()]);
 		/*
-		 * // print word Map PrintStream pr = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/wordMap.wm")); for(String word
-		 * : words){ pr.println(word+", " + wordMap.get(word)); }
+		 * // print word Map PrintStream pr = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/wordMap.wm")); for(String word :
+		 * words){ pr.println(word+", " + wordMap.get(word)); }
 		 */
 		return wordMap.get(words[(int) (words.length * 0.6)]);
 	}
 
 	/*
 	 * public static void main(String[] args) throws Exception { ClassPathXmlApplicationContext appContext = new
-	 * ClassPathXmlApplicationContext("Service.xml"); Object object = new Object(); SemplestConfiguration configDB = new
-	 * SemplestConfiguration(object); Thread configThread = new Thread(configDB); configThread.start(); synchronized (object) { object.wait(); }
+	 * ClassPathXmlApplicationContext("Service.xml"); Object object = new Object(); SemplestConfiguration configDB = new SemplestConfiguration(object);
+	 * Thread configThread = new Thread(configDB); configThread.start(); synchronized (object) { object.wait(); }
 	 * 
 	 * PrintStream ps = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/updatedProbKw.txt"));
 	 * 
@@ -960,8 +911,8 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		String userInfo1 = "";
 		final PrintStream logging = new PrintStream(new FileOutputStream("data\\test\\categoriesTime.txt"));
 		/*
-		 * while(true){ Long start = System.currentTimeMillis(); ArrayList<String> categOpt = kwGen.getCategories(null, null , "science fiction",
-		 * null, null); logging.println(System.currentTimeMillis()-start); }
+		 * while(true){ Long start = System.currentTimeMillis(); ArrayList<String> categOpt = kwGen.getCategories(null, null , "science fiction", null,
+		 * null); logging.println(System.currentTimeMillis()-start); }
 		 */
 		while (!userInfo1.equals("exit"))
 		{
@@ -1035,7 +986,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 				}
 				Double startTime = new Long(System.currentTimeMillis()).doubleValue();
 				Integer[] nGrams = { 300, 300, 100 };
-				KeywordProbabilityObject[] kw = kwGen.getKeywords(categories, null, new String[] { "Google", "MSN" }, uInf, searchTerm[0], adds, url, null, nGrams);
+				KeywordProbabilityObject[] kw = kwGen.getKeywords(categories, null, new AdEngine[] { AdEngine.Google, AdEngine.MSN }, uInf, searchTerm[0], adds, url, null, nGrams);
 				Double endTime = new Long(System.currentTimeMillis()).doubleValue();
 				System.out.println("Time for keywords: " + (endTime - startTime));
 				for (KeywordProbabilityObject k : kw)
@@ -1051,7 +1002,6 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 					String kaux = k.getKeyword();// .replaceAll("wed", "wedding");
 					System.out.println(kaux + ", " + k.getSemplestProbability());
 				}
-
 				System.setOut(stdout);
 			}
 			catch (Exception e)

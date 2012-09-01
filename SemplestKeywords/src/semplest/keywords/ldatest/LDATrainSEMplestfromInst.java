@@ -8,8 +8,8 @@ public class LDATrainSEMplestfromInst
 {
 	/**
 	 * Trains model based on dataset and saves model and instances to default file Arguments args[0] : path to training data file ( In SEMplest
-	 * FORMAT!!) args[1] : path to instance document saved args[2] : Number of topics args[3] : Number of Gibbs iterations args[4] : alpha value
-	 * args[5] : beta value
+	 * FORMAT!!) args[1] : path to instance document saved args[2] : Number of topics args[3] : Number of Gibbs iterations args[4] : alpha value args[5]
+	 * : beta value
 	 * 
 	 * @throws Exception
 	 */

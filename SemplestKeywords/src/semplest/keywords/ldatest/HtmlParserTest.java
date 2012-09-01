@@ -38,7 +38,7 @@ public class HtmlParserTest
 
 	}
 
-	public static void sortAndPrintMap(HashMap<String, Double> map) throws FileNotFoundException
+	public static void sortAndPrintMap(Map<String, Double> map) throws FileNotFoundException
 	{
 		// pr = new PrintStream(new FileOutputStream("/semplest/lluis/keywordExp/wordmap.txt"));
 		pr = System.out;
@@ -52,9 +52,9 @@ public class HtmlParserTest
 		System.out.println("Number of words : " + map.size());
 	}
 
-	public static HashMap<String, Double> getWordCount(HashMap<String, ArrayList<String>> data)
+	public static Map<String, Double> getWordCount(Map<String, List<String>> data)
 	{
-		HashMap<String, Double> wordMap = new HashMap<String, Double>();
+		Map<String, Double> wordMap = new HashMap<String, Double>();
 		for (String url : data.keySet())
 		{
 			for (String line : data.get(url))
@@ -101,9 +101,9 @@ public class HtmlParserTest
 		 */
 	}
 
-	public static HashMap<String, ArrayList<String>> readData(String path) throws FileNotFoundException
+	public static Map<String, List<String>> readData(String path) throws FileNotFoundException
 	{
-		HashMap<String, ArrayList<String>> data = new HashMap<String, ArrayList<String>>();
+		Map<String, List<String>> data = new HashMap<String, List<String>>();
 		Scanner sc = new Scanner(new FileInputStream(path));
 		String latestUrl = new String();
 		while (sc.hasNext())
@@ -137,8 +137,8 @@ public class HtmlParserTest
 		{
 			/*
 			 * if(!urlMap.contains(ur)){ pr.println(ur+"***************************************************************"); try{
-			 * printList(cleanUrlText(TextUtils.HTMLText(ur))); }catch(Exception e){ System.out.println("Error with url :"+ ur); e.printStackTrace();
-			 * } urlMap.add(ur); }
+			 * printList(cleanUrlText(TextUtils.HTMLText(ur))); }catch(Exception e){ System.out.println("Error with url :"+ ur); e.printStackTrace(); }
+			 * urlMap.add(ur); }
 			 */
 		}
 		pr.println("Time elapsed" + (start - System.currentTimeMillis()));
@@ -154,7 +154,7 @@ public class HtmlParserTest
 		printList(cleanUrlText(TextUtils.HTMLText(inurl, tag)));
 		String urls = TextUtils.HTMLLinkString(inurl, inurl);
 		String[] url = urls.split("\\s+");
-		HashSet<String> urlMap = new HashSet<String>(url.length);
+		Set<String> urlMap = new HashSet<String>(url.length);
 		urlMap.add(inurl);
 		for (String ur : url)
 		{
@@ -178,9 +178,9 @@ public class HtmlParserTest
 
 	}
 
-	public static ArrayList<String> cleanUrlText(String in)
+	public static List<String> cleanUrlText(String in)
 	{
-		ArrayList<String> out = new ArrayList<String>();
+		List<String> out = new ArrayList<String>();
 		String[] split = in.split("\\n");
 		for (String line : split)
 		{
