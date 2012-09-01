@@ -1,4 +1,4 @@
-package semplest.dmoz;
+package semplest.dmoz.tree;
 
 import java.util.Arrays;
 

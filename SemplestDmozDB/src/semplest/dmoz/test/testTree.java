@@ -4,20 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import semplest.dmoz.DmozDB;
-import semplest.dmoz.TreeNode;
 import semplest.dmoz.springjdbc.BaseDB;
+import semplest.dmoz.tree.TreeNode;
 
 public class testTree extends BaseDB {
 	
 	public ArrayList<TreeNode> sqlBatch = new ArrayList<TreeNode>();
 	
 	public static void main(String[] args){
-		try {
-			DmozDB.loadDmozToDB();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 	
 	public static void test(){
