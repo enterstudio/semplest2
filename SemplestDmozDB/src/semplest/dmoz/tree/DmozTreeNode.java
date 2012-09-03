@@ -2,15 +2,15 @@ package semplest.dmoz.tree;
 
 import java.util.HashMap;
 
-public class TreeNode {
+public class DmozTreeNode {
 	private Long nodeID;
 	private Long parentID;
 	private String name;
 	private String fullName;
-	private CategoryData categoryData;
-	private HashMap<String,TreeNode> childrenNodes;	
+	private DmozCategoryData categoryData;
+	private HashMap<String,DmozTreeNode> childrenNodes;	
 	
-	public void addChildrenNode(TreeNode newNode){
+	public void addChildrenNode(DmozTreeNode newNode){
 		this.childrenNodes.put(newNode.getName(), newNode);
 	}
 
@@ -55,22 +55,22 @@ public class TreeNode {
 	}
 
 
-	public CategoryData getCategoryData() {
+	public DmozCategoryData getCategoryData() {
 		return categoryData;
 	}
 
 
-	public void setCategoryData(CategoryData categoryData) {
+	public void setCategoryData(DmozCategoryData categoryData) {
 		this.categoryData = categoryData;
 	}
 
 
-	public HashMap<String, TreeNode> getChildrenNodes() {
+	public HashMap<String, DmozTreeNode> getChildrenNodes() {
 		return childrenNodes;
 	}
 
 
-	public void setChildrenNodes(HashMap<String, TreeNode> childrenNodes) {
+	public void setChildrenNodes(HashMap<String, DmozTreeNode> childrenNodes) {
 		this.childrenNodes = childrenNodes;
 	}
 }

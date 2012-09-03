@@ -2,7 +2,7 @@ package semplest.dmoz.tree;
 
 import java.util.Arrays;
 
-public class CategoryData {
+public class DmozCategoryData {
 	private String description;
 	private String[] urls;
 	

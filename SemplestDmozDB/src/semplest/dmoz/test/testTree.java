@@ -5,11 +5,11 @@ import java.util.List;
 
 import semplest.dmoz.DmozDB;
 import semplest.dmoz.springjdbc.BaseDB;
-import semplest.dmoz.tree.TreeNode;
+import semplest.dmoz.tree.DmozTreeNode;
 
 public class testTree extends BaseDB {
 	
-	public ArrayList<TreeNode> sqlBatch = new ArrayList<TreeNode>();
+	public ArrayList<DmozTreeNode> sqlBatch = new ArrayList<DmozTreeNode>();
 	
 	public static void main(String[] args){
 		
@@ -26,7 +26,7 @@ public class testTree extends BaseDB {
 		jdbcTemplate.batchUpdate(sqls.toArray(new String[sqls.size()]));
 	}
 	
-	public void test2tree(TreeNode topnode){
+	public void test2tree(DmozTreeNode topnode){
 			
 	}
 }

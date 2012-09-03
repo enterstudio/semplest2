@@ -32,19 +32,20 @@ public class DmozImporter extends BaseDB {
 		
 		//Build DMOZ Tree
 		System.out.println("Get Dmoz tree nodes.");
-		final BuildDmozTree dmozTreeBuilder = new BuildDmozTree(dmozDescriptionFile,dmozUrlFile);
-		HashMap<String,TreeNode> dmozTree = dmozTreeBuilder.buildAndGetAllDmozTreeNodes();
+		final DmozTreeBuilder dmozTreeBuilder = new DmozTreeBuilder(dmozDescriptionFile,dmozUrlFile);
+		dmozTreeBuilder.buildAndGetAllDmozTreeNodes();
+		HashMap<String,DmozTreeNode> dmozTree = dmozTreeBuilder.getAllDmozEntries();
 		
 		//Batch and store the tree to database
-		final List<Map<String,TreeNode>> batches = SemplestUtils.getBatches(dmozTree, 5000);
+		final List<Map<String,DmozTreeNode>> batches = SemplestUtils.getBatches(dmozTree, 5000);
 		System.out.println("Going to store " + batches.size() + " batchs (of 5000 node entries) to DB.");
 		Long counter = 0L;		
-		for (final Map<String,TreeNode> batch : batches)
+		for (final Map<String,DmozTreeNode> batch : batches)
 		{			
 			Long start = System.currentTimeMillis();
 			System.out.println("Storing batch #" + counter + " to DB...");
 			ArrayList<String> batchSql = new ArrayList<String>();
-			for(TreeNode node : batch.values()){
+			for(DmozTreeNode node : batch.values()){
 				if(node == null){
 					continue;
 				}
