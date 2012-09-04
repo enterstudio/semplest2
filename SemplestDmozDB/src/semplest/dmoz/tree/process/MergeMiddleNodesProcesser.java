@@ -60,7 +60,8 @@ public class MergeMiddleNodesProcesser implements TreeProcesserInterface{
 		return null;
 	}
 	
-	public void outputReport(String path) throws Exception{
+	@Override
+	public void printReport(String path) throws Exception{
 		FileWriter writer = new FileWriter(path);
 		for(String node : splittedMiddleNodes){
 			writer.append(node + "\n");

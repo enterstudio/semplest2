@@ -30,7 +30,8 @@ public class CountLeafNodesUrlProcesser implements TreeProcesserInterface{
 		return null;
 	}
 	
-	public void outputReport(String path) throws Exception{
+	@Override
+	public void printReport(String path) throws Exception{
 		FileWriter writer = new FileWriter(path);
 		for(String node : urlCounts){
 			writer.append(node + "\n");

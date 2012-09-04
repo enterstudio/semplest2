@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tree.DmozTreeBuilder;
 import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.process.AllNodesUrlNumProcesser;
 import semplest.dmoz.tree.process.EmptyNodesProcesser;
 import semplest.dmoz.tree.process.MergeLeafNodesProcesser;
 import semplest.dmoz.tree.process.CountLeafNodesUrlProcesser;
@@ -23,22 +24,27 @@ public class testTree extends BaseDB {
 			/*
 			MergeLeafNodesProcesser leafNodesMerger = new MergeLeafNodesProcesser();
 			leafNodesMerger.analyzeTree(dmozTree);
-			leafNodesMerger.outputReport("c:\\dmoz\\AnalyzeLeafNodesReport.txt");
+			leafNodesMerger.printReport("c:\\dmoz\\AnalyzeLeafNodesReport.txt");
 			*/
 			/*
 			MergeMiddleNodesProcesser middleNodesMerger = new MergeMiddleNodesProcesser();
 			middleNodesMerger.analyzeTree(dmozTree);
-			middleNodesMerger.outputReport("c:\\dmoz\\AnalyzeMiddleNodesReport.txt");
+			middleNodesMerger.printReport("c:\\dmoz\\AnalyzeMiddleNodesReport.txt");
 			*/
 			/*
 			CountLeafNodesUrlProcesser leafNodesUrl = new CountLeafNodesUrlProcesser();
 			leafNodesUrl.analyzeTree(dmozTree);
-			leafNodesUrl.outputReport("c:\\dmoz\\LeafNodesUrls.txt");
+			leafNodesUrl.printReport("c:\\dmoz\\LeafNodesUrls.txt");
 			*/
-			
+			/*
 			EmptyNodesProcesser emptyNodes = new EmptyNodesProcesser();
 			emptyNodes.analyzeTree(dmozTree);
-			emptyNodes.outputReport("c:\\dmoz\\EmptyNodes.txt");
+			emptyNodes.printReport("c:\\dmoz\\EmptyNodes.txt");
+			*/
+			
+			AllNodesUrlNumProcesser allNodesUrl = new AllNodesUrlNumProcesser();
+			allNodesUrl.analyzeTree(dmozTree);
+			allNodesUrl.printReport("c:\\dmoz\\AllNodesUrlCount.txt");
 			
 		}
 		catch(Exception e){
