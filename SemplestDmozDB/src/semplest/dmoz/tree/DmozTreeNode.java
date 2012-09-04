@@ -9,6 +9,7 @@ public class DmozTreeNode {
 	private String fullName;
 	private DmozCategoryData categoryData;
 	private HashMap<String,DmozTreeNode> childrenNodes;	
+	private DmozTreeNode parentNode;
 	
 	public void addChildrenNode(DmozTreeNode newNode){
 		this.childrenNodes.put(newNode.getName(), newNode);
@@ -73,6 +74,14 @@ public class DmozTreeNode {
 		this.childrenNodes = childrenNodes;
 	}
 
+	public DmozTreeNode getParentNode() {
+		return parentNode;
+	}
+
+
+	public void setParentNode(DmozTreeNode parentNode) {
+		this.parentNode = parentNode;
+	}
 
 	@Override
 	public String toString() {

@@ -130,6 +130,7 @@ public class DmozTreeBuilder {
 		topNode.setFullName("top");
 		topNode.setCategoryData(new DmozCategoryData());
 		topNode.setChildrenNodes(new HashMap<String,DmozTreeNode>());
+		topNode.setParentNode(topNode);
 		
 		for(String cat : inputData.keySet()){
 			String[] nodes = cat.split("/");			
@@ -149,6 +150,7 @@ public class DmozTreeBuilder {
 					newNode.setName(currentNodeName);
 					newNode.setFullName(fullNodeName);
 					newNode.setChildrenNodes(new HashMap<String,DmozTreeNode>());
+					newNode.setParentNode(currentParent);
 					currentParent.addChildrenNode(newNode);
 				}
 				currentParent = currentLevelNodes.get(currentNodeName);
@@ -164,6 +166,7 @@ public class DmozTreeBuilder {
 			leafNode.setFullName(fullLeafNodeName);			
 			leafNode.setCategoryData(catData);
 			leafNode.setChildrenNodes(new HashMap<String,DmozTreeNode>());
+			leafNode.setParentNode(currentParent);
 			currentParent.addChildrenNode(leafNode);
 			
 			allNodes.put(leafNode.getFullName(), leafNode);
