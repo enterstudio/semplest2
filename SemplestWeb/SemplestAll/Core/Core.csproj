@@ -176,9 +176,11 @@
     <Compile Include="Models\ReportIndexModel.cs" />
     <Compile Include="Models\Repositories\CampaignRepository.cs" />
     <Compile Include="Models\Repositories\ICampaignRepository.cs" />
+    <Compile Include="Models\Repositories\IKeyWordRepository.cs" />
     <Compile Include="Models\Repositories\IPromotionRepository.cs" />
     <Compile Include="Models\Repositories\ISmartWordRepository.cs" />
     <Compile Include="Models\Repositories\IStateRepository.cs" />
+    <Compile Include="Models\Repositories\KeyWordRepository.cs" />
     <Compile Include="Models\Repositories\PromotionRepository.cs" />
     <Compile Include="Models\Repositories\SmartWordRepository.cs" />
     <Compile Include="Models\Repositories\StateRepository.cs" />
@@ -422,6 +424,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\SmartWord\Words.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\NegativeSmartWords.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web.Mvc;
+using System.Web.UI;
 using Semplest.Core.Models.Repositories;
 using Semplest.SharedResources.Services;
 using SemplestModel;
@@ -40,10 +43,13 @@ namespace Semplest.Core.Controllers
             Session["AllCategories"] = null;
             Session["AllKeyWords"] = null;
             Session["PromoId"] = null;
+            Session["NegativeSmartWords"] = null;
             var swr = new SmartWordRepository();
             var swsm = swr.GetSetupModelForPromotionId(promotionId, GetCustomerId());
             ViewBag.Title = swsm.ProductGroup.ProductGroupName + " " + swsm.ProductGroup.ProductPromotionName;
             Session.Add("PromoId", promotionId);
+            Session.Add("NegativeSmartwords", swsm.NegativeKeywords);
+            Session.Add("NegativeSmartwordsText", swsm.NegativeKeywordsText);
             return View(swsm);
         }
 
@@ -85,7 +91,6 @@ namespace Semplest.Core.Controllers
 
         }
 
-
         public ActionResult Categories()
         {
             var categoryModels = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
@@ -120,7 +125,6 @@ namespace Semplest.Core.Controllers
             return PartialView(swm);
         }    
 
-
         private int GetCustomerId()
         {
             var customerFk =
@@ -128,9 +132,6 @@ namespace Semplest.Core.Controllers
                     User.CustomerFK;
             return customerFk.Value;
         }
-
-
-
 
         [HttpPost]
         [ActionName("Setup")]
@@ -154,7 +155,8 @@ namespace Semplest.Core.Controllers
             var campaignRepository = new CampaignRepository();
             var kpos = new List<KeywordProbabilityObject>();
             kpos.AddRange(keywords);
-            var promotionRepository = new PromotionRepository();
+            var dbcontext = new SemplestModel.Semplest();
+            var promotionRepository = new PromotionRepository(dbcontext);
             var promoId = promotionRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                             model.ProductGroup.ProductPromotionName);
             campaignRepository.SaveKeywords(promoId, kpos, null,
@@ -195,6 +197,88 @@ namespace Semplest.Core.Controllers
             swm.AllKeywords = keyWordModels;
             swm.WordCount = keyWordModels.Count();
             return PartialView(swm);
+        }
+
+        [HttpPost]
+        [ActionName("Setup")]
+        [AcceptSubmitType(Name = "Command", Type = "SetNegativeKeywords")]
+        public ActionResult SetNegativeKeywords(SmartWordSetupModel model)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(model.NegativeKeywordsText))
+                {
+                    var addl = model.NegativeKeywordsText.Split(',').ToList();
+                    addl.ForEach(t => model.NegativeKeywords.Add(t.Trim()));
+                }
+                Session["NegativeSmartwords"] = model.NegativeKeywords;
+                Session["NegativeSmartwordsText"] = model.NegativeKeywordsText;
+                var cred =
+                    (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
+                var dbcontext = new SemplestModel.Semplest();
+                IPromotionRepository pr = new PromotionRepository(dbcontext);
+                IKeyWordRepository kwr = new KeyWordRepository(dbcontext);
+                var customerFK = GetCustomerId();
+                var promo = pr.GetPromoitionFromCampaign(customerFK, model);
+                model.AllKeywords = kwr.SaveNegativeKeywords(model, customerFK, promo);
+                return Json("NegativeKeywords");
+            }
+            catch (Exception ex)
+            {
+                ExceptionHelper.LogException(ex);
+                return Json(ExceptionHelper.GetErrorMessage(ex));
+            }
+        }
+
+        public ActionResult NegativeSmartWords(SmartWordSetupModel model)
+        {
+            if (Session["NegativeSmartwords"] != null)
+            {
+                model.NegativeKeywords = (List<string>)Session["NegativeSmartwords"];
+                model.NegativeKeywordsText = (string)Session["NegativeSmartwordsText"];
+            }
+            return PartialView("NegativeSmartWords", model);
+        }
+
+        //[HttpPost]
+        //[ActionName("Setup")]
+        //[AcceptSubmitType(Name = "Command", Type = "ExportSmartWords")]
+        public ActionResult ExportSmartWords()
+        {
+            var keyWordModels = (List<CampaignSetupModel.KeywordsModel>)Session["AllKeyWords"];
+            var grid = new System.Web.UI.WebControls.GridView {DataSource = keyWordModels};
+            grid.DataBind();
+            //HttpContext.Response.Buffer = true;
+            //Response.ClearContent();
+            //Response.AddHeader("content-disposition", "attachment; filename=YourFileName.xls");
+            //Response.ContentType = "application/vnd.ms-excel"; 
+            var sw = new StringWriter();
+            var htw = new HtmlTextWriter(sw);
+            grid.RenderControl(htw);
+            //Response.Write(sw.ToString());
+            //Response.End();
+            var sm = new MemoryStream(Encoding.ASCII.GetBytes( sw.ToString() ));
+            return File(sm, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","SmartWords.xlsx");
+            //return new ExcelResult
+            //           {
+            //               FileName = "sample.xls",
+            //               Path = "~/Content/sample.xlsx"
+            //           };
+        }
+
+        public class ExcelResult : ActionResult
+        {
+            public string FileName { get; set; }
+            public string Path { get; set; }
+
+            public override void ExecuteResult(ControllerContext context)
+            {
+                context.HttpContext.Response.Buffer = true;
+                context.HttpContext.Response.Clear();
+                context.HttpContext.Response.AddHeader("content-disposition", "attachment; filename=" + FileName);
+                context.HttpContext.Response.ContentType = "application/vnd.ms-excel";
+                context.HttpContext.Response.WriteFile(context.HttpContext.Server.MapPath(Path));
+            }
         }
 
         #region Nested type: AcceptSubmitTypeAttribute

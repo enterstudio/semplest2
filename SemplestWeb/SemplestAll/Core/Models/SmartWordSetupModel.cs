@@ -17,6 +17,7 @@ namespace Semplest.Core.Models
             AllKeywords = new List<CampaignSetupModel.KeywordsModel>();
             using (var entities = new SemplestModel.Semplest())
                 Configuration = entities.Configurations.SingleOrDefault();
+            NegativeKeywords = new List<string>();
         }
 
         public ProductGroupModel ProductGroup { get; set; }
@@ -31,6 +32,8 @@ namespace Semplest.Core.Models
         public List<int> KeywordIds { get; set; }
         public List<CampaignSetupModel.KeywordsModel> AllKeywords { get; set; }
         public int WordCount;
+        public List<string> NegativeKeywords { get; set; }
+        public string NegativeKeywordsText { get; set; }
 
 
     }

@@ -75,32 +75,32 @@ namespace Semplest.Core.Models.Repositories
                 //model.AdModelProp.Ads = promo.PromotionAds.Where(ads => !ads.IsDeleted).ToList();
 
                 // set negative keywords
-                //if (promo.PromotionKeywordAssociations != null)
-                //    model.AdModelProp.NegativeKeywords =
-                //        promo.PromotionKeywordAssociations.Where(m => m.IsNegative && !m.IsDeleted).Select(m => m.Keyword.Keyword1).
-                //            ToList();
+                if (promo.PromotionKeywordAssociations != null)
+                model.NegativeKeywords =
+                    promo.PromotionKeywordAssociations.Where(m => m.IsNegative && !m.IsDeleted).Select(m => m.Keyword.Keyword1).
+                        ToList();
 
                 // set islaunched
                 //    if (!preview)
                 //    {
-                //        model.AllKeywords.AddRange(
-                //            promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
-                //                key =>
-                //                new CampaignSetupModel.KeywordsModel { Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK }));
+                model.AllKeywords.AddRange(
+                    promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
+                        key =>
+                        new CampaignSetupModel.KeywordsModel { Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK }));
                 //    }
                 //}
 
                 //if (!preview)
                 //{
-                //    var cnt = model.AdModelProp.NegativeKeywords.Count();
-                //    for (var i = 0; i < cnt; i++)
-                //    {
-                //        model.AdModelProp.NegativeKeywordsText += model.AdModelProp.NegativeKeywords[i];
-                //        if (i < cnt - 1)
-                //        {
-                //            model.AdModelProp.NegativeKeywordsText += ", ";
-                //        }
-                //    }
+                var cnt = model.NegativeKeywords.Count();
+                for (var i = 0; i < cnt; i++)
+                {
+                    model.NegativeKeywordsText += model.NegativeKeywords[i];
+                    if (i < cnt - 1)
+                    {
+                        model.NegativeKeywordsText += ", ";
+                    }
+                }
                 //}
 
 

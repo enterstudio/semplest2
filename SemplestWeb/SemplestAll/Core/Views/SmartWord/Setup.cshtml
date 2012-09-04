@@ -100,7 +100,7 @@
                 </fieldset>
             </li>
             <li>     <fieldset style="padding-bottom: 10px">
-                         <table >
+                         <table border="0">
                          <tr style="height: 35px;">
                              <td colspan = "3">
                                  <label >
@@ -117,13 +117,17 @@
                                  <td>
                                      <span style=" margin-left: 5px;" class="grey-text">This url is your landing page</span>
                                  </td>
-                             </tr></table></fieldset></li>
-                                         <li>
-            <div style="text-align: center">
-                <button class="k-button" id="save1" type="submit" name="Command" value ="Setup">
-                    <span class="k-update k-icon"></span>Save & Continue
-                </button>
-            </div>
+                             </tr>
+                             <tr><td colspan="3"><button class="k-button" id="negativeKeyWords" type="button" >
+                    <span class="k-add k-icon"></span>Negative Keywords</button></td></tr>
+                             </table></fieldset></li>
+            <li>
+                <hr />
+                <div style="text-align: center">
+                    <button class="k-button" id="save1" type="submit" name="Command" value ="Setup">
+                        <span class="k-update k-icon"></span>Save & Continue
+                    </button>
+                </div>
             </li>
         </ul>
     </div>
@@ -134,7 +138,7 @@
             <br style="margin-top:1px;background-color:red;"></br>*@
             <input type="hidden" id="ViewSelectedKeywordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'/>
             <input type="hidden" id="ViewSmartWordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["ViewSmartWordsUrl"]'/>
-            <input type="hidden" id="NegativeKeyWordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["NegativeKeyWordsUrl"]'/>
+            <input type="hidden" id="NegativeSmartWordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["NegativeSmartWordsUrl"]'/>
             <input type="hidden" id="AdditionalSiteLinksUrl" value='@System.Configuration.ConfigurationManager.AppSettings["AdditionalSiteLinksUrl"]'/>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
             <input type="hidden" id="LogoUrlStr" value='@System.Configuration.ConfigurationManager.AppSettings["LogoUrl"]'/>
@@ -143,6 +147,7 @@
             <input type="hidden" id="CreateAdsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["CreateAdsUrl"]'/>
             <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
             <input type="hidden" id="PromotionAddressType" name="PromotionAddressType" value="@Model.PromotionAddressType"/>
+            <input type="hidden" id="CategoriesSmartWordsUrl" value="@System.Configuration.ConfigurationManager.AppSettings["CategoriesSmartWordsUrl"]"/>
             <img id="displayBox" style="display: none" />
             <div id="InvalidDescriptionWindow" style="display: none; text-align: center; font-weight: bold;">
                 <div class="InvalidDescriptionText">

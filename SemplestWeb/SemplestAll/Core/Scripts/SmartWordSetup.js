@@ -260,18 +260,18 @@ $(document).ready(function () {
         var length = tabStrip.items().length;
         var isnegativeKeyWordsAdded = false;
         for (var item = 0; item < length; item++) {
-            if (tabStrip.items().item(item).innerText == "Negative Keywords") {
+            if (tabStrip.items().item(item).innerText == "Negative SmartWords") {
                 isnegativeKeyWordsAdded = true;
                 break;
             }
         }
         if (!isnegativeKeyWordsAdded) {
             tabStrip.append({
-                text: "Negative Keywords",
-                contentUrl: $('#NegativeKeyWordsUrl').val()
+                text: "Negative SmartWords",
+                contentUrl: $('#NegativeSmartWordsUrl').val()
             });
         }
-        tab = tabStrip.tabGroup.children('li:contains("Negative Keywords")');
+        tab = tabStrip.tabGroup.children('li:contains("Negative SmartWords")');
         tabStrip.select(tab);
     });
 
@@ -636,7 +636,7 @@ function OnSuccess(id) {
         tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
         tabStrip.select(tab);
     } else if (id.name == "ViewSmartWords") {
-        if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
+        if (!tabStrip.tabGroup.children('li:contains("' + id.name + '")').text()) {
             tabStrip.append({
                 text: "View SmartWords",
                 contentUrl: $('#ViewSmartWordsUrl').val()
@@ -660,7 +660,7 @@ function OnSuccess(id) {
             if (!tabStrip.tabGroup.children('li:contains("' + id.name + '")').text()) {
                 tabStrip.append({
                     text: "Categories",
-                    contentUrl: '/SmartWord/Categories'
+                    contentUrl: $("#CategoriesSmartWordsUrl").val()
                 }, tabStrip.tabGroup.children("li:last")).select();
                 tab = tabStrip.tabGroup.children('li:contains("' + id.name + '")');
                 tabStrip.select(tab);

@@ -1,25 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using SemplestModel;
 
 namespace Semplest.Core.Models.Repositories
 {
     public class PromotionRepository : IPromotionRepository
     {
+        private SemplestModel.Semplest _dbcontext;
+
+        public PromotionRepository(SemplestModel.Semplest dbcontext)
+        {
+            _dbcontext = dbcontext;
+        }
+
         public int GetPromotionId(int userid, string prodGroupName, string promotionName)
         {
-            using (var dbcontext = new SemplestModel.Semplest())
-            {
                 // get the customerfk from userid
-                var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
+                var queryCustFk = from c in _dbcontext.Users where c.UserPK == userid select c.CustomerFK;
                 var i = queryCustFk.First();
                 if (i != null)
                 {
                     var custfk = (int)i;
 
                     // get ProductGroup
-                    var queryProdGrp = from c in dbcontext.ProductGroups
+                    var queryProdGrp = from c in _dbcontext.ProductGroups
                                        where c.CustomerFK == custfk && c.ProductGroupName == prodGroupName
                                        select c;
                     // get Promotion
@@ -34,8 +38,23 @@ namespace Semplest.Core.Models.Repositories
                         }
                     }
                 }
-            }
             return -1;
+        }
+
+        public Promotion GetPromoitionFromCampaign(int customerFK, SmartWordSetupModel model)
+        {
+            var queryProd = (from c in _dbcontext.ProductGroups
+                             where
+                                 c.CustomerFK == customerFK &&
+                                 c.ProductGroupName == model.ProductGroup.ProductGroupName
+                             select c).Single();
+            return GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
+        }
+
+        public Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)
+        {
+            var promo = prodGroup.Promotions.FirstOrDefault(m => m.PromotionName == promotionName && !m.IsDeleted);
+            return promo;
         }
     }
 }
