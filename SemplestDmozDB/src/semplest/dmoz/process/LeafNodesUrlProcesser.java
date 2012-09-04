@@ -1,23 +1,21 @@
-package semplest.dmoz.analyze;
+package semplest.dmoz.process;
 
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
-public class EmptyNodesProcesser implements TreeProcesserInterface {
+public class LeafNodesUrlProcesser implements TreeProcesserInterface{
+	private ArrayList<String> urlCounts = new ArrayList<String>();
 
-	HashSet<String> nodes = new HashSet<String>();
-	
 	@Override
 	public void analyzeTree(DmozTreeNode topNode) throws Exception {
 		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
-		if(topNode.getCategoryData() == null || topNode.getCategoryData().isEmpty()){
-			nodes.add(topNode.getFullName());
-		}
 		if(childrenNodes.size() == 0 ){
-			return;
+			//this is a leaf
+			int numUrls = topNode.getCategoryData() == null? 0 : (topNode.getCategoryData().getUrls() == null ? 0 : topNode.getCategoryData().getUrls().length);
+			urlCounts.add(topNode.getFullName() + " : " + numUrls);
 		}
 		else{
 			for(DmozTreeNode childrenNode : childrenNodes.values()){
@@ -34,10 +32,10 @@ public class EmptyNodesProcesser implements TreeProcesserInterface {
 	
 	public void outputReport(String path) throws Exception{
 		FileWriter writer = new FileWriter(path);
-		for(String node : nodes){
+		for(String node : urlCounts){
 			writer.append(node + "\n");
 		}
 		writer.close();	
 	}
-
+	
 }
