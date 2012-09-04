@@ -19,6 +19,20 @@ public class DmozCategoryData {
 		this.urls = urls;
 	}
 	
+	public boolean isEmpty(){
+		if(description == null && urls == null){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isInsufficientData(){
+		if(this.description == null || urls == null){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString() {
 		return "CategoryData [description=" + description + ", urls="

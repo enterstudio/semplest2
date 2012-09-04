@@ -69,8 +69,15 @@ public class DmozTreeNode {
 		return childrenNodes;
 	}
 
-
 	public void setChildrenNodes(HashMap<String, DmozTreeNode> childrenNodes) {
 		this.childrenNodes = childrenNodes;
 	}
+
+
+	@Override
+	public String toString() {
+		return "DmozTreeNode [nodeID=" + nodeID + ", parentID=" + parentID
+				+ ", name=" + name + ", fullName=" + fullName;
+	}
+	
 }
