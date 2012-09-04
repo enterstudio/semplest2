@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
-public class LeafNodesUrlProcesser implements TreeProcesserInterface{
+public class CountLeafNodesUrlProcesser implements TreeProcesserInterface{
 	private ArrayList<String> urlCounts = new ArrayList<String>();
 
 	@Override

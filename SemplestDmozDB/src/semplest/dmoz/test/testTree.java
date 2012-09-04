@@ -6,9 +6,9 @@ import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tree.DmozTreeBuilder;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.process.EmptyNodesProcesser;
-import semplest.dmoz.tree.process.LeafNodesMergeProcesser;
-import semplest.dmoz.tree.process.LeafNodesUrlProcesser;
-import semplest.dmoz.tree.process.MiddleNodesMergeProcesser;
+import semplest.dmoz.tree.process.MergeLeafNodesProcesser;
+import semplest.dmoz.tree.process.CountLeafNodesUrlProcesser;
+import semplest.dmoz.tree.process.MergeMiddleNodesProcesser;
 
 public class testTree extends BaseDB {
 	
@@ -21,17 +21,17 @@ public class testTree extends BaseDB {
 			DmozTreeNode dmozTree = treeBuilder.getTree();
 			
 			/*
-			LeafNodesMergeProcesser leafNodesMerger = new LeafNodesMergeProcesser();
+			MergeLeafNodesProcesser leafNodesMerger = new MergeLeafNodesProcesser();
 			leafNodesMerger.analyzeTree(dmozTree);
 			leafNodesMerger.outputReport("c:\\dmoz\\AnalyzeLeafNodesReport.txt");
 			*/
 			/*
-			MiddleNodesMergeProcesser middleNodesMerger = new MiddleNodesMergeProcesser();
+			MergeMiddleNodesProcesser middleNodesMerger = new MergeMiddleNodesProcesser();
 			middleNodesMerger.analyzeTree(dmozTree);
 			middleNodesMerger.outputReport("c:\\dmoz\\AnalyzeMiddleNodesReport.txt");
 			*/
 			/*
-			LeafNodesUrlProcesser leafNodesUrl = new LeafNodesUrlProcesser();
+			CountLeafNodesUrlProcesser leafNodesUrl = new CountLeafNodesUrlProcesser();
 			leafNodesUrl.analyzeTree(dmozTree);
 			leafNodesUrl.outputReport("c:\\dmoz\\LeafNodesUrls.txt");
 			*/

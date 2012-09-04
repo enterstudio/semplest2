@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
-public class LeafNodesMergeProcesser implements TreeProcesserInterface{
+public class MergeLeafNodesProcesser implements TreeProcesserInterface{
 	
 	private ArrayList<String> splittedLeafNodes = new ArrayList<String>();
 	

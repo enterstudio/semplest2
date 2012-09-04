@@ -27,6 +27,18 @@ public class DmozTreeBuilder {
 	//temp
 	private static Long numOfNodes = 0L;
 	
+	public static void main(String[] args){
+		try{
+			DmozTreeBuilder tree = new DmozTreeBuilder();
+			tree.buildAndGetAllDmozTreeNodes();
+			System.out.println(tree.inputData.size());
+			System.out.println(tree.allNodes.size());
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	public DmozTreeBuilder() throws Exception{
 		//Read property file for dmoz files paths
 		Properties properties = new Properties();
