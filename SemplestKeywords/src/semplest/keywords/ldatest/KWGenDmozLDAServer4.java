@@ -1031,7 +1031,6 @@ public class KWGenDmozLDAServer4 implements SemplestKeywordLDAServiceInterface
 		String[] searchTerm = new String[1];
 		String userInfo1 = "";
 		BasicConfigurator.configure();
-		PrintStream logging = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/categoriesTime.txt"));
 		/*
 		 * while(true){ Long start = System.currentTimeMillis(); ArrayList<String> categOpt = kwGen.getCategories(null, null , "science fiction", null,
 		 * null); logging.println(System.currentTimeMillis()-start); }
