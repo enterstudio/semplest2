@@ -20,12 +20,13 @@ public class testTree extends BaseDB {
 			DmozTreeBuilder treeBuilder = new DmozTreeBuilder();
 			treeBuilder.buildAndGetAllDmozTreeNodes();
 			DmozTreeNode dmozTree = treeBuilder.getTree();
+			//treeBuilder.printTree("c:\\dmoz\\DmozTree.txt", dmozTree);
 			
-			///*
+			/*
 			MergeLeafNodesProcesser leafNodesMerger = new MergeLeafNodesProcesser();
 			leafNodesMerger.analyzeTree(dmozTree);
 			leafNodesMerger.printReport("c:\\dmoz\\SplitLeafNodesReport.txt");
-			//*/
+			*/
 			/*
 			MergeMiddleNodesProcesser middleNodesMerger = new MergeMiddleNodesProcesser();
 			middleNodesMerger.analyzeTree(dmozTree);
@@ -41,11 +42,12 @@ public class testTree extends BaseDB {
 			emptyNodes.analyzeTree(dmozTree);
 			emptyNodes.printReport("c:\\dmoz\\EmptyNodes.txt");
 			*/
-			/*
+			///*
 			AllNodesUrlNumProcesser allNodesUrl = new AllNodesUrlNumProcesser();
 			allNodesUrl.analyzeTree(dmozTree);
 			allNodesUrl.printReport("c:\\dmoz\\AllNodesUrlCount.txt");
-			*/
+			//*/
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();

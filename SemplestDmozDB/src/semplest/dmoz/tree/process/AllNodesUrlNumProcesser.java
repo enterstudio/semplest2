@@ -32,21 +32,19 @@ public class AllNodesUrlNumProcesser implements TreeProcesserInterface{
 	
 	private Integer countNodeUrl(DmozTreeNode currentNode){
 		HashMap<String,DmozTreeNode> childrenNodes = currentNode.getChildrenNodes();
-		if(childrenNodes.size() == 0 ){
-			//this is a leaf
-			Integer numUrls = currentNode.getCategoryData() == null? 0 : (currentNode.getCategoryData().getUrls() == null ? 0 : currentNode.getCategoryData().getUrls().length);
-			urlCounts.add(currentNode.getFullName() + " : " + numUrls);
-			return numUrls;
+		Integer numSubNodeUrls = 0;
+		for(DmozTreeNode childNode : childrenNodes.values()){
+			Integer numChildUrls = countNodeUrl(childNode);
+			numSubNodeUrls = numSubNodeUrls + numChildUrls;
 		}
-		else{
-			Integer numParentNodeUrls = 0;
-			for(DmozTreeNode childNode : childrenNodes.values()){
-				Integer numChildUrls = countNodeUrl(childNode);
-				numParentNodeUrls = numParentNodeUrls + numChildUrls;				
-			}
-			urlCounts.add(currentNode.getFullName() + " : " + numParentNodeUrls);
-			return numParentNodeUrls;
-		}
+		
+		Integer numCurrentNodeUrls = currentNode.getCategoryData() == null? 0 : 
+			(currentNode.getCategoryData().getUrls() == null ? 0 : currentNode.getCategoryData().getUrls().length);
+		
+		Integer numAllUrls = numCurrentNodeUrls + numSubNodeUrls;		
+		urlCounts.add(currentNode.getFullName() + " : " + numAllUrls);
+		
+		return numAllUrls;
 	}
 
 }

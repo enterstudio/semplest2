@@ -24,15 +24,19 @@ public class DmozTreeBuilder {
 	private static String categoryDescriptionFile;
 	private static String categoryUrlsFile;
 	
+	
 	//temp
 	private static Long numOfNodes = 0L;
 	
 	public static void main(String[] args){
 		try{
+			///*
 			DmozTreeBuilder tree = new DmozTreeBuilder();
 			tree.buildAndGetAllDmozTreeNodes();
 			System.out.println(tree.inputData.size());
 			System.out.println(tree.allNodes.size());
+			//tree.printTree(tree.getTree());
+			//*/
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -136,52 +140,45 @@ public class DmozTreeBuilder {
 			String[] nodes = cat.split("/");			
 			DmozCategoryData catData = inputData.get(cat);
 			
-			DmozTreeNode currentParent = topNode;
+			DmozTreeNode currentNode = topNode;
 			
-			//find or create middle nodes						
-			for(int node = 1; node < nodes.length - 1; node++){
+			//find or create nodes						
+			for(int node = 1; node < nodes.length; node++){
 				String currentNodeName = nodes[node];
-				HashMap<String,DmozTreeNode> currentLevelNodes = currentParent.getChildrenNodes();
-				String fullNodeName = currentParent.getFullName() + "/" + currentNodeName;
+				HashMap<String,DmozTreeNode> currentLevelNodes = currentNode.getChildrenNodes();
+				String fullNodeName = currentNode.getFullName() + "/" + currentNodeName;
 				if(!currentLevelNodes.containsKey(currentNodeName)){
 					DmozTreeNode newNode = new DmozTreeNode();
 					newNode.setNodeID(getUniqueId());
-					newNode.setParentID(currentParent.getNodeID());
+					newNode.setParentID(currentNode.getNodeID());
 					newNode.setName(currentNodeName);
 					newNode.setFullName(fullNodeName);
 					newNode.setChildrenNodes(new HashMap<String,DmozTreeNode>());
-					newNode.setParentNode(currentParent);
-					currentParent.addChildrenNode(newNode);
+					newNode.setParentNode(currentNode);
+					currentNode.addChildNode(newNode);
 				}
-				currentParent = currentLevelNodes.get(currentNodeName);
-			}		
+				currentNode = currentLevelNodes.get(currentNodeName);
+			}			
+			currentNode.setCategoryData(catData);
 			
-			//create the leaf
-			String leafNodeName = nodes[nodes.length-1];
-			String fullLeafNodeName = currentParent.getFullName() + "/" + leafNodeName;
-			DmozTreeNode leafNode = new DmozTreeNode();
-			leafNode.setNodeID(getUniqueId());
-			leafNode.setParentID(currentParent.getNodeID());
-			leafNode.setName(leafNodeName);
-			leafNode.setFullName(fullLeafNodeName);			
-			leafNode.setCategoryData(catData);
-			leafNode.setChildrenNodes(new HashMap<String,DmozTreeNode>());
-			leafNode.setParentNode(currentParent);
-			currentParent.addChildrenNode(leafNode);
-			
-			allNodes.put(leafNode.getFullName(), leafNode);
+			allNodes.put(currentNode.getFullName(), currentNode);
 		}		
 		
 		return topNode;		
 	}	
 	
-	public void printTree(DmozTreeNode currentNode) throws Exception{		
+	public void printTree(String path, DmozTreeNode topNode) throws Exception{
+		FileWriter writer = new FileWriter(path);
+		printTree(topNode,writer);
+	}
+	
+	public void printTree(DmozTreeNode currentNode, FileWriter writer) throws Exception{		
 		HashMap<String,DmozTreeNode> nodes = currentNode.getChildrenNodes();		
-		for(DmozTreeNode node : nodes.values()){
-			System.out.println(node.getName() + " : " + node.getFullName() + " : " + node.getNodeID() + " : " + node.getParentID());			
+		writer.append(currentNode.getName() + " : " + currentNode.getFullName() + " : " + currentNode.getNodeID() + " : " + currentNode.getParentID() + "\n");			
+		for(DmozTreeNode node : nodes.values()){			
 			numOfNodes++;
 			if(node.getChildrenNodes() != null && !node.getChildrenNodes().isEmpty()){				
-				printTree(node);
+				printTree(node, writer);
 			}
 		}		
 	}
