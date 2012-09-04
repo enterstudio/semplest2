@@ -1,4 +1,4 @@
-package semplest.dmoz.process;
+package semplest.dmoz.tree.process;
 
 import java.io.FileWriter;
 import java.util.ArrayList;

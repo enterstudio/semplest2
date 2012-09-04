@@ -1,4 +1,4 @@
-package semplest.dmoz.process;
+package semplest.dmoz.tree.process;
 
 import semplest.dmoz.tree.DmozTreeNode;
 

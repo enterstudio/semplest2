@@ -2,13 +2,13 @@ package semplest.dmoz.test;
 
 import java.util.ArrayList;
 
-import semplest.dmoz.process.EmptyNodesProcesser;
-import semplest.dmoz.process.LeafNodesMergeProcesser;
-import semplest.dmoz.process.LeafNodesUrlProcesser;
-import semplest.dmoz.process.MiddleNodesMergeProcesser;
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tree.DmozTreeBuilder;
 import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.process.EmptyNodesProcesser;
+import semplest.dmoz.tree.process.LeafNodesMergeProcesser;
+import semplest.dmoz.tree.process.LeafNodesUrlProcesser;
+import semplest.dmoz.tree.process.MiddleNodesMergeProcesser;
 
 public class testTree extends BaseDB {
 	
