@@ -23,7 +23,7 @@ public class ArticleProcesser
 
 	// private final String seperators = "\\p{Punct}";
 	private final String seperators = " |\\.|\\,";
-	private final Integer maxWordsOfPhrase = 5;
+	private final Integer maxWordsOfPhrase = 4;
 	private final Double weightOfFrequency = 0.5;
 	private final Double weightOfFlexibility = 0.5;
 	private final String defaultWordStoplist = "c:\\temp\\wordstoplist.txt";
