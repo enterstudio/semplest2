@@ -5,21 +5,20 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 
 public class DmozTreeBuilder {
 	
-	private Long uniqueId = 0L;
-	private HashMap<String,DmozTreeNode> allNodes = new HashMap<String,DmozTreeNode>();
-	private HashMap<String,DmozCategoryData> inputData;
+	private Long uniqueId = 1L;
 	private DmozTreeNode topNode;
 	
 	private String categoryCidFile;
 	private String categoryDescriptionFile;
-	private String categoryUrlsFile;
-	
+	private String categoryUrlsFile;	
 	
 	//temp
 	private static Long numOfNodes = 0L;
@@ -29,8 +28,6 @@ public class DmozTreeBuilder {
 			///*
 			DmozTreeBuilder tree = new DmozTreeBuilder();
 			tree.buildDmozTree();
-			System.out.println(tree.inputData.size());
-			System.out.println(tree.allNodes.size());
 			//tree.printTree(tree.getTree());
 			//*/
 		}
@@ -57,8 +54,22 @@ public class DmozTreeBuilder {
 		this.categoryUrlsFile = categoryUrlsFile;
 	}
 	
-	public HashMap<String,DmozTreeNode> getAllDmozEntries(){
+	public List<DmozTreeNode> getAllDmozNodes(){
+		List<DmozTreeNode> allNodes = new ArrayList<DmozTreeNode>();
+		
+		recordNode(topNode, allNodes);		
+		
 		return allNodes;
+	}
+	
+	private void recordNode(DmozTreeNode currentNode, List<DmozTreeNode> allNodes){
+		allNodes.add(currentNode);
+		HashMap<String,DmozTreeNode> nodes = currentNode.getChildrenNodes();				
+		for(DmozTreeNode node : nodes.values()){			
+			if(node.getChildrenNodes() != null && !node.getChildrenNodes().isEmpty()){				
+				recordNode(node, allNodes);
+			}
+		}
 	}
 	
 	public DmozTreeNode getTree(){
@@ -67,7 +78,7 @@ public class DmozTreeBuilder {
 	
 	public void buildDmozTree() throws Exception{
 		System.out.println("Loading Dmoz data...");
-		inputData = readInData();
+		HashMap<String,DmozCategoryData> inputData = readInData();
 		System.out.println("Building Dmoz tree...");
 		buildTree(inputData);
 		System.out.println("Done.");
@@ -81,33 +92,30 @@ public class DmozTreeBuilder {
 		BufferedReader br;
 		String strLine;
 		
-		// 1 --load all descriptions
+		// 1 -- load all cids
+		fstream = new FileInputStream(categoryCidFile);
+		in = new DataInputStream(fstream);
+		br = new BufferedReader(new InputStreamReader(in));
+		
+		while ((strLine = br.readLine()) != null){
+			String[] lineContents = strLine.split(" : ");
+			String cat = lineContents[0].trim();
+			String categoryId = lineContents[1].trim();
+			DmozCategoryData catData = new DmozCategoryData();
+			catData.setCategoryId(Long.valueOf(categoryId));
+			allData.put(cat, catData);
+		}
+		in.close();
+		
+		// 2 --load all descriptions
 		fstream = new FileInputStream(categoryDescriptionFile);
 		in = new DataInputStream(fstream);
 		br = new BufferedReader(new InputStreamReader(in));
 		
 		while ((strLine = br.readLine()) != null){
-			String[] lineContents = strLine.split("\\:");
+			String[] lineContents = strLine.split(" : ");
 			String cat = lineContents[0].trim();
 			String description = lineContents[1].trim();
-			DmozCategoryData catData = new DmozCategoryData();
-			catData.setDescription(description);
-			allData.put(cat, catData);
-		}
-		in.close();
-		
-		// 2 --load all urls
-		fstream = new FileInputStream(categoryUrlsFile);
-		in = new DataInputStream(fstream);
-		br = new BufferedReader(new InputStreamReader(in));
-		
-		while ((strLine = br.readLine()) != null){
-			String[] lineContents = strLine.split(" ");
-			String cat = lineContents[0].trim();
-			HashSet<String> urls = new HashSet<String>();
-			for(int i = 2; i < lineContents.length; i++){
-				urls.add(lineContents[i]);
-			}
 			DmozCategoryData catData;
 			if(!allData.containsKey(cat)){
 				catData = new DmozCategoryData();
@@ -115,7 +123,28 @@ public class DmozTreeBuilder {
 			else{
 				catData = allData.get(cat);
 			}
-			catData.setUrls(urls.toArray(new String[urls.size()]));
+			catData.setDescription(description);
+			allData.put(cat, catData);
+		}
+		in.close();
+		
+		// 3 --load all urls
+		fstream = new FileInputStream(categoryUrlsFile);
+		in = new DataInputStream(fstream);
+		br = new BufferedReader(new InputStreamReader(in));
+		
+		while ((strLine = br.readLine()) != null){
+			String[] lineContents = strLine.split(" ");
+			String cat = lineContents[0].trim();
+			HashMap<String,String> urls = parseUrls(strLine);
+			DmozCategoryData catData;
+			if(!allData.containsKey(cat)){
+				catData = new DmozCategoryData();
+			}
+			else{
+				catData = allData.get(cat);
+			}
+			catData.setUrlsAndDescs(urls);
 			allData.put(cat, catData);
 		}
 		in.close();
@@ -127,7 +156,7 @@ public class DmozTreeBuilder {
 		topNode = new DmozTreeNode();
 		Long topNodeId = getUniqueId();
 		topNode.setNodeID(topNodeId);
-		topNode.setParentID(topNodeId);  //top node's parent is itself
+		topNode.setParentID(0L);
 		topNode.setName("top");
 		topNode.setFullName("top");
 		topNode.setCategoryData(new DmozCategoryData());
@@ -147,7 +176,7 @@ public class DmozTreeBuilder {
 				String fullNodeName = currentNode.getFullName() + "/" + currentNodeName;
 				if(!currentLevelNodes.containsKey(currentNodeName)){
 					DmozTreeNode newNode = new DmozTreeNode();
-					newNode.setNodeID(getUniqueId());
+					newNode.setNodeID(catData.getCategoryId());
 					newNode.setParentID(currentNode.getNodeID());
 					newNode.setName(currentNodeName);
 					newNode.setFullName(fullNodeName);
@@ -157,9 +186,7 @@ public class DmozTreeBuilder {
 				}
 				currentNode = currentLevelNodes.get(currentNodeName);
 			}			
-			currentNode.setCategoryData(catData);
-			
-			allNodes.put(currentNode.getFullName(), currentNode);
+			currentNode.setCategoryData(catData);			
 		}		
 		
 		return topNode;		
@@ -184,6 +211,11 @@ public class DmozTreeBuilder {
 	private Long getUniqueId(){
 		uniqueId++;
 		return uniqueId;
+	}
+	
+	private HashMap<String,String> parseUrls(String lineContent){
+		
+		return null;
 	}
 	
 }
