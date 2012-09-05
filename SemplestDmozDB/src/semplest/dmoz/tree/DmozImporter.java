@@ -14,13 +14,13 @@ public class DmozImporter extends BaseDB {
 	
 	public static void main(String[] args){
 		try {
-			storeDmozToDB();
+			importDmozTreeToDB();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void storeDmozToDB() throws Exception{
+	public static void importDmozTreeToDB() throws Exception{
 		//Read property file for dmoz files paths
 		Properties properties = new Properties();
 		FileInputStream in = new FileInputStream("bin/system.properties");
@@ -33,7 +33,7 @@ public class DmozImporter extends BaseDB {
 		//Build DMOZ Tree
 		System.out.println("Get Dmoz tree nodes.");
 		final DmozTreeBuilder dmozTreeBuilder = new DmozTreeBuilder(dmozDescriptionFile,dmozUrlFile);
-		dmozTreeBuilder.buildAndGetAllDmozTreeNodes();
+		dmozTreeBuilder.buildDmozTree();
 		HashMap<String,DmozTreeNode> dmozTree = dmozTreeBuilder.getAllDmozEntries();
 		
 		//Batch and store the tree to database

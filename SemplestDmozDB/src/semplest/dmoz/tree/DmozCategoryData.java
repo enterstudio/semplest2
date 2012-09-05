@@ -1,10 +1,11 @@
 package semplest.dmoz.tree;
 
-import java.util.Arrays;
+import java.util.HashMap;
 
 public class DmozCategoryData {
+	private Long categoryId;
 	private String description;
-	private String[] urls;
+	private HashMap<String,String> urlsAndDescs;
 	
 	public String getDescription() {
 		return description;
@@ -12,31 +13,32 @@ public class DmozCategoryData {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String[] getUrls() {
-		return urls;
+	public Long getCategoryId() {
+		return categoryId;
 	}
-	public void setUrls(String[] urls) {
-		this.urls = urls;
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
+	public HashMap<String, String> getUrlsAndDescs() {
+		return urlsAndDescs;
+	}
+	public void setUrlsAndDescs(HashMap<String, String> urlsAndDescs) {
+		this.urlsAndDescs = urlsAndDescs;
+	}
+
 	
 	public boolean isEmpty(){
-		if(description == null && urls == null){
+		if(description == null && urlsAndDescs == null){
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean isInsufficientData(){
-		if(this.description == null || urls == null){
+		if(this.description == null || urlsAndDescs == null || urlsAndDescs.size() == 0){
 			return true;
 		}
 		return false;
 	}
-	
-	@Override
-	public String toString() {
-		return "CategoryData [description=" + description + ", urls="
-				+ Arrays.toString(urls) + "]";
-	}	
 	
 }

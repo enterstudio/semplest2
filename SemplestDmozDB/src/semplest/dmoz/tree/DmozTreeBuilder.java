@@ -5,24 +5,20 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
-
-import semplest.util.SemplestUtils;
 
 public class DmozTreeBuilder {
 	
-	private static Long uniqueId = 0L;
-	private static HashMap<String,DmozTreeNode> allNodes = new HashMap<String,DmozTreeNode>();
-	private static HashMap<String,DmozCategoryData> inputData;
-	private static DmozTreeNode topNode;
+	private Long uniqueId = 0L;
+	private HashMap<String,DmozTreeNode> allNodes = new HashMap<String,DmozTreeNode>();
+	private HashMap<String,DmozCategoryData> inputData;
+	private DmozTreeNode topNode;
 	
-	private static String categoryDescriptionFile;
-	private static String categoryUrlsFile;
+	private String categoryCidFile;
+	private String categoryDescriptionFile;
+	private String categoryUrlsFile;
 	
 	
 	//temp
@@ -32,7 +28,7 @@ public class DmozTreeBuilder {
 		try{
 			///*
 			DmozTreeBuilder tree = new DmozTreeBuilder();
-			tree.buildAndGetAllDmozTreeNodes();
+			tree.buildDmozTree();
 			System.out.println(tree.inputData.size());
 			System.out.println(tree.allNodes.size());
 			//tree.printTree(tree.getTree());
@@ -50,11 +46,13 @@ public class DmozTreeBuilder {
 		properties.load(in);
 		in.close();
 		
+		this.categoryCidFile = properties.getProperty("dmoz.idFile");
 		this.categoryDescriptionFile = properties.getProperty("dmoz.urlFile");
 		this.categoryUrlsFile = properties.getProperty("dmoz.descriptionFile");
 	}
 	
-	public DmozTreeBuilder(String categoryDescriptionFile, String categoryUrlsFile) throws Exception{
+	public DmozTreeBuilder(String categoryCidFile, String categoryDescriptionFile, String categoryUrlsFile) throws Exception{
+		this.categoryCidFile = categoryCidFile;
 		this.categoryDescriptionFile = categoryDescriptionFile;
 		this.categoryUrlsFile = categoryUrlsFile;
 	}
@@ -67,7 +65,7 @@ public class DmozTreeBuilder {
 		return topNode;
 	}
 	
-	public void buildAndGetAllDmozTreeNodes() throws Exception{
+	public void buildDmozTree() throws Exception{
 		System.out.println("Loading Dmoz data...");
 		inputData = readInData();
 		System.out.println("Building Dmoz tree...");

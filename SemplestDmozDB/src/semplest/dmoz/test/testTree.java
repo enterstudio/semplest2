@@ -18,7 +18,7 @@ public class testTree extends BaseDB {
 	public static void main(String[] args){
 		try{
 			DmozTreeBuilder treeBuilder = new DmozTreeBuilder();
-			treeBuilder.buildAndGetAllDmozTreeNodes();
+			treeBuilder.buildDmozTree();
 			DmozTreeNode dmozTree = treeBuilder.getTree();
 			//treeBuilder.printTree("c:\\dmoz\\DmozTree.txt", dmozTree);
 			
