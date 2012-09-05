@@ -38,6 +38,8 @@ public class DmozImporter extends BaseDB {
 		final DmozTreeBuilder dmozTreeBuilder = new DmozTreeBuilder(categoryCidFile, categoryDescriptionFile, categoryUrlsFile);
 		dmozTreeBuilder.buildDmozTree();
 		List<DmozTreeNode> dmozTree = dmozTreeBuilder.getAllDmozNodes();
+		
+		//Store DMOZ tree to a file
 		System.out.println("Storing Dmoz tree to file...");
 		storeTreeToFile(dmozTree, dmozTreeFile);		
 	}	

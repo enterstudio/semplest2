@@ -14,7 +14,8 @@ public class CountLeafNodesUrlProcesser implements TreeProcesserInterface{
 		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
 		if(childrenNodes.size() == 0 ){
 			//this is a leaf
-			int numUrls = topNode.getCategoryData() == null? 0 : (topNode.getCategoryData().getUrls() == null ? 0 : topNode.getCategoryData().getUrls().length);
+			int numUrls = topNode.getCategoryData() == null? 0 : 
+				(topNode.getCategoryData().getUrlsAndDescs() == null ? 0 : topNode.getCategoryData().getUrlsAndDescs().size());
 			urlCounts.add(topNode.getFullName() + " : " + numUrls);
 		}
 		else{
