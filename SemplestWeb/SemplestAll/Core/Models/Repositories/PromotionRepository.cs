@@ -56,5 +56,10 @@ namespace Semplest.Core.Models.Repositories
             var promo = prodGroup.Promotions.FirstOrDefault(m => m.PromotionName == promotionName && !m.IsDeleted);
             return promo;
         }
+
+        public void SetPromotionToLaunched(int id)
+        {
+            _dbcontext.Promotions.Single(t => t.PromotionPK == id).IsLaunched = true;
+        }
     }
 }

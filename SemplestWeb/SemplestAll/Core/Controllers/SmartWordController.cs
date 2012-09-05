@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.UI;
+using ExcelLibrary.SpreadSheet;
 using Semplest.Core.Models.Repositories;
 using Semplest.SharedResources.Services;
 using SemplestModel;
@@ -59,7 +60,7 @@ namespace Semplest.Core.Controllers
         public ActionResult Setup(SmartWordSetupModel swsm)
         {
             var swr = new SmartWordRepository();
-             var newIds = swr.SavePromotionDetails(swsm, swsm, GetCustomerId());
+            var newIds = swr.SavePromotionDetails(swsm, swsm, GetCustomerId());
             var scw = new ServiceClientWrapper();
             if (!string.IsNullOrEmpty(newIds))
             {
@@ -73,27 +74,33 @@ namespace Semplest.Core.Controllers
 
 
             var categories = scw.GetCategories(null, swsm.ProductGroup.ProductPromotionName,
-                                            swsm.ProductGroup.Words,
-                                            null, swsm.LandingUrl);
-             var categoryModels= new List<CampaignSetupModel.CategoriesModel>();
-             if (categories != null && categories.Count > 0)
-             {
-                 categoryModels.AddRange(categories.Select((t, i) => new CampaignSetupModel.CategoriesModel {Id = i, Name = t}));
-                 Session.Add("AllCategories", categoryModels);
-             }
+                                               swsm.ProductGroup.Words,
+                                               null, swsm.LandingUrl);
+            var categoryModels = new List<CampaignSetupModel.CategoriesModel>();
+            if (categories != null && categories.Count > 0)
+            {
+                categoryModels.AddRange(
+                    categories.Select((t, i) => new CampaignSetupModel.CategoriesModel {Id = i, Name = t}));
+                Session.Add("AllCategories", categoryModels);
+            }
 
 
             // get the categoris from the web service
-            
-            return Json(new { newKeys = newIds, name = "Categories" });
 
-            
+            return Json(new {newKeys = newIds, name = "Categories"});
 
+
+
+        }
+
+        public ActionResult Setup(SmartWordSetupModel swsm, string command)
+        {
+            return View(swsm);
         }
 
         public ActionResult Categories()
         {
-            var categoryModels = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+            var categoryModels = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
             if (categoryModels == null)
             {
                 //var scw = new ServiceClientWrapper();
@@ -102,7 +109,7 @@ namespace Semplest.Core.Controllers
                 //Session["CampaignSetupModel"] = model;
                 //Session["AllCategories"] = model.AllCategories;
             }
-            var promoId = (int)Session["PromoId"];
+            var promoId = (int) Session["PromoId"];
             //var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
             //                                                 model.ProductGroup.ProductPromotionName);
             var dbContext = new SemplestModel.Semplest();
@@ -123,14 +130,6 @@ namespace Semplest.Core.Controllers
             swm.CategoryIds = selectedIds;
             swm.AllCategories = categoryModels;
             return PartialView(swm);
-        }    
-
-        private int GetCustomerId()
-        {
-            var customerFk =
-                ((Credential) System.Web.HttpContext.Current.Session[SharedResources.SEMplestConstants.SESSION_USERID]).
-                    User.CustomerFK;
-            return customerFk.Value;
         }
 
         [HttpPost]
@@ -142,15 +141,15 @@ namespace Semplest.Core.Controllers
             //                                        model.ProductGroup.ProductPromotionName);
             //        _campaignRepository.SaveSelectedCategories(promoId, catList);
             int userid =
-                       ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var catList = new List<string>();
-            var categoryModels = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+            var categoryModels = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
             foreach (var cat in categoryModels)
                 catList.AddRange(model.CategoryIds.Where(t => cat.Id == t).Select(t => cat.Name));
             var scw = new ServiceClientWrapper();
-            var keywords = scw.GetKeywords(catList, null, new string[]{"MSN", "Google"}, 
+            var keywords = scw.GetKeywords(catList, null, new string[] {"MSN", "Google"},
                                            model.ProductGroup.ProductPromotionName,
-                                           model.ProductGroup.Words,null, model.LandingUrl,
+                                           model.ProductGroup.Words, null, model.LandingUrl,
                                            null);
             var campaignRepository = new CampaignRepository();
             var kpos = new List<KeywordProbabilityObject>();
@@ -158,27 +157,30 @@ namespace Semplest.Core.Controllers
             var dbcontext = new SemplestModel.Semplest();
             var promotionRepository = new PromotionRepository(dbcontext);
             var promoId = promotionRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
-                                            model.ProductGroup.ProductPromotionName);
+                                                             model.ProductGroup.ProductPromotionName);
             campaignRepository.SaveKeywords(promoId, kpos, null,
-             model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-            foreach (var kwm in kpos.Where(key => key.isDeleted == false).Select(key => new CampaignSetupModel.KeywordsModel { Name = key.keyword, Id = key.id }))
+                                            model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+            foreach (
+                var kwm in
+                    kpos.Where(key => key.isDeleted == false).Select(
+                        key => new CampaignSetupModel.KeywordsModel {Name = key.keyword, Id = key.id}))
                 model.AllKeywords.Add(kwm);
 
             Session.Add("AllKeyWords", model.AllKeywords);
 
 
 
-            return Json(new { name = "ViewSmartWords" });
+            return Json(new {name = "ViewSmartWords"});
             //        // get the keywords from web service
             //        model = _campaignRepository.GetKeyWords(model, promoId);
 
-                   
+
             //        model.BillingLaunch.KeywordsCount = model.AllKeywordProbabilityObjects.Count(x => x.isDeleted == false);
             //        Session.Add("CampaignSetupModel", model);
 
             //        return Json("Billing & Launch");
             //    }
-                return Json("ModelState Invalid required data is missing");
+            return Json("ModelState Invalid required data is missing");
             //}
             //catch (Exception ex)
             //{
@@ -192,7 +194,7 @@ namespace Semplest.Core.Controllers
 
         public ActionResult Words()
         {
-            var keyWordModels = (List<CampaignSetupModel.KeywordsModel>)Session["AllKeyWords"];
+            var keyWordModels = (List<CampaignSetupModel.KeywordsModel>) Session["AllKeyWords"];
             var swm = new SmartWordSetupModel();
             swm.AllKeywords = keyWordModels;
             swm.WordCount = keyWordModels.Count();
@@ -214,7 +216,7 @@ namespace Semplest.Core.Controllers
                 Session["NegativeSmartwords"] = model.NegativeKeywords;
                 Session["NegativeSmartwordsText"] = model.NegativeKeywordsText;
                 var cred =
-                    (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
+                    (Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
                 var dbcontext = new SemplestModel.Semplest();
                 IPromotionRepository pr = new PromotionRepository(dbcontext);
                 IKeyWordRepository kwr = new KeyWordRepository(dbcontext);
@@ -234,8 +236,8 @@ namespace Semplest.Core.Controllers
         {
             if (Session["NegativeSmartwords"] != null)
             {
-                model.NegativeKeywords = (List<string>)Session["NegativeSmartwords"];
-                model.NegativeKeywordsText = (string)Session["NegativeSmartwordsText"];
+                model.NegativeKeywords = (List<string>) Session["NegativeSmartwords"];
+                model.NegativeKeywordsText = (string) Session["NegativeSmartwordsText"];
             }
             return PartialView("NegativeSmartWords", model);
         }
@@ -243,44 +245,62 @@ namespace Semplest.Core.Controllers
         //[HttpPost]
         //[ActionName("Setup")]
         //[AcceptSubmitType(Name = "Command", Type = "ExportSmartWords")]
-        public ActionResult ExportSmartWords()
+        public ActionResult ExcelExport()
+        {
+            var keyWordModels = (List<CampaignSetupModel.KeywordsModel>) Session["AllKeyWords"];
+            var workbook = new Workbook();
+            var worksheet = new Worksheet("First Sheet");
+            var row = 0;
+            foreach (CampaignSetupModel.KeywordsModel kw in keyWordModels)
+            {
+                worksheet.Cells[row, 0] = new Cell(kw.Name);
+                row++;
+            }
+            worksheet.Cells.ColumnWidth[0] = 10000;            
+            workbook.Worksheets.Add(worksheet);
+            var ms = new MemoryStream();
+            workbook.SaveToStream(ms);
+            var dbContext = new SemplestModel.Semplest();
+            var promoReposiorty = new PromotionRepository(dbContext);
+            promoReposiorty.SetPromotionToLaunched((int) Session["PromoId"]);
+            dbContext.SaveChanges();
+            var mimetype = "application/x-excel";
+                //application/excel
+            return File(ms.ToArray(), mimetype, "SmartWords.xls");
+            //var grid = new System.Web.UI.WebControls.GridView {DataSource = keyWordModels};
+            //grid.DataBind();
+            //var sw = new StringWriter();
+            //var htw = new HtmlTextWriter(sw);
+            //grid.RenderControl(htw);
+            //var sm = new MemoryStream(Encoding.ASCII.GetBytes(sw.ToString()));
+            //return File(sm, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SmartWords.xlsx");
+        }
+
+        public ActionResult CsvExport()
         {
             var keyWordModels = (List<CampaignSetupModel.KeywordsModel>)Session["AllKeyWords"];
-            var grid = new System.Web.UI.WebControls.GridView {DataSource = keyWordModels};
-            grid.DataBind();
-            //HttpContext.Response.Buffer = true;
-            //Response.ClearContent();
-            //Response.AddHeader("content-disposition", "attachment; filename=YourFileName.xls");
-            //Response.ContentType = "application/vnd.ms-excel"; 
-            var sw = new StringWriter();
-            var htw = new HtmlTextWriter(sw);
-            grid.RenderControl(htw);
-            //Response.Write(sw.ToString());
-            //Response.End();
-            var sm = new MemoryStream(Encoding.ASCII.GetBytes( sw.ToString() ));
-            return File(sm, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","SmartWords.xlsx");
-            //return new ExcelResult
-            //           {
-            //               FileName = "sample.xls",
-            //               Path = "~/Content/sample.xlsx"
-            //           };
-        }
-
-        public class ExcelResult : ActionResult
-        {
-            public string FileName { get; set; }
-            public string Path { get; set; }
-
-            public override void ExecuteResult(ControllerContext context)
+            var sb = new StringBuilder();
+            foreach (CampaignSetupModel.KeywordsModel kw in keyWordModels)
             {
-                context.HttpContext.Response.Buffer = true;
-                context.HttpContext.Response.Clear();
-                context.HttpContext.Response.AddHeader("content-disposition", "attachment; filename=" + FileName);
-                context.HttpContext.Response.ContentType = "application/vnd.ms-excel";
-                context.HttpContext.Response.WriteFile(context.HttpContext.Server.MapPath(Path));
+                sb.Append(kw.Name);
+                sb.Append(Environment.NewLine);
             }
+            var dbContext = new SemplestModel.Semplest();
+            var promoReposiorty = new PromotionRepository(dbContext);
+            promoReposiorty.SetPromotionToLaunched((int)Session["PromoId"]);
+            dbContext.SaveChanges();
+            var ms = new MemoryStream();
+            ms.Write(Encoding.ASCII.GetBytes(sb.ToString()),0,sb.ToString().Length);
+            return File(ms, "text/csv", "SmartWords.csv");
         }
 
+        private int GetCustomerId()
+        {
+            var customerFk =
+                ((Credential)System.Web.HttpContext.Current.Session[SharedResources.SEMplestConstants.SESSION_USERID]).
+                    User.CustomerFK;
+            return customerFk.Value;
+        }
         #region Nested type: AcceptSubmitTypeAttribute
 
         public class AcceptSubmitTypeAttribute : ActionMethodSelectorAttribute
@@ -296,5 +316,6 @@ namespace Semplest.Core.Controllers
         }
 
         #endregion
+
     }
 }

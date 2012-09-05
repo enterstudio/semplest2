@@ -44,6 +44,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.5.0.0-rc\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="ExcelLibrary">
+      <HintPath>..\packages\ExcelLibrary.1.2011.7.30\lib\ExcelLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="FileHelpers">
       <HintPath>..\packages\FileHelpers-Stable.2.9.9\lib\4.0\FileHelpers.dll</HintPath>
     </Reference>
