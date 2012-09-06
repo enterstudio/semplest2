@@ -6,23 +6,28 @@ import java.util.HashMap;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
-public class AllNodesUrlNumProcesser implements TreeProcesserInterface{
+public class AllNodesUrlNumProcesser implements TreeProcesserInterface {
 	
-	private ArrayList<String> urlCounts = new ArrayList<String>();
+	private ArrayList<String> urlCounts;
+	private boolean storeData = false;
 
 	@Override
 	public void analyzeTree(DmozTreeNode topNode) throws Exception {
+		urlCounts = new ArrayList<String>();
+		storeData = true;
 		countNodeUrl(topNode);
 	}
 
 	@Override
 	public DmozTreeNode processTree(DmozTreeNode topNode) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void printReport(String path) throws Exception {
+		if(urlCounts==null){
+			throw new Exception("You need to first analyze the tree before calling printReport().");
+		}
 		FileWriter writer = new FileWriter(path);
 		for(String node : urlCounts){
 			writer.append(node + "\n");
@@ -41,10 +46,17 @@ public class AllNodesUrlNumProcesser implements TreeProcesserInterface{
 		Integer numCurrentNodeUrls = currentNode.getCategoryData() == null? 0 : 
 			(currentNode.getCategoryData().getUrlData() == null ? 0 : currentNode.getCategoryData().getUrlData().size());
 		
-		Integer numAllUrls = numCurrentNodeUrls + numSubNodeUrls;		
-		urlCounts.add(currentNode.getFullName() + " : " + numAllUrls);
-		
+		Integer numAllUrls = numCurrentNodeUrls + numSubNodeUrls;	
+		//System.out.println(currentNode.getFullName() + " : " + numAllUrls);
+		if(storeData){
+			urlCounts.add(currentNode.getFullName() + " : " + numAllUrls);
+		}
 		return numAllUrls;
+	}
+
+	@Override
+	public Integer getCount(DmozTreeNode topNode) throws Exception {
+		return countNodeUrl(topNode);
 	}
 
 }

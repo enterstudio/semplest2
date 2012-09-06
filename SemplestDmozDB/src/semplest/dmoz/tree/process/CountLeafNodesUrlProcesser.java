@@ -39,5 +39,11 @@ public class CountLeafNodesUrlProcesser implements TreeProcesserInterface{
 		}
 		writer.close();	
 	}
+
+	@Override
+	public Integer getCount(DmozTreeNode topNode) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

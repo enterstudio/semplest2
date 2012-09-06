@@ -6,4 +6,5 @@ public interface TreeProcesserInterface {
 	public void analyzeTree(DmozTreeNode topNode) throws Exception;
 	public DmozTreeNode processTree(DmozTreeNode topNode) throws Exception;
 	public void printReport(String path) throws Exception;
+	public Integer getCount(DmozTreeNode topNode) throws Exception;
 }
