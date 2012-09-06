@@ -30,6 +30,10 @@ public class DmozCategoryData {
 		this.urlData.putAll(urlData);
 	}
 	
+	public void addUrlData(String url, String urlDesc){
+		this.urlData.put(url, urlDesc);
+	}
+	
 	public boolean isEmpty(){
 		if(description == null && urlData == null){
 			return true;

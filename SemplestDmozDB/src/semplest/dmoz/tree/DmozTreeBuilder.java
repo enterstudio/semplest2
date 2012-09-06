@@ -156,11 +156,9 @@ public class DmozTreeBuilder {
 		topNode = new DmozTreeNode();
 		//Long topNodeId = getUniqueId();
 		//topNode.setNodeID(topNodeId);
-		//topNode.setParentID(0L);
+		topNode.setParentID(-1L);
 		topNode.setName("top");
 		topNode.setFullName("top");
-		topNode.setCategoryData(new DmozCategoryData());
-		topNode.setChildrenNodes(new HashMap<String,DmozTreeNode>());
 		topNode.setParentNode(topNode);
 		
 		for(String cat : inputData.keySet()){
@@ -180,9 +178,7 @@ public class DmozTreeBuilder {
 					//newNode.setParentID(currentNode.getNodeID());
 					newNode.setName(currentNodeName);
 					newNode.setFullName(fullNodeName);
-					newNode.setChildrenNodes(new HashMap<String,DmozTreeNode>());
 					newNode.setParentNode(currentNode);
-					newNode.setCategoryData(new DmozCategoryData());
 					currentNode.addChildNode(newNode);
 				}
 				currentNode = currentLevelNodes.get(currentNodeName);

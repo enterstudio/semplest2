@@ -3,19 +3,20 @@ package semplest.dmoz.tree;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.util.SemplestUtils;
 
-public class DmozImporter extends BaseDB {
+public class DmozTreeDBoperator extends BaseDB {
 	
 	private static Integer maxBatchSize = 5000;
 	
 	public static void main(String[] args){
 		try {
-			importDmozTreeToDB();
+			loadDmozTreeFromDB();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -85,15 +86,70 @@ public class DmozImporter extends BaseDB {
 		}
 	}	
 	
+	public static DmozTreeNode loadDmozTreeFromDB(){
+		
+		//Get the top node of the tree from DB
+		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,SemplestID FROM DMOZ WHERE ParentNodeID = -1";
+		DbDmozObject topNode = jdbcTemplate.queryForObject(sql, DbDmozObject.class);
+		DmozTreeNode dmozTree = new DmozTreeNode();
+		dmozTree.setNodeID(topNode.getDmozNodePK());
+		dmozTree.setParentID(topNode.getParentNodeID());
+		dmozTree.setFullName(topNode.getNodeText());
+		dmozTree.setNodeDescription(topNode.getNodeDescription());
+		
+		//Build the tree
+		setChildrenNodes(dmozTree);
+		
+		//Set UrlData
+		setUrlDataThroughTree(dmozTree);
+		
+		return null;
+	}
+	
 	//helper methods
+	private static void setChildrenNodes (DmozTreeNode currentNode){
+		/*
+		 * Set up children nodes of a node recursively. Thus build the tree.
+		 */
+		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,SemplestID FROM DMOZ WHERE ParentNodeID = " + currentNode.getNodeID();
+		List<DbDmozObject> childrenNodes = jdbcTemplate.queryForList(sql, DbDmozObject.class);
+		
+		for(DbDmozObject childNode : childrenNodes){
+			DmozTreeNode newNode = new DmozTreeNode();
+			newNode.setNodeID(childNode.getDmozNodePK());
+			newNode.setParentID(childNode.getParentNodeID());
+			newNode.setFullName(childNode.getNodeText());
+			newNode.setNodeDescription(childNode.getNodeDescription());
+			currentNode.addChildNode(newNode);
+			
+			setChildrenNodes(newNode);
+		}
+	}
+	
+	private static void setUrlDataThroughTree(DmozTreeNode currentNode){
+		/*
+		 * get url data for each node from DB, and store to the tree.
+		 */
+		String sql = "SELECT UrlDataPK,DmozNodeFK,URL,URLDescription,Level,ParentURLDataID FROM URLData WHERE DmozNodeFK = " + currentNode.getNodeID();
+		List<DbUrlDataObject> urlsData = jdbcTemplate.queryForList(sql, DbUrlDataObject.class);
+		
+		for(DbUrlDataObject urlData : urlsData){
+			currentNode.addUrlData(urlData.getURL(), urlData.getURLDescription());
+		}
+		
+		for(DmozTreeNode childNode : currentNode.getChildrenNodes().values()){
+			setUrlDataThroughTree(childNode);
+		}
+	}
+	
 	private static void storeTreeToFile(List<DmozTreeNode> dmozTree, String path) throws Exception{
 		FileWriter writer = new FileWriter(path);
-		writer.write("DmozNodePK|NodeText|ParentNodeID|NodeDescription\n");
+		writer.write("DmozNodePK | NodeText | ParentNodeID | NodeDescription\n");
 		
 		for(DmozTreeNode node : dmozTree){		
-			writer.append(node.getNodeID() + "," 
-						+ node.getFullName() + ","
-						+ node.getParentID() + ","
+			writer.append(node.getNodeID() + " | " 
+						+ node.getFullName() + " | "
+						+ node.getParentID() + " | "
 						+ node.getCategoryData().getDescription() + "\n");
 		}		
 		
