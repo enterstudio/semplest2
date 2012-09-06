@@ -3,5 +3,17 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/weka.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-3.6.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-3.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-test-framework-3.6.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-test-framework-3.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/mahout-core-0.7.jar"/>
+	<classpathentry kind="lib" path="lib/mahout-examples-0.7.jar"/>
+	<classpathentry kind="lib" path="lib/mahout-integration-0.7.jar"/>
+	<classpathentry kind="lib" path="lib/mahout-math-0.7.jar"/>
+	<classpathentry kind="lib" path="lib/mahout-core-0.7-job.jar"/>
+	<classpathentry kind="lib" path="lib/mahout-examples-0.7-job.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-core-0.20.204.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SemplestKeywords"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

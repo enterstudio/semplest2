@@ -37,12 +37,15 @@ public class SemplestClassifier {
 
 		// setting class attribute if the data format does not provide this information
 		// For example, the XRFF format saves the class attribute information as well
-		if (trainData.classIndex() == -1)
+		if (trainData.classIndex() == -1){
 			trainData.setClassIndex(trainData.numAttributes() - 1);
-
-		if (testData.classIndex() == -1)
+		}
+		
+		if (testData.classIndex() == -1){
 			testData.setClassIndex(testData.numAttributes() - 1);
-
+		}
+		
+		
 		/*
 		 for(int i=0; i< trainData.numInstances(); i++){
 			 System.out.println(trainData.instance(i));
