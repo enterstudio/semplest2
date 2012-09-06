@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import semplest.dmoz.tree.DmozCategoryData;
 import semplest.dmoz.tree.DmozTreeNode;
 
 public class MergeLeafNodesProcesser implements TreeProcesserInterface{
@@ -42,8 +43,8 @@ public class MergeLeafNodesProcesser implements TreeProcesserInterface{
 			//this is a leaf
 			String leafNodeName = topNode.getName();
 			if(leafNodeName.length() == 1 || leafNodeName.matches("[+-]?\\d*(\\.\\d+)?")){
-				//this leaf node is a single-letter node
-				splitLeafNodes.add(topNode.getFullName());
+				//this leaf node is a single-letter node, connect node contents directly with its parent (merge).
+				HashMap<String,String> urlData = topNode.getCategoryData().getUrlData();
 			}
 		}
 		else{

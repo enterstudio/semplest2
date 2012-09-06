@@ -15,6 +15,9 @@ public class DmozTreeNode {
 		this.childrenNodes.put(newNode.getName(), newNode);
 	}
 
+	public void addUrlData(HashMap<String,String> urlData){
+		categoryData.addUrlData(urlData);
+	}
 
 	public Long getNodeID() {
 		return nodeID;

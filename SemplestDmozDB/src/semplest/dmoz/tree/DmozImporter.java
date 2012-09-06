@@ -60,19 +60,20 @@ public class DmozImporter extends BaseDB {
 				}
 				Long nodeId = node.getNodeID();
 				Long nodeParentId = node.getParentID();
+				Long nodeSemplestId = node.getCategoryData() == null? null : (node.getCategoryData().getCategoryId() == null? null : node.getCategoryData().getCategoryId());
 				String nodeFullName = node.getFullName().replace("'", "''");
 				String nodeDescription = node.getCategoryData() == null? null : (node.getCategoryData().getDescription() == null? null : node.getCategoryData().getDescription().replace("'", "''"));				
 				
-				String sqlDmoz = "INSERT INTO DMOZ(DmozNodePK,NodeText,ParentNodeID,NodeDescription) " +
-						"VALUES("+ nodeId +",'" + nodeFullName + "'," + nodeParentId + ",'" + nodeDescription + "');";
+				String sqlDmoz = "INSERT INTO DMOZ(DmozNodePK,SemplestID,NodeText,ParentNodeID,NodeDescription) " +
+						"VALUES("+ nodeId +"," + nodeSemplestId + ",'" + nodeFullName + "'," + nodeParentId + ",'" + nodeDescription + "');";
 				
 				batchSql.add(sqlDmoz);
 				
-				if(node.getCategoryData() == null || node.getCategoryData().getUrlsAndDescs() == null){
+				if(node.getCategoryData() == null || node.getCategoryData().getUrlData() == null){
 					continue;
 				}
-				for(String url : node.getCategoryData().getUrlsAndDescs().keySet()){
-					String urlDesc = node.getCategoryData().getUrlsAndDescs().get(url);
+				for(String url : node.getCategoryData().getUrlData().keySet()){
+					String urlDesc = node.getCategoryData().getUrlData().get(url);
 					String sqlUrl = "INSERT INTO URLData(DmozNodeFK,URL,Level,URLDescription) " +
 							"VALUES(" + nodeId + ",'" + url.replace("'", "''") + "'," + 1 + "," + urlDesc + ");";
 					batchSql.add(sqlUrl);

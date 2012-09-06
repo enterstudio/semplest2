@@ -15,7 +15,7 @@ public class CountLeafNodesUrlProcesser implements TreeProcesserInterface{
 		if(childrenNodes.size() == 0 ){
 			//this is a leaf
 			int numUrls = topNode.getCategoryData() == null? 0 : 
-				(topNode.getCategoryData().getUrlsAndDescs() == null ? 0 : topNode.getCategoryData().getUrlsAndDescs().size());
+				(topNode.getCategoryData().getUrlData() == null ? 0 : topNode.getCategoryData().getUrlData().size());
 			urlCounts.add(topNode.getFullName() + " : " + numUrls);
 		}
 		else{
