@@ -43,8 +43,8 @@ public class DmozTreeBuilder {
 		in.close();
 		
 		this.categoryCidFile = properties.getProperty("dmoz.idFile");
-		this.categoryDescriptionFile = properties.getProperty("dmoz.urlFile");
-		this.categoryUrlsFile = properties.getProperty("dmoz.descriptionFile");
+		this.categoryDescriptionFile = properties.getProperty("dmoz.descriptionFile");
+		this.categoryUrlsFile = properties.getProperty("dmoz.urlFile");
 	}
 	
 	public DmozTreeBuilder(String categoryCidFile, String categoryDescriptionFile, String categoryUrlsFile) throws Exception{
@@ -154,7 +154,7 @@ public class DmozTreeBuilder {
 
 	private DmozTreeNode buildTree(HashMap<String,DmozCategoryData> inputData) throws Exception{					
 		topNode = new DmozTreeNode();
-		Long topNodeId = getUniqueId();
+		//Long topNodeId = getUniqueId();
 		//topNode.setNodeID(topNodeId);
 		//topNode.setParentID(0L);
 		topNode.setName("top");
@@ -214,7 +214,7 @@ public class DmozTreeBuilder {
 		printTree(topNode,writer);
 	}
 	
-	public void printTree(DmozTreeNode currentNode, FileWriter writer) throws Exception{		
+	private void printTree(DmozTreeNode currentNode, FileWriter writer) throws Exception{		
 		HashMap<String,DmozTreeNode> nodes = currentNode.getChildrenNodes();		
 		writer.append(currentNode.getName() + " : " + currentNode.getFullName() + " : " + currentNode.getNodeID() + " : " + currentNode.getParentID() + "\n");			
 		for(DmozTreeNode node : nodes.values()){			
