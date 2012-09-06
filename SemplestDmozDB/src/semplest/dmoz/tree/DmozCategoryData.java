@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class DmozCategoryData {
 	private Long categoryId;
 	private String description;
-	private HashMap<String,String> urlData;
+	private HashMap<String,String> urlData = new HashMap<String,String>();
 	
 	public String getDescription() {
 		return description;

@@ -11,6 +11,11 @@ public class DmozTreeNode {
 	private HashMap<String,DmozTreeNode> childrenNodes = new HashMap<String,DmozTreeNode>();	
 	private DmozTreeNode parentNode;
 	
+	public DmozTreeNode(){
+		this.categoryData = new DmozCategoryData();
+		this.childrenNodes = new HashMap<String,DmozTreeNode>();
+	}
+	
 	public void addChildNode(DmozTreeNode newNode){
 		this.childrenNodes.put(newNode.getName(), newNode);
 	}

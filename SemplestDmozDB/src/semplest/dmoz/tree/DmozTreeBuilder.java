@@ -160,6 +160,7 @@ public class DmozTreeBuilder {
 		topNode.setName("top");
 		topNode.setFullName("top");
 		topNode.setParentNode(topNode);
+		//topNode.setCategoryData(inputData.get("top"));
 		
 		for(String cat : inputData.keySet()){
 			String[] nodes = cat.split("/");			
@@ -228,8 +229,15 @@ public class DmozTreeBuilder {
 	}
 	
 	private HashMap<String,String> parseUrls(String lineContent){
+		HashMap<String,String> urlAndDesc = new HashMap<String,String>();
 		
-		return null;
+		String urlcluster = lineContent.split(" : ")[1];
+		String[] urls = urlcluster.split(" ");
+		for(String url : urls){
+			urlAndDesc.put(url, null);
+		}
+		
+		return urlAndDesc;
 	}
 	
 }
