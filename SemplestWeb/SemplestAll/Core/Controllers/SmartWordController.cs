@@ -59,39 +59,47 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "Setup")]
         public ActionResult Setup(SmartWordSetupModel swsm)
         {
-            var swr = new SmartWordRepository();
-            var newIds = swr.SavePromotionDetails(swsm, swsm, GetCustomerId());
-            var scw = new ServiceClientWrapper();
-            if (!string.IsNullOrEmpty(newIds))
+            try
             {
-                foreach (var nvp in newIds.Split(',').Select(items => items.Split('=')))
+
+
+                var swr = new SmartWordRepository();
+                var newIds = swr.SavePromotionDetails(swsm, swsm, GetCustomerId());
+                var scw = new ServiceClientWrapper();
+                if (!string.IsNullOrEmpty(newIds))
                 {
-                    var item = swsm.Addresses.SingleOrDefault(t => t.UID == nvp[0]);
-                    if (item != null)
-                        item.GeoTargetingPK = int.Parse(nvp[1]);
+                    foreach (var nvp in newIds.Split(',').Select(items => items.Split('=')))
+                    {
+                        var item = swsm.Addresses.SingleOrDefault(t => t.UID == nvp[0]);
+                        if (item != null)
+                            item.GeoTargetingPK = int.Parse(nvp[1]);
+                    }
                 }
+
+
+                var categories = scw.GetCategories(null, swsm.ProductGroup.ProductPromotionName,
+                                                   swsm.ProductGroup.Words,
+                                                   null, swsm.LandingUrl);
+                var categoryModels = new List<CampaignSetupModel.CategoriesModel>();
+                if (categories != null && categories.Count > 0)
+                {
+                    categoryModels.AddRange(
+                        categories.Select((t, i) => new CampaignSetupModel.CategoriesModel {Id = i, Name = t}));
+                    Session.Add("AllCategories", categoryModels);
+                }
+
+                return Json(new {newKeys = newIds, name = "Categories"});
+                // get the categoris from the web service
             }
-
-
-            var categories = scw.GetCategories(null, swsm.ProductGroup.ProductPromotionName,
-                                               swsm.ProductGroup.Words,
-                                               null, swsm.LandingUrl);
-            var categoryModels = new List<CampaignSetupModel.CategoriesModel>();
-            if (categories != null && categories.Count > 0)
+            catch (Exception ex)
             {
-                categoryModels.AddRange(
-                    categories.Select((t, i) => new CampaignSetupModel.CategoriesModel {Id = i, Name = t}));
-                Session.Add("AllCategories", categoryModels);
+                ExceptionHelper.LogException(ex);
+                return Json(ExceptionHelper.GetErrorMessage(ex));
             }
-
-
-            // get the categoris from the web service
-
-            return Json(new {newKeys = newIds, name = "Categories"});
-
-
 
         }
+
+
 
         public ActionResult Setup(SmartWordSetupModel swsm, string command)
         {
@@ -291,7 +299,7 @@ namespace Semplest.Core.Controllers
             dbContext.SaveChanges();
             var ms = new MemoryStream();
             ms.Write(Encoding.ASCII.GetBytes(sb.ToString()),0,sb.ToString().Length);
-            return File(ms, "text/csv", "SmartWords.csv");
+            return File(ms.ToArray(), "text/csv", "SmartWords.csv");
         }
 
         private int GetCustomerId()

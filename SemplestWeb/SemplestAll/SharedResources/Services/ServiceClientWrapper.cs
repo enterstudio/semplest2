@@ -51,8 +51,7 @@ namespace Semplest.SharedResources.Services
             {
                 if (string.IsNullOrEmpty(returnData))
                     throw;
-                else
-                    throw new Exception(returnData);
+                throw new Exception(returnData);
             }
         }
 
@@ -665,10 +664,9 @@ namespace Semplest.SharedResources.Services
                     stemp.Append("Json Returned:");
                     stemp.Append(returnData);
                     stemp.Append(Environment.NewLine);
-                    throw new Exception(stemp.ToString());
+                    throw new Exception(ex.Message);
                 }
             }
-
         }
     }
 

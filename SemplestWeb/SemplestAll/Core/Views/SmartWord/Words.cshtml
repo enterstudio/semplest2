@@ -20,9 +20,11 @@
     <div style="text-align: center;">
         <h3>We have selected <span id="KeywordCount" style="color: #8ebc00; font-weight: bold">@Model.WordCount</span> SmartWords</h3>
         <!--<button class="k-button" id="" type="submit" name="Command" value="ExportSmartWords">
-            Download SmartWords</button>-->
+                Download SmartWords</button>-->
+        <div id="links" style="display: none">
             @Html.ActionLink("Excel Download", "ExcelExport", "SmartWord")
             @Html.ActionLink("CSV Download", "CsvExport", "SmartWord")
+        </div>
     </div>
     <input type="checkbox" id="agreecheckbox" /><label style="margin-left: 5px; color: grey;">I have read and agree to the </label>@Html.ActionLink("Services Agreement", "ServicesAgreement", "Home")
     <div style="display: inline-block; margin-top:10px;margin-bottom: 10px;">
@@ -64,70 +66,14 @@
     </div>
 *@
 </div>
-<script type="text/javascript">
-    $('#backKey').click(function () {
-        tabChange();
-    });
-
-    $('#getBillingLaunch').click(function () {
-        //alert('billinglaunch clicked');
-        //tabChange();
-    });
-
-    function tabChange(parameters) {
-        var tab = tabStrip.select(),
-        otherTab = tab.prev();
-        tabStrip.remove(tab);
-        tabStrip.select(otherTab);
-
-    }
-
-
-</script>
-<script type="text/javascript">
-
-    (function ($) {
-        enableDisable();
-        // custom css expression for a case-insensitive contains()
-        jQuery.expr[':'].Contains = function (a, i, m) {
-            return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-        };
-
-
-        function listFilter(header, list) { // header is any element, list is an unordered list
-            // create and add the filter form to the header
-
-            var form = $("<form>").attr({ "class": "filterform", "action": "#" }),
-        input = $("<input>").attr({ "class": "filterinput", "type": "text" });
-            $(form).append(input).appendTo(header);
-
-
-
-            $(input)
-      .change(function () {
-          var filter = $(this).val();
-          if (filter) {
-              // this finds all links in a list that contain the input,
-              // and hide the ones not containing the input while showing the ones that do
-              //alert(1);
-              $(list).find("li:not(:Contains(" + filter + "))").parent().slideUp();
-              $(list).find("li:Contains(" + filter + ")").parent().slideDown();
-          } else {
-              $(list).find("li").slideDown();
-          }
-          return false;
-      })
-    .keyup(function () {
-        // fire the above change event after every letter
-        $(this).change();
-    });
-        }
-
-
-        //ondomready
-        $(function () {
-            listFilter($("#headerF"), $("#list"));
+<script language="javascript">
+    $(document).ready(function () {
+        $("#agreecheckbox").click(function (event) {
+            if ($('#agreecheckbox').prop('checked') == true) {
+                $("#links").show();
+            } else {
+                $("#links").hide();
+            }
         });
-    } (jQuery));
-
+    });
 </script>
