@@ -20,7 +20,7 @@ public class testTree extends BaseDB {
 		try{
 			DmozTreeBuilder treeBuilder = new DmozTreeBuilder();
 			treeBuilder.buildDmozTree();
-			//DmozTreeNode dmozTree = treeBuilder.getTree();
+			DmozTreeNode dmozTree = treeBuilder.getTree();
 			//List<DmozTreeNode> allNodes = treeBuilder.getAllDmozNodes();
 			
 			
@@ -44,11 +44,11 @@ public class testTree extends BaseDB {
 			emptyNodes.analyzeTree(dmozTree);
 			emptyNodes.printReport("c:\\dmoz\\EmptyNodes.txt");
 			*/
-			/*
+			///*
 			AllNodesUrlNumProcesser allNodesUrl = new AllNodesUrlNumProcesser();
 			allNodesUrl.analyzeTree(dmozTree);
 			allNodesUrl.printReport("c:\\dmoz\\AllNodesUrlCount.txt");
-			*/
+			//*/
 			
 		}
 		catch(Exception e){

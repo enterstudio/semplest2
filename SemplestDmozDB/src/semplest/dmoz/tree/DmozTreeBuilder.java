@@ -165,7 +165,7 @@ public class DmozTreeBuilder {
 		
 		for(String cat : inputData.keySet()){
 			String[] nodes = cat.split("/");			
-			DmozCategoryData catData = inputData.get(cat) == null? new DmozCategoryData() : inputData.get(cat);
+			DmozCategoryData catData = inputData.containsKey(cat)? inputData.get(cat) : new DmozCategoryData();
 			
 			DmozTreeNode currentNode = topNode;
 			
@@ -182,6 +182,7 @@ public class DmozTreeBuilder {
 					newNode.setFullName(fullNodeName);
 					newNode.setChildrenNodes(new HashMap<String,DmozTreeNode>());
 					newNode.setParentNode(currentNode);
+					newNode.setCategoryData(new DmozCategoryData());
 					currentNode.addChildNode(newNode);
 				}
 				currentNode = currentLevelNodes.get(currentNodeName);
