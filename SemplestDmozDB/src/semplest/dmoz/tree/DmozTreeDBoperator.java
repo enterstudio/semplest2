@@ -7,16 +7,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
+
 import semplest.dmoz.springjdbc.BaseDB;
+import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.util.SemplestUtils;
 
 public class DmozTreeDBoperator extends BaseDB {
 	
-	private static Integer maxBatchSize = 5000;
+	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+	
+	private static Integer maxBatchSize = 1000;  //xnxn -change back to 5000 later
 	
 	public static void main(String[] args){
 		try {
-			loadDmozTreeFromDB();
+			//importDmozTreeToDB();
+			DmozTreeNode dmozTree = loadDmozTreeFromDB();
+			TreeFuncs.printTree("c:\\dmoz\\loadDbTree.txt", dmozTree);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -50,8 +59,10 @@ public class DmozTreeDBoperator extends BaseDB {
 		final List<List<DmozTreeNode>> batches = SemplestUtils.getBatches(dmozTree, maxBatchSize);
 		System.out.println("Going to store " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to DB.");
 		Long counter = 0L;		
-		for (final List<DmozTreeNode> batch : batches)
-		{			
+		//for (final List<DmozTreeNode> batch : batches)  //xnxn -uncomment later
+		//{			//uncomment later
+			List<DmozTreeNode> batch = batches.get(0);  //xnxn -temp. delete later
+		
 			Long start = System.currentTimeMillis();
 			System.out.println("Storing batch #" + counter + " to DB...");
 			ArrayList<String> batchSql = new ArrayList<String>();
@@ -62,7 +73,7 @@ public class DmozTreeDBoperator extends BaseDB {
 				Long nodeId = node.getNodeID();
 				Long nodeParentId = node.getParentID();
 				Long nodeSemplestId = node.getCategoryData() == null? null : (node.getCategoryData().getCategoryId() == null? null : node.getCategoryData().getCategoryId());
-				String nodeFullName = node.getFullName().replace("'", "''");
+				String nodeFullName = node.getName().replace("'", "''");
 				String nodeDescription = node.getCategoryData() == null? null : (node.getCategoryData().getDescription() == null? null : node.getCategoryData().getDescription().replace("'", "''"));				
 				
 				String sqlDmoz = "INSERT INTO DMOZ(DmozNodePK,SemplestID,NodeText,ParentNodeID,NodeDescription) " +
@@ -83,27 +94,32 @@ public class DmozTreeDBoperator extends BaseDB {
 			jdbcTemplate.batchUpdate(batchSql.toArray(new String[batchSql.size()]));
 			System.out.println("	took " + (System.currentTimeMillis() - start)*1d/1000 + " secs.");
 			counter++;
-		}
+		//}  //uncomment later
 	}	
 	
+	private static RowMapper<DbDmozObject> dbDmozObjectMapper = new BeanPropertyRowMapper<DbDmozObject>(DbDmozObject.class);
 	public static DmozTreeNode loadDmozTreeFromDB(){
 		
-		//Get the top node of the tree from DB
+		System.out.println("Loading dmoz data from DB and building the tree...");
+		//Get the top node of the tree from DB		
 		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,SemplestID FROM DMOZ WHERE ParentNodeID = -1";
-		DbDmozObject topNode = jdbcTemplate.queryForObject(sql, DbDmozObject.class);
+		DbDmozObject topNode = jdbcTemplate.query(sql, dbDmozObjectMapper).get(0);
 		DmozTreeNode dmozTree = new DmozTreeNode();
 		dmozTree.setNodeID(topNode.getDmozNodePK());
 		dmozTree.setParentID(topNode.getParentNodeID());
-		dmozTree.setFullName(topNode.getNodeText());
+		dmozTree.setName(topNode.getNodeText());
 		dmozTree.setNodeDescription(topNode.getNodeDescription());
 		
 		//Build the tree
 		setChildrenNodes(dmozTree);
 		
+		System.out.println("Loading url data from DB...");
 		//Set UrlData
 		setUrlDataThroughTree(dmozTree);
 		
-		return null;
+		System.out.println("Done.");
+		
+		return dmozTree;
 	}
 	
 	//helper methods
@@ -112,26 +128,27 @@ public class DmozTreeDBoperator extends BaseDB {
 		 * Set up children nodes of a node recursively. Thus build the tree.
 		 */
 		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,SemplestID FROM DMOZ WHERE ParentNodeID = " + currentNode.getNodeID();
-		List<DbDmozObject> childrenNodes = jdbcTemplate.queryForList(sql, DbDmozObject.class);
+		List<DbDmozObject> childrenNodes = jdbcTemplate.query(sql, dbDmozObjectMapper);
 		
 		for(DbDmozObject childNode : childrenNodes){
 			DmozTreeNode newNode = new DmozTreeNode();
 			newNode.setNodeID(childNode.getDmozNodePK());
 			newNode.setParentID(childNode.getParentNodeID());
-			newNode.setFullName(childNode.getNodeText());
+			newNode.setName(childNode.getNodeText());
 			newNode.setNodeDescription(childNode.getNodeDescription());
-			currentNode.addChildNode(newNode);
 			
 			setChildrenNodes(newNode);
+			currentNode.addChildNode(newNode);						
 		}
 	}
 	
+	private static RowMapper<DbUrlDataObject> dbUrlDataObjectMapper = new BeanPropertyRowMapper<DbUrlDataObject>(DbUrlDataObject.class);
 	private static void setUrlDataThroughTree(DmozTreeNode currentNode){
 		/*
 		 * get url data for each node from DB, and store to the tree.
 		 */
 		String sql = "SELECT UrlDataPK,DmozNodeFK,URL,URLDescription,Level,ParentURLDataID FROM URLData WHERE DmozNodeFK = " + currentNode.getNodeID();
-		List<DbUrlDataObject> urlsData = jdbcTemplate.queryForList(sql, DbUrlDataObject.class);
+		List<DbUrlDataObject> urlsData = jdbcTemplate.query(sql, dbUrlDataObjectMapper);
 		
 		for(DbUrlDataObject urlData : urlsData){
 			currentNode.addUrlData(urlData.getURL(), urlData.getURLDescription());
@@ -148,7 +165,7 @@ public class DmozTreeDBoperator extends BaseDB {
 		
 		for(DmozTreeNode node : dmozTree){		
 			writer.append(node.getNodeID() + " | " 
-						+ node.getFullName() + " | "
+						+ node.getName() + " | "
 						+ node.getParentID() + " | "
 						+ node.getCategoryData().getDescription() + "\n");
 		}		

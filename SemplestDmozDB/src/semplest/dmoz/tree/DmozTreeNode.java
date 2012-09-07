@@ -5,8 +5,7 @@ import java.util.HashMap;
 public class DmozTreeNode {
 	private Long nodeID;
 	private Long parentID;
-	private String name;
-	private String fullName;
+	private String nodeName;
 	private DmozCategoryData categoryData = new DmozCategoryData();
 	private HashMap<String,DmozTreeNode> childrenNodes = new HashMap<String,DmozTreeNode>();	
 	private DmozTreeNode parentNode;
@@ -51,24 +50,13 @@ public class DmozTreeNode {
 		this.parentID = parentID;
 	}
 
-
 	public String getName() {
-		return name;
+		return nodeName;
 	}
 
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
-	public String getFullName() {
-		return fullName;
-	}
-
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	public void setName(String nodeName) {
+		this.nodeName = nodeName;
 	}
 
 
@@ -102,7 +90,7 @@ public class DmozTreeNode {
 	@Override
 	public String toString() {
 		return "DmozTreeNode [nodeID=" + nodeID + ", parentID=" + parentID
-				+ ", name=" + name + ", fullName=" + fullName;
+				+ ", nodeName=" + nodeName;
 	}
 	
 }

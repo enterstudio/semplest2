@@ -49,7 +49,7 @@ public class AllNodesUrlNumProcesser implements TreeProcesserInterface {
 		Integer numAllUrls = numCurrentNodeUrls + numSubNodeUrls;	
 		//System.out.println(currentNode.getFullName() + " : " + numAllUrls);
 		if(storeData){
-			urlCounts.add(currentNode.getFullName() + " : " + numAllUrls);
+			urlCounts.add(currentNode.getName() + " : " + numAllUrls);
 		}
 		return numAllUrls;
 	}

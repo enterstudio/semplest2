@@ -38,7 +38,7 @@ public class MergeMiddleNodesProcesser implements TreeProcesserInterface{
 		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
 		if(childrenNodes.size() == 0 ){
 			//reach the leaf of this branch
-			String fullNodeName = topNode.getFullName();
+			String fullNodeName = topNode.getName();
 			for(String nodeName : fullNodeName.trim().split("/")){
 				if(nodeName.length() == 1 || nodeName.matches("[+-]?\\d*(\\.\\d+)?")){
 					//this branch is spitted at a middle node

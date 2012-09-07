@@ -14,7 +14,7 @@ public class EmptyNodesProcesser implements TreeProcesserInterface {
 	public void analyzeTree(DmozTreeNode topNode) throws Exception {
 		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
 		if(topNode.getCategoryData() == null || topNode.getCategoryData().isEmpty()){
-			nodes.add(topNode.getFullName());
+			nodes.add(topNode.getName());
 		}
 		if(childrenNodes.size() == 0 ){
 			return;

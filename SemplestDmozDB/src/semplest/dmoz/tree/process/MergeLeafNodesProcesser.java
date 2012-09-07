@@ -23,7 +23,7 @@ public class MergeLeafNodesProcesser implements TreeProcesserInterface{
 			String leafNodeName = topNode.getName();
 			if(leafNodeName.length() == 1 || leafNodeName.matches("[+-]?\\d*(\\.\\d+)?")){
 				//this leaf node is a single-letter node, record its parent node
-				splitLeafNodes.add(topNode.getParentNode().getFullName());
+				splitLeafNodes.add(topNode.getParentNode().getName());
 			}			
 		}
 		else{
