@@ -203,9 +203,10 @@ namespace Semplest.Core.Controllers
         public ActionResult Words()
         {
             var keyWordModels = (List<CampaignSetupModel.KeywordsModel>) Session["AllKeyWords"];
+            //var keyWordModelsF = keyWordModels.Where(x => x.Name.Contains("work")).ToList();
             var swm = new SmartWordSetupModel();
-            swm.AllKeywords = keyWordModels;
-            swm.WordCount = keyWordModels.Count();
+            //swm.AllKeywords = keyWordModelsF;
+            //swm.WordCount = keyWordModelsF.Count();
             return PartialView(swm);
         }
 

@@ -158,6 +158,7 @@
     <Compile Include="Controllers\RequireRequestValueAttribute.cs" />
     <Compile Include="Controllers\SmartWordController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TreeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -430,6 +431,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\SmartWord\NegativeSmartWords.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Tree\Index.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
