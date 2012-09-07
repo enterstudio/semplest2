@@ -1,6 +1,8 @@
 package semplest.keywords.crawl;
 
 import akka.actor.*;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.Config;
 
@@ -30,6 +32,7 @@ public class Run {
 
   // The Actor that talks to the Collector
   public class RActor extends UntypedActor {
+    LoggingAdapter log = Logging.getLogger( getContext().system(), this );
     private ActorRef collector;
 
     // Actor Ctr
@@ -75,9 +78,9 @@ public class Run {
     String myip = crawlUtils.getIp();
     Config conf = ConfigFactory.parseString(
         "akka {" +
-        "  actor  { provider = \"akka.remote.RemoteActorRefProvider\" } " +
-        "  \n" +
-        " remote { netty { hostname = \"" + myip + "\" \n  port = 2554 } }" +
+        "  actor  { provider = \"akka.remote.RemoteActorRefProvider\" } \n " +
+        " remote { netty { hostname = \"" + myip + "\" \n  port = 2554 } } \n" +
+        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" " +
         "} "
         );
 

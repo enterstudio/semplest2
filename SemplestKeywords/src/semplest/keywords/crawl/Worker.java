@@ -1,7 +1,8 @@
 package semplest.keywords.crawl;
 
 import akka.actor.*;
-import akka.routing.RoundRobinRouter;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.Config;
 
@@ -71,9 +72,9 @@ public class Worker {
     String port = "2552";
     Config conf = ConfigFactory.parseString(
         "akka {" +
-        "  actor  { provider = \"akka.remote.RemoteActorRefProvider\" } " +
-        "  \n" +
-        "  remote { netty { port = 2553 } }" +
+        "  actor  { provider = \"akka.remote.RemoteActorRefProvider\" } \n " +
+        "  remote { netty { port = 2553 } } \n" +
+        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" " +
         "} "
         );
     String remoteAddr = "akka://Collector@" + ip + ":" + port + "/user/cactor";

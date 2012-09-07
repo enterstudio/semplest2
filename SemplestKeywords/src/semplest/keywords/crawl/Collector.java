@@ -1,7 +1,8 @@
 package semplest.keywords.crawl;
 
 import akka.actor.*;
-import akka.routing.RoundRobinRouter;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.Config;
 
@@ -53,6 +54,7 @@ public class Collector {
 
   // - The Actor ---------
   public static class CActor extends UntypedActor {
+    LoggingAdapter log = Logging.getLogger( getContext().system(), this );
     public ArrayBlockingQueue<Work> workQ = new ArrayBlockingQueue<Work>( 
         Collector.QSIZE);
     public HashSet<Answer> results = new HashSet<Answer>();
@@ -95,9 +97,9 @@ public class Collector {
 
     Config conf = ConfigFactory.parseString(
         "akka {"+
-        " actor { provider = \"akka.remote.RemoteActorRefProvider\" } " + 
-        " \n " +
-        " remote { netty { hostname = \"" + myip + "\" } }" +
+        " actor { provider = \"akka.remote.RemoteActorRefProvider\" } \n" + 
+        " remote { netty { hostname = \"" + myip + "\" } } \n" +
+        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" " +
         "} ");
     ActorSystem system = ActorSystem.create("Collector", ConfigFactory.load( conf ));
     cactor = system.actorOf(new Props( new UntypedActorFactory(){
