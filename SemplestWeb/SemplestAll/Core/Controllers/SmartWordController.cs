@@ -12,6 +12,8 @@ using Semplest.SharedResources.Services;
 using SemplestModel;
 using Semplest.Core.Models;
 using Semplest.SharedResources.Helpers;
+using System.Web.Script.Serialization;
+using TreeView.Models;
 
 namespace Semplest.Core.Controllers
 {
@@ -80,6 +82,7 @@ namespace Semplest.Core.Controllers
                 var categories = scw.GetCategories(null, swsm.ProductGroup.ProductPromotionName,
                                                    swsm.ProductGroup.Words,
                                                    null, swsm.LandingUrl);
+                Session.Add("CategoryList", categories);
                 var categoryModels = new List<CampaignSetupModel.CategoriesModel>();
                 if (categories != null && categories.Count > 0)
                 {
@@ -325,6 +328,63 @@ namespace Semplest.Core.Controllers
         }
 
         #endregion
+
+
+        public ActionResult BuildSubItems()
+        {
+            const string json = "[\"top/business/financial_services/insurance/agents_and_marketers/travel/mexico\",\"top/business/financial_services/insurance/agents_and_marketers/automotive/united_states/illinois\",\"top/business/financial_services/insurance/agents_and_marketers/multi-line/united_states/washington\",\"top/home/personal_finance/insurance/automotive\",\"top/business/financial_services/insurance/agents_and_marketers/multi-line/united_states/kansas\",\"top/business/financial_services/insurance/agents_and_marketers/automotive/united_states\",\"top/business/financial_services/insurance/agents_and_marketers/multi-line/united_states\",\"top/business/financial_services/insurance/agents_and_marketers/multi-line\",\"top/business/financial_services/insurance/agents_and_marketers\"]";
+            var jss = new JavaScriptSerializer();
+            var jsonList = jss.Deserialize<List<string>>(json);
+            jsonList = (List<string>)Session["CategoryList"];
+            var strs = jsonList.Select(jsl => jsl.Split('/').ToList()).ToList();
+            //strs =  (List<string>) Session["CategoryList"];
+            var treeManager = new TreeManager();
+
+            foreach (var row in strs)
+            {
+                var path = new List<String>();
+                foreach (String item in row)
+                {
+                    path.Add(item);
+                    treeManager.AddData(treeManager, path);
+                }
+            }
+            var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
+            NavBar promotionBar = null;
+            foreach (var promotion in treeManager.Select(x => x))
+            {
+                Console.WriteLine("as");
+                promotionBar = new NavBar
+                {
+                    Name = promotion.GetName(),
+                    Id = 1,
+                    SubItems = new List<NavBar>()
+                };
+
+                BuildSubItems(promotionBar, promotion);
+            }
+            productGroupsBar.SubItems.Add(promotionBar);
+            var navBars = new List<NavBar>();
+            navBars.Add(productGroupsBar);
+            var jss2 = new JavaScriptSerializer();
+            return Json(navBars, JsonRequestBehavior.AllowGet);
+        }
+
+        private void BuildSubItems(NavBar top, TreeItem next)
+        {
+            foreach (var child in next.children)
+            {
+                var promotionBar = new NavBar
+                {
+                    Name = child.Value.GetName(),
+                    Id = 1,
+                    SubItems = new List<NavBar>()
+                };
+                top.SubItems.Add(promotionBar);
+
+                BuildSubItems(promotionBar, child.Value);
+            }
+        }
 
     }
 }
