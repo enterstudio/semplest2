@@ -9,6 +9,9 @@ public class DmozTreeNode {
 	private DmozCategoryData categoryData = new DmozCategoryData();
 	private HashMap<String,DmozTreeNode> childrenNodes = new HashMap<String,DmozTreeNode>();	
 	private DmozTreeNode parentNode;
+
+	private int treeURLCount;
+	private int treeNodeCount;
 	
 	public DmozTreeNode(){
 		this.categoryData = new DmozCategoryData();
@@ -86,6 +89,23 @@ public class DmozTreeNode {
 	public void setParentNode(DmozTreeNode parentNode) {
 		this.parentNode = parentNode;
 	}
+	
+	public int getTreeURLCount() {
+		return treeURLCount;
+	}
+
+	public void setTreeURLCount(int treeURLCount) {
+		this.treeURLCount = treeURLCount;
+	}
+
+	public int getTreeNodeCount() {
+		return treeNodeCount;
+	}
+
+	public void setTreeNodeCount(int treeNodeCount) {
+		this.treeNodeCount = treeNodeCount;
+	}
+
 
 	@Override
 	public String toString() {
