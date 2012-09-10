@@ -5,7 +5,7 @@ public class DbDmozObject {
 	private Long ParentNodeID;
 	private String NodeText;
 	private String NodeDescription;
-	private Long SemplestID;
+	private Long CategoryID;
 	
 	public Long getDmozNodePK() {
 		return DmozNodePK;
@@ -31,11 +31,11 @@ public class DbDmozObject {
 	public void setNodeDescription(String nodeDescription) {
 		NodeDescription = nodeDescription;
 	}
-	public Long getSemplestID() {
-		return SemplestID;
+	public Long getCategoryID() {
+		return CategoryID;
 	}
-	public void setSemplestID(Long semplestID) {
-		SemplestID = semplestID;
+	public void setCategoryID(Long categoryID) {
+		CategoryID = categoryID;
 	}
 	
 }

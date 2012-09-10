@@ -19,13 +19,12 @@ public class DmozDbOperator extends BaseDB {
 	
 	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 	
-	private static Integer maxBatchSize = 1000;  //xnxn -change back to 5000 later
+	private static Integer maxBatchSize = 5000;
 	
 	public static void main(String[] args){
 		try {
-			//importDmozTreeToDB();
-			DmozTreeNode dmozTree = loadDmozTreeFromDB();
-			TreeFuncs.printTree("c:\\dmoz\\loadDbTree.txt", dmozTree);
+			importDmozTreeToDB();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -224,13 +223,19 @@ public class DmozDbOperator extends BaseDB {
 		}	
 	}
 	
+	public static Long getUniqueIdBase() throws Exception{
+		String sql = "SELECT MAX(DmozNodePK) FROM DMOZ";
+		Long maxIdInDB = jdbcTemplate.queryForLong(sql);
+		
+		return maxIdInDB + 100;
+	}
 	
 	//helper methods
 	private static void setChildrenNodes (DmozTreeNode currentNode) throws Exception{
 		/*
 		 * Set up children nodes of a node recursively. Thus build the tree.
 		 */
-		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,SemplestID FROM DMOZ WHERE ParentNodeID = " + currentNode.getNodeID();
+		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,CategoryID FROM DMOZ WHERE ParentNodeID = " + currentNode.getNodeID();
 		List<DbDmozObject> childrenNodes = jdbcTemplate.query(sql, dbDmozObjectMapper);
 		
 		for(DbDmozObject childNode : childrenNodes){
