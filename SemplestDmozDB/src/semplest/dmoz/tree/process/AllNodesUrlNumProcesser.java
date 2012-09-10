@@ -51,6 +51,7 @@ public class AllNodesUrlNumProcesser implements TreeProcesserInterface {
 		if(storeData){
 			urlCounts.add(currentNode.getName() + " : " + numAllUrls);
 		}
+		currentNode.setTreeURLCount(numAllUrls);
 		return numAllUrls;
 	}
 
