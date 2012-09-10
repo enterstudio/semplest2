@@ -14,11 +14,15 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.util.*;
 import org.apache.lucene.store.*;
 
+import com.sleepycat.je.rep.elections.Protocol.Result;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.Console;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import semplest.keywords.lda.KWGenDmozLDAdata3;
@@ -76,14 +80,17 @@ public class DmozLuceneWriter
 
 	public String[] search(String qs, int nresults) throws Exception
 	{
-		Query q = parser.parse(qs);
-		ScoreDoc[] hits = searcher.search(q, null, nresults).scoreDocs;
-		String[] res = new String[hits.length];
+		final Query q = parser.parse(qs);
+		final ScoreDoc[] hits = searcher.search(q, null, nresults).scoreDocs;
+		final List<String> res = new ArrayList<String>();
 		for (int i = 0; i < hits.length; i++)
 		{
-			res[i] = (searcher.doc(hits[i].doc)).get("cat");
+			final int docId = hits[i].doc;
+			final Document document = searcher.doc(docId);
+			final String result = document.get("cat");
+			res.add(result);
 		}
-		return res;
+		return res.toArray(new String[res.size()]);
 	}
 
 	// - Privates -------

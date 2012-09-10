@@ -155,7 +155,9 @@ public class catUtils
 		{
 			return "";
 		}
-		return toCat(java.util.Arrays.copyOfRange(nodes, 0, Math.min(n, nodes.length)));
+		final int min = Math.min(n, nodes.length);
+		final String[] array = java.util.Arrays.copyOfRange(nodes, 0, min);
+		return toCat(array);
 	}
 
 	// everything but last n nodes ( drop 5 returns top/recreation/pets/dogs )

@@ -27,17 +27,9 @@ public class KWGenDmozLDAdata3 implements Runnable
 	public int numKeywordsMSN;
 	public static ProjectProperties pr;
 	public catUtils cu;
-	dictUtils du;
 
 	public KWGenDmozLDAdata3(Map<String, Object> configData) throws IOException
 	{
-		/*
-		 * //Load property file if necessary for paths if(SEMplestService.properties==null){ String PROPSFILE =
-		 * "../SemplestServices/bin/system.properties"; SEMplestService.properties = new Properties(); FileInputStream is = new
-		 * FileInputStream(PROPSFILE); SEMplestService.properties.load(is); is.close(); }
-		 * 
-		 * dfile = SEMplestService.properties.getProperty("data.dmoz.all.alldesc");
-		 */
 		try
 		{
 			// pr=new ProjectProperties(configData);
@@ -46,26 +38,17 @@ public class KWGenDmozLDAdata3 implements Runnable
 			userInfoWeight = pr.userInfoWeight;
 			numKeywordsGoogle = pr.numKeywordsGoogle;
 			numKeywordsMSN = pr.numKeywordsMSN;
-
-			// logger.info(pr.dfile+"\n"+pr.baseMultiWPath+"\n"+pr.numTopics);
-
 			cu = new catUtils();
-			du = new dictUtils();
-
-			logger.info("create DmozLucene()");
+			logger.info("About to create DmozLuceneWriter");
 			dl = new DmozLuceneWriter();
-			// logger.info("Indexing dmoz description data...");
-			// DmozLucene.loadDescDB(dl);
-			logger.info("Data indexed!");
-
+			logger.info("DmozLuceneWriter initialized");
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage());
+			logger.error("Problem", e);
 			e.printStackTrace();
 			throw new IOException("Problem", e);
 		}
-
 	}
 
 	@Override

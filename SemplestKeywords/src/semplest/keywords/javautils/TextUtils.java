@@ -581,7 +581,7 @@ public class TextUtils
 		String lower = text.toLowerCase();
 		String noPunct = lower.replaceAll("\\W", " ");
 		String noNum = noPunct.replaceAll("[0-9]", " ");
-		List<String> words = new ArrayList<String>(Arrays.asList(noNum.split("\\s+")));
+		List<String> words = Arrays.asList(noNum.split("\\s+"));
 		return words;
 	}
 

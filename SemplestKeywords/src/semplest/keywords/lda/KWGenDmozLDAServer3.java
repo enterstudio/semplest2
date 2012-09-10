@@ -15,36 +15,33 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.google.api.adwords.v201109.cm.ApiException;
 
 import scala.actors.threadpool.Arrays;
-import semplest.keywords.javautils.MultiWordCollect;
 import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.keywordb;
-import semplest.keywords.lda.*;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.EmailType;
-import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.mail.SemplestMailServiceImpl;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.server.service.springjdbc.storedproc.AddKeywordBidDataSP;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 
@@ -118,7 +115,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 			String qsStem = stemvString(searchTerm, data.dict);
 			if (qsStem != null && qsStem.length() > 0)
 			{
-				logger.debug(qsStem);
+				logger.info("Stemmed version: [" + qsStem + "]");
 				res = data.dl.search(qsStem, numresults);
 				for (int i = 0; i < res.length; i++)
 				{
@@ -152,7 +149,8 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		// Identify repeated patterns in top categories
 		Map<String, Double> catPatRepMap = idRepeatedCatPat(optKeys);
 		// Filter out just relevant patterns and add to result
-		ret.addAll(selectRelevantOpt(catPatRepMap));
+		final List<String> relevantOpt = selectRelevantOpt(catPatRepMap);
+		ret.addAll(relevantOpt);
 		return ret;
 
 	}
@@ -195,9 +193,12 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 			{
 				if (catUtils.last(optKey).length() > 1)
 				{
-					if (!optList.containsKey(catUtils.take(optKey, numNEval)))
+					final String key = catUtils.take(optKey, numNEval);
+					if (!optList.containsKey(key))
 					{
-						optList.put(catUtils.take(optKey, numNEval), new Double(numNodes));
+						final Double numNods = new Double(numNodes);
+						final String k = catUtils.take(optKey, numNEval);
+						optList.put(k, numNods);
 					}
 				}
 			}
@@ -292,7 +293,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		logger.info("time for categories" + (System.currentTimeMillis() - startTime));
 		return retMap;
 	}
-
+	
 	private List<KeywordProbabilityObject> getKeywordsSorted(List<String> categories, String description, String data1, List<AdEngine> srchE, Integer[] nGrams, int numKw) throws Exception
 	{
 		try
@@ -632,13 +633,14 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 				String newWord = "";
 				for (int j = 0; j < nGrams; j++)
 				{
-					if (words[i + j].equalsIgnoreCase("s"))
+					final String currentWord = words[i + j];
+					if (currentWord.equalsIgnoreCase("s"))
 					{
-						newWord = newWord + "'" + words[i + j];
+						newWord = newWord + "'" + currentWord;
 					}
 					else
 					{
-						newWord = newWord + "+" + words[i + j];
+						newWord = newWord + "+" + currentWord;
 					}
 				}
 				String word = newWord.replaceAll("\\+$", "").replaceAll("^\\+", "");
@@ -734,7 +736,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		try
 		{
 			data = new KWGenDmozLDAdata3(configData);
-			Thread thread = new Thread(data);
+			final Thread thread = new Thread(data);
 			thread.start();
 		}
 		catch (Exception e)
@@ -751,10 +753,10 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		boolean flag = false;
 		for (String w : raws.split("\\s+"))
 		{
-			if (!dict.commonWord(w.toLowerCase()))
+			final String wordLowerCase = w.toLowerCase();
+			if (!dictUtils.commonWord(wordLowerCase))
 			{
-				// String newword = dict.getStemWord( w.toLowerCase() );
-				String newword = dict.getRoot(w.toLowerCase());
+				String newword = dictUtils.getRoot(w.toLowerCase());
 				if (newword != null)
 				{
 					os = os + newword + " ";
@@ -872,30 +874,13 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		final TreeMap<String, Double> sortedMap = new TreeMap<String, Double>(bvc);
 		sortedMap.putAll(wordMap);
 		final String[] words = sortedMap.keySet().toArray(new String[sortedMap.size()]);
-		/*
-		 * // print word Map PrintStream pr = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/wordMap.wm")); for(String word :
-		 * words){ pr.println(word+", " + wordMap.get(word)); }
-		 */
 		return wordMap.get(words[(int) (words.length * 0.6)]);
 	}
 
-	/*
-	 * public static void main(String[] args) throws Exception { ClassPathXmlApplicationContext appContext = new
-	 * ClassPathXmlApplicationContext("Service.xml"); Object object = new Object(); SemplestConfiguration configDB = new SemplestConfiguration(object);
-	 * Thread configThread = new Thread(configDB); configThread.start(); synchronized (object) { object.wait(); }
-	 * 
-	 * PrintStream ps = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/updatedProbKw.txt"));
-	 * 
-	 * 
-	 * KWGenDmozLDAServer2 kwGen = new KWGenDmozLDAServer2(null); kwGen.initializeService(null); KeywordProbabilityObject[] kwrds =
-	 * kwGen.recalculateProbabilities(223); for(KeywordProbabilityObject kw : kwrds ){ ps.println(kw.getKeyword()+", "+ kw.getSemplestProbability()
-	 * +", IsTargetGoogle: " + kw.getIsTargetGoogle() + ", IsTargetMSN: "+
-	 * kw.getIsTargetMSN()+", IsActive: "+kw.getIsActive()+", IsDeleted: "+kw.getIsDeleted() + ", IsNegative: " + kw.getIsNegative()+ ", kwPK:" +
-	 * kw.getKeywordPK()); } ps.close(); }
-	 */
 	public static void main(String[] args) throws Exception
 	{
-		final ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+		logger.info("Starting");
+		new ClassPathXmlApplicationContext("Service.xml");
 		final Object object = new Object();
 		final SemplestConfiguration configDB = new SemplestConfiguration(object);
 		final Thread configThread = new Thread(configDB);
@@ -909,11 +894,6 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		kwGen.initializeService(null);
 		final String[] searchTerm = new String[1];
 		String userInfo1 = "";
-		final PrintStream logging = new PrintStream(new FileOutputStream("data\\test\\categoriesTime.txt"));
-		/*
-		 * while(true){ Long start = System.currentTimeMillis(); ArrayList<String> categOpt = kwGen.getCategories(null, null , "science fiction", null,
-		 * null); logging.println(System.currentTimeMillis()-start); }
-		 */
 		while (!userInfo1.equals("exit"))
 		{
 			try

@@ -34,7 +34,7 @@ public class keywordb
 	// keyword-counts for all chidren categories of "cat"
 	public static Map<String, Map<String, Integer>> children(String cat, String db) throws Exception
 	{
-		HashMap<String, Map<String, Integer>> resm = new HashMap<String, Map<String, Integer>>();
+		Map<String, Map<String, Integer>> resm = new HashMap<String, Map<String, Integer>>();
 		for (Map.Entry<String, String> e : bdb.children(db, cat).entrySet())
 		{
 			resm.put(e.getKey(), ioUtils.toWc(e.getValue()));
