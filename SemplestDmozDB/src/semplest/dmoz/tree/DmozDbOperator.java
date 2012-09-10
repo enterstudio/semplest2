@@ -63,7 +63,7 @@ public class DmozDbOperator extends BaseDB {
 		
 		System.out.println("Loading dmoz data from DB and building the tree...");
 		//Get the top node of the tree from DB		
-		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,SemplestID FROM DMOZ WHERE ParentNodeID = -1";
+		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,CategoryID FROM DMOZ WHERE ParentNodeID = -1";
 		DbDmozObject topNode = jdbcTemplate.query(sql, dbDmozObjectMapper).get(0);
 		DmozTreeNode dmozTree = new DmozTreeNode();
 		dmozTree.setNodeID(topNode.getDmozNodePK());
@@ -131,12 +131,12 @@ public class DmozDbOperator extends BaseDB {
 				}
 				Long nodeId = node.getNodeID();
 				Long nodeParentId = node.getParentID();
-				Long nodeSemplestId = node.getCategoryData() == null? null : (node.getCategoryData().getCategoryId() == null? null : node.getCategoryData().getCategoryId());
+				Long nodeCategoryId = node.getCategoryData() == null? null : (node.getCategoryData().getCategoryId() == null? null : node.getCategoryData().getCategoryId());
 				String nodeFullName = node.getName().replace("'", "''");
 				String nodeDescription = node.getCategoryData() == null? null : (node.getCategoryData().getDescription() == null? null : node.getCategoryData().getDescription().replace("'", "''"));				
 				
-				String sqlDmoz = "INSERT INTO DMOZ(DmozNodePK,SemplestID,NodeText,ParentNodeID,NodeDescription) " +
-						"VALUES("+ nodeId +"," + nodeSemplestId + ",'" + nodeFullName + "'," + nodeParentId + ",'" + nodeDescription + "');";
+				String sqlDmoz = "INSERT INTO DMOZ(DmozNodePK,CategoryID,NodeText,ParentNodeID,NodeDescription) " +
+						"VALUES("+ nodeId +"," + nodeCategoryId + ",'" + nodeFullName + "'," + nodeParentId + ",'" + nodeDescription + "');";
 				
 				batchSql.add(sqlDmoz);
 				
