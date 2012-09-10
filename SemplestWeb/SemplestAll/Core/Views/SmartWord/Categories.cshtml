@@ -28,10 +28,10 @@
             
 @*@Html.ListBoxFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
             
-            <div style="height: 345px; width: 700px; overflow-x: auto">
+            <div style="width: 700px; overflow-x: auto">
                 @Html.CheckBoxListFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { @class = "spacing" }, 2)
             </div>
-                 <ul id="reportTreeView" style="margin: 5px; height: 1000px;">
+                 <ul id="reportTreeView" style="margin: 5px; ">
                    </ul>
         }
     </div>
@@ -67,7 +67,7 @@
     $(document).ready(function () {
         $("#reportTreeView").dynatree({
             checkbox: true,
-            selectMode: 3,
+            selectMode: 2,
             title: "Reports",
             onSelect: function (select, node) {
                 // Get a list of all selected nodes, and convert to a key array:        

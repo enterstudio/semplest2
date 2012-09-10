@@ -362,8 +362,9 @@ namespace Semplest.Core.Controllers
                 };
 
                 BuildSubItems(promotionBar, promotion);
+                productGroupsBar.SubItems.Add(promotionBar);
             }
-            productGroupsBar.SubItems.Add(promotionBar);
+            
             var navBars = new List<NavBar>();
             navBars.Add(productGroupsBar);
             var jss2 = new JavaScriptSerializer();
