@@ -287,18 +287,6 @@
   	 	</jar>
 	 <echo message="Done."/> 
 		
-	  	<!-- If it's a Keyword service, copy data folder -->
-	  	<if>
-	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
-	  	 <then>  	   
-	  	 	<echo message="This is KeywordGeneratorService."/>	 	  	 	
-	  	 	<mkdir dir="${dist}/data"/>
-	  	 	<copydir src="${semplest.keywords.dir}/data"
-	  	 		dest="${dist}/data"
-	  	 	    includes="**/*"
-	  	 	/>
-	  	 </then>
-	  	</if>
 	</target>
    
   <target name="compile" depends="depJars" description="Compile all source files">
@@ -359,6 +347,19 @@
 
 	<target name="build-installer" depends="compileProtocol,depJars,compile,deps" description="Create distribution executable">
 		 <!-- Run installer build with install-definition -->
+
+	  	<!-- If it's a Keyword service, copy data folder -->
+	  	<if>
+	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
+	  	 <then>  	   
+	  	 	<echo message="This is KeywordGeneratorService. Include /data folder in the installer."/>	 	  	 	
+	  	 	<mkdir dir="${dist}/data"/>
+	  	 	<copydir src="${semplest.keywords.dir}/data"
+	  	 		dest="${dist}/data"
+	  	 	    includes="**/*"
+	  	 	/>
+	  	 </then>
+	  	</if>
 		
 		<echo message="Running IzPack to build the installer(s)..."/>  				
 		
