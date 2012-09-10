@@ -397,7 +397,7 @@
   		            inheritAll="true"
   		            basedir="${dist}"
   		            compression="deflate"
-  		            compressionlevel="5"/> 	  		             
+  		            compressionlevel="1"/> 	  		             
   		    <echo message="Done."/>  
 	 	  </sequential> 
 	 	</for>
