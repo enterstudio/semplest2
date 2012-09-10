@@ -72,9 +72,9 @@ public class LuceneAnalyzer implements TextAnalyzer{
 		Vector v1 = new RandomAccessSparseVector(100);
 		for(String s : tokenized_string){
 			System.out.println(s);
-			encoder.addToVector(s, 1, v1);
+			//encoder.addToVector(s, 1, v1);
 		}
-		System.out.println(v1);
+		//System.out.println(v1);
 
 	}
 

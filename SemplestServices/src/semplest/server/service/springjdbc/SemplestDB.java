@@ -845,7 +845,38 @@ public class SemplestDB extends BaseDB
 				{ promotionID, TargetedDailyMicroBudget, TargetedDailyClicks, adEngine.name() });
 
 	}
-
+	
+	public static void truncateKeywordData()
+			throws Exception
+	{
+		jdbcTemplate.update("truncate table Keywords.dbo.Keywords");
+	}
+	
+	public static void storeKeywordBatch(final String file, final Map<String, String> categoryVsKeywordMap) throws Exception
+	{
+		final Set<Entry<String, String>> entrySet = categoryVsKeywordMap.entrySet();
+		final List<Entry<String, String>> list = new ArrayList<Entry<String, String>>(entrySet);
+		jdbcTemplate.batchUpdate("insert into Keywords.dbo.Keywords (file_name, category, keyword_data) values (?, ?, ?)", new BatchPreparedStatementSetter()
+			{
+				@Override
+				public void setValues(final PreparedStatement ps, int i) throws SQLException
+				{
+					final Entry<String, String> entry = list.get(i);
+					final String category = entry.getKey();
+					final String keywordData = entry.getValue();
+					ps.setString(1, file);
+					ps.setString(2, category);
+					ps.setString(3, keywordData);
+				}
+	
+				@Override
+				public int getBatchSize()
+				{
+					return list.size();
+				}
+			});
+	}
+	
 	public static void storeTrafficEstimatorData(int promotionID, AdEngine adEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
 	{
 		// AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();

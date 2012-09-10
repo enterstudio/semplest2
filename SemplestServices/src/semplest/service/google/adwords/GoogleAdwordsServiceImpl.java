@@ -2000,11 +2000,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			catch (ApiException e)
 			{
-				throw new Exception(e.dumpToString());
+				throw new Exception(e.dumpToString(), e);
 			}
 			catch (RemoteException e)
 			{
-				throw new Exception(e);
+				throw new Exception("Problem", e);
 			}
 
 			if (page != null && page.getEntries() != null)
