@@ -17,5 +17,20 @@ public class TreeFuncs {
 			printTree(node, writer);
 		}		
 	}
+	
+	public static HashMap<String,DmozTreeNode> getTreeInMap(DmozTreeNode tree) throws Exception{
+		HashMap<String,DmozTreeNode> treeMap = new HashMap<String,DmozTreeNode>();
+		
+		treeToMap(tree, treeMap);
+		
+		return treeMap;
+	}
+	
+	private static void treeToMap(DmozTreeNode currentNode, HashMap<String,DmozTreeNode> treeMap) throws Exception{
+		treeMap.put(currentNode.getName(), currentNode);
+		for(DmozTreeNode node : currentNode.getChildrenNodes().values()){			
+			treeToMap(node, treeMap);
+		}
+	}
 
 }

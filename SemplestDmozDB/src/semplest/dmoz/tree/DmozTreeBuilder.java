@@ -53,15 +53,23 @@ public class DmozTreeBuilder {
 	}
 	
 	public List<DmozTreeNode> getAllDmozNodes(){
-		List<DmozTreeNode> allNodes = new ArrayList<DmozTreeNode>();
+		HashMap<String,DmozTreeNode> allNodes = new HashMap<String,DmozTreeNode>();
+		
+		recordNode(topNode, allNodes);		
+		
+		return new ArrayList(allNodes.values());
+	}
+	
+	public HashMap<String,DmozTreeNode> getAllDmozNodesInMap(){
+		HashMap<String,DmozTreeNode> allNodes = new HashMap<String,DmozTreeNode>();
 		
 		recordNode(topNode, allNodes);		
 		
 		return allNodes;
 	}
 	
-	private void recordNode(DmozTreeNode currentNode, List<DmozTreeNode> allNodes){
-		allNodes.add(currentNode);
+	private void recordNode(DmozTreeNode currentNode, HashMap<String,DmozTreeNode> allNodes){
+		allNodes.put(currentNode.getName(),currentNode);
 		HashMap<String,DmozTreeNode> nodes = currentNode.getChildrenNodes();				
 		for(DmozTreeNode node : nodes.values()){			
 			if(node.getChildrenNodes() != null && !node.getChildrenNodes().isEmpty()){				
