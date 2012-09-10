@@ -99,6 +99,7 @@ public class Run {
     for( Map.Entry<String,String> w: work.entrySet() )
       cactor.tell( new Collector.Work( w.getKey(), w.getValue()));
   }
+  // Get whatever results are available
   public Map<String,String> results(){ 
     Map<String,String> ret = new HashMap<String,String>();
     for( Map.Entry<String,String> e: res.entrySet())
