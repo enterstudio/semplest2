@@ -6,5 +6,7 @@ namespace Semplest.Core.Models.Repositories
     public interface IKeyWordRepository
     {
         List<CampaignSetupModel.KeywordsModel> SaveNegativeKeywords(SmartWordSetupModel model, int customerFk, Promotion promo);
+
+        void SetKeywordsDeleted(List<int> keywordIds, int promoId);
     }
 }

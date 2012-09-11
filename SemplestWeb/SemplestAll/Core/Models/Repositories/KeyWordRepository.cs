@@ -115,6 +115,14 @@ namespace Semplest.Core.Models.Repositories
             return model.AllKeywords;
         }
 
+        public void SetKeywordsDeleted(List<int> keywordIds, int promoId)
+        {
+            foreach (int keywordId in keywordIds)
+                _dbcontext.PromotionKeywordAssociations.Where(key => key.KeywordFK == keywordId).First(
+                    key => key.PromotionFK == promoId).IsDeleted = true;
+            _dbcontext.SaveChanges();
+        }
+
         private void RefreshKeywords(SmartWordSetupModel model, Promotion promo)
         {
             IEnumerable<PromotionKeywordAssociation> qry =

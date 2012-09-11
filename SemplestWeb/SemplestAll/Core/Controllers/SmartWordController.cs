@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
-using System.Web.UI;
 using ExcelLibrary.SpreadSheet;
 using Semplest.Core.Models.Repositories;
+using Semplest.SharedResources;
 using Semplest.SharedResources.Services;
 using SemplestModel;
 using Semplest.Core.Models;
@@ -29,7 +29,7 @@ namespace Semplest.Core.Controllers
         public ActionResult Index()
         {
             var dbContext = new SemplestModel.Semplest();
-            var cred = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            var cred = ((Credential) (Session[SEMplestConstants.SESSION_USERID]));
 
             var child = new HomeModelChild();
             IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
@@ -157,11 +157,8 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "GetKeywords")]
         public ActionResult GetKeywords(SmartWordSetupModel model)
         {
-            //        var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
-            //                                        model.ProductGroup.ProductPromotionName);
-            //        _campaignRepository.SaveSelectedCategories(promoId, catList);
             int userid =
-                ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                ((Credential) (Session[SEMplestConstants.SESSION_USERID])).UsersFK;
             var catList = new List<string>();
             var categoryModels = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
             foreach (var cat in categoryModels)
@@ -185,31 +182,8 @@ namespace Semplest.Core.Controllers
                     kpos.Where(key => key.isDeleted == false).Select(
                         key => new CampaignSetupModel.KeywordsModel {Name = key.keyword, Id = key.id}))
                 model.AllKeywords.Add(kwm);
-
             Session.Add("AllKeyWords", model.AllKeywords);
-
-
-
             return Json(new {name = "ViewSmartWords"});
-            //        // get the keywords from web service
-            //        model = _campaignRepository.GetKeyWords(model, promoId);
-
-
-            //        model.BillingLaunch.KeywordsCount = model.AllKeywordProbabilityObjects.Count(x => x.isDeleted == false);
-            //        Session.Add("CampaignSetupModel", model);
-
-            //        return Json("Billing & Launch");
-            //    }
-            return Json("ModelState Invalid required data is missing");
-            //}
-            //catch (Exception ex)
-            //{
-            //    ExceptionHelper.LogException(ex);
-            //    if (ex.Message.Contains("Not enough data provided"))
-            //        return Json("Invalid words/phrases, URL or ADs<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
-            //    else
-            //        return Json(ex.ToString());
-            //}
         }
 
         public ActionResult Words()
@@ -221,9 +195,7 @@ namespace Semplest.Core.Controllers
                 Session["AllKeyWords"] = ((SmartWordSetupModel) Session["SmartWordSetupModel"]).AllKeywords;
             }
             //var keyWordModelsF = keyWordModels.Where(x => x.Name.Contains("work")).ToList();
-            var swm = new SmartWordSetupModel();
-            swm.AllKeywords = keyWordModels;
-            swm.WordCount = keyWordModels.Count();
+            var swm = new SmartWordSetupModel {AllKeywords = keyWordModels, WordCount = keyWordModels.Count()};
             return PartialView(swm);
         }
 
@@ -242,7 +214,7 @@ namespace Semplest.Core.Controllers
                 Session["NegativeSmartwords"] = model.NegativeKeywords;
                 Session["NegativeSmartwordsText"] = model.NegativeKeywordsText;
                 var cred =
-                    (Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
+                    (Credential) (Session[SEMplestConstants.SESSION_USERID]);
                 var dbcontext = new SemplestModel.Semplest();
                 IPromotionRepository pr = new PromotionRepository(dbcontext);
                 IKeyWordRepository kwr = new KeyWordRepository(dbcontext);
@@ -268,9 +240,31 @@ namespace Semplest.Core.Controllers
             return PartialView("NegativeSmartWords", model);
         }
 
-        //[HttpPost]
-        //[ActionName("Setup")]
-        //[AcceptSubmitType(Name = "Command", Type = "ExportSmartWords")]
+
+        [HttpPost]
+        [ActionName("Setup")]
+        [CampaignController.AcceptSubmitTypeAttribute(Name = "Command", Type = "FilterSmartWords")]
+        public ActionResult KeyWords(SmartWordSetupModel model)
+        {
+            try
+            {
+                var promoId = int.Parse(Session["PromoId"].ToString());
+                IKeyWordRepository kr = new KeyWordRepository(new SemplestModel.Semplest());
+                kr.SetKeywordsDeleted(model.KeywordIds, promoId);
+                var sessionModel = (SmartWordSetupModel)Session["SmartWordSetupModel"];
+                sessionModel.AllKeywords.RemoveAll(key => model.KeywordIds.Contains(key.Id));
+                //model.KeywordsCount = sessionModel.AllKeywords.Count();
+                Session["SmartWordSetupModel"] = sessionModel;
+                //model = sessionModel;
+                return Json(new { count = sessionModel.AllKeywords.Count(), name = "Keywords" });
+            }
+            catch (Exception ex)
+            {
+                ExceptionHelper.LogException(ex);
+                return Json(ExceptionHelper.GetErrorMessage(ex));
+            }
+        }
+
         public ActionResult ExcelExport()
         {
             var keyWordModels = (List<CampaignSetupModel.KeywordsModel>) Session["AllKeyWords"];
