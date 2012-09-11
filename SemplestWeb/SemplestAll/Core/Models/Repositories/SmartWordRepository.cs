@@ -84,7 +84,7 @@ namespace Semplest.Core.Models.Repositories
                 //    if (!preview)
                 //    {
                 model.AllKeywords.AddRange(
-                    promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
+                    promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).OrderByDescending(o => o.SemplestProbability).Select(
                         key =>
                         new CampaignSetupModel.KeywordsModel { Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK }));
                 //    }
