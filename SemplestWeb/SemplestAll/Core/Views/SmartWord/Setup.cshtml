@@ -148,6 +148,8 @@
             <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
             <input type="hidden" id="PromotionAddressType" name="PromotionAddressType" value="@Model.PromotionAddressType"/>
             <input type="hidden" id="CategoriesSmartWordsUrl" value="@System.Configuration.ConfigurationManager.AppSettings["CategoriesSmartWordsUrl"]"/>
+            <input type="hidden" id="HasNegativeKeywords" value="@Model.NegativeKeywords.Any()"/>
+            <input type="hidden" id="IsNew" value="@ViewBag.IsNew"/>
             <img id="displayBox" style="display: none" />
             <div id="InvalidDescriptionWindow" style="display: none; text-align: center; font-weight: bold;">
                 <div class="InvalidDescriptionText">
@@ -192,13 +194,21 @@
         $("#btnThree").addClass('selected');
     }
     $(document).ready(function () {
-        if ($('#AdModelProp_IsNew').val() == 'False') {
-            enableDisable();
-            if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
-                openAllTabs(false);
-            } else if ($('#IsLaunched').val() == 'False') {
-                openAllTabs(true);
-            }
+        if (($('input[id="HasNegativeKeywords"]').val() == 'True')) {
+            tabStrip.append({
+                text: "Negative SmartWords",
+                contentUrl: $('#NegativeSmartWordsUrl').val()
+            }, tabStrip.tabGroup.children("li:last")).select();
+        }
+        if ($('#IsNew').val() == 'False') {
+            tabStrip.append({
+                text: "Categories",
+                contentUrl: $('#CategoriesSmartWordsUrl').val()
+            }, tabStrip.tabGroup.children("li:last")).select();
+            tabStrip.append({
+                text: "View SmartWords",
+                contentUrl: $('#ViewSmartWordsUrl').val()
+            }, tabStrip.tabGroup.children("li:last")).select();
         }
         if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
             $('#ProductGroup_ProductGroupName').attr("readonly", true);

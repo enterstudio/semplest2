@@ -43,6 +43,7 @@ namespace Semplest.Core.Controllers
         [RequireRequestValue("promotionId")]
         public ActionResult Setup(int promotionId)
         {
+            ViewBag.IsNew = "False";
             Session["AllCategories"] = null;
             Session["AllKeyWords"] = null;
             Session["PromoId"] = null;
@@ -53,6 +54,7 @@ namespace Semplest.Core.Controllers
             Session.Add("PromoId", promotionId);
             Session.Add("NegativeSmartwords", swsm.NegativeKeywords);
             Session.Add("NegativeSmartwordsText", swsm.NegativeKeywordsText);
+            Session.Add("SmartWordSetupModel", swsm);
             return View(swsm);
         }
 
@@ -64,7 +66,7 @@ namespace Semplest.Core.Controllers
             try
             {
 
-
+                ViewBag.IsNew = "False";
                 var swr = new SmartWordRepository();
                 var newIds = swr.SavePromotionDetails(swsm, swsm, GetCustomerId());
                 var scw = new ServiceClientWrapper();
@@ -106,21 +108,29 @@ namespace Semplest.Core.Controllers
 
         public ActionResult Setup(SmartWordSetupModel swsm, string command)
         {
+            ViewBag.IsNew = "True";
             return View(swsm);
         }
 
         public ActionResult Categories()
         {
             var categoryModels = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
+            var promoId = (int) Session["PromoId"];
+            var swsm = (SmartWordSetupModel)(Session["SmartWordSetupModel"]);
             if (categoryModels == null)
             {
-                //var scw = new ServiceClientWrapper();
-                //categoryModels = new List<CampaignSetupModel.CategoriesModel>();
-                //model = scw.GetCategories((CampaignSetupModel)Session["CampaignSetupModel"]);
+                var scw = new ServiceClientWrapper();
+                categoryModels = new List<CampaignSetupModel.CategoriesModel>();
+                var categories = scw.GetCategories(null, swsm.ProductGroup.ProductPromotionName,
+                                                   swsm.ProductGroup.Words,
+                                                   null, swsm.LandingUrl);
+                Session.Add("CategoryList", categories);
+                categoryModels.AddRange(
+                        categories.Select((t, j) => new CampaignSetupModel.CategoriesModel { Id = j, Name = t }));
                 //Session["CampaignSetupModel"] = model;
-                //Session["AllCategories"] = model.AllCategories;
+                Session["AllCategories"] = categoryModels;
             }
-            var promoId = (int) Session["PromoId"];
+            
             //var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
             //                                                 model.ProductGroup.ProductPromotionName);
             var dbContext = new SemplestModel.Semplest();
@@ -135,7 +145,6 @@ namespace Semplest.Core.Controllers
                         selectedIds.Add(i);
                     i += 1;
                 }
-
             }
             var swm = new SmartWordSetupModel();
             swm.CategoryIds = selectedIds;
@@ -206,10 +215,15 @@ namespace Semplest.Core.Controllers
         public ActionResult Words()
         {
             var keyWordModels = (List<CampaignSetupModel.KeywordsModel>) Session["AllKeyWords"];
+            if (keyWordModels == null)
+            {
+                keyWordModels = ((SmartWordSetupModel) Session["SmartWordSetupModel"]).AllKeywords;
+                Session["AllKeyWords"] = ((SmartWordSetupModel) Session["SmartWordSetupModel"]).AllKeywords;
+            }
             //var keyWordModelsF = keyWordModels.Where(x => x.Name.Contains("work")).ToList();
             var swm = new SmartWordSetupModel();
-            //swm.AllKeywords = keyWordModelsF;
-            //swm.WordCount = keyWordModelsF.Count();
+            swm.AllKeywords = keyWordModels;
+            swm.WordCount = keyWordModels.Count();
             return PartialView(swm);
         }
 
