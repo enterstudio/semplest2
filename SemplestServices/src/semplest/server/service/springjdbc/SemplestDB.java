@@ -32,6 +32,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.ApplyPromotionBudgetRequest;
 import semplest.server.protocol.Credential;
+import semplest.server.protocol.CreditCardProfile;
 import semplest.server.protocol.CustomOperation;
 import semplest.server.protocol.CustomerHierarchy;
 import semplest.server.protocol.EmailTemplate;
@@ -101,6 +102,13 @@ public class SemplestDB extends BaseDB
 
 	public static final String SQL_MARK_KEYWORD_DELETED = "update PromotionKeywordAssociation " + "set IsDeleted = 1, " + "Comment = ? "
 			+ "where KeywordFK = ?" + "  and PromotionFK = ?";
+	
+	public static final String SQL_GET_LATEST_BUDGET_FOR_PROMOTION = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate " +  
+																																	"from PromotionBudget  " + 
+																																	"where IsAppliedToPromotion = 1 " + 
+																																		"and IsValid = 1 " + 
+																																		"and PromotionFK = ? " + 
+																																	"order by BudgetToAddDate desc";
 
 	public static final String GET_EMAIL_TEMPLATE_SQL = "select	e.EmailTemplatePK, e.CustomerFK, e.EmailSubject, e.EmailBody, e.EmailFrom, e.EmailTypeFK "
 			+ "from	EmailTemplate e, " + "EmailType t " + "where	e.EmailTypeFK = t.EmailTypePK " + "and t.EmailTypePK = ?";
@@ -116,8 +124,8 @@ public class SemplestDB extends BaseDB
 	public static final String GET_USER_FOR_REGISTRATION_REMINDER_SQL = GET_USERS_FOR_REGISTRATION_REMINDER_SQL + " and UserPK = ?";
 
 	public static final String GET_USER_SQL = "select UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate from Users where UserPK = ?";
-	
 	public static final String GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate > ? and IsAppliedToPromotion = 0 and IsValid = 1";
+	
 	
 	public static final String GET_TRANSACTION_FOR_MAINTENANCE_SQL = "select TransactionsPK, CustomerFK, PayTypeFK, TransactionTypeFK, CreditCardProfileFK, Amount, CreatedDate, EditedDate from Transactions where TransactionsPK = ?";
 
@@ -126,6 +134,7 @@ public class SemplestDB extends BaseDB
 	public static final RowMapper<Job> JOB_ROW_MAPPER;	
 	public static final RowMapper<PromotionBudget> PROMOTION_BUDGET_ROW_MAPPER;
 	public static final RowMapper<Transaction> TRANSACTIONS_ROW_MAPPER;
+	public static final RowMapper<CreditCardProfile> CREDIT_CARD_PROFILE_ROW_MAPPER;	
 	
 	static
 	{
@@ -218,6 +227,28 @@ public class SemplestDB extends BaseDB
 				return promotionBudget;
 			}	
 		}; 
+		
+		CREDIT_CARD_PROFILE_ROW_MAPPER = new RowMapper<CreditCardProfile>()
+		{
+			@Override
+			public CreditCardProfile mapRow(final ResultSet rs, final int index) throws SQLException
+			{
+				final Integer creditCardProfilePk = rs.getInt("CreditCardProfilePK");
+				final String customerRefNum = rs.getString("CustomerRefNum");
+				final String authCode = rs.getString("AuthCode");
+				final String txRefNum = rs.getString("TxRefNum");
+				final Integer promotionFk = rs.getInt("PromotionFK");
+				final Integer customerFk = rs.getInt("CustomerFK");
+				final CreditCardProfile creditCardProfile = new CreditCardProfile(creditCardProfilePk, customerRefNum, authCode, txRefNum, promotionFk, customerFk);
+				return creditCardProfile;
+			}	
+		}; 
+	}
+	
+	public static List<CreditCardProfile> getCreditCardProfiles(final Integer promotionId)
+	{
+		final List<CreditCardProfile> creditCardProfiles = jdbcTemplate.query("select CreditCardProfilePK, CustomerRefNum, AuthCode, TxRefNum, PromotionFK, CustomerFK from CreditCardProfile where PromotionFK = ?", CREDIT_CARD_PROFILE_ROW_MAPPER, promotionId);
+		return creditCardProfiles;
 	}
 	
 	public static void updateJobLastSuccessfulRunTime(final JobName jobName) throws Exception
@@ -363,6 +394,18 @@ public class SemplestDB extends BaseDB
 		final List<PromotionBudget> budgets = jdbcTemplate.query(GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL, PROMOTION_BUDGET_ROW_MAPPER, asOfDate);
 		return budgets;
 	}
+	
+	public static PromotionBudget getLatestPromotionBudgetForPromotion(final Integer promotionId)
+	{
+		logger.info("Will try to Retrieve Latest Budget for Promotion for PromotionID [" + promotionId + "]");
+		final List<PromotionBudget> budgets = jdbcTemplate.query(SQL_GET_LATEST_BUDGET_FOR_PROMOTION, PROMOTION_BUDGET_ROW_MAPPER, promotionId);
+		if (budgets == null || budgets.isEmpty())
+		{
+			return null;
+		}
+		final PromotionBudget budget = budgets.get(0);
+		return budget;
+	}
 
 	public static Credential getCredential(final Integer userID) throws Exception
 	{
@@ -507,11 +550,9 @@ public class SemplestDB extends BaseDB
 		throw new UnsupportedOperationException("Cannot process [" + request + "] because this functionality is not yet implemented");
 	}
 	
-	// TODO: work in progress
-	
 	public static void applyInvoicePromotionBudget(final ApplyPromotionBudgetRequest request) throws Exception
 	{
-		final String operationDescription = "update Promotion using [" + request + "]";
+		final String operationDescription = "apply Invoice Promotion Budget using [" + request + "]";
 		logger.info("Will try to " + operationDescription);
 		final BigDecimal budgetCarryOverAmount = request.getBudgetCarryOverAmount();
 		final int rowcount = jdbcTemplate.update("begin tran " +

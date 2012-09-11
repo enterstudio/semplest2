@@ -38,10 +38,6 @@ public class PromotionMaintenance
 	 * 1) update cycle dates
 	 * 2) refill budget
 	 * 3) setup next budget for invoice transactions 
-	 * 
-	 * 
-	 * Questions
-	 * 1) can a customer switch between credit card and invoice type?
 	 */
 	public void engage(final java.util.Date asOfDate)
 	{
@@ -110,7 +106,7 @@ public class PromotionMaintenance
 				errorMap.put(promotionId, errMsg);
 			}
 		}
-		log.info("Summary:\n\nPromotions successfully processed:\n" + SemplestUtils.getEasilyReadableString(promotionsProcessed) + "\n\nPromotions with problems:\n" + SemplestUtils.getEasilyReadableString(errorMap));
+		log.info("Summary:\n\n" + promotionsProcessed.size() + " Promotions successfully processed:\n" + SemplestUtils.getEasilyReadableString(promotionsProcessed) + "\n\n" + errorMap.size() + " Promotions with problems:\n" + SemplestUtils.getEasilyReadableString(errorMap));
 	}
 	
 	// TODO: see if you need StartBudgetInCycle column, if not then delete it

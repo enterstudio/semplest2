@@ -29,7 +29,9 @@ import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.job.AccountActivationEmailSender;
 import semplest.server.job.ExpiredCredentialsEmailSender;
 import semplest.server.protocol.Credential;
+import semplest.server.protocol.CreditCardProfile;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
+import semplest.server.protocol.PromotionBudget;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
@@ -52,6 +54,7 @@ import semplest.server.protocol.adengine.PromotionStatus;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.SemplestCampaignStatus;
 import semplest.server.protocol.adengine.SiteLink;
+import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
 import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
 import semplest.server.protocol.google.GoogleAddAdRequest;
@@ -81,6 +84,7 @@ import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.service.scheduler.CreateSchedulerAndTask;
 import semplest.services.client.api.SemplestBiddingServiceClient;
+import semplest.services.client.api.SemplestChaseOrbitalGatewayServiceClient;
 import semplest.services.client.api.SemplestMailServiceClient;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
@@ -110,9 +114,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Long AdwordsValidationAdGroupID = null;
 	private static String DevelopmentEmail = null;
 	private static String RunMode = null;
-	private static Double BudgetMultFactor = null;
 	private static String AdengineExecuteBidProcessFrequency = null;
+	private static Integer billingDaysOffset = null;
 	private static Integer SemplestAdEngineReportLookbackDays;
+	private SemplestChaseOrbitalGatewayServiceClient chaseOrbitalClient;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 	// CustomerID = 2 State Farm coffee machine promotionID = 4
@@ -245,15 +250,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
 		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
-		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		DevelopmentEmail = (String) SemplestConfiguration.configData.get("DevelopmentEmail");
 		RunMode = (String) SemplestConfiguration.configData.get("RunMode");
 		SemplestAdEngineReportLookbackDays = (Integer) SemplestConfiguration.configData.get("SemplestAdEngineReportLookbackDays");
 		AdengineExecuteBidProcessFrequency = (String) SemplestConfiguration.configData.get("AdengineExecuteBidProcessFrequency");
+		billingDaysOffset = (Integer) SemplestConfiguration.configData.get("BillingDaysOffset");
 		if (!ProtocolEnum.ScheduleFrequency.existsFrequency(AdengineExecuteBidProcessFrequency))
 		{
 			throw new Exception("AdengineExecuteBidProcessFrequency parameter " + AdengineExecuteBidProcessFrequency + " is not a valid Schedule Frequency");
 		}
+		chaseOrbitalClient = new SemplestChaseOrbitalGatewayServiceClient(ESBWebServerURL);
 	}
 
 	public String AddPromotionToAdEngine(String json) throws Exception
@@ -268,6 +274,28 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
 		AddPromotionToAdEngine(customerID, productGroupID, promotionID, adEngines);
 		return gson.toJson(true);
+	}
+	
+	public void setupRecurringBilling(final Integer promotionId, final java.util.Date asOfDate) throws Exception
+	{
+		logger.info("Will try to Setup Recurring Billing for PromotionID [" + promotionId + "], AsOfDate [" + asOfDate + "]");
+		final List<CreditCardProfile> creditCardProfiles = SemplestDB.getCreditCardProfiles(promotionId);
+		final Integer numCreditCardProfiles = creditCardProfiles.size();
+		logger.info("Found " + numCreditCardProfiles + " CreditCardProfiles:\n" + SemplestUtils.getEasilyReadableString(creditCardProfiles));
+		if (numCreditCardProfiles != 1)
+		{
+			throw new Exception("Expect to find 1 Credit Card Profile for PromotionID [" + promotionId + "], but found " + numCreditCardProfiles);
+		}
+		final CreditCardProfile creditCardProfile = creditCardProfiles.get(0);
+		final String creditCardProfileRefNum = creditCardProfile.getCustomerRefNum();
+		final PromotionBudget budget = SemplestDB.getLatestPromotionBudgetForPromotion(promotionId);
+		
+		// TODO: need to add Semplest Fee to the amount being charged
+		final BigDecimal budgetAmount = budget.getBudgetToAddAmount();
+		final java.util.Date recurringBillingDate = SemplestUtils.getDate(asOfDate, billingDaysOffset);
+		final Double budgetAmountDouble = budgetAmount.doubleValue();
+		final GatewayReturnObject response = chaseOrbitalClient.UpdateProfileRecurringBilling(creditCardProfileRefNum, budgetAmountDouble, recurringBillingDate);
+		logger.info("Chase response:\n" + response.toStringPretty());
 	}
 
 	@Override
@@ -287,17 +315,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 7. Set Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE // 8. Service
 			 * call - semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
 			 */
+			
+			// Setup recurring billing
+			setupRecurringBilling(PromotionID, new java.util.Date());
 						
 			/*
 			TODO: put this back when the GUI initiates the status to PENDING
-			 
 			final Map<AdEngine, PromotionStatus> promotionStatuses = SemplestDB.getPromotionStatus(PromotionID, adEngines);
 			if (!promotionStatuses.isEmpty())
 			{
 				throw new Exception("This promotion already has statuses from before, so it's not the first time this promotion is being added.  This shouldn't happen.\n" + SemplestUtils.getEasilyReadableString(promotionStatuses));
 			}
-			*/
-			
+			*/					
 			SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);			
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(PromotionID);

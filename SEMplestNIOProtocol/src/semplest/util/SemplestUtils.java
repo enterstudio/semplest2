@@ -226,6 +226,15 @@ public final class SemplestUtils
 		return stackTrace;
 	}
 	
+	public static java.util.Date getDate(final java.util.Date baseDate, final Integer daysDiff)
+	{
+		final Calendar c = Calendar.getInstance();
+		c.setTime(baseDate);
+		c.add(Calendar.DAY_OF_MONTH, daysDiff);
+		final java.util.Date newDate = c.getTime();
+		return newDate;
+	}
+	
 	public static Integer getDiffInDays(final java.util.Date date1, java.util.Date date2)
 	{
 		final long date1Millis = date1.getTime();
