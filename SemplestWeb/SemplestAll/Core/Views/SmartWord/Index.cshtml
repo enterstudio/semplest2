@@ -52,7 +52,7 @@
                 </table>
             </div>
             <br />
-           
+           <input type="hidden" id="SetUpURL" value="@System.Configuration.ConfigurationManager.AppSettings["SetUpURL"]"/>
             <div id="RemovePromotionWindow" style="display: none">
                 <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
                 <div class="question">
@@ -116,7 +116,7 @@
                     });
 
                     $('#btnCreatAd').click(function () {
-                        location.href = '../SmartWord/Setup';
+                        location.href = $('#SetUpURL').val();
                     });
 
                     $("#btnAdd").click(function (event) {
