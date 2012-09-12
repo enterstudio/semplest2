@@ -12,12 +12,12 @@ import java.util.HashSet;
 
 // The worker of the distributed computing system
 // 
-// As many workers as necessary are created(with the ip adress of the master)
-//  Workers periodically announce to master they are free to do work 
+// As many workers as necessary are constructed (with master's ip-adress)
+//  When free workers announce to master they are able to do work 
 //  The master sends them work of form String w;
-//  The worker does computaion on the work string and returns a result String
+//  The worker does computation on the work string and returns a result String
 //  The master saves the work and sends new work if there is work to be done
-//  A worker needs an imlementation the interface Collector.Computer
+//  A worker needs to implement the interface Collector.Computer
 //    which requires the function "String Compute(String w)"
 
 public class Worker {
@@ -40,7 +40,7 @@ public class Worker {
       askForWork();
     }
 
-    // Actor Message processing
+    // Periodically ask for work if free
     public void askForWork(){
       try {
         Thread.sleep( 5000 );
@@ -49,7 +49,7 @@ public class Worker {
       }
       getSelf().tell( new Collector.Wakeup() );
     }
-
+    // Actor Message Processing
     public void onReceive( Object msg){
       if( msg instanceof Collector.Work ){
         working = true;
@@ -97,7 +97,7 @@ public class Worker {
 
   // ------------------------------------------------------------------------------
   // - Example usage
-  //    Imlement the interface Collector.Computer
+  //    Implement the interface Collector.Computer
   //     implement the function "String Compute(String w)"
   //    Construct Worker
   public static void main( String[] args ){
@@ -107,6 +107,8 @@ public class Worker {
     if( args.length > 1 ) workers = Integer.parseInt( args[1]);
 
     Collector.Computer c = new Collector.Computer(){
+      // example here assumes input is a space-separated list of urls
+      // returns text associated with each url, " :: " separated
       public String compute( String w) {
         String res = "";
         for( String url : w.split("\\s+"))
