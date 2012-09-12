@@ -13,10 +13,15 @@ $(document).ready(function () {
 
     $("#form0").kendoValidator({
         rules: {
-//            custom: function (input) {
-//                // Only Tom will be a valid value for FirstName input
-//                return input.is("[name=ProductGroupName]") && input.val() == "Sports Equiptment";
-//            }
+            custom: function (input) {
+                var rval = false;
+                if (input.is("[name=LandingUrl]")) {
+                    if (input.val().substr(0, 4) == 'http') rval = true;
+                } else {
+                    rval = true;
+                }
+                return rval;
+            }
         }
     });
 
@@ -393,7 +398,7 @@ $(document).ready(function () {
         $('.address')[i].outerHTML = DisableGeoTargetFields($('.address')[i].outerHTML);
     }
 
-});                                    //end ready
+});                                          //end ready
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);

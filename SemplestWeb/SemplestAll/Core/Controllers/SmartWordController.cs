@@ -50,6 +50,8 @@ namespace Semplest.Core.Controllers
             Session["NegativeSmartWords"] = null;
             var swr = new SmartWordRepository();
             var swsm = swr.GetSetupModelForPromotionId(promotionId, GetCustomerId());
+            if (swsm.Addresses.Count == 0)
+                swsm.Addresses.Add(new GeoTargeting());
             ViewBag.Title = swsm.ProductGroup.ProductGroupName + " " + swsm.ProductGroup.ProductPromotionName;
             Session.Add("PromoId", promotionId);
             Session.Add("NegativeSmartwords", swsm.NegativeKeywords);
