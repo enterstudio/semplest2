@@ -65,6 +65,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.bidding.AdEngineBidHistoryData;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
+import semplest.server.protocol.msn.AddAdGroupsRetriableMsnOperation;
 import semplest.server.protocol.msn.AddKeywordsRetriableMsnOperation;
 import semplest.server.protocol.msn.AddNegativeKeywordsRetriableMsnOperation;
 import semplest.server.protocol.msn.MSNGeotargetObject;
@@ -73,6 +74,7 @@ import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnCloudException;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.protocol.msn.MsnKeywordObject;
+import semplest.server.protocol.msn.SubmitAdGroupRequestRetriableMsnOperation;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
@@ -1482,13 +1484,16 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			adGroup.setPublisherCountries(publisherCountries);
 			adGroup.setNetwork(Network.OwnedAndOperatedAndSyndicatedSearch);
 			logger.info("About to create MSN AdGroup: " + SemplestUtils.getMsnAdGroupString(adGroup));
-			final AddAdGroupsResponse addAdGroupsResponse = campaignManagement.addAdGroups(new AddAdGroupsRequest(campaignId, new AdGroup[] { adGroup }));
+			final AddAdGroupsRequest addAdGroupsRequest = new AddAdGroupsRequest(campaignId, new AdGroup[]{adGroup});			
+			final AddAdGroupsRetriableMsnOperation operation = new AddAdGroupsRetriableMsnOperation(campaignManagement, addAdGroupsRequest, SemplestUtils.DEFAULT_RETRY_COUNT);			
+			final AddAdGroupsResponse addAdGroupsResponse = operation.performOperation();
 			final long[] adGroupIds = addAdGroupsResponse.getAdGroupIds();
 			logger.info("Got " + adGroupIds.length + " AdGroup Ids from MSN: [" + SemplestUtils.getStringForArray(adGroupIds) + "]");
 			final Long adGroupId = adGroupIds[0];
 			final SubmitAdGroupForApprovalRequest submitAdGroupRequest = new SubmitAdGroupForApprovalRequest();
 			submitAdGroupRequest.setAdGroupId(adGroupId);
-			final SubmitAdGroupForApprovalResponse approvalResponse = campaignManagement.submitAdGroupForApproval(submitAdGroupRequest);
+			final SubmitAdGroupRequestRetriableMsnOperation submitForApprovalOperation = new SubmitAdGroupRequestRetriableMsnOperation(campaignManagement, submitAdGroupRequest, SemplestUtils.DEFAULT_RETRY_COUNT);
+			final SubmitAdGroupForApprovalResponse approvalResponse = submitForApprovalOperation.performOperation();
 			return adGroupId;
 		}
 		catch (AdApiFaultDetail e)

@@ -67,6 +67,7 @@ import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleSetBidForKeywordRequest;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.InfoServiceGetRetriableGoogleOperation;
+import semplest.server.protocol.google.LocationCriterionGetRetriableGoogleOperation;
 import semplest.server.protocol.google.TargetingIdeaGetRetriableGoogleOperation;
 import semplest.server.protocol.google.TrafficEstimatorGetRetriableGoogleOperation;
 import semplest.server.protocol.google.UpdateAdRequest;
@@ -3639,13 +3640,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.info("Will try to " + operationDescription);
 		try
 		{
-			AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
+			final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 			final Selector selector = new Selector();
 			selector.setFields(GEO_TARGET_FIELDS);
 			final Predicate cp = new Predicate("CampaignId", PredicateOperator.EQUALS, new String[]{"" + campaignId});
 			selector.setPredicates(new Predicate[]{cp});
-			final CampaignCriterionPage page = campaignCriterionService.get(selector);
+			final CampaignCriterionGetRetriableGoogleOperation operation = new CampaignCriterionGetRetriableGoogleOperation(campaignCriterionService, selector, SemplestUtils.DEFAULT_RETRY_COUNT);
+			final CampaignCriterionPage page = operation.performOperation();
 			final CampaignCriterion[] campaignCriterion = page.getEntries();
 			final List<Long> existingProximityIds = new ArrayList<Long>();
 			final List<Long> existingLocationIds = new ArrayList<Long>();
@@ -3762,32 +3764,33 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.info("Will try to get Google Location ID for State [" + state + "]");
 		final Selector selector = new Selector();
 		selector.setFields(LOCATION_SERVICE_FIELDS);
-	    final Predicate locationNamePredicate = new Predicate("LocationName",PredicateOperator.IN, new String[]{state});
-	    final Predicate localePredicate = new Predicate("Locale",PredicateOperator.EQUALS, new String[]{"en_US"});
-	    selector.setPredicates(new Predicate[]{locationNamePredicate,localePredicate});	    
-	    final LocationCriterion[] locationCriterions;
+    final Predicate locationNamePredicate = new Predicate("LocationName",PredicateOperator.IN, new String[]{state});
+    final Predicate localePredicate = new Predicate("Locale",PredicateOperator.EQUALS, new String[]{"en_US"});
+    selector.setPredicates(new Predicate[]{locationNamePredicate,localePredicate});	    
+    final LocationCriterion[] locationCriterions;
 		try
 		{
-			locationCriterions = LOCATION_CRITERION_SERVICE.get(selector);
+			final LocationCriterionGetRetriableGoogleOperation operation = new LocationCriterionGetRetriableGoogleOperation(LOCATION_CRITERION_SERVICE, selector, SemplestUtils.DEFAULT_RETRY_COUNT); 
+			locationCriterions = operation.performOperation();
 		}
 		catch (Exception e)
 		{
 			throw new Exception("Problem getting Google Location ID for State [" + state + "]", e);
 		}
-	    if (locationCriterions == null || locationCriterions.length == 0)
-	    {
-	    	return null;
-	    }
-	    for (final LocationCriterion locationCriterion : locationCriterions)
-	    {
-	    	final Location location = locationCriterion.getLocation();
-	    	final String displayName = location.getDisplayType();
-	    	if ("State".equals(displayName))
-	    	{	    		
-	    		return location.getId(); 
-	    	}
-	    }
-	    return null;
+    if (locationCriterions == null || locationCriterions.length == 0)
+    {
+    	return null;
+    }
+    for (final LocationCriterion locationCriterion : locationCriterions)
+    {
+    	final Location location = locationCriterion.getLocation();
+    	final String displayName = location.getDisplayType();
+    	if ("State".equals(displayName))
+    	{	    		
+    		return location.getId(); 
+    	}
+    }
+    return null;
 	}
 	
 	public List<CampaignCriterionOperation> getGeoPointGeoTargetOperations(final Long campaignId, final List<GeoTargetObject> geoTargets, final Operator operator) throws Exception

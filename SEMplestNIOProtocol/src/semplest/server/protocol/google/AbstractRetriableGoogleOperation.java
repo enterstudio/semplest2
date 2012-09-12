@@ -9,6 +9,7 @@ import semplest.util.SemplestUtils;
 
 import com.google.api.adwords.v201109.cm.ApiError;
 import com.google.api.adwords.v201109.cm.ApiException;
+import com.google.api.adwords.v201109.cm.DatabaseError;
 import com.google.api.adwords.v201109.cm.PolicyViolationError;
 import com.google.api.adwords.v201109.cm.PolicyViolationKey;
 import com.google.api.adwords.v201109.cm.RateExceededError;
@@ -67,16 +68,39 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOp
 		final String errMsg = "Problem performing operation: " + e.dumpToString();
 		logger.error(errMsg, e);
 		final RateExceededError rateExceededError = getRateExceededError(e);
+		final DatabaseError databaseError = getDatabaseError(e);
 		if (rateExceededError != null)
 		{
 			final Integer retryAfterSeconds = getRetryAfterSeconds(rateExceededError);
 			logger.info("Encountered RateExceededError.  Will sleep for " + retryAfterSeconds + " seconds");
 			Thread.sleep(retryAfterSeconds * SemplestUtils.SECOND);			
 		}
+		else if (databaseError != null)
+		{
+			logger.info("Encountered DatabaseError.  Will sleep for " + SemplestUtils.DEFAULT_API_SLEEP_SECS + " seconds");
+			Thread.sleep(SemplestUtils.DEFAULT_API_SLEEP_SECS * SemplestUtils.SECOND);		
+		}
 		else
 		{
 			logger.info("Encountered ApiException.  Will try again (if not yet hit the limit of [" + maxRetries + "] times ).");
 		}
+	}
+	
+	public static DatabaseError getDatabaseError(final ApiException e)
+	{
+		final ApiError[] apiErrors = e.getErrors();
+		if (apiErrors != null)
+		{
+			for (final ApiError apiError : apiErrors)
+			{
+				if (apiError instanceof DatabaseError)
+				{
+					final DatabaseError databaseError = (DatabaseError)apiError;
+					return databaseError;						
+				}
+			}
+		}
+		return null;
 	}
 	
 	public static RateExceededError getRateExceededError(final ApiException e)
