@@ -147,6 +147,10 @@ public class SystemTestFunc extends BaseDB
 
 		System.out.println(" - Delete history test data from database.");
 
+		//delete transaction data
+		sql = "DELETE Transactions WHERE CustomerFK = ?";
+		jdbcTemplate.update(sql, new Object[] {SystemTestDataModel.semplestCustomerId});
+		
 		// get the list of promotion IDs
 		sql = "SELECT p.PromotionPK FROM Promotion p WHERE ProductGroupFK = ?";
 		List<Integer> promoIds = jdbcTemplate.queryForList(sql, new Object[] { SystemTestDataModel.semplestProductGroupId }, Integer.class);
@@ -246,9 +250,11 @@ public class SystemTestFunc extends BaseDB
 					"DELETE FROM PromotionBidding WHERE PromotionFK = ?;" + 
 					"DELETE FROM TargetedDailyBudget WHERE PromotionFK = ?;" + 
 					"DELETE CreditCardProfile WHERE PromotionFK = ?" + 
+					"DELETE CreditCardProfile WHERE PromotionFK = ?" +
+					"DELETE PromotionBudget WHERE PromotionFK = ?" + 
 					"DELETE Promotion WHERE PromotionPK = ?;";
 
-			jdbcTemplate.update(sql, new Object[] { promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId });
+			jdbcTemplate.update(sql, new Object[] { promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId});
 
 			System.out.println("  	> deleted all the other data for PromotionID " + promoId);
 		}
