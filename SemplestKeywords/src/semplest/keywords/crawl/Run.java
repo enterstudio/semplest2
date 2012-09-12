@@ -14,12 +14,12 @@ import java.util.HashMap;
 //  Run r = new Run();
 //  Map<String,String> work;
 //  .......... populate work ...... 
-//  r.add( wmap );
+//  r.add( work );
 //  while( ! done )
 //    Map<String,String> = r.results();
 //
 //  Note: This Master distributes the work to workers and collects results.
-//        It doe *not* do retries. It is up to the user to keep track of
+//        It does *not* do retries. It is up to the user to keep track of
 //        completion and do retries.
 
 public class Run {
