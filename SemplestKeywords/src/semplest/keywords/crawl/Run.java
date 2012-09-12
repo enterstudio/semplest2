@@ -18,7 +18,7 @@ import java.util.HashMap;
 //  while( ! done )
 //    Map<String,String> = r.results();
 //
-//  Note: The Master distributes the work to workers and collects results.
+//  Note: This Master distributes the work to workers and collects results.
 //        It doe *not* do retries. It is up to the user to keep track of
 //        completion and do retries.
 
@@ -44,7 +44,9 @@ public class Run {
     public void collectResults(){
       try {
         Thread.sleep( Run.COLLECT_INTERVAL );
-      } catch (Exception e){ e.printStackTrace(); }
+      } catch (Exception e){ 
+        e.printStackTrace();                               // logging ?
+      }
       getSelf().tell( new Collector.Wakeup() );
     }
 
