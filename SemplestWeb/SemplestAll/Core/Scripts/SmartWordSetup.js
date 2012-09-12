@@ -672,6 +672,7 @@ function OnSuccess(id) {
     } else {
         if (id.name == "Keywords") {
             $('#KeywordCount').html(id.count);
+            tabStrip.reload(tabStrip.select());
         } else if (id.name == "Categories") {
             $('input[name *= "HasBeenSaved"]').val('True');
             if (!tabStrip.tabGroup.children('li:contains("' + id.name + '")').text()) {

@@ -94,7 +94,7 @@ namespace Semplest.Core.Controllers
                         categories.Select((t, i) => new CampaignSetupModel.CategoriesModel {Id = i, Name = t}));
                     Session.Add("AllCategories", categoryModels);
                 }
-
+                
                 return Json(new {newKeys = newIds, name = "Categories"});
                 // get the categoris from the web service
             }
@@ -170,6 +170,7 @@ namespace Semplest.Core.Controllers
                                            model.ProductGroup.ProductPromotionName,
                                            model.ProductGroup.Words, null, model.LandingUrl,
                                            null);
+
             var campaignRepository = new CampaignRepository();
             var kpos = new List<KeywordProbabilityObject>();
             kpos.AddRange(keywords);
@@ -177,6 +178,9 @@ namespace Semplest.Core.Controllers
             var promotionRepository = new PromotionRepository(dbcontext);
             var promoId = promotionRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                              model.ProductGroup.ProductPromotionName);
+            
+            ICategoriesRepository catRepos = new CategoriesRepository(dbcontext);
+            catRepos.SaveSelectedCategories(promoId, catList);
             campaignRepository.SaveKeywords(promoId, kpos, null,
                                             model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
             foreach (

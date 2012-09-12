@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using SemplestModel;
-using Semplest.SharedResources.Services;
-using SemplestModel.TVP;
+
 
 namespace Semplest.Core.Models.Repositories
 {

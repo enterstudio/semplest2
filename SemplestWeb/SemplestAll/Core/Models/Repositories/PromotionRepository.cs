@@ -1,12 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using SemplestModel;
 
 namespace Semplest.Core.Models.Repositories
 {
     public class PromotionRepository : IPromotionRepository
     {
-        private SemplestModel.Semplest _dbcontext;
+        readonly SemplestModel.Semplest _dbcontext;
 
         public PromotionRepository(SemplestModel.Semplest dbcontext)
         {
