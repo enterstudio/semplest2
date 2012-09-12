@@ -122,7 +122,8 @@ public class Run {
     r.add( work );
     while( true ){
       Map<String,String> res = r.results();
-      if( res.size() > 0 ){
+      // do something with results. In this example we just print a count.
+      if( res.size() > 0 ){ 
         System.out.println("R:Got " + res.size() + " results, " + r.todo() + " todo");
         for( Map.Entry<String,String> e: res.entrySet())
           System.out.println( e.getKey() + " : " + e.getValue().substring(0,25) );
