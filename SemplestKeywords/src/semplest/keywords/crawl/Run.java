@@ -116,7 +116,7 @@ public class Run {
   public static void main( String[] args ) throws Exception {
 
     String ufile = "/semplest/data/dmoz/all.urls";
-    Map<String,String> work = crawlUtils.readUrls( ufile );
+    Map<String,String> work = crawlUtils.readUrls( ufile, 10 );
 
     Run r = new Run();
     r.add( work );

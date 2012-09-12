@@ -11,8 +11,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.HashSet;
 
 // The worker of the distributed computing system
-// As many workers as necessary are creates(with the ip adress of the master)
-//  Workers periodically announce they are free to do work 
+// 
+// As many workers as necessary are created(with the ip adress of the master)
+//  Workers periodically announce to master they are free to do work 
 //  The master sends them work of form String w;
 //  The worker does computaion on the work string and returns a result String
 //  The master saves the work and sends new work if there is work to be done
@@ -35,7 +36,7 @@ public class Worker {
       try {
         id = java.net.InetAddress.getLocalHost().getHostName() + ":" +
           Thread.currentThread().getId();
-      } catch (Exception e){ e.printStackTrace(); }
+      } catch (Exception e){ e.printStackTrace(); }      // logging? 
       askForWork();
     }
 
@@ -43,7 +44,9 @@ public class Worker {
     public void askForWork(){
       try {
         Thread.sleep( 5000 );
-      } catch (Exception e){ e.printStackTrace(); }
+      } catch (Exception e){ 
+        e.printStackTrace();                              // logging ?
+      }
       getSelf().tell( new Collector.Wakeup() );
     }
 
@@ -81,7 +84,8 @@ public class Worker {
     ActorSystem system = ActorSystem.create("Collector", 
         ConfigFactory.load( conf ));
     final ActorRef collector= system.actorFor( remoteAddr );
-    
+   
+    // Create workers-num of new worker threads
     for( int i=0; i< new Integer( workers); i++)
       system.actorOf(new Props( new UntypedActorFactory(){
         public UntypedActor create(){
@@ -93,9 +97,9 @@ public class Worker {
 
   // ------------------------------------------------------------------------------
   // - Example usage
-  // -   Imlement the interface Collector.Computer
-  // -   Implement the function "String Compute(String w)"
-  // -   Construct Worker
+  //    Imlement the interface Collector.Computer
+  //     implement the function "String Compute(String w)"
+  //    Construct Worker
   public static void main( String[] args ){
     String ip = "127.0.1.1";
     if( args.length > 0 ) ip = args[0];

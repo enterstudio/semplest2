@@ -13,17 +13,19 @@ import java.util.HashSet;
 // Class that distributes and collects work from distributed workers
 public class Collector {
 
-  final static int QSIZE = 1000000;
+  final static int QSIZE = 1000000;         // Internal work queue
   
   public ActorRef cactor;
-  
+ 
+  // ----------------------------------------------------
   // - Interfaces --------
   public interface Computer {
     public String compute( String in );
   }
   public interface Msgs extends Serializable {}
-  
-  // - Messages --------
+ 
+  // -----------------
+  // - Definition of Messages used for communication--------
   public static class Work implements Msgs {
     public final String id;
     public final String data;
@@ -64,8 +66,8 @@ public class Collector {
     // Message processing
     public void onReceive( Object msg){
       if( msg instanceof Ready ){
-        System.out.printf("C: %s ready, (done/todo): %d,%d\n", ((Ready)msg).id, 
-            workQ.size(), results.size());
+        System.out.printf("C: %s ready, (done/todo): %d,%d\n", 
+            ((Ready)msg).id, workQ.size(), results.size());       // logging ?
         Work w = workQ.poll();
         if( w != null ) getSender().tell( w );
       }
@@ -73,7 +75,7 @@ public class Collector {
         getSender().tell( results.toArray( new Answer[]{} ));
         results.clear();
         System.out.printf("C: Result:: (done/todo): %d,%d\n", 
-            workQ.size(), results.size());
+            workQ.size(), results.size());                        // logging ?
       }
       else if ( msg instanceof Work )
         workQ.add( (Work) msg );
@@ -86,11 +88,11 @@ public class Collector {
         getSender().tell( new Todo( workQ.size()));
       }
       else 
-        System.out.println("Errro" + msg.getClass().getName());
+        System.out.println("Errro" + msg.getClass().getName());  // logging?
     }
   }
 
-  // - The Interface -----------------------------------------------------------
+  // - The API Interface --------------------------------------------- 
   // - Ctr ---------
   public Collector(){
     String myip = crawlUtils.getIp();
@@ -101,7 +103,8 @@ public class Collector {
         " remote { netty { hostname = \"" + myip + "\" } } \n" +
         " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" " +
         "} ");
-    ActorSystem system = ActorSystem.create("Collector", ConfigFactory.load( conf ));
+    ActorSystem system = ActorSystem.create("Collector", 
+        ConfigFactory.load( conf ));
     cactor = system.actorOf(new Props( new UntypedActorFactory(){
       public UntypedActor create(){
         return new CActor(); 
@@ -109,9 +112,8 @@ public class Collector {
     }), "cactor");
   }
 
-  // ----------------------------------------------------------------------------
+  // ------------------------------------------------------------------
   public static void main( String[] args ){
-    Collector collector = new Collector();
   }
 }
 
