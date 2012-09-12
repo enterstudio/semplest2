@@ -15,7 +15,6 @@ public class DmozTreeBuilder {
 	private DmozTreeNode topNode;
 	
 	private String categoryCidFile;
-	//private String categoryDescriptionFile;
 	private String categoryUrlsFile;		
 	
 	public static void main(String[] args){
@@ -37,13 +36,11 @@ public class DmozTreeBuilder {
 		in.close();
 		
 		this.categoryCidFile = properties.getProperty("dmoz.idFile");
-		//this.categoryDescriptionFile = properties.getProperty("dmoz.descriptionFile");
 		this.categoryUrlsFile = properties.getProperty("dmoz.urlDescFile");
 	}
 	
 	public DmozTreeBuilder(String categoryCidFile, String categoryUrlsFile) throws Exception{
 		this.categoryCidFile = categoryCidFile;
-		//this.categoryDescriptionFile = categoryDescriptionFile;
 		this.categoryUrlsFile = categoryUrlsFile;
 	}
 	
@@ -105,29 +102,6 @@ public class DmozTreeBuilder {
 			allData.put(cat, catData);
 		}
 		in.close();
-		
-		/*
-		// 3 --load all descriptions
-		fstream = new FileInputStream(categoryDescriptionFile);
-		in = new DataInputStream(fstream);
-		br = new BufferedReader(new InputStreamReader(in));
-		
-		while ((strLine = br.readLine()) != null){
-			String[] lineContents = strLine.split(" : ");
-			String cat = lineContents[0].trim();
-			String description = lineContents[1].trim();
-			DmozCategoryData catData;
-			if(!allData.containsKey(cat)){
-				catData = new DmozCategoryData();
-			}
-			else{
-				catData = allData.get(cat);
-			}
-			catData.setDescription(description);
-			allData.put(cat, catData);
-		}
-		in.close();		
-		*/
 		
 		return allData;
 	}
