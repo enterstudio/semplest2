@@ -8,6 +8,19 @@ var formClean;
 
 
 $(document).ready(function () {
+
+
+
+    $("#form0").kendoValidator({
+        rules: {
+//            custom: function (input) {
+//                // Only Tom will be a valid value for FirstName input
+//                return input.is("[name=ProductGroupName]") && input.val() == "Sports Equiptment";
+//            }
+        }
+    });
+
+
     //tabStrip.tabGroup.children('li:contains("Create Ads")').find('a.k-link').data('contentUrl', $('#CreateAdsUrl').val());
     $("#adMessage").css("visibility", "hidden");
     formClean = $('#LandingUrl').serialize() + $('#DisplayUrl').serialize() + $('#Words').serialize();
@@ -380,7 +393,7 @@ $(document).ready(function () {
         $('.address')[i].outerHTML = DisableGeoTargetFields($('.address')[i].outerHTML);
     }
 
-});                                 //end ready
+});                                    //end ready
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
@@ -636,7 +649,7 @@ function OnSuccess(id) {
         tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
         tabStrip.select(tab);
     } else if (id.name == "ViewSmartWords") {
-        if (!tabStrip.tabGroup.children('li:contains("' + id.name + '")').text()) {
+        if (!tabStrip.tabGroup.children('li:contains("View SmartWords")').text()) {
             tabStrip.append({
                 text: "View SmartWords",
                 contentUrl: $('#ViewSmartWordsUrl').val()
@@ -644,7 +657,7 @@ function OnSuccess(id) {
             tab = tabStrip.tabGroup.children('li:contains("View SmartWords")');
             tabStrip.select(tab);
         } else {
-            tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+            tab = tabStrip.tabGroup.children('li:contains("View SmartWords")');
             tabStrip.select(tab);
         }
     } else if (id == "NegativeKeywords") {
