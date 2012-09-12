@@ -234,11 +234,21 @@ public class SystemTestFunc extends BaseDB
 			}
 			System.out.println("  	>>");
 
-			sql = "DELETE FROM AdvertisingEnginePromotion where PromotionFK = ?;" + "DELETE PromotionAds WHERE PromotionFK = ?;" + "DELETE FROM KeywordBid WHERE PromotionFK = ?;" + "DELETE PromotionKeywordAssociation WHERE PromotionFK = ?;" + "DELETE FROM KeywordCategory WHERE PromotionFK = ?;"
-					+ "DELETE GeoTargeting WHERE PromotionFK = ?;" + "DELETE SiteLinks WHERE PromotionFK = ?;" + "DELETE FROM PromotionAdEngineSelected WHERE PromotionFK = ?;" + "DELETE FROM PromotionAdengineStatus WHERE PromotionFK = ?;" + "DELETE FROM PromotionBidding WHERE PromotionFK = ?;"
-					+ "DELETE FROM TargetedDailyBudget WHERE PromotionFK = ?;" + "DELETE Promotion WHERE PromotionPK = ?;";
+			sql = "DELETE FROM AdvertisingEnginePromotion where PromotionFK = ?;" + 
+					"DELETE PromotionAds WHERE PromotionFK = ?;" + 
+					"DELETE FROM KeywordBid WHERE PromotionFK = ?;" + 
+					"DELETE PromotionKeywordAssociation WHERE PromotionFK = ?;" + 
+					"DELETE FROM KeywordCategory WHERE PromotionFK = ?;" + 
+					"DELETE GeoTargeting WHERE PromotionFK = ?;" + 
+					"DELETE SiteLinks WHERE PromotionFK = ?;" + 
+					"DELETE FROM PromotionAdEngineSelected WHERE PromotionFK = ?;" + 
+					"DELETE FROM PromotionAdengineStatus WHERE PromotionFK = ?;" + 
+					"DELETE FROM PromotionBidding WHERE PromotionFK = ?;" + 
+					"DELETE FROM TargetedDailyBudget WHERE PromotionFK = ?;" + 
+					"DELETE CreditCardProfile WHERE PromotionFK = ?" + 
+					"DELETE Promotion WHERE PromotionPK = ?;";
 
-			jdbcTemplate.update(sql, new Object[] { promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId });
+			jdbcTemplate.update(sql, new Object[] { promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId });
 
 			System.out.println("  	> deleted all the other data for PromotionID " + promoId);
 		}
