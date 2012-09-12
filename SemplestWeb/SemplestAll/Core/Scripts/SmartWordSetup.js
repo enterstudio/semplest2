@@ -17,7 +17,14 @@ $(document).ready(function () {
                 var rval = false;
                 if (input.is("[name=LandingUrl]")) {
                     if (input.val().substr(0, 4) == 'http') rval = true;
-                } else {
+                }
+//                else if (input.is("[name=CategoryIds]")) {
+//                    var fields = $("input[name=CategoryIds]").serializeArray();
+//                    if (fields.length == 0) {
+//                        rval = false;
+//                    } else {
+//                        rval = true; }}
+                 else {
                     rval = true;
                 }
                 return rval;
@@ -398,7 +405,7 @@ $(document).ready(function () {
         $('.address')[i].outerHTML = DisableGeoTargetFields($('.address')[i].outerHTML);
     }
 
-});                                          //end ready
+});                                             //end ready
 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);

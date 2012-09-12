@@ -159,6 +159,8 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "GetKeywords")]
         public ActionResult GetKeywords(SmartWordSetupModel model)
         {
+            if (model.CategoryIds == null)
+                return Json("Atleast one Category needs to be selected");
             int userid =
                 ((Credential) (Session[SEMplestConstants.SESSION_USERID])).UsersFK;
             var catList = new List<string>();
