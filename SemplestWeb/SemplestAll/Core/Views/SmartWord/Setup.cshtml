@@ -111,7 +111,7 @@
                              <tr style="height: 35px;">
                                  <td style="width: 68px">&nbsp;</td>
                                  <td>
-                                     @Html.TextBoxFor(m => m.LandingUrl, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter a valid URL it must begin with http(s)" })
+                                     @Html.TextBoxFor(m => m.LandingUrl, new { @class = "k-textbox k-textboxAd1", @validationmessage = "Please enter a valid URL it must begin with http(s)" })
                                      @Html.ValidationMessageFor(t => t.LandingUrl)
                                  </td>
                                  <td>

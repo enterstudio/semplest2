@@ -810,6 +810,10 @@
           <Property Name="BiddingServiceGoogleVolMultiplierFromMSNHistory" Type="int" />
           <Property Name="SemplestAdEngineReportLookbackDays" Type="int" />
           <Property Name="MSNReportRetrievalTimeoutSecs" Type="int" />
+          <Property Name="SemplestKeywordslucenedir" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsbdbdir" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsdffile" Type="varchar" MaxLength="100" />
+          <Property Name="numTopics" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -1187,6 +1191,7 @@
           <Property Name="DisplayURL" Type="nvarchar" MaxLength="35" />
           <Property Name="IsAutobid" Type="bit" Nullable="false" />
           <Property Name="AutoBidMaxCPC" Type="money" />
+          <Property Name="IsKeywordServiceOnly" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="PromotionAdEngineSelected">
           <Key>
@@ -1480,6 +1485,7 @@
           <Property Name="MiddleInitial" Type="nchar" MaxLength="1" />
           <Property Name="IsRegistered" Type="bit" Nullable="false" />
           <Property Name="LastEmailReminderDate" Type="datetime2" />
+          <Property Name="UserTypeFK" Type="int" />
         </EntityType>
         <EntityType Name="WebContent">
           <Key>
@@ -2971,39 +2977,6 @@
           <Parameter Name="EndDate" Type="datetime2" Mode="In" />
           <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
-        <!--Errors Found During Generation:
-      warning 6013: The table/view 'semplest.dbo.keywordsmall' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-      
-      <EntityType Name="keywordsmall">
-        <Property Name="Column 0" Type="varchar" MaxLength="250" />
-        <Property Name="Column 1" Type="varchar" MaxLength="50" />
-        <Property Name="Column 2" Type="varchar" MaxLength="5000" />
-      </EntityType>
-      Errors Found During Generation:
-      warning 6013: The table/view 'semplest.dbo.keywordsmall2' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-      
-      <EntityType Name="keywordsmall2">
-        <Property Name="Column 0" Type="varchar" MaxLength="250" />
-        <Property Name="Column 1" Type="varchar" MaxLength="50" />
-        <Property Name="Column 2" Type="varchar(max)" />
-      </EntityType>
-      Errors Found During Generation:
-      warning 6013: The table/view 'semplest.dbo.ZipCodesTemp' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-      
-      <EntityType Name="ZipCodesTemp">
-        <Property Name="country code" Type="varchar" MaxLength="2" />
-        <Property Name="postal code" Type="varchar" MaxLength="20" />
-        <Property Name="place name" Type="varchar" MaxLength="180" />
-        <Property Name="admin name1" Type="varchar" MaxLength="100" />
-        <Property Name="admin code1" Type="varchar" MaxLength="20" />
-        <Property Name="admin name2" Type="varchar" MaxLength="100" />
-        <Property Name="admin code2" Type="varchar" MaxLength="20" />
-        <Property Name="admin name3" Type="varchar" MaxLength="100" />
-        <Property Name="admin code3" Type="varchar" MaxLength="20" />
-        <Property Name="latitude" Type="decimal" Precision="8" Scale="4" />
-        <Property Name="longitude" Type="decimal" Precision="8" Scale="4" />
-        <Property Name="accuracy" Type="int" />
-      </EntityType>-->
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -3996,6 +3969,7 @@
           <Property Type="Boolean" Name="IsAutobid" Nullable="false" />
           <Property Type="Decimal" Name="AutoBidMaxCPC" Precision="19" Scale="4" />
           <NavigationProperty Name="PromotionBudgets" Relationship="SemplestModel.REL_Promotion_PromotionBudget_1" FromRole="Promotion" ToRole="PromotionBudget" />
+          <Property Type="Boolean" Name="IsKeywordServiceOnly" Nullable="false" />
         </EntityType>
         <EntityType Name="PromotionAdEngineSelected">
           <Key>
@@ -4302,6 +4276,7 @@
           <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Users_Schedule_5" FromRole="User" ToRole="Schedule" />
           <NavigationProperty Name="TransactionHistories" Relationship="SemplestModel.REL_Users_TransactionHistory_1" FromRole="User" ToRole="TransactionHistory" />
           <NavigationProperty Name="UserRolesAssociations" Relationship="SemplestModel.REL_Users_UserRolesAssociation_1" FromRole="User" ToRole="UserRolesAssociation" />
+          <Property Type="Int32" Name="UserTypeFK" />
         </EntityType>
         <EntityType Name="WebContent">
           <Key>
@@ -5453,6 +5428,10 @@
           <Property Type="Int32" Name="BiddingServiceGoogleVolMultiplierFromMSNHistory" />
           <Property Type="Int32" Name="SemplestAdEngineReportLookbackDays" />
           <Property Type="Int32" Name="MSNReportRetrievalTimeoutSecs" />
+          <Property Type="String" Name="SemplestKeywordslucenedir" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsbdbdir" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsdffile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="numTopics" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="vwCreditCardTransactionDetail">
           <Key>
@@ -6257,6 +6236,7 @@
           <EntitySetMapping Name="Promotions">
             <EntityTypeMapping TypeName="SemplestModel.Promotion">
               <MappingFragment StoreEntitySet="Promotion">
+                <ScalarProperty Name="IsKeywordServiceOnly" ColumnName="IsKeywordServiceOnly" />
                 <ScalarProperty Name="AutoBidMaxCPC" ColumnName="AutoBidMaxCPC" />
                 <ScalarProperty Name="IsAutobid" ColumnName="IsAutobid" />
                 <ScalarProperty Name="DisplayURL" ColumnName="DisplayURL" />
@@ -6549,6 +6529,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="SemplestModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="UserTypeFK" ColumnName="UserTypeFK" />
                 <ScalarProperty Name="LastEmailReminderDate" ColumnName="LastEmailReminderDate" />
                 <ScalarProperty Name="IsRegistered" ColumnName="IsRegistered" />
                 <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
@@ -6652,6 +6633,10 @@
           <EntitySetMapping Name="Configurations">
             <EntityTypeMapping TypeName="SemplestModel.Configuration">
               <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="numTopics" ColumnName="numTopics" />
+                <ScalarProperty Name="SemplestKeywordsdffile" ColumnName="SemplestKeywordsdffile" />
+                <ScalarProperty Name="SemplestKeywordsbdbdir" ColumnName="SemplestKeywordsbdbdir" />
+                <ScalarProperty Name="SemplestKeywordslucenedir" ColumnName="SemplestKeywordslucenedir" />
                 <ScalarProperty Name="MSNReportRetrievalTimeoutSecs" ColumnName="MSNReportRetrievalTimeoutSecs" />
                 <ScalarProperty Name="SemplestAdEngineReportLookbackDays" ColumnName="SemplestAdEngineReportLookbackDays" />
                 <ScalarProperty Name="BiddingServiceGoogleVolMultiplierFromMSNHistory" ColumnName="BiddingServiceGoogleVolMultiplierFromMSNHistory" />

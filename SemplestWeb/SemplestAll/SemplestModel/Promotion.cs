@@ -55,6 +55,7 @@ namespace SemplestModel
         public string DisplayURL { get; set; }
         public bool IsAutobid { get; set; }
         public Nullable<decimal> AutoBidMaxCPC { get; set; }
+        public bool IsKeywordServiceOnly { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }

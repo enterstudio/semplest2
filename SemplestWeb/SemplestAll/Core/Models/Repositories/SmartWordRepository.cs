@@ -120,7 +120,7 @@ namespace Semplest.Core.Models.Repositories
                                     where
                                         c.CustomerFK == customerFk &&
                                         c.ProductGroupName == model.ProductGroup.ProductGroupName
-                                    select c).Single();
+                                    select c).SingleOrDefault();
                 Promotion promo;
                 if (queryProdGrp == null)
                 {
@@ -233,10 +233,11 @@ namespace Semplest.Core.Models.Repositories
         {
             return new Promotion
                        {
+                           IsKeywordServiceOnly = true,
                            PromotionName = model.ProductGroup.ProductPromotionName,
                            LandingPageURL = model.LandingUrl,
                            PromotionDescription = model.ProductGroup.Words,
-                           PromotionBudgetAmount = decimal.MinValue,
+                           PromotionBudgetAmount = 0,
                            BudgetCycleFK = 3,
                            PromotionStartDate =
                                Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")),
