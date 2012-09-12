@@ -45,7 +45,7 @@ public class Run {
       try {
         Thread.sleep( Run.COLLECT_INTERVAL );
       } catch (Exception e){ 
-        e.printStackTrace();                               // logging ?
+        log.error("Thread.sleep");                               // logging
       }
       getSelf().tell( new Collector.Wakeup() );
     }

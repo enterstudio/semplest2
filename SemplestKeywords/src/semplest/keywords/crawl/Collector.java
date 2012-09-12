@@ -66,16 +66,16 @@ public class Collector {
     // Message processing
     public void onReceive( Object msg){
       if( msg instanceof Ready ){
-        System.out.printf("C: %s ready, (done/todo): %d,%d\n", 
-            ((Ready)msg).id, workQ.size(), results.size());       // logging ?
+        log.info("C: %s ready, (done/todo): %d,%d\n", 
+            ((Ready)msg).id, workQ.size(), results.size());       // logging
         Work w = workQ.poll();
         if( w != null ) getSender().tell( w );
       }
       else if ( msg instanceof Result ){
         getSender().tell( results.toArray( new Answer[]{} ));
         results.clear();
-        System.out.printf("C: Result:: (done/todo): %d,%d\n", 
-            workQ.size(), results.size());                        // logging ?
+        log.info("C: Result:: (done/todo): %d,%d\n", 
+            workQ.size(), results.size());                        // logging
       }
       else if ( msg instanceof Work )
         workQ.add( (Work) msg );
@@ -88,7 +88,7 @@ public class Collector {
         getSender().tell( new Todo( workQ.size()));
       }
       else 
-        System.out.println("Errro" + msg.getClass().getName());  // logging?
+        log.error("Errro" + msg.getClass().getName());           // logging
     }
   }
 

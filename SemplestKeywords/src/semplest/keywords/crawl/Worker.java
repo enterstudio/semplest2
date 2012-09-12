@@ -24,6 +24,7 @@ public class Worker {
 
   // - The Actor ------------------------------------------------
   public static class WActor extends UntypedActor  {
+    LoggingAdapter log = Logging.getLogger( getContext().system(), this );
     boolean working = false;
     ActorRef collector;
     Collector.Computer computor;
@@ -36,7 +37,9 @@ public class Worker {
       try {
         id = java.net.InetAddress.getLocalHost().getHostName() + ":" +
           Thread.currentThread().getId();
-      } catch (Exception e){ e.printStackTrace(); }      // logging? 
+      } catch (Exception e){ 
+        log.error("Host/Thread id");                    // logging
+      }       
       askForWork();
     }
 
@@ -45,7 +48,7 @@ public class Worker {
       try {
         Thread.sleep( 5000 );
       } catch (Exception e){ 
-        e.printStackTrace();                              // logging ?
+        log.error("Thread Sleep");                       // logging
       }
       getSelf().tell( new Collector.Wakeup() );
     }
@@ -55,7 +58,7 @@ public class Worker {
         working = true;
         System.out.println("Got Work !");
         Collector.Work w = (Collector.Work)msg;
-        collector.tell( new Collector.Answer( w.id, computor.compute( w.data ) ) );
+        collector.tell( new Collector.Answer( w.id, computor.compute(w.data)) );
         working = false;
       }
       else if( msg instanceof Collector.Wakeup ){
