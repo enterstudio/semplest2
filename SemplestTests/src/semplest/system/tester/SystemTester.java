@@ -26,11 +26,13 @@ public class SystemTester
 			keywordTest.Test_KeywordService(serviceURL);
 			mailTest.Test_MailService(serviceURL);
 
-			SystemTestFunc.FinalizeReport();
+			SystemTestFunc.FinalizeReport();			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			System.exit(1);
 		}
+		System.exit(0);
 	}
 }
