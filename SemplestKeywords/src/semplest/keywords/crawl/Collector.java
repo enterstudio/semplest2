@@ -19,10 +19,10 @@ public class Collector {
  
   // ----------------------------------------------------
   // - Interfaces --------
-  public interface Computer {
+  public interface Computer {               // Workers need to implement this
     public String compute( String in );
   }
-  public interface Msgs extends Serializable {}
+  public interface Msgs extends Serializable {}  // For message classes
  
   // -----------------
   // - Definition of Messages used for communication--------
