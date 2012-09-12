@@ -145,11 +145,7 @@ public class SystemTestFunc extends BaseDB
 
 		System.out.println("Clearing history test data...");
 
-		System.out.println(" - Delete history test data from database.");
-
-		//delete transaction data
-		sql = "DELETE Transactions WHERE CustomerFK = ?";
-		jdbcTemplate.update(sql, new Object[] {SystemTestDataModel.semplestCustomerId});
+		System.out.println(" - Delete history test data from database.");		
 		
 		// get the list of promotion IDs
 		sql = "SELECT p.PromotionPK FROM Promotion p WHERE ProductGroupFK = ?";
@@ -249,12 +245,13 @@ public class SystemTestFunc extends BaseDB
 					"DELETE FROM PromotionAdengineStatus WHERE PromotionFK = ?;" + 
 					"DELETE FROM PromotionBidding WHERE PromotionFK = ?;" + 
 					"DELETE FROM TargetedDailyBudget WHERE PromotionFK = ?;" + 
-					"DELETE CreditCardProfile WHERE PromotionFK = ?" + 
-					"DELETE CreditCardProfile WHERE PromotionFK = ?" +
-					"DELETE PromotionBudget WHERE PromotionFK = ?" + 
+					"DELETE CreditCardProfile WHERE PromotionFK = ?;" + 
+					"DELETE CreditCardProfile WHERE PromotionFK = ?;" +
+					"DELETE PromotionBudget WHERE PromotionFK = ?;" + 
+					"DELETE Transactions WHERE CustomerFK = ?;" +
 					"DELETE Promotion WHERE PromotionPK = ?;";
 
-			jdbcTemplate.update(sql, new Object[] { promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId});
+			jdbcTemplate.update(sql, new Object[] { promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, SystemTestDataModel.semplestCustomerId, promoId});
 
 			System.out.println("  	> deleted all the other data for PromotionID " + promoId);
 		}
