@@ -4,55 +4,55 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 public class DmozUpdater {
 	
-	private static HashMap<String,DmozTreeNode> nodesToBeDeleted;
-	private static HashMap<String,DmozTreeNode> nodesToBeAdded;
-	private static HashMap<String,DmozTreeNode> nodesToUpdateUrlData;
-	private static HashMap<String,DmozTreeNode> nodesToChangeParentId;
+	private HashMap<String,DmozTreeNode> nodesToBeDeleted;
+	private HashMap<String,DmozTreeNode> nodesToBeAdded;
+	private HashMap<String,DmozTreeNode> nodesToUpdateUrlData;
 	
 	private static Long uniqueId;
 	
 	public static void main(String[] args){
 		try {
-			updateNodesInDB();
+			DmozUpdater updateDmozDB = new DmozUpdater();
+			updateDmozDB.updateNodesInDB();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void updateNodesInDB() throws Exception{
+	public void updateNodesInDB() throws Exception{
 		setUniqueIdBase();
 		compareDbTreeAndNewTree();
 		DmozDbOperator.deleteTreeNodes(getNodesToBeDeleted());
 		DmozDbOperator.addTreeNodes(getNodesToBeAdded());
-		DmozDbOperator.updateTreeNode(getNodesToChangeParentId());
 		DmozDbOperator.updateUrlData(getNodesToUpdateUrlData());
+		saveChangeToLog();
 	}
 	
-	public static List<DmozTreeNode> getNodesToBeDeleted(){
+	public List<DmozTreeNode> getNodesToBeDeleted(){
 		return new ArrayList<DmozTreeNode>(nodesToBeDeleted.values());
 	}
 	
-	public static List<DmozTreeNode> getNodesToBeAdded(){
+	public List<DmozTreeNode> getNodesToBeAdded(){
 		return new ArrayList<DmozTreeNode>(nodesToBeAdded.values());
 	}
 	
-	public static List<DmozTreeNode> getNodesToChangeParentId(){
-		return new ArrayList<DmozTreeNode>(nodesToChangeParentId.values());
-	}
-	
-	public static List<DmozTreeNode> getNodesToUpdateUrlData(){
+	public List<DmozTreeNode> getNodesToUpdateUrlData(){
 		return new ArrayList<DmozTreeNode>(nodesToUpdateUrlData.values());
 	}
 	
-	public static void compareDbTreeAndNewTree() throws Exception{
+	public void compareDbTreeAndNewTree() throws Exception{
 		//Get the tree from DB
 		DmozTreeNode dmozTree = DmozDbOperator.loadDmozTreeFromDB();		
 		HashMap<String,DmozTreeNode> dbTreeMap = TreeFuncs.getTreeInMap(dmozTree);
@@ -64,16 +64,45 @@ public class DmozUpdater {
 		refreshTreeNodeIDs(dbTreeMap, newTree);
 		HashMap<String,DmozTreeNode> newTreeMap = TreeFuncs.getTreeInMap(newTree);
 		
-		nodesToBeDeleted = processNodesToBeDeleted(dbTreeMap,newTreeMap);
-		
-		nodesToBeAdded = processNodesToBeAdded(dbTreeMap,newTreeMap);
-		
-		nodesToChangeParentId = detectParentNodeChange(dbTreeMap, newTreeMap);
-		
+		nodesToBeDeleted = processNodesToBeDeleted(dbTreeMap,newTreeMap);		
+		nodesToBeAdded = processNodesToBeAdded(dbTreeMap,newTreeMap);				
 		nodesToUpdateUrlData = detectUrlDataChange(dbTreeMap, newTreeMap);
 	}
 	
-	private static void refreshTreeNodeIDs(HashMap<String,DmozTreeNode> dbTreeMap, DmozTreeNode newTree) throws Exception{
+	public void saveChangeToLog() throws Exception{
+		//Read property file for dmoz files paths
+		Properties properties = new Properties();
+		FileInputStream in = new FileInputStream("bin/system.properties");
+		properties.load(in);
+		in.close();
+		
+		String path = properties.getProperty("dmoz.updater.changeLog");
+		
+		//Save the nodes info
+		FileWriter writer = new FileWriter(path);
+		
+		writer.write("Time of update - " + new Date() + "\n");
+		writer.append("Format - " + "Category Name : Node PK : Parent Node ID");
+		
+		writer.append("------- Nodes that got deleted from DB -------\n");
+		for(DmozTreeNode node : nodesToBeDeleted.values()){
+			writer.append(node.getName() + " : " + node.getNodeID() + " : " + node.getParentID() + "\n");
+		}
+		
+		writer.append("------- Nodes that are added to DB -------\n");
+		for(DmozTreeNode node : nodesToBeAdded.values()){
+			writer.append(node.getName() + " : " + node.getNodeID() + " : " + node.getParentID() + "\n");
+		}
+		
+		writer.append("------- Nodes that got URL data updated to DB -------\n");
+		for(DmozTreeNode node : nodesToUpdateUrlData.values()){
+			writer.append(node.getName() + " : " + node.getNodeID() + " : " + node.getParentID() + "\n");
+		}		
+		
+		writer.close();
+	}
+	
+	private void refreshTreeNodeIDs(HashMap<String,DmozTreeNode> dbTreeMap, DmozTreeNode newTree) throws Exception{
 		Long nodeId = dbTreeMap.get(newTree.getName()).getNodeID();
 		newTree.setNodeID(nodeId);
 		newTree.setParentID(-1L);
@@ -81,7 +110,7 @@ public class DmozUpdater {
 		assignParentChildrenIDs(dbTreeMap,newTree);
 	}
 	
-	private static void assignParentChildrenIDs(HashMap<String,DmozTreeNode> dbTreeMap, DmozTreeNode currentNode) throws Exception{
+	private void assignParentChildrenIDs(HashMap<String,DmozTreeNode> dbTreeMap, DmozTreeNode currentNode) throws Exception{
 		if(dbTreeMap.containsKey(currentNode.getName())){
 			//this node exists in the old tree
 			DmozTreeNode correspondingNode = dbTreeMap.get(currentNode.getName());		
@@ -102,7 +131,7 @@ public class DmozUpdater {
 		}
 	}
 	
-	private static HashMap<String,DmozTreeNode> processNodesToBeDeleted(HashMap<String,DmozTreeNode> dbTreeMap, HashMap<String,DmozTreeNode> newTreeMap) throws Exception{
+	private HashMap<String,DmozTreeNode> processNodesToBeDeleted(HashMap<String,DmozTreeNode> dbTreeMap, HashMap<String,DmozTreeNode> newTreeMap) throws Exception{
 		HashMap<String,DmozTreeNode> nodesToBeDeleted = new HashMap<String,DmozTreeNode>();
 		HashMap<String,DmozTreeNode> nodesList = new HashMap<String,DmozTreeNode>();
 		
@@ -118,7 +147,7 @@ public class DmozUpdater {
 		return nodesToBeDeleted;
 	}
 	
-	private static HashMap<String,DmozTreeNode> processNodesToBeAdded(HashMap<String,DmozTreeNode> dbTreeMap, HashMap<String,DmozTreeNode> newTreeMap) throws Exception{
+	private HashMap<String,DmozTreeNode> processNodesToBeAdded(HashMap<String,DmozTreeNode> dbTreeMap, HashMap<String,DmozTreeNode> newTreeMap) throws Exception{
 		HashMap<String,DmozTreeNode> nodesToBeAdded = new HashMap<String,DmozTreeNode>();
 		
 		nodesToBeAdded.putAll(newTreeMap);
@@ -127,25 +156,7 @@ public class DmozUpdater {
 		return nodesToBeAdded;
 	}
 	
-	private static HashMap<String,DmozTreeNode> detectParentNodeChange(HashMap<String,DmozTreeNode> oldTree, HashMap<String,DmozTreeNode> newTree) throws Exception{
-		HashMap<String,DmozTreeNode> nodesHaveParentNodeChange = new HashMap<String,DmozTreeNode>();
-		for(String cat : oldTree.keySet()){			
-			if(newTree.containsKey(cat)){
-				//detect if there's any parent node change
-				Long oldParent = oldTree.get(cat).getParentID();
-				Long newParent = newTree.get(cat).getParentID();
-				
-				if(!oldParent.equals(newParent)){
-					//if there's any change, update to new one
-					nodesHaveParentNodeChange.put(cat, newTree.get(cat));
-				}
-			}
-		}
-		
-		return nodesHaveParentNodeChange;
-	}
-	
-	private static HashMap<String,DmozTreeNode> detectUrlDataChange(HashMap<String,DmozTreeNode> oldTree, HashMap<String,DmozTreeNode> newTree) throws Exception{
+	private HashMap<String,DmozTreeNode> detectUrlDataChange(HashMap<String,DmozTreeNode> oldTree, HashMap<String,DmozTreeNode> newTree) throws Exception{
 		HashMap<String,DmozTreeNode> urlUpdateNodes = new HashMap<String,DmozTreeNode>();
 		for(String cat : oldTree.keySet()){			
 			if(newTree.containsKey(cat)){
@@ -153,7 +164,7 @@ public class DmozUpdater {
 				HashMap<String,String> oldUrlData = oldTree.get(cat).getCategoryData().getUrlData();
 				HashMap<String,String> newUrlData = newTree.get(cat).getCategoryData().getUrlData();
 				
-				if(!oldUrlData.keySet().equals(newTree.keySet())){
+				if(!oldUrlData.keySet().equals(newUrlData.keySet())){
 					//if there's any change, update to new one
 					urlUpdateNodes.put(cat, newTree.get(cat));
 				}
@@ -163,16 +174,16 @@ public class DmozUpdater {
 		return urlUpdateNodes;
 	}
 	
-	private static Long getUniqueId(){
+	private Long getUniqueId(){
 		uniqueId++;
 		return uniqueId;
 	}
 	
-	public static void setUniqueIdBase() throws Exception{
+	public void setUniqueIdBase() throws Exception{
 		uniqueId = DmozDbOperator.getUniqueIdBase();
 	}
 	
-	public static void compareCidFiles() throws Exception{		
+	public void compareCidFiles() throws Exception{		
 		PrintStream out = new PrintStream(new FileOutputStream("c:\\dmoz\\temp.txt"));
 		System.setOut(out);
 		
