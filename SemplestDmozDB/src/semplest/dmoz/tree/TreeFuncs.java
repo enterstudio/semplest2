@@ -48,13 +48,13 @@ public class TreeFuncs {
 		
 	public static void storeTreeToFile(List<DmozTreeNode> dmozTree, String path) throws Exception{
 		FileWriter writer = new FileWriter(path);
-		writer.write("DmozNodePK | ParentNodeID | CategoryID | NodeText | NodeDescription \n");
+		writer.write("DmozNodePK || ParentNodeID || CategoryID || NodeText || NodeDescription \n");
 		
 		for(DmozTreeNode node : dmozTree){
-			writer.append(node.getNodeID() + " | " 
-						+ node.getParentID() + " | "
-						+ node.getCategoryData().getCategoryId() + " | "
-						+ node.getName() + " | "						
+			writer.append(node.getNodeID() + " || " 
+						+ node.getParentID() + " || "
+						+ node.getCategoryData().getCategoryId() + " || "
+						+ node.getName() + " || "						
 						+ node.getCategoryData().getDescription()
 						 + "\n");
 		}		

@@ -52,7 +52,6 @@ public class DmozDbOperator extends BaseDB {
 		//Store DMOZ tree to a file
 		System.out.println("Storing Dmoz tree to file...");
 		TreeFuncs.storeTreeToFile(dmozTreeNodes, dmozTreeFile);	
-		//TreeFuncs.printTree("c:\\dmoz\\BuiltTree.txt",dmozTree);	
 		
 		System.out.println("Done.");
 		
@@ -92,9 +91,8 @@ public class DmozDbOperator extends BaseDB {
 		final List<List<DmozTreeNode>> batches = SemplestUtils.getBatches(newNodes, maxBatchSize);
 		System.out.println("Going to store " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to DB.");
 		Long counter = 0L;		
-		//for (final List<DmozTreeNode> batch : batches)
-		//{		
-		List<DmozTreeNode> batch = batches.get(15);
+		for (final List<DmozTreeNode> batch : batches)
+		{		
 			Long start = System.currentTimeMillis();
 			System.out.println("Storing batch #" + counter + " to DB...");
 			
@@ -132,7 +130,7 @@ public class DmozDbOperator extends BaseDB {
 			}
 			System.out.println("	took " + (System.currentTimeMillis() - start)*1d/1000 + " secs.");
 			counter++;
-		//}		
+		}		
 	}
 	
 	public static void deleteTreeNodes(List<DmozTreeNode> nodes) throws Exception{
