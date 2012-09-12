@@ -31,6 +31,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.ApplyPromotionBudgetRequest;
+import semplest.server.protocol.CrawlFeedback;
 import semplest.server.protocol.Credential;
 import semplest.server.protocol.CreditCardProfile;
 import semplest.server.protocol.CustomOperation;
@@ -124,9 +125,9 @@ public class SemplestDB extends BaseDB
 	public static final String GET_USER_FOR_REGISTRATION_REMINDER_SQL = GET_USERS_FOR_REGISTRATION_REMINDER_SQL + " and UserPK = ?";
 
 	public static final String GET_USER_SQL = "select UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate from Users where UserPK = ?";
-	public static final String GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate > ? and IsAppliedToPromotion = 0 and IsValid = 1";
 	
-	
+	public static final String GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate < ? and IsAppliedToPromotion = 0 and IsValid = 1";
+		
 	public static final String GET_TRANSACTION_FOR_MAINTENANCE_SQL = "select TransactionsPK, CustomerFK, PayTypeFK, TransactionTypeFK, CreditCardProfileFK, Amount, CreatedDate, EditedDate from Transactions where TransactionsPK = ?";
 
 	public static final RowMapper<User> USER_ROW_MAPPER;
@@ -195,7 +196,7 @@ public class SemplestDB extends BaseDB
 			{
 				final Integer transactionPK = rs.getInt("TransactionsPK");				
 				final Integer customerFK = rs.getInt("CustomerFK");
-				final Integer payTypeFK = rs.getInt("PayType");
+				final Integer payTypeFK = rs.getInt("PayTypeFK");
 				final PayType payType = PayType.fromCode(payTypeFK);				
 				final Integer transactionTypeFK = rs.getInt("TransactionTypeFK");
 				final TransactionType transactionType = TransactionType.fromCode(transactionTypeFK);
@@ -891,6 +892,30 @@ public class SemplestDB extends BaseDB
 			throws Exception
 	{
 		jdbcTemplate.update("truncate table Keywords.dbo.Keywords");
+	}
+	
+	public static void storeCrawlFeedbackBatch(final List<CrawlFeedback> batch) throws Exception
+	{
+		jdbcTemplate.batchUpdate("insert into Keywords.dbo.CrawlFeedback (url, content, result) values (?, ?, ?)", new BatchPreparedStatementSetter()
+			{
+				@Override
+				public void setValues(final PreparedStatement ps, int i) throws SQLException
+				{
+					final CrawlFeedback entry = batch.get(i);
+					final String url = entry.getUrl();
+					final String content = entry.getContent();
+					final String feedback = entry.getFeedback();
+					ps.setString(1, url);
+					ps.setString(2, content);
+					ps.setString(3, feedback);
+				}
+	
+				@Override
+				public int getBatchSize()
+				{
+					return batch.size();
+				}
+			});
 	}
 	
 	public static void storeKeywordBatch(final String file, final Map<String, String> categoryVsKeywordMap) throws Exception

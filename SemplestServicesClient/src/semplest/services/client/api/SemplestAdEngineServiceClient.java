@@ -36,10 +36,10 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
-	//private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
 	//private static String BASEURLTEST = "http://172.18.9.26:9898/semplest";
 	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
+	//private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
 	private static String timeoutMS = "18000000"; // 5 hours
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
@@ -165,11 +165,11 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		
 		
 		 // scheduleAddPromotionToAdEngine 			
-		 final Integer customerID_scheduleAddPromotionToAdEngine = 6; 
-		 final Integer productGroupID_scheduleAddPromotionToAdEngine = 8; 
-		 final Integer promotionID_scheduleAddPromotionToAdEngine = 8; 
+		 final Integer customerID_scheduleAddPromotionToAdEngine = 7; 
+		 final Integer productGroupID_scheduleAddPromotionToAdEngine = 5; 
+		 final Integer promotionID_scheduleAddPromotionToAdEngine = 5; 
 		 final List<AdEngine> adEngines_scheduleAddPromotionToAdEngine = Arrays.asList(AdEngine.Google);
-		 client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngine, productGroupID_scheduleAddPromotionToAdEngine, promotionID_scheduleAddPromotionToAdEngine, adEngines_scheduleAddPromotionToAdEngine);
+		 client.AddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngine, productGroupID_scheduleAddPromotionToAdEngine, promotionID_scheduleAddPromotionToAdEngine, adEngines_scheduleAddPromotionToAdEngine);
 		
 		
 		//client.validateGoogleNegativeKeywords(Arrays.asList("hooker"));
