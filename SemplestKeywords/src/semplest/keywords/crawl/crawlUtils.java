@@ -8,11 +8,11 @@ import java.io.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
-// Some useful utilities
+// Some useful utilities for crawling-testing
 
 public class crawlUtils {
   // get my Ip address
-  public static String getIp(){
+  public static String getIp() {
     try {
       return (new java.net.Socket("www.google.com", 80 )).
         getLocalAddress().getHostAddress();
@@ -20,7 +20,7 @@ public class crawlUtils {
     return "";
   }
 
-  // reads a dmoz url file and returns first n entries as a HashMap
+  // reads a dmoz url-file and returns first n entries as a HashMap
   public static Map<String, String> readUrls(String file, int n) 
     throws Exception {
     Map<String, String> hash = new HashMap<String, String>();
