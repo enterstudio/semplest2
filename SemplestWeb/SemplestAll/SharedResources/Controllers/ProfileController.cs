@@ -107,10 +107,13 @@ namespace Semplest.SharedResources.Controllers
                             var ur = new UserRepository(dbContext);
 
                             if (cred.User.UserTypeFK == ur.GetUserType("KeywordBid").UserTypePK)
+                            {
+                                Session[SEMplestConstants.SESSION_ISKEYWORDBIDDING] = true;
                                 if (cred.User.CustomerFK == null)
                                     return RedirectToAction("Index", "Home");
-                                else
-                                    return RedirectToAction("Index2", "Home");
+                                return RedirectToAction("Index2", "Home");
+                            }
+                            Session[SEMplestConstants.SESSION_ISKEYWORDBIDDING] = false;
                             return RedirectToAction("Index", "SmartWord");
                         }
                         else if (pm.LoggedInSucceeded)

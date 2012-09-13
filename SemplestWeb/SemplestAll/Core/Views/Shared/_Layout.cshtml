@@ -79,12 +79,22 @@
             <ul id="panelbar-images">
                 <li><span>Home</span>
                     <ul>
-                        <li>@Html.ActionLink("My Account", "Index2", "Home")</li>
-                        <li>@Html.ActionLink("Create Advertising", "CampaignSetup", "Campaign")</li>
-                        <li>@Html.ActionLink("Reporting", "Index", "Reporting")</li>
-                         <li>@Html.ActionLink("Billing", "Billing", "Campaign")</li>
-                        <li>@Html.ActionLink("Smart Words", "Index","SmartWord")</li>
-                        <li>@Html.ActionLink("My Profile", "MyProfile", "Account")</li>
+                        @{
+                            if ((bool)Session[Semplest.SharedResources.SEMplestConstants.SESSION_ISKEYWORDBIDDING])
+                            {
+                                <li>@Html.ActionLink("My Account", "Index2", "Home")</li>
+                                <li>@Html.ActionLink("Create Advertising", "CampaignSetup", "Campaign")</li>
+                                <li>@Html.ActionLink("Reporting", "Index", "Reporting")</li>
+                                <li>@Html.ActionLink("Billing", "Billing", "Campaign")</li>
+                                <li>@Html.ActionLink("My Profile", "MyProfile", "Account")</li>
+                            }
+                            else
+                            {
+                                <li>@Html.ActionLink("My Account", "Setup", "SmartWord")</li>
+                                <li>@Html.ActionLink("Create Smart Words", "Index", "SmartWord")</li>
+                                <li>@Html.ActionLink("My Profile", "MyProfile", "Account")</li>
+                            }
+                        }
                     </ul>
                 </li>
                 <li><span>
