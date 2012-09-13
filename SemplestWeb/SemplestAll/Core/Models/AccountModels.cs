@@ -137,13 +137,8 @@ namespace Semplest.Core.Models
     }
 
 
-    public class ChildModel : ModelBase
+    public class ChildModel
     {
-        public ChildModel()
-        {
-            using (var entities = new SemplestModel.Semplest())
-                Configuration = entities.Configurations.FirstOrDefault();
-        }
 
          [DisplayName("Account #")]
         public int AccountNumber { get; set; }

@@ -2,6 +2,7 @@
     Layout = null;
 }
 @using System.Diagnostics
+@using Semplest.SharedResources
 <!DOCTYPE html>
 <html>
 <head>
@@ -98,7 +99,7 @@
                     </ul>
                 </li>
                 <li><span>
-                        @Model.Configuration.DefaultProductGroupName
+                        @Session[SEMplestConstants.SessionDefaultProductGroupName]
                     </span>
                     <div style="height: 476px;" class="k-treeview">
                         <ul id="treeview">

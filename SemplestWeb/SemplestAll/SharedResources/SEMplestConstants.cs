@@ -10,6 +10,7 @@ namespace Semplest.SharedResources
         public const string SESSION_USERID = "UserId";
         public const string SESSION_LOGINATTEMPTS = "loginAttempts";
         public const string SESSION_ISKEYWORDBIDDING = "IsKeyWordBidding";
+        public const string SessionDefaultProductGroupName = "DefaultProductGroupName";
 
        public enum PromotionAdAction { Add, Update, Delete }
 

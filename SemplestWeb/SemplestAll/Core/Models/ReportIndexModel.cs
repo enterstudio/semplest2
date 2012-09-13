@@ -18,12 +18,10 @@ namespace Semplest.Core.Models
         public double AveragePosition;
     }
 
-    public class ReportIndexModel : ModelBase
+    public class ReportIndexModel
     {
         public ReportIndexModel()
         {
-            using (var entities = new SemplestModel.Semplest())
-                Configuration = entities.Configurations.FirstOrDefault();
             StartDate = DateTime.Now;
             EndDate = DateTime.Now.AddDays(2);
         }

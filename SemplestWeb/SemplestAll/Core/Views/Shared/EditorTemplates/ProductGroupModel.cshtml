@@ -1,15 +1,14 @@
-﻿@model Semplest.Core.Models.ProductGroupModel
+﻿@using Semplest.SharedResources
+@model Semplest.Core.Models.ProductGroupModel
 <div id="productGroupModel">
     <div class="configuration">
         <span class="infoHead">Tell us about your product or service</span>
         <ul class="options">
             <li>
                 <h3>
-                    @Model.Configuration.DefaultProductGroupName <a href ="#" class="help-button" id="helpbutton1" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]1" tabindex="-1" >
+                    @Session[SEMplestConstants.SessionDefaultProductGroupName] <a href ="#" class="help-button" id="helpbutton1" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]1" tabindex="-1" >
                                                                      ?</a>
                 </h3>
-                @*                    @Htmsemplest  sl.TextBoxFor(t => t.ProductGroupName, ViewBag.IsLaunchedAndCompleted ? (object)new { disabled = "true", @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName } : new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName })
-*@                  
                 @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName, @style = "width:200px;" })
             </li>
             <li>

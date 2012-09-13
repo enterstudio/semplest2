@@ -7,7 +7,7 @@ using SharedResources.Models;
 
 namespace Semplest.Core.Models
 {
-    public class SmartWordSetupModel : ModelBase
+    public class SmartWordSetupModel
     {
         public SmartWordSetupModel()
         {
@@ -15,8 +15,6 @@ namespace Semplest.Core.Models
             Addresses = new List<GeoTargeting> {new GeoTargeting()};
             KeywordIds = new List<int>();
             AllKeywords = new List<CampaignSetupModel.KeywordsModel>();
-            using (var entities = new SemplestModel.Semplest())
-                Configuration = entities.Configurations.SingleOrDefault();
             NegativeKeywords = new List<string>();
         }
 

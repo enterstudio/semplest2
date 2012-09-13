@@ -105,7 +105,9 @@ namespace Semplest.SharedResources.Controllers
                             //else if (cred.User.IsRegistered)
                             //user is a regular core user
                             var ur = new UserRepository(dbContext);
-
+                            Session[SEMplestConstants.SessionDefaultProductGroupName] = dbContext.Configurations.Select(q => q.DefaultProductGroupName).Single();
+                            if (isAdminLogin)
+                                return RedirectToAction("Index", "Home");
                             if (cred.User.UserTypeFK == ur.GetUserType("KeywordBid").UserTypePK)
                             {
                                 Session[SEMplestConstants.SESSION_ISKEYWORDBIDDING] = true;

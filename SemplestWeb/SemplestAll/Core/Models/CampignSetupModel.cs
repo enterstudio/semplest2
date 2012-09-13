@@ -11,7 +11,7 @@ using SharedResources.Models;
 namespace Semplest.Core.Models
 {
 
-    public class CampaignSetupModel : ModelBase
+    public class CampaignSetupModel
     {
         public CampaignSetupModel()
         {
@@ -27,8 +27,6 @@ namespace Semplest.Core.Models
             AllKeywordProbabilityObjects = new List<KeywordProbabilityObject>();
             SelectedKeywords = new List<KeywordsModel>();
             KeywordIds = new List<int>();
-            using (var entities = new SemplestModel.Semplest())
-                Configuration = entities.Configurations.FirstOrDefault();
             SiteLinks = new List<SiteLink>();
         }
 

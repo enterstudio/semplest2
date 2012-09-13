@@ -56,7 +56,6 @@ namespace Semplest.Core.Controllers
             if (credential != null)
                 model.ProductGroups = credential.User.Customer.ProductGroups;
             model.Detail = dbContext.vwPromotionCharts.Where(t => t.UserPK == cred.UsersFK).OrderBy(t => t.Keyword);
-            model.Configuration = dbContext.Configurations.FirstOrDefault();
             return View(model);
         }
 
@@ -107,7 +106,6 @@ namespace Semplest.Core.Controllers
             var credential = dbContext.Credentials.FirstOrDefault(x => x.UsersFK == cred.UsersFK);
             if (credential != null)
                 model.ProductGroups = credential.User.Customer.ProductGroups;
-            model.Configuration = dbContext.Configurations.FirstOrDefault();
             return PartialView(model);
         }
         public ActionResult ReportGraph(string promotionFk, string advertisingEngineFk, DateTime? startDate, DateTime? endDate, string mode)

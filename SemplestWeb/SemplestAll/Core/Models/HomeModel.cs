@@ -5,13 +5,8 @@ using SharedResources.Models;
 
 namespace Semplest.Core.Models
 {
-    public class HomeModelParent : ModelBase
+    public class HomeModelParent
     {
-        public HomeModelParent()
-        {
-            using (var entities = new SemplestModel.Semplest())
-                Configuration = entities.Configurations.FirstOrDefault();
-        }
 
         public int LaunchedCampaigns;
         public int StartedCampaignsNotLaunched;
@@ -19,12 +14,10 @@ namespace Semplest.Core.Models
         public IEnumerable<AdvertisingEngine> AdvertisingEngines;
     }
 
-    public class HomeModelChild : ModelBase
+    public class HomeModelChild
     {
         public HomeModelChild()
         {
-            using (var entities = new SemplestModel.Semplest())
-                Configuration = entities.Configurations.FirstOrDefault();
             CampaignSetup = new CampaignSetupModel();
             CampaignSetup.AdModelProp.Addresses.FirstOrDefault().StateCodeFK = 0;
         }

@@ -134,9 +134,9 @@ namespace Semplest.SharedResources.Encryption
 
         private static void Initalize()
         {
-            using (SemplestModel.Semplest dbContext = new SemplestModel.Semplest())
+            using (var dbContext = new SemplestModel.Semplest())
             {
-                _encryptionKey = dbContext.Configurations.FirstOrDefault().SemplestEncryptionkey;
+                _encryptionKey = dbContext.Configurations.Select(q => q.SemplestEncryptionkey).Single();
             }
         }
 

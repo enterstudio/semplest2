@@ -5,13 +5,12 @@ using System.Web;
 
 namespace SharedResources.Models
 {
-    public class StaticModel : ModelBase
+    public class StaticModel
     {
         public StaticModel(StaticPages pageType)
         {
             using (var entities = new SemplestModel.Semplest())
             {
-                Configuration = entities.Configurations.FirstOrDefault();
                 switch (pageType)
                 {
                     case StaticPages.About:

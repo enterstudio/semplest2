@@ -7,13 +7,8 @@ using SharedResources.Models;
 
 namespace Semplest.Core.Models
 {
-    public class BillingModel : ModelBase
+    public class BillingModel
     {
-        public BillingModel()
-        {
-            using (var entities = new SemplestModel.Semplest())
-                Configuration = entities.Configurations.FirstOrDefault();
-        }
         public decimal Amount { get; set; }
         public string ProductGroupName { get; set; }
         public string PromotionName { get; set; }

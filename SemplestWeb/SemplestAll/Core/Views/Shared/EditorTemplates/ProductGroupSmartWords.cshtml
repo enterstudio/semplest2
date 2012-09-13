@@ -1,4 +1,5 @@
 ﻿@using Semplest.Core.Helpers
+@using Semplest.SharedResources
 @model Semplest.Core.Models.SmartWordSetupModel
 <div id="productGroupModel">
     <div class="configuration">
@@ -6,14 +7,14 @@
         <ul class="options">
             <li>
                 <h3>
-                    @Model.Configuration.DefaultProductGroupName <a href ="#" class="help-button" id="helpbutton1" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]1" tabindex="-1" >
+                    @Session[SEMplestConstants.SessionDefaultProductGroupName]<a href ="#" class="help-button" id="helpbutton1" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]1" tabindex="-1" >
                                                                      ?</a>
                 </h3>
                 @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName, @style = "width:200px;" })
             </li>
             <li>
                 <h3>
-                    @Model.Configuration.DefaultProductPromotionName <a href ="#" class="help-button" id="helpbutton2" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]2"  tabindex="-1" >
+                    @Session[SEMplestConstants.SessionDefaultProductGroupName] <a href ="#" class="help-button" id="helpbutton2" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]2"  tabindex="-1" >
                                                                          ?</a>
                 </h3>
                 @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductPromotionName, @style = "width:200px;" })

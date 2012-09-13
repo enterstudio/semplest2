@@ -9,14 +9,8 @@ using SharedResources.Models;
 
 namespace Semplest.SharedResources.Models
 {
-    public class ProfileModel : ModelBase
+    public class ProfileModel 
     {
-        public ProfileModel()
-        {
-            using (var entities = new SemplestModel.Semplest())
-                Configuration = entities.Configurations.FirstOrDefault();
-        }
-
         [Required]
         [Display(Name = "User name")]
         public string UserName { get; set; }
