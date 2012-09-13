@@ -120,3 +120,14 @@ BEGIN CATCH
 	RAISERROR (@ErrMessage, @ErrorSeverity, @ErrorState);
 END CATCH;
 GO
+
+
+
+
+insert into Job values ('EXPIRED_CREDENTIALS_EMAIL_SENDER', GETDATE());
+insert into Job values ('PROMOTION_MAINTENANCE', GETDATE());
+
+
+
+
+
