@@ -610,15 +610,18 @@ namespace Semplest.Core.Controllers
                     Id = promotion.Key.ProductGroupPK,
                     SubItems = new List<NavBar>()
                 };
-
+                string baseUrl;
+                if ((bool)Session[Semplest.SharedResources.SEMplestConstants.SESSION_ISKEYWORDBIDDING])
+                    baseUrl = ConfigurationManager.AppSettings["CampaignUrl"];
+                else
+                    baseUrl = ConfigurationManager.AppSettings["SmartUrl"];
+                    
                 foreach (var prom in promotion.OrderBy(x => x.PromotionName))
                     promotionBar.SubItems.Add(new NavBar
                     {
                         Name = prom.PromotionName,
                         Id = prom.PromotionPK,
-                        Url =
-                            ConfigurationManager.AppSettings["CampaignUrl"] +
-                            prom.PromotionPK.ToString(CultureInfo.InvariantCulture)
+                        Url = baseUrl + prom.PromotionPK.ToString(CultureInfo.InvariantCulture)
                     });
                 //promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionId=" + prom.PromotionPK.ToString() });
 
