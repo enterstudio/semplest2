@@ -3,7 +3,6 @@ package semplest.server.job;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +13,13 @@ import org.apache.log4j.PropertyConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.ApplyPromotionBudgetRequest;
+import semplest.server.protocol.Job;
+import semplest.server.protocol.JobName;
 import semplest.server.protocol.PayType;
 import semplest.server.protocol.PromotionBudget;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.RunMode;
 import semplest.server.protocol.Transaction;
-import semplest.server.protocol.ProtocolEnum.AdEngine;
-import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.mail.SemplestMailClient;
 import semplest.server.service.springjdbc.PromotionObj;
@@ -32,6 +31,14 @@ import semplest.util.SemplestUtils;
 public class PromotionMaintenance
 {
 	private static final Logger log = Logger.getLogger(PromotionMaintenance.class);
+	
+	public void engageBatch(final java.util.Date asOfDate) throws Exception
+	{
+		final Job job = SemplestDB.getJob(JobName.PROMOTION_MAINTENANCE);
+		log.info("State of the job before running the current iteration: " + job);
+		engage(asOfDate);
+		SemplestDB.updateJobLastSuccessfulRunTime(JobName.PROMOTION_MAINTENANCE);
+	}
 	
 	/*
 	 * Apply budget to promotion
@@ -151,7 +158,7 @@ public class PromotionMaintenance
 			}
 			final PromotionMaintenance promotionMaintenance = new PromotionMaintenance();
 			final java.util.Date asOfDate = new java.util.Date();
-			promotionMaintenance.engage(asOfDate);
+			promotionMaintenance.engageBatch(asOfDate);
 		}
 		catch (final Throwable t)
 		{
