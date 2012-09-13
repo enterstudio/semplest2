@@ -431,12 +431,20 @@ public final class SemplestUtils
 	
 	public static BigDecimal getBigDecimal(final Long microAmount)
 	{
+		if (microAmount == null)
+		{
+			return BigDecimal.valueOf(0);
+		}
 		final Double microAmountDouble = microAmount / MICRO_AMOUNT_FACTOR;
 		return BigDecimal.valueOf(microAmountDouble);
 	}
 		
 	public static Integer getIntegerMicroAmount(final Double d)
 	{
+		if (d == null)
+		{
+			return Integer.valueOf(0);
+		}
 		final Double dMicroDouble = d * SemplestUtils.MICRO_AMOUNT_FACTOR;
 		return dMicroDouble.intValue() / SemplestUtils.DOUBLE_TO_INTEGER_MICRO_DIVISOR_HELPER * SemplestUtils.DOUBLE_TO_INTEGER_MICRO_DIVISOR_HELPER;
 	}

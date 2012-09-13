@@ -82,8 +82,9 @@ public class PromotionMaintenance
 				final BigDecimal carryOverAmount = amountToRefill.subtract(spendIncurredThisMonth);		
 				final BigDecimal budgetToAddAmount = budget.getBudgetToAddAmount();
 				final BigDecimal newRemainingBudget = remainingBudget.subtract(amountToRefill);
-				final Integer customerID = transaction.getCustomerFK();				
-				final ApplyPromotionBudgetRequest request = new ApplyPromotionBudgetRequest(promotionID, newCycleStartDate, newCycleEndDate, newRemainingBudget, promotionBudgetID, spendIncurredThisMonth, carryOverAmount, newBudgetToAddDate, budgetToAddAmount, customerID);
+				final Integer customerID = transaction.getCustomerFK();
+				final Integer transactionID = transaction.getPk();
+				final ApplyPromotionBudgetRequest request = new ApplyPromotionBudgetRequest(promotionID, newCycleStartDate, newCycleEndDate, newRemainingBudget, transactionID, promotionBudgetID, spendIncurredThisMonth, carryOverAmount, newBudgetToAddDate, budgetToAddAmount, customerID);
 				if (payType == PayType.INVOICE)
 				{
 					SemplestDB.applyInvoicePromotionBudget(request);

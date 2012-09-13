@@ -548,11 +548,31 @@ public class SemplestDB extends BaseDB
 	
 	public static void applyCreditCardPromotionBudget(final ApplyPromotionBudgetRequest request) throws Exception
 	{
-		throw new UnsupportedOperationException("Cannot process [" + request + "] because this functionality is not yet implemented");
+		final String operationDescription = "apply CreditCard PromotionBudget [" + request + "]";
+		logger.info("Will try to " + operationDescription);
+		final Integer promotionID = request.getPromotionID();
+		final java.util.Date newCycleStartDate = request.getNewCycleStartDate();
+		final java.util.Date newCycleEndDate = request.getNewCycleEndDate();
+		final BigDecimal newRemainingBudget = request.getNewRemainingBudget();
+		final Integer promotionBudgetID = request.getPromotionBudgetID();
+		final Integer transactionID = request.getTransactionID();
+		final BigDecimal budgetCarryOverAmount = request.getBudgetCarryOverAmount();
+		final java.util.Date newBudgetToAddDate = request.getNewBudgetToAddDate();
+		final BigDecimal newBudgetToAddAmount = request.getNewBudgetToAddAmount();				
+		final int rowcount = jdbcTemplate.update(
+									 "begin tran " +
+												"update Promotion set CycleStartDate = ?, CycleEndDate = ?, RemainingBudgetInCycle = ? where PromotionPK = ? " +
+												"update PromotionBudget set IsAppliedToPromotion = 1, BudgetCarryOverAmount = ?  where PromotionBudgetPK = ? " +
+												"insert into PromotionBudget (TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate) values (?, ?, ?, 1, 0, ?, ?, getdate()) " + 																																						
+									 "commit tran", 
+									 new Object[]{newCycleStartDate, newCycleEndDate, newRemainingBudget, promotionID,
+											 					budgetCarryOverAmount, promotionBudgetID,
+											 					transactionID, promotionID, newBudgetToAddDate, budgetCarryOverAmount, newBudgetToAddAmount});
 	}
 	
 	public static void applyInvoicePromotionBudget(final ApplyPromotionBudgetRequest request) throws Exception
 	{
+		// TODO: this has not been fully done and not yet tested due to requirement changes.  So if this is worked on in the future, make sure to review this code with compliance with latest requirements.
 		final String operationDescription = "apply Invoice Promotion Budget using [" + request + "]";
 		logger.info("Will try to " + operationDescription);
 		final BigDecimal budgetCarryOverAmount = request.getBudgetCarryOverAmount();

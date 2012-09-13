@@ -146,8 +146,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
-			final List<Integer> keywordIds = Arrays.asList(160604, 161089);
-			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN);
+			//final List<Integer> keywordIds = Arrays.asList(160604, 161089);
+			//final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN);
+
 			
 			//adEng.DeleteNegativeKeywords(228, keywordIds, adEngines);
 			// final KeywordIdRemoveOppositePair pair1 = new KeywordIdRemoveOppositePair(160604, false);

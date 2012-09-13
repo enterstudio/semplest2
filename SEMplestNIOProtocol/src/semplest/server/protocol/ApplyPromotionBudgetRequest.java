@@ -12,7 +12,8 @@ public class ApplyPromotionBudgetRequest
 	private final BigDecimal newRemainingBudget;
 	
 	// params for updating promotion budget
-	private final Integer promotionBudgetID;	
+	private final Integer promotionBudgetID;
+	private final Integer transactionID;
 	private final BigDecimal spendIncurredThisMonth;
 	private final BigDecimal budgetCarryOverAmount;
 	
@@ -22,7 +23,7 @@ public class ApplyPromotionBudgetRequest
 	
 	private final Integer customerID;
 
-	public ApplyPromotionBudgetRequest(Integer promotionID, Date newCycleStartDate, Date newCycleEndDate, BigDecimal newRemainingBudget, Integer promotionBudgetID, BigDecimal spendIncurredThisMonth, BigDecimal budgetCarryOverAmount, Date newBudgetToAddDate, BigDecimal newBudgetToAddAmount,
+	public ApplyPromotionBudgetRequest(Integer promotionID, Date newCycleStartDate, Date newCycleEndDate, BigDecimal newRemainingBudget, Integer transactionID, Integer promotionBudgetID, BigDecimal spendIncurredThisMonth, BigDecimal budgetCarryOverAmount, Date newBudgetToAddDate, BigDecimal newBudgetToAddAmount,
 			Integer customerID)
 	{
 		super();
@@ -30,12 +31,18 @@ public class ApplyPromotionBudgetRequest
 		this.newCycleStartDate = newCycleStartDate;
 		this.newCycleEndDate = newCycleEndDate;
 		this.newRemainingBudget = newRemainingBudget;
+		this.transactionID = transactionID;
 		this.promotionBudgetID = promotionBudgetID;
 		this.spendIncurredThisMonth = spendIncurredThisMonth;
 		this.budgetCarryOverAmount = budgetCarryOverAmount;
 		this.newBudgetToAddDate = newBudgetToAddDate;
 		this.newBudgetToAddAmount = newBudgetToAddAmount;
 		this.customerID = customerID;
+	}
+	
+	public Integer getTransactionID()
+	{
+		return transactionID;
 	}
 
 	public Integer getPromotionID()
@@ -103,6 +110,7 @@ public class ApplyPromotionBudgetRequest
 		result = prime * result + ((promotionBudgetID == null) ? 0 : promotionBudgetID.hashCode());
 		result = prime * result + ((promotionID == null) ? 0 : promotionID.hashCode());
 		result = prime * result + ((spendIncurredThisMonth == null) ? 0 : spendIncurredThisMonth.hashCode());
+		result = prime * result + ((transactionID == null) ? 0 : transactionID.hashCode());
 		return result;
 	}
 
@@ -186,14 +194,21 @@ public class ApplyPromotionBudgetRequest
 		}
 		else if (!spendIncurredThisMonth.equals(other.spendIncurredThisMonth))
 			return false;
+		if (transactionID == null)
+		{
+			if (other.transactionID != null)
+				return false;
+		}
+		else if (!transactionID.equals(other.transactionID))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "ApplyPromotionBudgetRequest [promotionID=" + promotionID + ", newCycleStartDate=" + newCycleStartDate + ", newCycleEndDate=" + newCycleEndDate + ", newRemainingBudget=" + newRemainingBudget + ", promotionBudgetID=" + promotionBudgetID + ", spendIncurredThisMonth="
-				+ spendIncurredThisMonth + ", budgetCarryOverAmount=" + budgetCarryOverAmount + ", newBudgetToAddDate=" + newBudgetToAddDate + ", newBudgetToAddAmount=" + newBudgetToAddAmount + ", customerID=" + customerID + "]";
+		return "ApplyPromotionBudgetRequest [promotionID=" + promotionID + ", newCycleStartDate=" + newCycleStartDate + ", newCycleEndDate=" + newCycleEndDate + ", newRemainingBudget=" + newRemainingBudget + ", promotionBudgetID=" + promotionBudgetID + ", transactionID=" + transactionID
+				+ ", spendIncurredThisMonth=" + spendIncurredThisMonth + ", budgetCarryOverAmount=" + budgetCarryOverAmount + ", newBudgetToAddDate=" + newBudgetToAddDate + ", newBudgetToAddAmount=" + newBudgetToAddAmount + ", customerID=" + customerID + "]";
 	}
 			
 }
