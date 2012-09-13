@@ -330,7 +330,9 @@ namespace Semplest.Admin.Models
         public int SelectedSalesPersonID { get; set; }
         public IEnumerable<SelectListItem> SalesPersons { get; set; }
 
-
+        public int SelectedUserTypeID { get; set; }
+        public IEnumerable<UserType> UserType { get; set; }
+       
         //for parent dropdown
         public int SelectedParentID { get; set; }
         public IEnumerable<SelectListItem> Parents { get; set; }

@@ -3,6 +3,7 @@ using Semplest.SharedResources.Encryption;
 using Semplest.SharedResources.Services;
 using SemplestModel;
 using System;
+using SemplestModel.Repositories;
 
 namespace Semplest.Admin.Models.Repositories
 {
@@ -34,7 +35,7 @@ namespace Semplest.Admin.Models.Repositories
                             };
 
                 dbcontext.Customers.Add(c);
-
+                var ur = new UserRepository(dbcontext);
                 var u = new User
                             {
                                 Customer = c,
@@ -43,7 +44,8 @@ namespace Semplest.Admin.Models.Repositories
                                 LastName = m.CustomerAccount.LastName,
                                 MiddleInitial = m.CustomerAccount.MiddleInitial,
                                 IsActive = m.CustomerAccount.isActive,
-                                CreatedDate = DateTime.Now
+                                CreatedDate = DateTime.Now,
+                                UserTypeFK = m.SelectedUserTypeID
                             };
                 dbcontext.Users.Add(u);
 

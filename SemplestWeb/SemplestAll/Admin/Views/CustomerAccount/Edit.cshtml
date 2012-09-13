@@ -164,6 +164,11 @@ Edit Customer Account:
                                         @Html.LabelFor(model => model.CustomerAccount.AllowAutoBid)
                                         @Html.CheckBoxFor(model => model.CustomerAccount.AllowAutoBid)
                                     </li>
+                                                               <li>
+                                        @Html.LabelFor(model => model.UserType)
+                                        @Html.DropDownListFor(model => model.SelectedUserTypeID, new SelectList(Model.UserType, "UserTypePK", "UserType1"))
+
+                                    </li>
                                 </ul>
                             </td>
                             <td style="vertical-align: top;">

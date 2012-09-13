@@ -84,48 +84,48 @@ namespace Semplest.Admin.Controllers
             SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
             var viewModel =
-               from u in dbcontext.Users
-               join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
-               join caa in dbcontext.CustomerAddressAssociations on c.CustomerPK equals caa.CustomerFK
-               join a in dbcontext.Addresses on caa.AddressFK equals a.AddressPK
-               join sc in dbcontext.StateCodes on a.StateAbbrFK equals sc.StateAbbrPK
-               join at in dbcontext.AddressTypes on caa.AddressTypeFK equals at.AddressTypePK
-               join cpa in dbcontext.CustomerPhoneAssociations on c.CustomerPK equals cpa.CustomerFK
-               join p in dbcontext.Phones on cpa.PhoneFK equals p.PhonePK
-               join b in dbcontext.BillTypes on c.BillTypeFK equals b.BillTypePK
-               join n in dbcontext.CustomerNotes.DefaultIfEmpty() on c.CustomerPK equals n.CustomerFK
+                from u in dbcontext.Users
+                join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
+                join caa in dbcontext.CustomerAddressAssociations on c.CustomerPK equals caa.CustomerFK
+                join a in dbcontext.Addresses on caa.AddressFK equals a.AddressPK
+                join sc in dbcontext.StateCodes on a.StateAbbrFK equals sc.StateAbbrPK
+                join at in dbcontext.AddressTypes on caa.AddressTypeFK equals at.AddressTypePK
+                join cpa in dbcontext.CustomerPhoneAssociations on c.CustomerPK equals cpa.CustomerFK
+                join p in dbcontext.Phones on cpa.PhoneFK equals p.PhonePK
+                join b in dbcontext.BillTypes on c.BillTypeFK equals b.BillTypePK
+                join n in dbcontext.CustomerNotes.DefaultIfEmpty() on c.CustomerPK equals n.CustomerFK
 
-               where (c.CustomerPK == id)
-               select new CustomerAccount
-               {
-                   AccountNumber = c.CustomerPK,
-                   Customer = c.Name,
-                   AllowAutoBid = c.AllowAutobid,
-                   FirstName = u.FirstName,
-                   LastName = u.LastName,
-                   MiddleInitial = u.MiddleInitial,
-                   Address1 = a.Address1,
-                   Address2 = a.Address2,
-                   City = a.City,
-                   State = sc.StateAbbr,
-                   Zip = a.ZipCode,
-                   Phone = p.Phone1,
-                   Email = u.Email,
-                   BillType = b.BillType1,
-                   UserPK = u.UserPK,
-                   StateID = sc.StateAbbrPK,
-                   CustomerNote = (n.Note == null ? null : n.Note),
-                   isActive = u.IsActive,
-                   selectedBillTypeid = c.BillTypeFK,
-                   internalID=c.InternalCustomerId,
-                   PercentMedia = c.PercentOfMedia,
-                    ServiceFee = c.ServiceFee ,
-                     CreditLimit=c.CreditLimit,
-                     PromotionFeeAmount=c.PromotionFeeAmount ,
-                     PromotionFeeOverride = c.PromotionFeeOverride 
-               };
+                where (c.CustomerPK == id)
+                select new CustomerAccount
+                           {
+                               AccountNumber = c.CustomerPK,
+                               Customer = c.Name,
+                               AllowAutoBid = c.AllowAutobid,
+                               FirstName = u.FirstName,
+                               LastName = u.LastName,
+                               MiddleInitial = u.MiddleInitial,
+                               Address1 = a.Address1,
+                               Address2 = a.Address2,
+                               City = a.City,
+                               State = sc.StateAbbr,
+                               Zip = a.ZipCode,
+                               Phone = p.Phone1,
+                               Email = u.Email,
+                               BillType = b.BillType1,
+                               UserPK = u.UserPK,
+                               StateID = sc.StateAbbrPK,
+                               CustomerNote = (n.Note == null ? null : n.Note),
+                               isActive = u.IsActive,
+                               selectedBillTypeid = c.BillTypeFK,
+                               internalID = c.InternalCustomerId,
+                               PercentMedia = c.PercentOfMedia,
+                               ServiceFee = c.ServiceFee,
+                               CreditLimit = c.CreditLimit,
+                               PromotionFeeAmount = c.PromotionFeeAmount,
+                               PromotionFeeOverride = c.PromotionFeeOverride
+                           };
 
-            
+
             var viewModel2 =
                 from e in dbcontext.Employees
                 join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
@@ -133,15 +133,15 @@ namespace Semplest.Admin.Controllers
                 join u in dbcontext.Users on e.UsersFK equals u.UserPK
                 where (eca.CustomerFK == id && et.EmployeeType1.ToLower() == "rep")
                 select new EmployeeCustomerAssociaitionModel
-                {
-                    AccountNumber = eca.CustomerFK,
-                    EmployeeType = et.EmployeeType1,
-                    employeePK = e.EmployeePK,
-                    FirstName = u.FirstName,
-                    MiddleInitial = u.MiddleInitial,
-                    LastName = u.LastName,
-                    EmployeeUserPK = u.UserPK
-                };
+                           {
+                               AccountNumber = eca.CustomerFK,
+                               EmployeeType = et.EmployeeType1,
+                               employeePK = e.EmployeePK,
+                               FirstName = u.FirstName,
+                               MiddleInitial = u.MiddleInitial,
+                               LastName = u.LastName,
+                               EmployeeUserPK = u.UserPK
+                           };
 
 
             var selectedrep =
@@ -151,27 +151,28 @@ namespace Semplest.Admin.Controllers
                 join u in dbcontext.Users on e.UsersFK equals u.UserPK
                 where (eca.CustomerFK == id && et.EmployeeType1.ToLower() == "rep")
                 select new EmployeeCustomerAssociaitionModel
-                {
-                    AccountNumber = eca.CustomerFK,
-                    EmployeeType = et.EmployeeType1,
-                    employeePK = e.EmployeePK,
-                    FirstName = u.FirstName,
-                    MiddleInitial = u.MiddleInitial,
-                    LastName = u.LastName,
-                    EmployeeUserPK = u.UserPK
-                };
+                           {
+                               AccountNumber = eca.CustomerFK,
+                               EmployeeType = et.EmployeeType1,
+                               employeePK = e.EmployeePK,
+                               FirstName = u.FirstName,
+                               MiddleInitial = u.MiddleInitial,
+                               LastName = u.LastName,
+                               EmployeeUserPK = u.UserPK
+                           };
 
             /////////////////////////////////////////////////////////////////////////////
             ////for parents dropdown
             /////////////////////////////////////////////////////////////////////////////
             var selectedparent =
-               from ch in dbcontext.CustomerHierarchies
-               where (ch.CustomerFK == id)
-               select ch;
+                from ch in dbcontext.CustomerHierarchies
+                where (ch.CustomerFK == id)
+                select ch;
 
             var allparents =
                 from c in dbcontext.Customers
-                join chi in dbcontext.CustomerHierarchies.Where(p => p.CustomerParentFK == null) on c.CustomerPK equals chi.CustomerFK
+                join chi in dbcontext.CustomerHierarchies.Where(p => p.CustomerParentFK == null) on c.CustomerPK equals
+                    chi.CustomerFK
                 select c;
 
 
@@ -179,8 +180,8 @@ namespace Semplest.Admin.Controllers
             ////for billtype dropdown
             /////////////////////////////////////////////////////////////////////////////
             var selectedbilltype =
-               from bt in dbcontext.BillTypes
-               select bt;
+                from bt in dbcontext.BillTypes
+                select bt;
 
             var allbilltypes =
                 from bt in dbcontext.BillTypes
@@ -195,15 +196,15 @@ namespace Semplest.Admin.Controllers
                 join u in dbcontext.Users on e.UsersFK equals u.UserPK
                 where (eca.CustomerFK == id && et.EmployeeType1.ToLower() == "sales")
                 select new EmployeeCustomerAssociaitionModel
-                {
-                    AccountNumber = eca.CustomerFK,
-                    EmployeeType = et.EmployeeType1,
-                    employeePK = e.EmployeePK,
-                    FirstName = u.FirstName,
-                    MiddleInitial = u.MiddleInitial,
-                    LastName = u.LastName,
-                    EmployeeUserPK = u.UserPK
-                };
+                           {
+                               AccountNumber = eca.CustomerFK,
+                               EmployeeType = et.EmployeeType1,
+                               employeePK = e.EmployeePK,
+                               FirstName = u.FirstName,
+                               MiddleInitial = u.MiddleInitial,
+                               LastName = u.LastName,
+                               EmployeeUserPK = u.UserPK
+                           };
 
 
             /////////////////////////////////////////////////////////////////////////////////
@@ -215,15 +216,15 @@ namespace Semplest.Admin.Controllers
                           join u in dbcontext.Users on e.UsersFK equals u.UserPK
                           where (et.EmployeeType1 == "Rep" && u.IsActive.Equals(true))
                           select new EmployeeCustomerAssociaitionModel
-                          {
-                              //AccountNumber = eca.CustomerFK,
-                              employeePK = e.EmployeePK,
-                              EmployeeType = et.EmployeeType1,
-                              EmployeeUserPK = u.UserPK,
-                              FirstName = u.FirstName,
-                              LastName = u.LastName,
-                              MiddleInitial = u.MiddleInitial
-                          };
+                                     {
+                                         //AccountNumber = eca.CustomerFK,
+                                         employeePK = e.EmployeePK,
+                                         EmployeeType = et.EmployeeType1,
+                                         EmployeeUserPK = u.UserPK,
+                                         FirstName = u.FirstName,
+                                         LastName = u.LastName,
+                                         MiddleInitial = u.MiddleInitial
+                                     };
 
             /////////////////////////////////////////////////////////////////////////////////
             //for sales dropdown
@@ -234,22 +235,22 @@ namespace Semplest.Admin.Controllers
                                   join u in dbcontext.Users on e.UsersFK equals u.UserPK
                                   where (et.EmployeeType1 == "Sales" && u.IsActive.Equals(true))
                                   select new EmployeeCustomerAssociaitionModel
-                                  {
-                                      //AccountNumber = eca.CustomerFK,
-                                      employeePK = e.EmployeePK,
-                                      EmployeeType = et.EmployeeType1,
-                                      EmployeeUserPK = u.UserPK,
-                                      FirstName = u.FirstName,
-                                      LastName = u.LastName,
-                                      MiddleInitial = u.MiddleInitial
-                                  };
+                                             {
+                                                 //AccountNumber = eca.CustomerFK,
+                                                 employeePK = e.EmployeePK,
+                                                 EmployeeType = et.EmployeeType1,
+                                                 EmployeeUserPK = u.UserPK,
+                                                 FirstName = u.FirstName,
+                                                 LastName = u.LastName,
+                                                 MiddleInitial = u.MiddleInitial
+                                             };
 
 
             CustomerAccountWithEmployeeModel x = new CustomerAccountWithEmployeeModel();
             x.CustomerAccount = viewModel.Single(c => c.AccountNumber == id);
             x.EmployeeCustomerAssociaitionModel = viewModel2;
 
-            
+
 
 
             //add userid and password to model
@@ -266,18 +267,25 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
             //x.SelectedRoleID = viewModel.Select(r => r.RolesFK).FirstOrDefault();
-            
-            
-            var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == x.CustomerAccount.UserPK);
-            if (userrolesassociation == null) { x.SelectedRoleID = -1; }
-            else { x.SelectedRoleID = userrolesassociation.RolesFK; }
+
+
+            var userrolesassociation =
+                dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == x.CustomerAccount.UserPK);
+            if (userrolesassociation == null)
+            {
+                x.SelectedRoleID = -1;
+            }
+            else
+            {
+                x.SelectedRoleID = userrolesassociation.RolesFK;
+            }
 
 
             x.Roles = roles.Select(r => new SelectListItem
-            {
-                Value = r.RolePK.ToString(),
-                Text = r.RoleName.ToString()
-            });
+                                            {
+                                                Value = r.RolePK.ToString(),
+                                                Text = r.RoleName.ToString()
+                                            });
 
 
 
@@ -288,19 +296,22 @@ namespace Semplest.Admin.Controllers
             var allstates = (from sc in dbcontext.StateCodes select sc).ToList();
             x.SelectedStateID = viewModel.Select(r => r.StateID).FirstOrDefault();
             x.States = allstates.Select(r => new SelectListItem
-                        {
-                            Value = r.StateAbbrPK.ToString(),
-                            Text = r.StateAbbr.ToString()
-                        });
+                                                 {
+                                                     Value = r.StateAbbrPK.ToString(),
+                                                     Text = r.StateAbbr.ToString()
+                                                 });
 
-
+            var userTypeFK = dbcontext.Users.Single(n => n.CustomerFK == id).UserTypeFK;
+            if (userTypeFK != null)
+                x.SelectedUserTypeID = userTypeFK.Value;
+            x.UserType = from u in dbcontext.UserTypes select u;
             /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
             if (selectedrep.ToList().FirstOrDefault() == null)
                 x.SelectedRepID = -1;
             else
-            x.SelectedRepID = selectedrep.ToList().FirstOrDefault().employeePK;
+                x.SelectedRepID = selectedrep.ToList().FirstOrDefault().employeePK;
 
             //x.Reps=allreps.Select(r=>new SelectListItem 
             //            {
@@ -310,11 +321,12 @@ namespace Semplest.Admin.Controllers
 
             //workaround below (same as for state dropdown but with lists, in order to get over the error i get above) ; need to refactor later!!
             List<SelectListItem> slina = new List<SelectListItem>();
-            slina.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+            slina.Add(new SelectListItem {Value = (-1).ToString(), Text = "«« Not Assigned »»"});
 
 
 
-            List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
+            List<EmployeeCustomerAssociaitionModel> ll1 =
+                allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
             List<SelectListItem> sl1 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll1)
             {
@@ -333,7 +345,7 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
 
             //x.SelectedSalesPersonID = viewModel2.Select(r => r.employeePK).FirstOrDefault();
-            if (selectedsales.ToList().FirstOrDefault()== null)
+            if (selectedsales.ToList().FirstOrDefault() == null)
                 x.SelectedSalesPersonID = -1;
             else
                 x.SelectedSalesPersonID = selectedsales.ToList().First().employeePK;
@@ -344,7 +356,8 @@ namespace Semplest.Admin.Controllers
             //    Text = r.FirstName.ToString()
             //});
             //workaround below (same as for state dropdown but with lists, in order to get over the error) ; need to refactor later!!
-            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
+            List<EmployeeCustomerAssociaitionModel> ll2 =
+                allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
             List<SelectListItem> sl2 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll2)
             {
@@ -362,33 +375,31 @@ namespace Semplest.Admin.Controllers
             //// for parent dropdown
             ////////////////////////////////
             List<SelectListItem> sli = new List<SelectListItem>();
-            sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Parent »»" });
-            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User »»" });
+            sli.Add(new SelectListItem {Value = (-1).ToString(), Text = "«« Parent »»"});
+            sli.Add(new SelectListItem {Value = (0).ToString(), Text = "«« Single User »»"});
             x.Parents = allparents.ToList().Select(r => new SelectListItem
-            {
-                Value = r.CustomerPK.ToString(),
-                Text = r.Name.ToString()
-            }).Union(sli);
+                                                            {
+                                                                Value = r.CustomerPK.ToString(),
+                                                                Text = r.Name.ToString()
+                                                            }).Union(sli);
 
 
-            if (selectedparent.FirstOrDefault().CustomerFK == selectedparent.FirstOrDefault().CustomerParentFK) //self -- single user
+            if (selectedparent.FirstOrDefault().CustomerFK == selectedparent.FirstOrDefault().CustomerParentFK)
+                //self -- single user
             {
                 //self -- single user
                 x.SelectedParentID = 0;
             }
+            else if (selectedparent.FirstOrDefault().CustomerParentFK == null) //parent
+            {
+                //parent
+                x.SelectedParentID = -1;
+
+            }
             else
-
-
-                if (selectedparent.FirstOrDefault().CustomerParentFK == null) //parent
-                {
-                    //parent
-                    x.SelectedParentID = -1;
-
-                }
-                else
-                {
-                    x.SelectedParentID = selectedparent.ToList().FirstOrDefault().CustomerParentFK.Value;
-                }
+            {
+                x.SelectedParentID = selectedparent.ToList().FirstOrDefault().CustomerParentFK.Value;
+            }
 
 
 
@@ -399,10 +410,10 @@ namespace Semplest.Admin.Controllers
             ////////////////////////////////
 
             x.BillTypes = allbilltypes.ToList().Select(r => new SelectListItem
-            {
-                Value = r.BillTypePK.ToString(),
-                Text = r.BillType1.ToString()
-            });
+                                                                {
+                                                                    Value = r.BillTypePK.ToString(),
+                                                                    Text = r.BillType1.ToString()
+                                                                });
 
 
             x.SelectedBillTypeID = x.CustomerAccount.selectedBillTypeid;
@@ -610,6 +621,7 @@ namespace Semplest.Admin.Controllers
             user.Email = m.CustomerAccount.Email;
             user.EditedDate = DateTime.Now;
             user.IsActive = m.CustomerAccount.isActive;
+            user.UserTypeFK = m.SelectedUserTypeID;
             UpdateModel(user);
 
 
@@ -922,7 +934,8 @@ namespace Semplest.Admin.Controllers
                 sl2.Add(mylistitem);
             }
             x.SalesPersons = sl2.Union(slina);
-            
+
+            x.UserType = from u in dbcontext.UserTypes select u;
             x.CustomerAccount = new CustomerAccount();
             x.CustomerAccount.UserPassword = Semplest.SharedResources.Helpers.RandomPassword.Generate(8,10);
             x.CustomerAccount.isActive = true;
