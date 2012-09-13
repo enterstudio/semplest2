@@ -229,6 +229,7 @@ namespace Semplest.Core.Controllers
                 var customerFK = GetCustomerId();
                 var promo = pr.GetPromoitionFromCampaign(customerFK, model);
                 model.AllKeywords = kwr.SaveNegativeKeywords(model, customerFK, promo);
+                Session["AllKeyWords"] = model.AllKeywords;
                 return Json("NegativeKeywords");
             }
             catch (Exception ex)

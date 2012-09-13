@@ -671,11 +671,14 @@ function OnSuccess(id) {
         } else {
             tab = tabStrip.tabGroup.children('li:contains("View SmartWords")');
             tabStrip.select(tab);
+            tabStrip.reload(tab);
         }
     } else if (id == "NegativeKeywords") {
         if ($("#NegativeKeywordsText").val().trim().length < 1) {
             removeCurrentTab();
         }
+        var smartTab = tabStrip.tabGroup.children('li:contains("View SmartWords")');
+        tabStrip.reload(smartTab);
     } else {
         if (id.name == "Keywords") {
             $('#KeywordCount').html(id.count);
@@ -758,6 +761,6 @@ function removeCurrentTab() {
     var tab = tabStrip.select();
     var otherTab = tab.prev();
     tabStrip.remove(tab);
-    tabStrip.select(tabStrip.tabGroup.children('li:contains("Create Ads")'));
+    tabStrip.select(tabStrip.tabGroup.children('li:contains("Define Product")'));
 }
 
