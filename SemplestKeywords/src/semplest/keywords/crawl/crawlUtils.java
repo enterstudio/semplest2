@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 // Some useful utilities for crawling-testing
+// Note: There are more in semplest.keywords.javautils.TextUtils
 
 public class crawlUtils {
   // get my Ip address
@@ -47,7 +48,17 @@ public class crawlUtils {
         al.add( url );
     return al.toArray( new  String[]{});
   }
-  
+  // get fully qualified url
+  public static String resolveURL( String url, String base ){
+    try {
+      return (new java.net.URI( base )).resolve( url ).toString();
+    } catch (Exception e) {
+      e.printStackTrace();                       // logging ?
+      return "";
+    }
+  }
+
+
   // - Jsoup -----------------------
   // visible text
   public static String htmlText( String url ) {
@@ -62,7 +73,7 @@ public class crawlUtils {
     ArrayList<String> al = new ArrayList<String>();
     try {
       for( Element link : Jsoup.connect( url ).get().select("a[href]"))
-        al.add( link.attr("abs:href"));
+        al.add( resolveURL( link.attr("abs:href"), url));
     } catch (Exception e){                       
       e.printStackTrace();                      // logging ?
     } 
