@@ -8,6 +8,7 @@ using Semplest.SharedResources.Services;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using Semplest.SharedResources.Encryption;
+using SemplestModel.Repositories;
 
 namespace Semplest.SharedResources.Controllers
 {
@@ -103,10 +104,14 @@ namespace Semplest.SharedResources.Controllers
                             //    return RedirectToAction("Index", "Home");
                             //else if (cred.User.IsRegistered)
                             //user is a regular core user
-                            if (cred.User.CustomerFK == null)
-                                return RedirectToAction("Index", "SmartWord");
-                            else
-                                return RedirectToAction("Index", "SmartWord");
+                            var ur = new UserRepository(dbContext);
+
+                            if (cred.User.UserTypeFK == ur.GetUserType("KeywordBid").UserTypePK)
+                                if (cred.User.CustomerFK == null)
+                                    return RedirectToAction("Index", "Home");
+                                else
+                                    return RedirectToAction("Index2", "Home");
+                            return RedirectToAction("Index", "SmartWord");
                         }
                         else if (pm.LoggedInSucceeded)
                         {

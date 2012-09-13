@@ -31,17 +31,10 @@
                                 <span>@p.PromotionName</span></a>
                                   
                             </td>
-                            @if (p.IsPaused)
-                            {
                                 <td>
-                                    @Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
+                                    &nbsp;
                                 </td>
-                            }
-                            else
-                            {
-                                <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
-                                </td>
-                            }
+                         
                             <td>@Html.ActionLink("Edit", "Setup", "SmartWord", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/SmartWord/Preview?promotionid=" + p.PromotionPK })
                             </td>
                             <td>@Html.ActionLink("End", "", "", new { @class = "endad", id = p.PromotionPK, name = p.PromotionName })

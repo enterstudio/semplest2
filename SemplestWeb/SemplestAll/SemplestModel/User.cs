@@ -44,5 +44,6 @@ namespace SemplestModel
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<TransactionHistory> TransactionHistories { get; set; }
         public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
+        public virtual UserType UserType { get; set; }
     }
 }
