@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import semplest.dmoz.tree.DmozCategoryData;
+import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
 
 public class MergeLeafNodesProcesser implements TreeProcesserInterface{

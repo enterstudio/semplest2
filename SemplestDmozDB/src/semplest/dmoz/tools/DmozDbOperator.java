@@ -1,7 +1,6 @@
-package semplest.dmoz.tree;
+package semplest.dmoz.tools;
 
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -11,6 +10,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import semplest.dmoz.springjdbc.BaseDB;
+import semplest.dmoz.tree.DbDmozObject;
+import semplest.dmoz.tree.DbUrlDataObject;
+import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.TreeFuncs;
 import semplest.util.SemplestUtils;
 
 public class DmozDbOperator extends BaseDB {

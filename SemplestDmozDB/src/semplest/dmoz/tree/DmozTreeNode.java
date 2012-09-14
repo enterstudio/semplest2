@@ -6,7 +6,7 @@ public class DmozTreeNode {
 	private Long nodeID;
 	private Long parentID;
 	private String nodeName;
-	private DmozCategoryData categoryData = new DmozCategoryData();
+	private DmozCategoryDataObject categoryData = new DmozCategoryDataObject();
 	private HashMap<String,DmozTreeNode> childrenNodes = new HashMap<String,DmozTreeNode>();	
 	private DmozTreeNode parentNode;
 
@@ -14,7 +14,7 @@ public class DmozTreeNode {
 	private int treeNodeCount;
 	
 	public DmozTreeNode(){
-		this.categoryData = new DmozCategoryData();
+		this.categoryData = new DmozCategoryDataObject();
 		this.childrenNodes = new HashMap<String,DmozTreeNode>();
 	}
 	
@@ -63,12 +63,12 @@ public class DmozTreeNode {
 	}
 
 
-	public DmozCategoryData getCategoryData() {
+	public DmozCategoryDataObject getCategoryData() {
 		return categoryData;
 	}
 
 
-	public void setCategoryData(DmozCategoryData categoryData) {
+	public void setCategoryData(DmozCategoryDataObject categoryData) {
 		this.categoryData = categoryData;
 	}
 

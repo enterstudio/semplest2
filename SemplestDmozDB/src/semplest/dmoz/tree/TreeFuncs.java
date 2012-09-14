@@ -70,6 +70,7 @@ public class TreeFuncs {
 	
 	public static void logError(String error) throws Exception{
 		logWriter.append(error + "\n");
+		logWriter.flush();
 	}
 
 	public static void endLogError() throws Exception{

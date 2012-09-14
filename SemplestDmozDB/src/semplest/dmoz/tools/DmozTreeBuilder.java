@@ -1,4 +1,4 @@
-package semplest.dmoz.tree;
+package semplest.dmoz.tools;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -6,6 +6,10 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Properties;
+
+import semplest.dmoz.tree.DmozCategoryDataObject;
+import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.TreeFuncs;
 
 public class DmozTreeBuilder {
 	
@@ -50,15 +54,15 @@ public class DmozTreeBuilder {
 	
 	public void buildDmozTree() throws Exception{
 		System.out.println("Loading Dmoz data...");
-		HashMap<String,DmozCategoryData> inputData = readInData();
+		HashMap<String,DmozCategoryDataObject> inputData = readInData();
 		System.out.println("Building Dmoz tree...");
 		buildTree(inputData);
 		//assignTreeIDs(topNode);
 		System.out.println("Done.");
 	}
 	
-	private HashMap<String,DmozCategoryData> readInData() throws Exception{
-		HashMap<String,DmozCategoryData> allData = new HashMap<String,DmozCategoryData>();		
+	private HashMap<String,DmozCategoryDataObject> readInData() throws Exception{
+		HashMap<String,DmozCategoryDataObject> allData = new HashMap<String,DmozCategoryDataObject>();		
 		
 		FileInputStream fstream;
 		DataInputStream in;
@@ -74,7 +78,7 @@ public class DmozTreeBuilder {
 			String[] lineContents = strLine.split(" : ");
 			String cat = lineContents[0].trim();
 			String categoryId = lineContents[1].trim();
-			DmozCategoryData catData = new DmozCategoryData();
+			DmozCategoryDataObject catData = new DmozCategoryDataObject();
 			catData.setCategoryId(Long.valueOf(categoryId));
 			allData.put(cat, catData);
 		}
@@ -90,9 +94,9 @@ public class DmozTreeBuilder {
 			String cat = lineContents[0].trim();
 			HashMap<String,String> urls = parseUrls(strLine);
 			String catDesc = parseCategoryDesc(strLine);
-			DmozCategoryData catData;
+			DmozCategoryDataObject catData;
 			if(!allData.containsKey(cat)){
-				catData = new DmozCategoryData();
+				catData = new DmozCategoryDataObject();
 			}
 			else{
 				catData = allData.get(cat);
@@ -106,7 +110,7 @@ public class DmozTreeBuilder {
 		return allData;
 	}
 
-	private DmozTreeNode buildTree(HashMap<String,DmozCategoryData> inputData) throws Exception{		
+	private DmozTreeNode buildTree(HashMap<String,DmozCategoryDataObject> inputData) throws Exception{		
 		
 		//set up the top node
 		topNode = new DmozTreeNode();
@@ -115,13 +119,13 @@ public class DmozTreeBuilder {
 		topNode.setParentID(-1L);
 		topNode.setName(topNodeName);
 		topNode.setParentNode(null);
-		DmozCategoryData topCatData = inputData.containsKey("top")? inputData.get("top") : new DmozCategoryData();
+		DmozCategoryDataObject topCatData = inputData.containsKey("top")? inputData.get("top") : new DmozCategoryDataObject();
 		topNode.setCategoryData(topCatData);
 		
 		//process each category, and build the tree
 		for(String cat : inputData.keySet()){
 			String[] nodes = cat.split("/");			
-			DmozCategoryData catData = inputData.containsKey(cat)? inputData.get(cat) : new DmozCategoryData();
+			DmozCategoryDataObject catData = inputData.containsKey(cat)? inputData.get(cat) : new DmozCategoryDataObject();
 			
 			DmozTreeNode currentNode = topNode;
 			

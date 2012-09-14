@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import semplest.dmoz.springjdbc.BaseDB;
-import semplest.dmoz.tree.DmozTreeBuilder;
+import semplest.dmoz.tools.DmozTreeBuilder;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFuncs;
 import semplest.dmoz.tree.process.AllNodesUrlNumProcesser;

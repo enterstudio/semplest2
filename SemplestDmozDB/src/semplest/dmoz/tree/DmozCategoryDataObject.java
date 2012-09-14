@@ -2,7 +2,7 @@ package semplest.dmoz.tree;
 
 import java.util.HashMap;
 
-public class DmozCategoryData {
+public class DmozCategoryDataObject {
 	private Long categoryId;
 	private String description;
 	private HashMap<String,String> urlData = new HashMap<String,String>();

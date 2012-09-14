@@ -2,7 +2,7 @@ package semplest.dmoz.tree.frame;
 
 import javax.swing.*;
 
-import semplest.dmoz.tree.DmozTreeBuilder;
+import semplest.dmoz.tools.DmozTreeBuilder;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.filter.CharDigitLeafNodeMerger;
 import semplest.dmoz.tree.filter.DmozTreeFliter;

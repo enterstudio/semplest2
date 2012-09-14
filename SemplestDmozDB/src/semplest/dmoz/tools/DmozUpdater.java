@@ -1,4 +1,4 @@
-package semplest.dmoz.tree;
+package semplest.dmoz.tools;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+
+import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.TreeFuncs;
 
 public class DmozUpdater {
 	
