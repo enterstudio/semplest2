@@ -86,6 +86,8 @@ namespace Semplest.Core.Controllers
                 var categories = scw.GetCategories(null, swsm.ProductGroup.ProductPromotionName,
                                                    swsm.ProductGroup.Words,
                                                    null, swsm.LandingUrl);
+                if (Session["NegativeSmartwords"] != null)
+                    SetNegativeKeywords(swsm);
                 Session.Add("CategoryList", categories);
                 var categoryModels = new List<CampaignSetupModel.CategoriesModel>();
                 if (categories != null && categories.Count > 0)
@@ -221,15 +223,20 @@ namespace Semplest.Core.Controllers
                 }
                 Session["NegativeSmartwords"] = model.NegativeKeywords;
                 Session["NegativeSmartwordsText"] = model.NegativeKeywordsText;
-                var cred =
-                    (Credential) (Session[SEMplestConstants.SESSION_USERID]);
-                var dbcontext = new SemplestModel.Semplest();
-                IPromotionRepository pr = new PromotionRepository(dbcontext);
-                IKeyWordRepository kwr = new KeyWordRepository(dbcontext);
-                var customerFK = GetCustomerId();
-                var promo = pr.GetPromoitionFromCampaign(customerFK, model);
-                model.AllKeywords = kwr.SaveNegativeKeywords(model, customerFK, promo);
-                Session["AllKeyWords"] = model.AllKeywords;
+                try
+                {
+                    var dbcontext = new SemplestModel.Semplest();
+                    IPromotionRepository pr = new PromotionRepository(dbcontext);
+                    IKeyWordRepository kwr = new KeyWordRepository(dbcontext);
+                    var customerFK = GetCustomerId();
+                    var promo = pr.GetPromoitionFromCampaign(customerFK, model);
+                    model.AllKeywords = kwr.SaveNegativeKeywords(model, customerFK, promo);
+                    Session["AllKeyWords"] = model.AllKeywords;
+                }
+                catch (InvalidOperationException io)
+                {
+                    //if this is the promo hasn't yet been saved then just leave it in the session and move on
+                }      
                 return Json("NegativeKeywords");
             }
             catch (Exception ex)

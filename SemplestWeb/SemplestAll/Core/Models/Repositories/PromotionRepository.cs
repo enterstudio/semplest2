@@ -52,7 +52,7 @@ namespace Semplest.Core.Models.Repositories
 
         public Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)
         {
-            var promo = prodGroup.Promotions.FirstOrDefault(m => m.PromotionName == promotionName && !m.IsDeleted);
+            var promo = prodGroup.Promotions.Single(m => m.PromotionName == promotionName && !m.IsDeleted);
             return promo;
         }
 
