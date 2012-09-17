@@ -115,6 +115,13 @@ namespace Semplest.Core.Controllers
 
         public ActionResult Setup(SmartWordSetupModel swsm, string command)
         {
+            Session["AllCategories"] = null;
+            Session["AllKeyWords"] = null;
+            Session["PromoId"] = null;
+            Session["NegativeSmartWords"] = null;
+            Session["NegativeSmartwordsText"] = null;
+            Session["CategoryList"] = null;
+            Session["SmartWordSetupModel"] = null;
             ViewBag.IsNew = "True";
             return View(swsm);
         }
