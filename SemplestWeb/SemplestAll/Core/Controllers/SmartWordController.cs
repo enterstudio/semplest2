@@ -119,7 +119,6 @@ namespace Semplest.Core.Controllers
         public ActionResult Categories()
         {
             var categoryModels = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
-            var promoId = (int) Session["PromoId"];
             var swsm = (SmartWordSetupModel)(Session["SmartWordSetupModel"]);
             if (categoryModels == null)
             {
@@ -134,20 +133,23 @@ namespace Semplest.Core.Controllers
                 //Session["CampaignSetupModel"] = model;
                 Session["AllCategories"] = categoryModels;
             }
-            
-            //var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
-            //                                                 model.ProductGroup.ProductPromotionName);
-            var dbContext = new SemplestModel.Semplest();
-            var cats = dbContext.KeywordCategories.Where(x => x.PromotionFK == promoId);
-            var i = 0;
+
             var selectedIds = new List<int>();
-            if (cats.Any())
+            if (Session["PromoId"] != null)
             {
-                foreach (CampaignSetupModel.CategoriesModel cm in categoryModels)
+                int promoId =int.Parse(Session["PromoId"].ToString());
+                var dbContext = new SemplestModel.Semplest();
+                var cats = dbContext.KeywordCategories.Where(x => x.PromotionFK == promoId);
+                var i = 0;
+                
+                if (cats.Any())
                 {
-                    if (cats.Any(x => x.KeywordCategory1 == cm.Name))
-                        selectedIds.Add(i);
-                    i += 1;
+                    foreach (CampaignSetupModel.CategoriesModel cm in categoryModels)
+                    {
+                        if (cats.Any(x => x.KeywordCategory1 == cm.Name))
+                            selectedIds.Add(i);
+                        i += 1;
+                    }
                 }
             }
             var swm = new SmartWordSetupModel();
@@ -174,18 +176,18 @@ namespace Semplest.Core.Controllers
                                            model.ProductGroup.ProductPromotionName,
                                            model.ProductGroup.Words, null, model.LandingUrl,
                                            null);
-
-            var campaignRepository = new CampaignRepository();
+            var dbcontext = new SemplestModel.Semplest();
+            var kr = new KeyWordRepository(dbcontext);
             var kpos = new List<KeywordProbabilityObject>();
             kpos.AddRange(keywords);
-            var dbcontext = new SemplestModel.Semplest();
+            
             var promotionRepository = new PromotionRepository(dbcontext);
             var promoId = promotionRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                              model.ProductGroup.ProductPromotionName);
             
             ICategoriesRepository catRepos = new CategoriesRepository(dbcontext);
             catRepos.SaveSelectedCategories(promoId, catList);
-            campaignRepository.SaveKeywords(promoId, kpos, null,
+            kr.SaveKeywords(promoId, kpos, (List<string>)Session["NegativeSmartwords"],
                                             model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
             foreach (
                 var kwm in

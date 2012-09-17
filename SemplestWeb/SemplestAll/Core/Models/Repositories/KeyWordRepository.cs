@@ -65,7 +65,7 @@ namespace Semplest.Core.Models.Repositories
                          model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
         }
 
-        private void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
+        public void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
                                 string productGroupName, string promotionName)
         {
             var stationIds = new DataTable();
