@@ -29,7 +29,7 @@ BEGIN TRY
 	insert into @promo(typePromo,PromotionStatus,PromotionPK, PromotionName)
 	select 'NotLaunched', null, p.PromotionPK, p.PromotionName from Promotion p
 	inner join ProductGroup pg on pg.ProductGroupPK = p.ProductGroupFK
-	where p.IsLaunched = 0 and pg.CustomerFK = 17
+	where p.IsLaunched = 0 and p.IsDeleted = 0 and pg.CustomerFK = @CustomerID
 
 	--Get Launched and all AdEngines are Live
 	insert into @promo(typePromo,PromotionStatus,PromotionPK, PromotionName)
@@ -37,7 +37,7 @@ BEGIN TRY
 	inner join ProductGroup pg on pg.ProductGroupPK = p.ProductGroupFK
 	inner join PromotionAdengineStatus paes on paes.PromotionFK = p.PromotionPK
 	inner join PromotionStatus ps on ps.PromotionStatusPK = paes.PromotionStatusFK
-	where p.IsLaunched = 1 and p.IsDeleted = 0 and pg.CustomerFK = 17
+	where p.IsLaunched = 1 and p.IsDeleted = 0 and p.IsCompleted = 0 and pg.CustomerFK = @CustomerID
 	group by ps.PromotionStatus, p.PromotionPK, p.PromotionName
 	having ps.PromotionStatus = 'Live'
 
@@ -47,7 +47,7 @@ BEGIN TRY
 	inner join ProductGroup pg on pg.ProductGroupPK = p.ProductGroupFK
 	inner join PromotionAdengineStatus paes on paes.PromotionFK = p.PromotionPK
 	inner join PromotionStatus ps on ps.PromotionStatusPK = paes.PromotionStatusFK
-	where p.IsLaunched = 1 and p.IsDeleted = 0 and p.PromotionPK not in (select p.PromotionPK from @promo p) and pg.CustomerFK = 17
+	where p.IsLaunched = 1 and p.IsDeleted = 0 and p.IsCompleted = 0 and p.PromotionPK not in (select p.PromotionPK from @promo p) and pg.CustomerFK = @CustomerID
 	group by ps.PromotionStatus, p.PromotionPK, p.PromotionName
 	having ps.PromotionStatus <> 'Deleted'
 
