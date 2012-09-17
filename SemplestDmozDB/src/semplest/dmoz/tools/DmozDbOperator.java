@@ -66,9 +66,8 @@ public class DmozDbOperator extends BaseDB {
 	
 	private static RowMapper<DbDmozObject> dbDmozObjectMapper = new BeanPropertyRowMapper<DbDmozObject>(DbDmozObject.class);
 	
-	public static DmozTreeNode loadDmozTreeFromDB(String categoryName) throws Exception{
+	public static DmozTreeNode loadDmozTreeFromDB(String categoryName) throws Exception{	
 		
-		System.out.println("Loading dmoz data from DB and building the tree...");
 		//Get the top node of the sub-tree from DB		
 		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,CategoryID FROM DMOZ WHERE NodeText = ?";
 		DbDmozObject topNode = jdbcTemplate.query(sql, new Object[]{categoryName}, dbDmozObjectMapper).get(0);
@@ -77,6 +76,8 @@ public class DmozDbOperator extends BaseDB {
 			//the sub-node does not exist
 			throw new Exception("The input node " + categoryName + " does not exist in the database.");
 		}
+		
+		System.out.println("Loading DMOZ data from DB and building the tree...");
 		
 		DmozTreeNode dmozTree = new DmozTreeNode();
 		dmozTree.setNodeID(topNode.getDmozNodePK());
