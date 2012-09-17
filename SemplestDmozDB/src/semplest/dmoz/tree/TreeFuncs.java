@@ -48,7 +48,7 @@ public class TreeFuncs {
 		
 	public static void storeTreeToFile(List<DmozTreeNode> dmozTree, String path) throws Exception{
 		FileWriter writer = new FileWriter(path);
-		writer.write("DmozNodePK || ParentNodeID || CategoryID || NodeText || NodeDescription \n");
+		writer.write("SemplestPK || ParentNodeID || DMOZCategoryID || NodeText || NodeDescription \n");
 		
 		for(DmozTreeNode node : dmozTree){
 			writer.append(node.getNodeID() + " || " 

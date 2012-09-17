@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import semplest.dmoz.DBType;
 import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFuncs;
@@ -38,9 +39,9 @@ public class DmozUpdater {
 	public void updateNodesInDB() throws Exception{
 		setUniqueIdBase();
 		compareDbTreeAndNewTree();
-		DmozDbOperator.deleteTreeNodes(getNodesToBeDeleted());
-		DmozDbOperator.addTreeNodes(getNodesToBeAdded());
-		DmozDbOperator.updateUrlData(getNodesToUpdateUrlData());
+		DbTreeOperator.deleteTreeNodes(DBType.DMOZ_TREE, getNodesToBeDeleted());
+		DbTreeOperator.addTreeNodes(DBType.DMOZ_TREE, getNodesToBeAdded());
+		DbTreeOperator.updateUrlData(DBType.DMOZ_TREE, getNodesToUpdateUrlData());
 		saveChangeToLog();
 	}
 	
@@ -58,7 +59,7 @@ public class DmozUpdater {
 	
 	public void compareDbTreeAndNewTree() throws Exception{
 		//Get the entire tree from DB
-		DmozTreeNode dmozTree = DmozDbOperator.loadDmozTreeFromDB("top");		
+		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB(DBType.DMOZ_TREE, "top");		
 		HashMap<String,DmozTreeNode> dbTreeMap = TreeFuncs.getTreeInMap(dmozTree);
 		
 		//Get the new tree
@@ -184,7 +185,7 @@ public class DmozUpdater {
 	}
 	
 	public void setUniqueIdBase() throws Exception{
-		uniqueId = DmozDbOperator.getUniqueIdBase();
+		uniqueId = DbTreeOperator.getUniqueIdBase(DBType.DMOZ_TREE);
 	}
 	
 	public void compareCidFiles() throws Exception{		

@@ -2,7 +2,7 @@ package semplest.dmoz.tree;
 
 public class DbUrlDataObject {
 	private Long UrlDataPK;
-	private Long DmozNodeFK;
+	private Long SemplestFK;
 	private String URL;
 	private String URLDescription;
 	private Integer Level;
@@ -14,11 +14,11 @@ public class DbUrlDataObject {
 	public void setUrlDataPK(Long urlDataPK) {
 		UrlDataPK = urlDataPK;
 	}
-	public Long getDmozNodeFK() {
-		return DmozNodeFK;
+	public Long getSemplestFK() {
+		return SemplestFK;
 	}
-	public void setDmozNodeFK(Long dmozNodeFK) {
-		DmozNodeFK = dmozNodeFK;
+	public void setSemplestFK(Long semplestFK) {
+		SemplestFK = semplestFK;
 	}
 	public String getURL() {
 		return URL;
