@@ -59,27 +59,6 @@
 			 </manifest>
 		</jar> 
 		
-		<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestTests/lib -->
-		<echo message="Creating Jar for SemplestBidding..."/>
-		<copy todir="${basedir}/lib" filtering="off">
-			<flattenmapper />
-			<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar" />
-		</copy>
-		<path id="bid.path">
-			<pathelement location="${classes}"/>
-				<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar"/>
-		</path>
-		<mkdir dir="${semplest.bidding.dir}/temp"/>
-		<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="bid.path"
-				target="1.6"
-				source="1.6"
-				debug="${java.debug}"   	
-				includes="**/*.java" >
-				<exclude name="**/*.svn"/>
-		</javac>
-		<jar destfile="${basedir}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">				 
-		</jar> 		
-		
 		<!-- compile services -->
 		<path id="services.path">
 			<pathelement location="${classes}"/>

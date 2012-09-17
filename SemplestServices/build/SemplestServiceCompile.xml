@@ -121,28 +121,6 @@
 		</jar>  	
 		 <echo message="Done."/> 
 		
-		<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestServices/lib -->
-		<echo message="Creating Jar for SemplestBidding..."/>
-			<copy todir="${dist}/lib" filtering="off">
-				<flattenmapper />
-				<fileset dir="${semplest.bidding.lib}" includes="**/*.jar" />
-			</copy>
-			<path id="api.path">
-				<pathelement location="${classes}"/>
-					<fileset dir="${semplest.bidding.lib}" includes="**/*.jar"/>
-				</path>
-				<mkdir dir="${semplest.bidding.dir}/temp"/>
-			<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="api.path"
-					target="1.6"
-					source="1.6"
-					debug="${java.debug}"   	
-					includes="**/*.java" >
-					<exclude name="**/*.svn"/>
-			</javac>
-			<jar destfile="${dist}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">
-			</jar>  
-		 <echo message="Done."/> 
-		
 		<!-- Copy folder for ChaseOrbitalGateway -->
 		<echo message="Copy folders for ChaseOrbitalGateway..."/>
   	 	<mkdir dir="${dist}/logs"/>
