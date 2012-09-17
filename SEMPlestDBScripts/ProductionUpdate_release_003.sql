@@ -58,6 +58,9 @@ ALTER TABLE dbo.Promotion ADD IsAutobid bit NOT NULL DEFAULT 0
 GO
 ALTER TABLE dbo.Promotion ADD AutoBidMaxCPC money NULL
 GO
+
+ALTER TABLE dbo.Customer ADD AllowAutoBid bit NOT NULL DEFAULT 0
+GO
 insert into UserType(UserType) Values ('KeywordOnly')
 insert into UserType(UserType) Values ('KeywordBid')
 
