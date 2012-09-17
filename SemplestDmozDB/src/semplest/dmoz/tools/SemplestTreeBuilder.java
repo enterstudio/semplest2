@@ -7,7 +7,7 @@ import java.util.Set;
 
 import semplest.dmoz.DBType;
 import semplest.dmoz.tree.DmozTreeNode;
-import semplest.dmoz.tree.TreeFuncs;
+import semplest.dmoz.tree.TreeFunctions;
 
 public class SemplestTreeBuilder {
 	
@@ -24,7 +24,7 @@ public class SemplestTreeBuilder {
 		
 		//now we have the new tree, it has the exactly same nodeID for each node, but different relationship between nodes/node data
 		//generate tree map
-		List<DmozTreeNode> treeNodesList = TreeFuncs.getTreeInList(dmozTree);
+		List<DmozTreeNode> treeNodesList = TreeFunctions.getTreeInList(dmozTree);
 		
 		for(DmozTreeNode treeNode : treeNodesList)
 		{

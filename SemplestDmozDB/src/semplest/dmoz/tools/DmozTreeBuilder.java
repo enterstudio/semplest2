@@ -9,7 +9,7 @@ import java.util.Properties;
 
 import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
-import semplest.dmoz.tree.TreeFuncs;
+import semplest.dmoz.tree.TreeFunctions;
 
 public class DmozTreeBuilder {
 	
@@ -25,7 +25,7 @@ public class DmozTreeBuilder {
 		try{			
 			DmozTreeBuilder tree = new DmozTreeBuilder();
 			tree.buildDmozTree();
-			TreeFuncs.printTree("c:\\dmoz\\BuiltTree.txt", tree.getTree());
+			TreeFunctions.printTree("c:\\dmoz\\BuiltTree.txt", tree.getTree());
 		}
 		catch(Exception e){
 			e.printStackTrace();

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tools.DmozTreeBuilder;
 import semplest.dmoz.tree.DmozTreeNode;
-import semplest.dmoz.tree.TreeFuncs;
+import semplest.dmoz.tree.TreeFunctions;
 import semplest.dmoz.tree.process.AllNodesUrlNumProcesser;
 import semplest.dmoz.tree.process.EmptyNodesProcesser;
 import semplest.dmoz.tree.process.MergeLeafNodesProcesser;
@@ -23,7 +23,7 @@ public class testTree extends BaseDB {
 			treeBuilder.buildDmozTree();
 			DmozTreeNode dmozTree = treeBuilder.getTree();
 			//List<DmozTreeNode> allNodes = treeBuilder.getAllDmozNodes();
-			//TreeFuncs.printTree("c:\\dmoz\\dmoz.tree", dmozTree);
+			//TreeFunctions.printTree("c:\\dmoz\\dmoz.tree", dmozTree);
 			
 			
 			/*

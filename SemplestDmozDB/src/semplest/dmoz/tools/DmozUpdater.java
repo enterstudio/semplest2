@@ -16,7 +16,7 @@ import java.util.Properties;
 import semplest.dmoz.DBType;
 import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
-import semplest.dmoz.tree.TreeFuncs;
+import semplest.dmoz.tree.TreeFunctions;
 
 public class DmozUpdater {
 	
@@ -60,14 +60,14 @@ public class DmozUpdater {
 	public void compareDbTreeAndNewTree() throws Exception{
 		//Get the entire tree from DB
 		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB(DBType.DMOZ_TREE, "top");		
-		HashMap<String,DmozTreeNode> dbTreeMap = TreeFuncs.getTreeInMap(dmozTree);
+		HashMap<String,DmozTreeNode> dbTreeMap = TreeFunctions.getTreeInMap(dmozTree);
 		
 		//Get the new tree
 		DmozTreeBuilder treeBuilder = new DmozTreeBuilder();
 		treeBuilder.buildDmozTree();
 		DmozTreeNode newTree = treeBuilder.getTree();
 		refreshTreeNodeIDs(dbTreeMap, newTree);
-		HashMap<String,DmozTreeNode> newTreeMap = TreeFuncs.getTreeInMap(newTree);
+		HashMap<String,DmozTreeNode> newTreeMap = TreeFunctions.getTreeInMap(newTree);
 		
 		nodesToBeDeleted = processNodesToBeDeleted(dbTreeMap,newTreeMap);		
 		nodesToBeAdded = processNodesToBeAdded(dbTreeMap,newTreeMap);				
@@ -145,7 +145,7 @@ public class DmozUpdater {
 		
 		//get sub-tree of each node
 		for(DmozTreeNode node : nodesList.values()){
-			HashMap<String, DmozTreeNode> subTreeNodes = TreeFuncs.getTreeInMap(node);
+			HashMap<String, DmozTreeNode> subTreeNodes = TreeFunctions.getTreeInMap(node);
 			nodesToBeDeleted.putAll(subTreeNodes);
 		}
 		

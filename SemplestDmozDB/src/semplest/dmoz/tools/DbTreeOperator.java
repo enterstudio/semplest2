@@ -12,7 +12,7 @@ import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tree.DbDmozObject;
 import semplest.dmoz.tree.DbUrlDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
-import semplest.dmoz.tree.TreeFuncs;
+import semplest.dmoz.tree.TreeFunctions;
 import semplest.util.SemplestUtils;
 
 public class DbTreeOperator extends BaseDB 
@@ -65,7 +65,7 @@ public class DbTreeOperator extends BaseDB
 				jdbcTemplate.batchUpdate(batchSql.toArray(new String[batchSql.size()]));
 			}catch(Exception e){
 				e.printStackTrace();
-				TreeFuncs.logError(e.getMessage());
+				TreeFunctions.logError(e.getMessage());
 			}
 			System.out.println("	took " + (System.currentTimeMillis() - start)*1d/1000 + " secs.");
 			counter++;
