@@ -276,15 +276,17 @@ namespace Semplest.Core.Controllers
         {
             try
             {
-                var promoId = int.Parse(Session["PromoId"].ToString());
-                IKeyWordRepository kr = new KeyWordRepository(new SemplestModel.Semplest());
+                var dbcontext = new SemplestModel.Semplest();
+                int promoId = GetPromoId(model.ProductGroup.ProductGroupName,
+                                         model.ProductGroup.ProductPromotionName);
+               IKeyWordRepository kr = new KeyWordRepository(dbcontext);
                 kr.SetKeywordsDeleted(model.KeywordIds, promoId);
-                var sessionModel = (SmartWordSetupModel)Session["SmartWordSetupModel"];
-                sessionModel.AllKeywords.RemoveAll(key => model.KeywordIds.Contains(key.Id));
+                var allKeywordsModel = (List<CampaignSetupModel.KeywordsModel>)Session["AllKeywords"];
+                allKeywordsModel.RemoveAll(key => model.KeywordIds.Contains(key.Id));
                 //model.KeywordsCount = sessionModel.AllKeywords.Count();
-                Session["SmartWordSetupModel"] = sessionModel;
+                Session["AllKeywords"] = allKeywordsModel;
                 //model = sessionModel;
-                return Json(new { count = sessionModel.AllKeywords.Count(), name = "Keywords" });
+                return Json(new { count = allKeywordsModel.Count(), name = "Keywords" });
             }
             catch (Exception ex)
             {
@@ -349,6 +351,23 @@ namespace Semplest.Core.Controllers
                     User.CustomerFK;
             return customerFk.Value;
         }
+
+        private int GetPromoId(string productGroupName, string promotionName)
+        {
+            int promoId;
+            if (Session["PromoId"] != null)
+            promoId = int.Parse(Session["PromoId"].ToString());
+        else
+            {
+                IPromotionRepository pr = new PromotionRepository( new SemplestModel.Semplest());
+                int userid =
+                    ((Credential) (Session[SEMplestConstants.SESSION_USERID])).UsersFK;
+                promoId = pr.GetPromotionId(userid, productGroupName,promotionName);
+                Session["PromoId"] = promoId;
+            }
+            return promoId;
+        }
+
         #region Nested type: AcceptSubmitTypeAttribute
 
         public class AcceptSubmitTypeAttribute : ActionMethodSelectorAttribute

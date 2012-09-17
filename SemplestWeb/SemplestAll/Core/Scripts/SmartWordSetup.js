@@ -291,10 +291,10 @@ $(document).ready(function () {
             }
         }
         if (!isnegativeKeyWordsAdded) {
-            tabStrip.append({
+            tabStrip.insertAfter({
                 text: "Negative SmartWords",
                 contentUrl: $('#NegativeSmartWordsUrl').val()
-            });
+            }, tabStrip.tabGroup.children('li:contains("Define Product")'));
         }
         tab = tabStrip.tabGroup.children('li:contains("Negative SmartWords")');
         tabStrip.select(tab);
