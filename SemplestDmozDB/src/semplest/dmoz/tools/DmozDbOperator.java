@@ -13,6 +13,7 @@ import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tree.DbDmozObject;
 import semplest.dmoz.tree.DbUrlDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.SemplestTreeMapDataObject;
 import semplest.dmoz.tree.TreeFuncs;
 import semplest.util.SemplestUtils;
 
@@ -65,12 +66,18 @@ public class DmozDbOperator extends BaseDB {
 	
 	private static RowMapper<DbDmozObject> dbDmozObjectMapper = new BeanPropertyRowMapper<DbDmozObject>(DbDmozObject.class);
 	
-	public static DmozTreeNode loadDmozTreeFromDB() throws Exception{
+	public static DmozTreeNode loadDmozTreeFromDB(String categoryName) throws Exception{
 		
 		System.out.println("Loading dmoz data from DB and building the tree...");
-		//Get the top node of the tree from DB		
-		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,CategoryID FROM DMOZ WHERE ParentNodeID = -1";
-		DbDmozObject topNode = jdbcTemplate.query(sql, dbDmozObjectMapper).get(0);
+		//Get the top node of the sub-tree from DB		
+		String sql = "SELECT DmozNodePK,NodeText,ParentNodeID,NodeDescription,CategoryID FROM DMOZ WHERE NodeText = ?";
+		DbDmozObject topNode = jdbcTemplate.query(sql, new Object[]{categoryName}, dbDmozObjectMapper).get(0);
+		
+		if(topNode == null){
+			//the sub-node does not exist
+			throw new Exception("The input node " + categoryName + " does not exist in the database.");
+		}
+		
 		DmozTreeNode dmozTree = new DmozTreeNode();
 		dmozTree.setNodeID(topNode.getDmozNodePK());
 		dmozTree.setParentID(topNode.getParentNodeID());
@@ -270,7 +277,7 @@ public class DmozDbOperator extends BaseDB {
 		List<DbUrlDataObject> urlsData = jdbcTemplate.query(sql, dbUrlDataObjectMapper);
 		
 		for(DbUrlDataObject urlData : urlsData){
-			currentNode.addUrlData(urlData.getURL(), urlData.getURLDescription());
+			currentNode.addUrlData(urlData.getUrlDataPK(), urlData.getURL(), urlData.getURLDescription());			
 		}
 		
 		for(DmozTreeNode childNode : currentNode.getChildrenNodes().values()){

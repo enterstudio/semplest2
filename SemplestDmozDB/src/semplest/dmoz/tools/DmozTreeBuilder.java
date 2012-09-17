@@ -191,7 +191,11 @@ public class DmozTreeBuilder {
 	}
 	
 	private String parseCategoryDesc(String lineContent) throws Exception{
-		return lineContent.split(" ::: ")[1];
+		String[] descs = lineContent.split(" ::  ::: ");
+		if(descs.length < 2){
+			return null;
+		}
+		return lineContent.split(" ::  ::: ")[1];
 	}
 	
 }

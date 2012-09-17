@@ -3,6 +3,7 @@ package semplest.dmoz;
 import java.util.List;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import semplest.dmoz.springjdbc.BaseDB;
+import semplest.dmoz.tools.DmozDbOperator;
 
 
 public class DmozDB extends BaseDB{
@@ -18,7 +19,7 @@ public class DmozDB extends BaseDB{
 		return parentNodeId;
 	}
 	
-	public static List<Integer> getNodeSiblingIDs(Integer nodeId){
+	public static List<Integer> getNodeSiblingIDs(Integer nodeId) throws Exception{
 		String sql = "SELECT d.DmozNodePK FROM DMOZ d WHERE ParentNodeID = " +
 				"(SELECT d2.ParentNodeID FROM DMOZ d2 WHERE DmozNodePK = ?)";
 		
@@ -28,7 +29,7 @@ public class DmozDB extends BaseDB{
 		return siblingNodeIds;
 	}
 	
-	public static List<Integer> getChildrenNodeIDs(Integer parentNodeId){
+	public static List<Integer> getChildrenNodeIDs(Integer parentNodeId) throws Exception{
 		String sql = "SELECT DmozNodePK FROM DMOZ WHERE ParentNodeID = ?";
 		
 		List<Integer> childrenNodes = jdbcTemplate.queryForList(sql, Integer.class, new Object[]
@@ -46,13 +47,17 @@ public class DmozDB extends BaseDB{
 		return nodeDescription;
 	}
 	
-	public static List<String> getUrls(Integer nodeId, Integer urlLevel){
+	public static List<String> getUrls(Integer nodeId, Integer urlLevel) throws Exception{
 		String sql = "SELECT u.URL FROM URLData u WHERE DmozNodeFK = ? and Level = ?";
 		
 		List<String> urls = jdbcTemplate.queryForList(sql, String.class, new Object[]
 				{nodeId, urlLevel});
 		
 		return urls;
+	}
+	
+	public static void getDmozTree(String categoryName) throws Exception{
+		DmozDbOperator.loadDmozTreeFromDB(categoryName);
 	}
 	
 }

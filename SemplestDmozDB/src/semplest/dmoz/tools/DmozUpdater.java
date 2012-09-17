@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFuncs;
 
@@ -56,8 +57,8 @@ public class DmozUpdater {
 	}
 	
 	public void compareDbTreeAndNewTree() throws Exception{
-		//Get the tree from DB
-		DmozTreeNode dmozTree = DmozDbOperator.loadDmozTreeFromDB();		
+		//Get the entire tree from DB
+		DmozTreeNode dmozTree = DmozDbOperator.loadDmozTreeFromDB("top");		
 		HashMap<String,DmozTreeNode> dbTreeMap = TreeFuncs.getTreeInMap(dmozTree);
 		
 		//Get the new tree

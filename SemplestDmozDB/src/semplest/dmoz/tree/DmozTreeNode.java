@@ -9,6 +9,8 @@ public class DmozTreeNode {
 	private DmozCategoryDataObject categoryData = new DmozCategoryDataObject();
 	private HashMap<String,DmozTreeNode> childrenNodes = new HashMap<String,DmozTreeNode>();	
 	private DmozTreeNode parentNode;
+	
+	private SemplestTreeMapDataObject semplestTreeMapData = new SemplestTreeMapDataObject();
 
 	private int treeURLCount;
 	private int treeNodeCount;
@@ -28,6 +30,11 @@ public class DmozTreeNode {
 	
 	public void addUrlData(String url, String urlDesc){
 		categoryData.addUrlData(url,urlDesc);
+	}
+	
+	public void addUrlData(Long urlID, String url, String urlDesc){
+		categoryData.addUrlData(url,urlDesc);
+		semplestTreeMapData.addSemplestUrlDataID(urlID);
 	}
 	
 	public void setNodeDescription(String description){
@@ -106,6 +113,13 @@ public class DmozTreeNode {
 		this.treeNodeCount = treeNodeCount;
 	}
 
+	public SemplestTreeMapDataObject getSemplestTreeMapData() {
+		return semplestTreeMapData;
+	}
+
+	public void setSemplestTreeMapData(SemplestTreeMapDataObject semplestTreeMapData) {
+		this.semplestTreeMapData = semplestTreeMapData;
+	}
 
 	@Override
 	public String toString() {
