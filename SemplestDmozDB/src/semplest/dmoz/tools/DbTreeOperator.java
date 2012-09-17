@@ -216,38 +216,6 @@ public class DbTreeOperator extends BaseDB
 		return dmozTree;
 	}	
 	
-	public static Long getUniqueIdBase(DBType dbType) throws Exception{
-		String treeTable = getTreeTableName(dbType);
-		String sql = "SELECT MAX(SemplestPK) FROM " + treeTable;
-		Long maxIdInDB = jdbcTemplate.queryForLong(sql);
-		
-		return maxIdInDB + 1;
-	}
-	
-	public static String getTreeTableName(DBType dbType) throws Exception{
-		if(dbType.equals(DBType.DMOZ_TREE)){
-			return "DMOZ";
-		}
-		else if(dbType.equals(DBType.SEMPLEST_TREE)){
-			return "SemplestTree";
-		}
-		else{
-			throw new Exception("Database specified is not available.");
-		}
-	}
-	
-	public static String getUrlDataTableName(DBType dbType) throws Exception{
-		if(dbType.equals(DBType.DMOZ_TREE)){
-			return "URLData";
-		}
-		else if(dbType.equals(DBType.SEMPLEST_TREE)){
-			return "SemplestURLData";
-		}
-		else{
-			throw new Exception("Database specified is not available.");
-		}
-	}
-	
 	//helper methods
 	private static void setChildrenNodes (DmozTreeNode currentNode, String treeTable) throws Exception{
 		/*
@@ -284,5 +252,38 @@ public class DbTreeOperator extends BaseDB
 			setUrlDataThroughTree(childNode, urlDataTable);
 		}
 	}
+	
+	
+	public static Long getUniqueIdBase(DBType dbType) throws Exception{
+		String treeTable = getTreeTableName(dbType);
+		String sql = "SELECT MAX(SemplestPK) FROM " + treeTable;
+		Long maxIdInDB = jdbcTemplate.queryForLong(sql);
+		
+		return maxIdInDB + 1;
+	}
+	
+	public static String getTreeTableName(DBType dbType) throws Exception{
+		if(dbType.equals(DBType.DMOZ_TREE)){
+			return "DMOZ";
+		}
+		else if(dbType.equals(DBType.SEMPLEST_TREE)){
+			return "SemplestTree";
+		}
+		else{
+			throw new Exception("Database specified is not available.");
+		}
+	}
+	
+	public static String getUrlDataTableName(DBType dbType) throws Exception{
+		if(dbType.equals(DBType.DMOZ_TREE)){
+			return "URLData";
+		}
+		else if(dbType.equals(DBType.SEMPLEST_TREE)){
+			return "SemplestURLData";
+		}
+		else{
+			throw new Exception("Database specified is not available.");
+		}
+	}	
 	
 }

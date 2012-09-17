@@ -5,6 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tools.DbTreeOperator;
 import semplest.dmoz.tools.DmozImporter;
+import semplest.dmoz.tree.DmozTreeNode;
 
 
 public class DmozDB extends BaseDB{
@@ -67,8 +68,8 @@ public class DmozDB extends BaseDB{
 		return urls;
 	}
 	
-	public static void getTree(DBType dbType, String categoryName) throws Exception{
-		DbTreeOperator.loadTreeFromDB(dbType, categoryName);
+	public static DmozTreeNode getTree(DBType dbType, String categoryName) throws Exception{
+		return DbTreeOperator.loadTreeFromDB(dbType, categoryName);
 	}
 	
 }
