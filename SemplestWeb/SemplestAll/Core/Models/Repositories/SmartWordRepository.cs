@@ -173,18 +173,8 @@ namespace Semplest.Core.Models.Repositories
                 var st = dbcontext.AddressTypes.SingleOrDefault(pt => pt.AddressType1 == model.PromotionAddressType);
                 if (st != null)
                     addressCode = st.AddressTypePK;
-                var shouldUpdateGeoTargeting = AddGeoTargetingToPromotion(promo, model, oldModel, out gt);
-                if (shouldUpdateGeoTargeting)
-                {
-                    var gtos = SerializeToGeoTargetObjectArray(model);
-                    if (gtos.Any())
-                    {
-                        var sw = new ServiceClientWrapper();
-                        GoogleViolation[] gv = sw.ValidateGoogleGeoTargets(gtos);
-                        if (gv.Length > 0)
-                            throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    }
-                }
+                AddGeoTargetingToPromotion(promo, model, oldModel, out gt);
+      
 
                 var parameter = new SqlParameter("PromotionPK", promo.PromotionPK) {SqlDbType = SqlDbType.Int};
                 var parameter2 = new SqlParameter("LandingUrl", model.LandingUrl.Trim())
