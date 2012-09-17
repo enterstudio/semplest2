@@ -3,12 +3,14 @@ package semplest.keywords.crawl;
 import akka.actor.*;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.util.Duration;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.Config;
 
 import java.io.Serializable;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 // The worker of the distributed computing system
 // 
@@ -30,6 +32,15 @@ public class Worker {
     Collector.Computer computor;
     String id;
 
+    // Actor Prestart. Use this to send a periodic wakup call
+    @Override
+    public void preStart(){
+      Cancellable c = getContext().system().scheduler().schedule( 
+          Duration.Zero(),
+          Duration.create( 5000, TimeUnit.MILLISECONDS), getSelf(), 
+          new Collector.Wakeup());
+    }
+
     // Actor Ctr
     public WActor( ActorRef cltr, Collector.Computer c){
       collector = cltr;
@@ -40,19 +51,8 @@ public class Worker {
       } catch (Exception e){ 
         log.error("Host/Thread id");                    // logging
       }       
-      askForWork();
     }
 
-    // Periodically ask for work if free
-    // [Note: ] This blocks. Make this non-blocking !!!
-    public void askForWork(){                
-      getSelf().tell( new Collector.Wakeup() );
-      try {
-        Thread.sleep( 5000 );
-      } catch (Exception e){ 
-        log.error("Thread Sleep");                       // logging
-      }
-    }
     // Actor Message Processing
     public void onReceive( Object msg){
       if( msg instanceof Collector.Work ){
@@ -66,7 +66,6 @@ public class Worker {
         if( ! working ){
           collector.tell( new Collector.Ready( id ), getSelf() );
           System.out.println(id + " :: Sending Ready Message");
-          askForWork();
         }
       }
     }
