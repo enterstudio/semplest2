@@ -27,7 +27,7 @@
                 </li>
                 <li>
                     <div style="display: inline-block; vert-align: top; overflow: hidden; width: 600px;margin-left: 75px">
-                        @Html.LinkToRemoveNestedForm("Delete Ad", "div.ads", "input.mark-for-delete")
+                        @Html.LinkToRemoveNestedForm("Delete Ad", "div.ads", "input.mark-for-delete", "RemoveAdButton")
                         
                         @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
                         @Html.HiddenFor(t => t.HasBeenSaved)

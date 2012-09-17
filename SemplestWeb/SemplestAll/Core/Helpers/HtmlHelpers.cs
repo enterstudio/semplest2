@@ -50,13 +50,14 @@ namespace Semplest.Core.Helpers
         }
 
         public static IHtmlString LinkToRemoveNestedForm(this HtmlHelper htmlHelper, string linkText, string container,
-                                                         string deleteElement)
+                                                         string deleteElement, string buttonId)
         {
             string js = string.Format("javascript:removeNestedForm(this,'{0}','{1}');return false;", container,
                                       deleteElement);
             var tb = new TagBuilder("button");
             tb.Attributes.Add("onclick", js);
             tb.Attributes.Add("class", "k-button");
+            tb.Attributes.Add("id", buttonId);
             tb.InnerHtml = "<span class=\"k-delete k-icon\"></span>" + linkText;
             string tag = tb.ToString(TagRenderMode.Normal);
             return MvcHtmlString.Create(tag);

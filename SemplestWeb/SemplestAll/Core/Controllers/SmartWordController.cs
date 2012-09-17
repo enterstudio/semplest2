@@ -48,6 +48,9 @@ namespace Semplest.Core.Controllers
             Session["AllKeyWords"] = null;
             Session["PromoId"] = null;
             Session["NegativeSmartWords"] = null;
+            Session["NegativeSmartwordsText"] = null;
+            Session["CategoryList"] = null;
+            Session["SmartWordSetupModel"] = null;
             var swr = new SmartWordRepository();
             var swsm = swr.GetSetupModelForPromotionId(promotionId, GetCustomerId());
             if (swsm.Addresses.Count == 0)
