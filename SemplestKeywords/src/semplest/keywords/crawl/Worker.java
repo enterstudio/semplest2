@@ -13,7 +13,7 @@ import java.util.HashSet;
 // The worker of the distributed computing system
 // 
 // As many workers as necessary are constructed (with master's ip-adress)
-//  When free workers announce to master they are able to do work 
+//  When free workers announce to the master they are able to do work 
 //  The master sends them work of form String w;
 //  The worker does computation on the work string and returns a result String
 //  The master saves the work and sends new work if there is work to be done
@@ -44,13 +44,14 @@ public class Worker {
     }
 
     // Periodically ask for work if free
-    public void askForWork(){
+    // [Note: ] This blocks. Make this non-blocking !!!
+    public void askForWork(){                
+      getSelf().tell( new Collector.Wakeup() );
       try {
         Thread.sleep( 5000 );
       } catch (Exception e){ 
         log.error("Thread Sleep");                       // logging
       }
-      getSelf().tell( new Collector.Wakeup() );
     }
     // Actor Message Processing
     public void onReceive( Object msg){
@@ -87,7 +88,7 @@ public class Worker {
     ActorSystem system = ActorSystem.create("Collector", 
         ConfigFactory.load( conf ));
     final ActorRef collector= system.actorFor( remoteAddr );
-   
+
     // Create workers-num of new worker threads
     for( int i=0; i< new Integer( workers); i++)
       system.actorOf(new Props( new UntypedActorFactory(){
@@ -121,7 +122,7 @@ public class Worker {
         return res;
       }
     };
-    
+
     Worker worker = new Worker( ip, workers, c); 
   }
 }
