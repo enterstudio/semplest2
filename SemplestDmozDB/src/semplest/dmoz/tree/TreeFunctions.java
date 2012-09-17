@@ -10,7 +10,7 @@ public class TreeFunctions {
 	
 	private static FileWriter logWriter;
 	
-	public static void printTree(String path, DmozTreeNode topNode) throws Exception{
+	public static void printTree(DmozTreeNode topNode, String path) throws Exception{
 		FileWriter writer = new FileWriter(path);
 		printTree(topNode,writer);
 		writer.close();
@@ -58,7 +58,7 @@ public class TreeFunctions {
 						+ node.getCategoryData().getDescription()
 						 + "\n");
 		}		
-		
+		writer.close();
 	}
 	
 	public static void startLogError(String name, String path) throws Exception{

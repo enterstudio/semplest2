@@ -221,6 +221,8 @@ public class DbTreeOperator extends BaseDB
 		/*
 		 * Set up children nodes of a node recursively. Thus build the tree.
 		 */
+		//System.out.println(currentNode.getName());
+		
 		String sql = "SELECT SemplestPK,NodeText,ParentNodeID,NodeDescription,DMOZCategoryID FROM " + treeTable + " WHERE ParentNodeID = " + currentNode.getNodeID();
 		List<DbDmozObject> childrenNodes = jdbcTemplate.query(sql, dbDmozObjectMapper);
 		

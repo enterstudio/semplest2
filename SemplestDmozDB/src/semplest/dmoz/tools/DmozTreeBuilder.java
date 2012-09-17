@@ -25,7 +25,7 @@ public class DmozTreeBuilder {
 		try{			
 			DmozTreeBuilder tree = new DmozTreeBuilder();
 			tree.buildDmozTree();
-			TreeFunctions.printTree("c:\\dmoz\\BuiltTree.txt", tree.getTree());
+			TreeFunctions.printTree(tree.getTree(), "c:\\dmoz\\BuiltTree.txt");
 		}
 		catch(Exception e){
 			e.printStackTrace();
