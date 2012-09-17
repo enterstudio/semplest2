@@ -224,6 +224,30 @@ public class DbTreeOperator extends BaseDB
 		return maxIdInDB + 1;
 	}
 	
+	public static String getTreeTableName(DBType dbType) throws Exception{
+		if(dbType.equals(DBType.DMOZ_TREE)){
+			return "DMOZ";
+		}
+		else if(dbType.equals(DBType.SEMPLEST_TREE)){
+			return "SemplestTree";
+		}
+		else{
+			throw new Exception("Database specified is not available.");
+		}
+	}
+	
+	public static String getUrlDataTableName(DBType dbType) throws Exception{
+		if(dbType.equals(DBType.DMOZ_TREE)){
+			return "URLData";
+		}
+		else if(dbType.equals(DBType.SEMPLEST_TREE)){
+			return "SemplestURLData";
+		}
+		else{
+			throw new Exception("Database specified is not available.");
+		}
+	}
+	
 	//helper methods
 	private static void setChildrenNodes (DmozTreeNode currentNode, String treeTable) throws Exception{
 		/*
@@ -261,27 +285,4 @@ public class DbTreeOperator extends BaseDB
 		}
 	}
 	
-	private static String getTreeTableName(DBType dbType) throws Exception{
-		if(dbType.equals(DBType.DMOZ_TREE)){
-			return "DMOZ";
-		}
-		else if(dbType.equals(DBType.SEMPLEST_TREE)){
-			return "SemplestTree";
-		}
-		else{
-			throw new Exception("Database specified is not available.");
-		}
-	}
-	
-	private static String getUrlDataTableName(DBType dbType) throws Exception{
-		if(dbType.equals(DBType.DMOZ_TREE)){
-			return "URLData";
-		}
-		else if(dbType.equals(DBType.SEMPLEST_TREE)){
-			return "SemplestURLData";
-		}
-		else{
-			throw new Exception("Database specified is not available.");
-		}
-	}
 }
