@@ -1,0 +1,114 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<title>SEMPLEST | Search Engine Marketing</title>
+
+<!-- SET: FAVICON -->
+<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+<!-- END: FAVICON -->
+
+<!-- SET: STYLESHEET -->
+<link href="css/style.css" rel="stylesheet" type="text/css" media="all">
+<link type="text/css" rel="stylesheet" href="css/jquery.fancybox-1.3.4.css" media="all" >
+<!-- END: STYLESHEET -->
+
+<!-- SET: SCRIPTS -->
+<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script src="js/jquery.robwalsh.randomImageOnload-1.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/application.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="js/jquery.fancybox-1.3.4.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#various1").fancybox({
+            'titlePosition': 'inside',
+            'transitionIn': 'none',
+            'transitionOut': 'none',
+            'centerOnScroll': 'true',
+            'overlayShow': 'false',
+            'overlayOpacity': '0.0',
+            'padding': '0',
+            'margin': '0'
+        });
+    });
+</script>
+<!-- END: SCRIPTS -->
+</head>
+
+<body>
+
+<!-- SET: WRAPPER -->
+<div class="wrapper">
+
+    <!-- SET: CONTAINER -->
+    	<div class="container">
+
+            <!-- SET: HEADER -->
+				<div id="header">
+                	<div id="logo" class="flt_Lt">
+                    	<a href="/"><img src="images/logo.jpg" width="292" height="51" alt="SEMplest"></a>
+                    </div>
+                    <div id="nav" class="flt_Rt" style="width: 480px;">
+                        @RenderSection("Nav", false)
+                        <span class="clear_0">&nbsp;</span>
+                    </div>
+                    <div style="display: none;">
+                        <div id="inline1" class="loginBox">
+                            <div class="loginBoxIn">
+                            	<div class="centerItem"><img src="images/overlay_clientlogin.jpg" border="0"></div>
+                                <ul class="contactForm" style="padding: 15px 0 0 0;">
+                                	<form action="login" method="post">
+									<li>
+                                    	<label class="flt_Lt">User name</label>
+                                        <div class="inputBox flt_Lt">
+                                        	<input type="text" name="account_email" onclick="this.value='';" onfocus="this.select()" onblur="this.value=!this.value?'email@example.com':this.value;" value="email@example.com">
+                                            <span class="clear_0">&nbsp;</span>
+                                        </div>
+                                        <span class="clear_0">&nbsp;</span>
+                                    </li>
+                                    <li>
+                                    	<label class="flt_Lt">Password</label>
+                                        <div class="inputBox flt_Lt">
+                                        	<input type="password" name="account_password" value="">
+                                            <span class="clear_0">&nbsp;</span>
+                                        </div>
+                                        <span class="clear_0">&nbsp;</span>
+                                    </li>
+                                    <li class="last">
+                                    	<label class="flt_Lt">&nbsp;</label>
+                                    	<div ><input type="image" src="images/button_submit.gif"></div>
+                                        <span class="clear_0">&nbsp;</span>
+                                    </li>
+									</form>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                    <span class="clear_0">&nbsp;</span>
+                </div>
+            <!-- END: HEADER -->
+            <!-- SET: MAIN CONTENT -->
+            @RenderBody()
+            <p>&nbsp;</p>
+           <!-- SET: FOOTER -->
+            	<div id="footer">
+                	<ul class="footerNav flt_Rt">
+                    	<li>@Html.ActionLink("Privacy", "PrivacyPolicy", "Home", new { area = "" }, null)</li>
+                        <li class="last">@Html.ActionLink("Terms", "TermsOfUse", "Home", new { area = "" }, null)</li>
+                    </ul>
+                    <span class="clear_0">&nbsp;</span>
+                </div>
+            <!-- END: FOOTER -->
+
+        </div>
+    <!-- END: CONTAINER -->
+
+</div>
+<!-- END: WRAPPER -->
+
+</body>
+</html>

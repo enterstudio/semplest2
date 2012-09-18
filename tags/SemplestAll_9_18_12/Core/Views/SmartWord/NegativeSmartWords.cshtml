@@ -1,0 +1,47 @@
+﻿@model Semplest.Core.Models.SmartWordSetupModel
+<div class="configuration">
+    <h3>
+        Negative Keywords</h3> 
+    <label class="greytext">
+        Adding a negative keyword(s) means that term will never trigger 
+        your ad to appear in web searches. By filtering out unwanted 
+        impressions, negative keywords can help you reach the most appropriate prospects.
+    </label>
+    <br style="display: block;margin-bottom: 30px;line-height:40px;" />
+    <span>Please type in several words or phrases that you do not want associated with your
+        business <br /><span>(separated by commas): </span></span>
+        
+    <br />
+    <br />
+    @Html.TextAreaFor(t => t.NegativeKeywordsText, new { @class = "k-textbox negKeyw" })
+    <div class="options" style="margin-top: 100px; text-align: center">
+        <hr />
+        <button class="k-button" id="back3" type="button">
+            <span class="k-back k-icon"></span>back</button>
+        <button class="k-button" id="setNegativeKeywords" type="submit" name="Command" value="SetNegativeKeywords">
+            <span class="k-update k-icon"></span>Save And Continue</button>
+    </div>
+</div>
+<style>
+    .negKeyw
+    {
+        width: 100%;
+        height: 150px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        enableDisable();
+    });
+    $('#back3').click(function () {
+        tabChange();
+    });
+    $('#saveNeg').click(function () {
+        tabChange();
+    });
+    function tabChange(parameters) {
+        var tab = tabStrip.select(),
+            otherTab = tab.prev();
+        tabStrip.select(otherTab);
+    }
+</script>​

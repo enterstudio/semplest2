@@ -1,0 +1,147 @@
+﻿@using System.Configuration
+@model Semplest.Core.Models.SmartWordSetupModel
+           
+<style>
+    .spacing
+    {
+        margin-left: 10px;
+        margin-right: 20px;
+    }
+    .options1
+    {
+        border-color: #fff;
+        border-width: 0.3em;
+        border-style: inset;
+        height: 345px;
+        width: 700px;
+        overflow-x: auto;
+    }
+</style>
+<div class="configuration">
+    <h3>
+        How Would you Classify Your Product? <a href ="#" class="help-button" id="helpbutton12" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]12 "  tabindex="0" >
+            ?</a></h3>
+    <div class="options">
+        @if (Model != null)
+        {
+            
+            
+@*@Html.ListBoxFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
+            
+            <div style="width: 700px; overflow-x: auto">
+                @Html.CheckBoxListFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { @class = "spacing" }, 2)
+            </div>
+                 <ul id="reportTreeView" style="margin: 5px; ">
+                   </ul>
+        }
+    </div>
+    <div class="options">
+        <br />
+        <hr class="titlewhitelinebottom" />
+        <div style="text-align: center">
+            <button class="k-button" id="backCat" type="button">
+                <span class="k-back k-icon"></span>back</button>
+            <button class="k-button" id="getKeywords" type="submit" name="Command" value="GetKeywords">
+                <span class="k-update k-icon"></span>Save And Continue</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#backCat').click(function () {
+        var nextItem = tabStrip.select().prev();
+        if (nextItem.length)
+            tabStrip.select(nextItem);
+        else
+            tabStrip.select(tabStrip.tabGroup.children().first());
+
+    });
+    $('#getKeywords').click(function () {
+        var urlStr = $('#LogoUrlStr').val() + 'maximizing your results.jpg';
+        $('#displayBox').attr('src', urlStr);
+    });
+    $('#helpbutton12').cluetip({ arrows: true, sticky: true, cluetipClass: 'jtip', closePosition: 'title', activation: 'click', cursor: 'pointer' });
+
+
+
+
+    $(document).ready(function () {
+        return;
+        $("#reportTreeView").dynatree({
+            checkbox: true,
+            selectMode: 3,
+            title: "Reports",
+            onSelect: function (select, node) {
+                // Get a list of all selected nodes, and convert to a key array:        
+                var selKeys = $.map(node.tree.getSelectedNodes(), function (node) { return node.data.key; });
+                var selTexts = $.map(node.tree.getSelectedNodes(), function (node) { return node.data.title; });
+                var selEngines = $.map($('.engnieBox'), function (node) { if (node.checked) return node.id; });
+                //alert(selEngines);
+                //alert(selKeys);
+                //alert(selKeys.join(", "));        
+                // Get a list of all selected TOP nodes        
+                var selRootNodes = node.tree.getSelectedNodes(true);
+                // ... and convert to a key array:        
+                var selRootKeys = $.map(selRootNodes, function (node) { return node.data.key; });
+                //alert(selRootKeys.join(", "));    
+                //alert(selTexts.join(", "));
+                //alert(selRootNodes.join(", "));  
+                $('#EngineFks').val(selEngines.join(", "));
+                $('#PromotionFks').val(selKeys.join(", "));
+                $('#PromotionName').val(selTexts.join(", "));
+            },
+            onDblClick: function (node, event) {
+                node.toggleSelect();
+            },
+            onKeydown: function (node, event) {
+                if (event.which == 32) {
+                    node.toggleSelect();
+                    return false;
+                }
+            },
+            onActivate: function (node) {
+                //        alert(node.getKeyPath());        
+                if (node.data.url)
+                    window.open(node.data.url, node.data.target);
+            },
+            onDeactivate: function (node) {
+
+            },
+            onFocus: function (node) {
+
+            },
+            onBlur: function (node) {
+
+            }
+        });
+        SideBarBus();
+    });
+
+    function LoadSubItems(subitems, mainGroup, subitem, childNode) {
+        for (var subitem1 in subitems) {
+            var childSubNode = childNode.addChild({ title: subitems[subitem1].Name, key: subitems[subitem1].Id });
+            if (subitems[subitem1].SubItems.length > 0)
+                LoadSubItems(subitems[subitem1].SubItems, 0, 0, childSubNode, subitems);
+        }
+    }
+
+    function SideBarBus() {
+        $.getJSON("/SmartWord/BuildSubItems", {}, function (data) {
+            var rootNode = $("#reportTreeView").dynatree("getRoot");
+            for (var mainGroup in data) {
+                for (var subitem in data[mainGroup].SubItems) {
+                    var childNode = rootNode.addChild({
+                        title: data[mainGroup].SubItems[subitem].Name,
+                        tooltip: data[mainGroup].SubItems[subitem].Name,
+                        key: data[mainGroup].SubItems[subitem].Id
+                    });
+                    LoadSubItems(data[mainGroup].SubItems[subitem].SubItems, mainGroup, subitem, childNode);
+                }
+            }
+            $("#reportTreeView").dynatree("getRoot").visit(function (node) {
+                node.expand(true);
+            });
+        });
+    }
+
+
+</script>

@@ -1,0 +1,76 @@
+﻿@model Semplest.Core.Models.SmartWordSetupModel
+<style>
+    .spacing
+    {
+        margin-left: 10px;
+        margin-right: 20px;
+    }
+    .options1
+    {
+        border-color: #fff;
+        border-width: 0.3em;
+        border-style: inset;
+        height: 345px;
+        width: 700px;
+        overflow-x: auto;
+    }
+</style>
+<div class="configuration">
+    
+    <div style="text-align: center;">
+        <h3>We have selected <span id="KeywordCount" style="color: #8ebc00; font-weight: bold">@Model.WordCount</span> SmartWords</h3>
+        <!--<button class="k-button" id="" type="submit" name="Command" value="ExportSmartWords">
+                Download SmartWords</button>-->
+        <div id="links" style="display: none">
+            @Html.ActionLink("Excel Download", "ExcelExport", "SmartWord")
+            @Html.ActionLink("CSV Download", "CsvExport", "SmartWord")
+        </div>
+    </div>
+    <input type="checkbox" id="agreecheckbox" /><label style="margin-left: 5px; color: grey;">I have read and agree to the </label>@Html.ActionLink("Services Agreement", "ServicesAgreement", "Home")
+    <br />
+    <div class="options" id="keywords">
+        @if (Model != null)
+        {
+         
+@*@Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
+            
+
+            <div class="options1" id="wrap">
+                @* <h1 id="headerF">Filter</h1>  *@ @* <<<----- uncomment h1  to get the filter*@
+                @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { @class = "spacing" }, 2)
+            </div>
+
+        }
+    </div>
+    <div class="options">
+        <br />
+        <hr class="titlewhitelinebottom" />
+        <div style="text-align: center;">
+            <button class="k-button" id="backKey" type="button">
+                <span class="k-back k-icon"></span>back</button>
+            <button class="k-button" id="getBillingLaunch" type="submit" name="Command" value="FilterSmartWords">
+                <span class="k-update k-icon"></span>Save</button>
+        </div>
+        @*<input class="k-button" id="getBillingLaunch" type="submit" name="Command" value="GetBillingLaunch"/>*@
+    </div>
+    @*    <div style="border:3px solid #fff">
+    </div>
+*@
+</div>
+<script language="javascript">
+    $(document).ready(function () {
+        $("#agreecheckbox").click(function (event) {
+            if ($('#agreecheckbox').prop('checked') == true) {
+                $("#links").show();
+            } else {
+                $("#links").hide();
+            }
+        });
+    });
+    $('#backKey').click(function () {
+        var tab = tabStrip.select(),
+            otherTab = tab.prev();
+        tabStrip.select(otherTab);
+    });
+ 
+</script>

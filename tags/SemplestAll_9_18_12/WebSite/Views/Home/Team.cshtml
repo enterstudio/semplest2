@@ -1,0 +1,40 @@
+﻿@section Nav{
+                            <!--<a id="various1" href="#inline1" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>-->
+                            <a href ="/SemplestCore" class="flt_Rt"><img src="images/button_log_in.gif" alt="login" border="0"></a>
+                    	<ul class="flt_Rt">                   
+							<li>@Html.ActionLink("Home", "index", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("About", "SEMAbout", "Home", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("Team", "team", "Home", new { area = "" }, new { @class = "active" })</li>
+                            <li class="last" style="padding-right: 9px;" ><a href="/contact" >Contact</a></li>
+				        </ul>	
+}
+					
+    		<!-- SET: MAIN CONTENT -->
+	    		<div id="bar">Team</div>
+				<div class="space20">				
+					<div class="row">
+						<div class="col40">
+							<div class="teamName">Paul Benjou</div>
+							<div class="teamRole">Chief Executive Officer</div>
+							<div class="teamBio">Mr. Benjou brings over 35 years of executive-level management experience to SEMplest. Mr. Benjou previously was founder and principal at The Center for Media Management Strategies, a consultancy serving digital media companies, and his prior employers include Universal McCann, DraftWorldwide, ValueClick and Datran Media. He serves as a senior fellow and advisory board member with the Society for New Communications Research and is a sustaining member of the American Institute for Economic Research. He served on the board of Global Networks Inc. and remains as an adviser.</div>
+						</div>
+						<div class="col">
+							<div class="teamName">Mitchell Berg, Ph.D.</div>
+							<div class="teamRole">Chief Technology Officer</div>
+							<div class="teamBio">Mr. Berg has over 25 years of technology and software architecture and development experience, with a focus on developing and commercializing R&D. Previous roles included chief information officer of BenefitPlan Manager Corp. and advanced information technologist at The Boeing Company.</div>
+						</div>
+					</div>
+					<div class="row40">
+						<div class="col40">
+							<div class="teamName">Chad Miller</div>
+							<div class="teamRole">Chief Revenue Officer</div>
+							<div class="teamBio">Mr. Miller has been in the digital and technology industry for 15 years. During most of this period, he has focused on marketing and selling technology and media services involving email, display and analytics with companies like Nielsen, Accenture and ValueClick.</div>
+						</div>
+						<div class="col">
+							<div class="teamName">Nicole Ragains</div>
+							<div class="teamRole">Executive Vice President, Operations</div>
+							<div class="teamBio">Ms. Ragains has been in the financial and digital industries for over 11 years. Prior roles included running corporate development for XO Group and financial consulting for Huron Consulting Group and Arthur Andersen.</div>
+						</div>
+					</div>	
+				</div>
+    		<!-- END: MAIN CONTENT -->

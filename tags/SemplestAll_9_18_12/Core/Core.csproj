@@ -1,0 +1,461 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B1A1CDCC-FFC2-4F9E-8F81-EAEA3D130829}</ProjectGuid>
+    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Semplest.Core</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.5.0.0-rc\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelLibrary">
+      <HintPath>..\packages\ExcelLibrary.1.2011.7.30\lib\ExcelLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="FileHelpers">
+      <HintPath>..\packages\FileHelpers-Stable.2.9.9\lib\4.0\FileHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="FileHelpers.DataLink">
+      <HintPath>..\packages\FileHelpers-Stable.2.9.9\lib\4.0\FileHelpers.DataLink.dll</HintPath>
+    </Reference>
+    <Reference Include="FileHelpers.ExcelStorage">
+      <HintPath>..\packages\FileHelpers-Stable.2.9.9\lib\4.0\FileHelpers.ExcelStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.Excel">
+      <HintPath>..\packages\FileHelpers-Stable.2.9.9\lib\4.0\Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.Office">
+      <HintPath>..\packages\FileHelpers-Stable.2.9.9\lib\4.0\Interop.Office.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="JsAction">
+      <HintPath>..\packages\JsAction.dll</HintPath>
+    </Reference>
+    <Reference Include="JsAction.BASE">
+      <HintPath>..\packages\JsAction.BASE.dll</HintPath>
+    </Reference>
+    <Reference Include="Kendo.Mvc, Version=2012.2.423.340, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SharedResources\OtherLibraries\Kendo.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="KendoGridBinder">
+      <HintPath>..\packages\KendoGridBinder.1.3\lib\KendoGridBinder.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqKit">
+      <HintPath>..\packages\LinqKit.1.0\lib\35\LinqKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EnterpriseLibrary.Logging.5.0.505.1\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\SharedResources\OtherLibraries\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.0.0.15\lib\net40\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.Common">
+      <HintPath>..\packages\Ninject.Web.Common.3.0.0.7\lib\net40-full\Ninject.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.Mvc">
+      <HintPath>..\packages\Ninject.MVC3.3.0.0.6\lib\net40-full\Ninject.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="WebActivator, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WebActivator.1.5\lib\net40\WebActivator.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\CampaignController.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\EntityController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ReportingController.cs" />
+    <Compile Include="Controllers\RequireRequestValueAttribute.cs" />
+    <Compile Include="Controllers\SmartWordController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TreeController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Extensions.Basic.cs" />
+    <Compile Include="Helpers\Extensions.Model.cs" />
+    <Compile Include="Helpers\htmlElementTag.cs" />
+    <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Helpers\HtmlListInfo.cs" />
+    <Compile Include="Helpers\HtmlTag.cs" />
+    <Compile Include="Helpers\htmlWrapperInfo.cs" />
+    <Compile Include="Helpers\MvcCheckBoxList.cs" />
+    <Compile Include="Helpers\Position.cs" />
+    <Compile Include="Helpers\toDictionary.cs" />
+    <Compile Include="Helpers\toProperty.cs" />
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\BillingModel.cs" />
+    <Compile Include="Models\CampignSetupModel.cs" />
+    <Compile Include="Models\HomeModel.cs" />
+    <Compile Include="Models\ReportIndexModel.cs" />
+    <Compile Include="Models\Repositories\CampaignRepository.cs" />
+    <Compile Include="Models\Repositories\CategoriesRepository.cs" />
+    <Compile Include="Models\Repositories\ICampaignRepository.cs" />
+    <Compile Include="Models\Repositories\ICategoriesRepository.cs" />
+    <Compile Include="Models\Repositories\IKeyWordRepository.cs" />
+    <Compile Include="Models\Repositories\IPromotionRepository.cs" />
+    <Compile Include="Models\Repositories\ISmartWordRepository.cs" />
+    <Compile Include="Models\Repositories\IStateRepository.cs" />
+    <Compile Include="Models\Repositories\KeyWordRepository.cs" />
+    <Compile Include="Models\Repositories\PromotionRepository.cs" />
+    <Compile Include="Models\Repositories\SmartWordRepository.cs" />
+    <Compile Include="Models\Repositories\StateRepository.cs" />
+    <Compile Include="Models\SearchKeywordsModel.cs" />
+    <Compile Include="Models\SemplestWebAppContext.cs" />
+    <Compile Include="Models\SmartWordSetupModel.cs" />
+    <Compile Include="Modules\Modules.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\LogService.svc.cs">
+      <DependentUpon>LogService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\ServiceHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\BrieflyDescribeYourBusiness.png" />
+    <Content Include="Content\cardslogo.jpg" />
+    <Content Include="Content\congratulations.jpg" />
+    <Content Include="Content\CreateYourAds.png" />
+    <Content Include="Content\formStyle.css" />
+    <Content Include="Content\icons.gif" />
+    <Content Include="Content\images\layers.png" />
+    <Content Include="Content\images\marker-shadow.png" />
+    <Content Include="Content\images\marker.png" />
+    <Content Include="Content\images\popup-close.png" />
+    <Content Include="Content\images\zoom-in.png" />
+    <Content Include="Content\images\zoom-out.png" />
+    <Content Include="Content\kendo.common.min.css" />
+    <Content Include="Content\kendo.dataviz.min.css" />
+    <Content Include="Content\kendo.metro.min.css" />
+    <Content Include="Content\LaunchYourCampaign.png" />
+    <Content Include="Content\leafleft.css" />
+    <Content Include="Content\leaflet.ie.css" />
+    <Content Include="Content\leafletmap.css" />
+    <Content Include="Content\loading.gif" />
+    <Content Include="Content\maximizing your results.jpg" />
+    <Content Include="Content\Metro\editor.png" />
+    <Content Include="Content\Metro\imagebrowser.png" />
+    <Content Include="Content\Metro\loading-image.gif" />
+    <Content Include="Content\Metro\loading.gif" />
+    <Content Include="Content\Metro\semplest_logo.jpg" />
+    <Content Include="Content\Metro\semplest_logo.png" />
+    <Content Include="Content\Metro\slider-h.gif" />
+    <Content Include="Content\Metro\slider-v.gif" />
+    <Content Include="Content\Metro\sprite.png" />
+    <Content Include="Content\Metro\wait.gif" />
+    <Content Include="Content\report.png" />
+    <Content Include="Content\reviewing your input.jpg" />
+    <Content Include="Content\SearchEngineMarketingAds.png" />
+    <Content Include="Content\themes\base\images\logo.png" />
+    <Content Include="Content\Google Logo.png" />
+    <Content Include="Content\MSN Logo.png" />
+    <Content Include="Content\ui.dynatree.css" />
+    <Content Include="Content\vline.gif" />
+    <Content Include="Content\WhatAreSiteLinks.png" />
+    <Content Include="Dynamic Expressions.html" />
+    <Content Include="Global.asax" />
+    <Content Include="Scripts\AdditionalLinks.js" />
+    <Content Include="Scripts\CampaignSetup.js" />
+    <Content Include="Scripts\conditional-validation.js" />
+    <Content Include="Scripts\enabledisable.js" />
+    <Content Include="Scripts\images\layers.png" />
+    <Content Include="Scripts\images\marker-shadow.png" />
+    <Content Include="Scripts\images\marker-icon.png" />
+    <Content Include="Scripts\images\popup-close.png" />
+    <Content Include="Scripts\images\zoom-in.png" />
+    <Content Include="Scripts\images\zoom-out.png" />
+    <Content Include="Scripts\jquery-1.7.2-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.7.2.js" />
+    <Content Include="Scripts\jquery-1.7.2.min.js" />
+    <Content Include="Scripts\jquery.busy.js" />
+    <Content Include="Scripts\jquery.cluetip.min.js" />
+    <Content Include="Scripts\jquery.dynatree.min.js" />
+    <Content Include="Scripts\jquery.hoverIntent.minified.js" />
+    <Content Include="Scripts\jquery.maskedinput-1.3.js" />
+    <Content Include="Scripts\jquery.maskedinput-1.3.min.js" />
+    <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\kendo.all-vsdoc.js" />
+    <Content Include="Scripts\kendo.all.min.js" />
+    <Content Include="Scripts\leaflet.js" />
+    <Content Include="Scripts\livepreview.js" />
+    <Content Include="Scripts\Maps.js" />
+    <Content Include="Scripts\PanelBar.js" />
+    <Content Include="Scripts\Profile.js" />
+    <Content Include="Scripts\QuestionMarkHelp.js" />
+    <Content Include="Scripts\SmartWordSetup.js" />
+    <Content Include="Scripts\SmartWordMaps.js" />
+    <Content Include="Scripts\tooltip.js" />
+    <Content Include="Services\LogService.svc" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\MicrosoftAjax.js" />
+    <Content Include="Scripts\MicrosoftAjax.debug.js" />
+    <Content Include="Scripts\MicrosoftMvcAjax.js" />
+    <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
+    <Content Include="Scripts\MicrosoftMvcValidation.js" />
+    <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\ChangePasswordSuccess.cshtml" />
+    <Content Include="Views\Account\LogOn.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Home\Static.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_LogOnPartial.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Contact.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Campaign\CampaignSetup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\GeoTargeting.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\PromotionAd.cshtml" />
+    <Content Include="Views\Entity\BillType.cshtml" />
+    <Content Include="Views\Entity\Create.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Test\Create.cshtml" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Home\SearchKeywords.cshtml" />
+    <Content Include="Views\Home\Profile.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Test\TestMap.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ProductGroupModel.cshtml" />
+    <Content Include="Views\Campaign\AdditionalLinks.cshtml" />
+    <Content Include="Views\Campaign\NegativeKeyWords.cshtml" />
+    <Content Include="Views\Campaign\KeyWords.cshtml" />
+    <Content Include="Views\Campaign\Categories.cshtml" />
+    <Content Include="Scripts\Jquery.UiBlock.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SemplestModel\SemplestModel.csproj">
+      <Project>{839F5DD8-AC95-4F7D-90C2-FB7CBAC08172}</Project>
+      <Name>SemplestModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedResources\SharedResources.csproj">
+      <Project>{4CB69885-A4AC-41D2-9A4D-121B4A8D36D6}</Project>
+      <Name>SharedResources</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Campaign\BillingLaunch.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index2.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Account\ParentProfile.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Account\MyProfile.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_AdvertisingEngine.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\SiteLink.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Reporting\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\AdModel.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Campaign\Preview.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\jquery.cluetip.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Reporting\ReportDetails.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Reporting\ReportChart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Preview.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_LoginLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Campaign\Billing.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Campaign\AddNewCard.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\Setup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\ProductGroupSmartWords.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\Categories.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\Words.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SmartWord\NegativeSmartWords.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Tree\Index.cshtml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+</Project>
