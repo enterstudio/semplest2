@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import semplest.dmoz.tree.DmozCategoryDataObject;
@@ -132,7 +133,7 @@ public class DmozTreeBuilder {
 			//find or create nodes						
 			for(int node = 1; node < nodes.length; node++){
 				String currentLevelName = nodes[node];
-				HashMap<String,DmozTreeNode> currentLevelNodes = currentNode.getChildrenNodes();
+				Map<String,DmozTreeNode> currentLevelNodes = currentNode.getChildrenNodes();
 				String fullNodeName = currentNode.getName() + "/" + currentLevelName;
 				if(!currentLevelNodes.containsKey(fullNodeName)){
 					DmozTreeNode newNode = new DmozTreeNode();

@@ -3,6 +3,7 @@ package semplest.dmoz.tree.process;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
@@ -35,7 +36,7 @@ public class MergeMiddleNodesProcesser implements TreeProcesserInterface{
 		}
 		*/
 		
-		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
+		Map<String, DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
 		if(childrenNodes.size() == 0 ){
 			//reach the leaf of this branch
 			String fullNodeName = topNode.getName();

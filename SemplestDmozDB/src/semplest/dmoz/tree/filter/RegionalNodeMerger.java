@@ -1,6 +1,7 @@
 package semplest.dmoz.tree.filter;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
@@ -23,7 +24,7 @@ public class RegionalNodeMerger implements DmozTreeFliter {
 			return 0;
 		}
 		
-		HashMap<String,DmozTreeNode> childrenNodes = currentNode.getChildrenNodes();
+		Map<String,DmozTreeNode> childrenNodes = currentNode.getChildrenNodes();
 		
 		String [] fullName = currentNode.getName().split("/");
 		String leafNodeName = fullName[fullName.length-1];

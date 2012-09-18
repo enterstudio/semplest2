@@ -2,6 +2,7 @@ package semplest.dmoz.tree;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DmozTreeNode {
 	private Long nodeID;
@@ -88,7 +89,7 @@ public class DmozTreeNode {
 	}
 
 
-	public HashMap<String, DmozTreeNode> getChildrenNodes() {
+	public Map<String, DmozTreeNode> getChildrenNodes() {
 		return childrenNodes;
 	}
 

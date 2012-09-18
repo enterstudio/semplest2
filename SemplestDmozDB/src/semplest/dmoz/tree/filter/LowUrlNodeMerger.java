@@ -1,6 +1,7 @@
 package semplest.dmoz.tree.filter;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
@@ -38,7 +39,7 @@ public class LowUrlNodeMerger implements DmozTreeFliter {
 			return 0;
 		}
 		
-		HashMap<String,DmozTreeNode> childrenNodes = currentNode.getChildrenNodes();
+		Map<String,DmozTreeNode> childrenNodes = currentNode.getChildrenNodes();
 
 		
 		Integer numSubNodes = 0;

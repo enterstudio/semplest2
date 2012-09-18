@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
@@ -17,7 +18,7 @@ public class MergeLeafNodesProcesser implements TreeProcesserInterface{
 		/*
 		 * find all the leaf nodes which name is only a letter, such as ../../a or ../../3
 		 */
-		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
+		Map<String, DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
 		if(childrenNodes.size() == 0 ){
 			//this is a leaf			
 			String leafNodeName = topNode.getName();
@@ -38,7 +39,7 @@ public class MergeLeafNodesProcesser implements TreeProcesserInterface{
 		/*
 		 * merge all the leaf nodes which name is only a letter, such as ../../a or ../../3, to its parent node
 		 */
-		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
+		Map<String, DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
 		if(childrenNodes.size() == 0 ){
 			//this is a leaf
 			String leafNodeName = topNode.getName();

@@ -1,6 +1,7 @@
 package semplest.dmoz.tree.filter;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
@@ -22,7 +23,7 @@ public class CharDigitLeafNodeMerger implements DmozTreeFliter {
 			return 0;
 		}
 		
-		HashMap<String,DmozTreeNode> childrenNodes = currentNode.getChildrenNodes();
+		Map<String,DmozTreeNode> childrenNodes = currentNode.getChildrenNodes();
 		
 		if(childrenNodes.size() == 0 ){
 			//this is a leaf

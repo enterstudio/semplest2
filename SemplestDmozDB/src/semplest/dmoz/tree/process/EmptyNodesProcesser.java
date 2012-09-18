@@ -3,6 +3,7 @@ package semplest.dmoz.tree.process;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
@@ -12,7 +13,7 @@ public class EmptyNodesProcesser implements TreeProcesserInterface {
 	
 	@Override
 	public void analyzeTree(DmozTreeNode topNode) throws Exception {
-		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
+		Map<String, DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
 		if(topNode.getCategoryData() == null || topNode.getCategoryData().isEmpty()){
 			nodes.add(topNode.getName());
 		}

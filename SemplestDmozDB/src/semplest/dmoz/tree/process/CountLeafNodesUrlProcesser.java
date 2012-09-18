@@ -3,6 +3,7 @@ package semplest.dmoz.tree.process;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import semplest.dmoz.tree.DmozTreeNode;
 
@@ -11,7 +12,7 @@ public class CountLeafNodesUrlProcesser implements TreeProcesserInterface{
 
 	@Override
 	public void analyzeTree(DmozTreeNode topNode) throws Exception {
-		HashMap<String,DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
+		Map<String, DmozTreeNode> childrenNodes = topNode.getChildrenNodes();
 		if(childrenNodes.size() == 0 ){
 			//this is a leaf
 			int numUrls = topNode.getCategoryData() == null? 0 : 
