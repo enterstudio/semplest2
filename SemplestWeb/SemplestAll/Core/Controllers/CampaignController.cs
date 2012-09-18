@@ -35,17 +35,6 @@ namespace Semplest.Core.Controllers
 
         public ActionResult CampaignSetup(CampaignSetupModel cs, string command)
         {
-
-            if (command == "") command = "";
-
-            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
-            Logger.Write(logEnty);
-            //var logService = new LogService();
-            //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
-            //var scw = new ServiceClientWrapper();
-            //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
-
-            //var campaignSetupModel = new CampaignSetupModel();
             Session["SiteLinks"] = null;
             Session["NegativeKeywords"] = null;
             Session["NegativeKeywordsText"] = null;
