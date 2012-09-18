@@ -161,7 +161,7 @@ namespace Semplest.SharedResources.Controllers
             var sr = new ServiceClientWrapper();
             var qs = Request.Url.Query.Substring(7);
             if (sr.ValidateAccountActivationToken(qs))
-                return RedirectToAction("Login", "Profile");
+                return Redirect("https://www.semplest.com/SemplestCore/Profile/Login");
             return Content("The URL is invalid.");
         }
 
