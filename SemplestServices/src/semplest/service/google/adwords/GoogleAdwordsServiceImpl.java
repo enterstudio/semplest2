@@ -3759,6 +3759,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return geoTargets;
 	}
 	
+	public Long getUsaLocationId()
+	{
+		return 2480L;
+	}
+	
 	public Long getLocationId(final String state) throws Exception  
 	{
 		logger.info("Will try to get Google Location ID for State [" + state + "]");
@@ -3813,12 +3818,25 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignCriterion campaignCriterion = new CampaignCriterion();
 			campaignCriterion.setCampaignId(campaignId);
 			campaignCriterion.setCriterion(proximity);
-		    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
-		    operation.setOperand(campaignCriterion);
-		    operation.setOperator(operator);
-		    operations.add(operation);		    
+	    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
+	    operation.setOperand(campaignCriterion);
+	    operation.setOperator(operator);
+	    operations.add(operation);		    
 		}
 		return operations;
+	}
+	
+	public CampaignCriterionOperation getUsaGeoTargetOperation(final Long campaignId, final Operator operator) throws Exception
+	{
+		final Location location = new Location();			
+		location.setId(getUsaLocationId());			
+		final CampaignCriterion campaignCriterion = new CampaignCriterion();
+		campaignCriterion.setCampaignId(campaignId);
+		campaignCriterion.setCriterion(location);
+    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
+    operation.setOperand(campaignCriterion);
+    operation.setOperator(operator);
+		return operation;
 	}
 	
 	public List<CampaignCriterionOperation> getStateGeoTargetOperations(final Long campaignId, final List<GeoTargetObject> geoTargets, final Operator operator) throws Exception
@@ -3838,10 +3856,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignCriterion campaignCriterion = new CampaignCriterion();
 			campaignCriterion.setCampaignId(campaignId);
 			campaignCriterion.setCriterion(location);
-		    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
-		    operation.setOperand(campaignCriterion);
-		    operation.setOperator(operator);
-		    operations.add(operation);
+	    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
+	    operation.setOperand(campaignCriterion);
+	    operation.setOperator(operator);
+	    operations.add(operation);
 		}
 		return operations;
 	}
@@ -3880,8 +3898,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		if (operationList.isEmpty())
 		{
-			logger.info("No Geo Criterions generated, so nothing to do");
-			return;
+			logger.info("No Geo Criterions generated, so assuming USA-wide target");
+			final CampaignCriterionOperation geoTargetOperation = getUsaGeoTargetOperation(campaignId, Operator.ADD);
+			operationList.add(geoTargetOperation);
 		}
 		logger.info(operationList.size() + " Geo Criterions generated");
 		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
