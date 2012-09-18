@@ -24,12 +24,6 @@ public class DmozTreeNode {
 	public void addChildNode(DmozTreeNode newNode){
 		this.childrenNodes.put(newNode.getName(), newNode);
 	}
-	
-	public void addChildrenNodes(List<DmozTreeNode> newNodes){
-		for(DmozTreeNode newNode : newNodes){
-			this.childrenNodes.put(newNode.getName(), newNode);
-		}
-	}
 
 	public void addUrlData(HashMap<String,String> urlData){
 		categoryData.addUrlData(urlData);

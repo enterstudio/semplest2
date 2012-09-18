@@ -212,20 +212,31 @@ public class DbTreeOperator extends BaseDB
 		List<DbTreeNodeObject> subDbNodes = jdbcTemplate.query(sql, new Object[]{childrenNodesPattern}, dbTreeNodeObjectMapper);		
 		
 		//make it a map, easier to process
-		Map<Long,List<DmozTreeNode>> subTreeNodes = new HashMap<Long,List<DmozTreeNode>>();
-		for(DbTreeNodeObject dbNode : subDbNodes){
-			DmozTreeNode treeNode = new DmozTreeNode();
-			treeNode.fromDbTreeNodeObject(dbNode);
-			Long parentID = treeNode.getParentID();			
+		Map<Long,HashMap<String,DmozTreeNode>> subTreeNodes = new HashMap<Long,HashMap<String,DmozTreeNode>>();
+		for(DbTreeNodeObject dbNode : subDbNodes){		
+			String nodeName = dbNode.getNodeText();
+			Long parentID = dbNode.getParentNodeID();		
 			if(subTreeNodes.containsKey(parentID)){
-				List<DmozTreeNode> nodesList = subTreeNodes.get(parentID);
-				nodesList.add(treeNode);
-				subTreeNodes.put(parentID, nodesList);
+				HashMap<String,DmozTreeNode> nodesMap = subTreeNodes.get(parentID);
+				DmozTreeNode node;
+				if(nodesMap.containsKey(nodeName)){
+					//the node is already there, just need to add url to it.
+					node = nodesMap.get(nodeName);
+					node.addUrlData(dbNode.getURL(), dbNode.getURLDescription());
+				}
+				else{
+					node = new DmozTreeNode();
+					node.fromDbTreeNodeObject(dbNode);
+				}
+				nodesMap.put(nodeName, node);
+				subTreeNodes.put(parentID, nodesMap);
 			}
 			else{
-				List<DmozTreeNode> newList = new ArrayList<DmozTreeNode>();
-				newList.add(treeNode);
-				subTreeNodes.put(parentID, newList);
+				HashMap<String,DmozTreeNode> newMap = new HashMap<String,DmozTreeNode>();
+				DmozTreeNode newNode = new DmozTreeNode();
+				newNode.fromDbTreeNodeObject(dbNode);
+				newMap.put(newNode.getName(), newNode);
+				subTreeNodes.put(parentID, newMap);
 			}
 		}		
 		
@@ -236,9 +247,10 @@ public class DbTreeOperator extends BaseDB
 	}
 	
 	//helper method
-	private static void setChildrenNodes(DmozTreeNode currentNode, Map<Long,List<DmozTreeNode>> allNodes){
-		if(allNodes.containsKey(currentNode.getNodeID())){
-			currentNode.addChildrenNodes(allNodes.get(currentNode.getNodeID()));
+	private static void setChildrenNodes(DmozTreeNode currentNode, Map<Long,HashMap<String,DmozTreeNode>> allNodes){
+		Long nodeId = currentNode.getNodeID();
+		if(allNodes.containsKey(nodeId)){
+			currentNode.setChildrenNodes(allNodes.get(nodeId));
 			for(DmozTreeNode childNode : currentNode.getChildrenNodes().values()){
 				setChildrenNodes(childNode,allNodes);
 			}
@@ -282,8 +294,10 @@ public class DbTreeOperator extends BaseDB
 		try {
 			System.out.println("start...");
 			Long start = System.currentTimeMillis();
-			loadTreeFromDB(DBType.DMOZ_TREE,"top");
+			DmozTreeNode dmozTree =  loadTreeFromDB(DBType.DMOZ_TREE,"top");
 			System.out.println(System.currentTimeMillis()-start);
+			
+			TreeFunctions.printTree(dmozTree, "c:\\dmoz\\tempOutput.txt");
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
