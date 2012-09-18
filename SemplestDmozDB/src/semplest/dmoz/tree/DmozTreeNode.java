@@ -1,6 +1,7 @@
 package semplest.dmoz.tree;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class DmozTreeNode {
 	private Long nodeID;
@@ -23,6 +24,12 @@ public class DmozTreeNode {
 	public void addChildNode(DmozTreeNode newNode){
 		this.childrenNodes.put(newNode.getName(), newNode);
 	}
+	
+	public void addChildrenNodes(List<DmozTreeNode> newNodes){
+		for(DmozTreeNode newNode : newNodes){
+			this.childrenNodes.put(newNode.getName(), newNode);
+		}
+	}
 
 	public void addUrlData(HashMap<String,String> urlData){
 		categoryData.addUrlData(urlData);
@@ -41,12 +48,11 @@ public class DmozTreeNode {
 		categoryData.setDescription(description);
 	}
 	
-	public void fromDbDmozObject(DbDmozObject object){
+	public void fromDbTreeNodeObject(DbTreeNodeObject object){
 		this.nodeID = object.getSemplestPK();
 		this.parentID = object.getParentNodeID();
 		this.nodeName = object.getNodeText();
-		this.categoryData.setCategoryId(object.getDMOZCategoryID());
-		this.categoryData.setDescription(object.getNodeDescription());
+		this.categoryData.addUrlData(object.getURL(), object.getURLDescription());
 	}
 
 	public Long getNodeID() {

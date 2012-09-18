@@ -11,8 +11,6 @@ import org.springframework.jdbc.core.RowMapper;
 
 import semplest.dmoz.DBType;
 import semplest.dmoz.springjdbc.BaseDB;
-import semplest.dmoz.tree.DbDmozObject;
-import semplest.dmoz.tree.DbUrlDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.SemplestTreeMapDataObject;
 import semplest.dmoz.tree.TreeFunctions;

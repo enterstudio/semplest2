@@ -14,8 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import semplest.dmoz.DBType;
 import semplest.dmoz.springjdbc.BaseDB;
-import semplest.dmoz.tree.DbDmozObject;
-import semplest.dmoz.tree.DbUrlDataObject;
+import semplest.dmoz.tree.DbTreeNodeObject;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFunctions;
 import semplest.util.SemplestUtils;
@@ -185,8 +184,7 @@ public class DbTreeOperator extends BaseDB
 		}	
 	}
 	
-	private static RowMapper<DbDmozObject> dbDmozObjectMapper = new BeanPropertyRowMapper<DbDmozObject>(DbDmozObject.class);
-	private static RowMapper<DbUrlDataObject> dbUrlDataObjectMapper = new BeanPropertyRowMapper<DbUrlDataObject>(DbUrlDataObject.class);
+	private static RowMapper<DbTreeNodeObject> dbTreeNodeObjectMapper = new BeanPropertyRowMapper<DbTreeNodeObject>(DbTreeNodeObject.class);
 	
 	public static DmozTreeNode loadTreeFromDB(DBType dbType, String categoryName) throws Exception
 	{
@@ -195,117 +193,57 @@ public class DbTreeOperator extends BaseDB
 		
 		String sql;
 		//get the top node of the sub-tree
-		sql = "SELECT SemplestPK,NodeText,ParentNodeID,NodeDescription,DMOZCategoryID FROM " + treeTable + " WHERE NodeText = ?;";
-		DbDmozObject topNode = jdbcTemplate.query(sql, new Object[]{categoryName}, dbDmozObjectMapper).get(0);
-		if(topNode == null){
+		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM " + treeTable + " t " +
+				"LEFT JOIN " + urlDataTable + " u ON t.SemplestPK = u.SemplestFK " +
+				"WHERE t.NodeText = ?";
+		List<DbTreeNodeObject> topNodeList = jdbcTemplate.query(sql, new Object[]{categoryName}, dbTreeNodeObjectMapper);
+		if(topNodeList == null){
 			//the sub-node does not exist
 			throw new Exception("The input node " + categoryName + " does not exist in the database of " + dbType.name() + ".");
 		}
+		DmozTreeNode topNode = new DmozTreeNode();
+		topNode.fromDbTreeNodeObject(topNodeList.get(0));
 		
 		//get all the nodes of the sub-tree
 		String childrenNodesPattern = categoryName + "/%";
-		sql = "SELECT SemplestPK,NodeText,ParentNodeID,NodeDescription,DMOZCategoryID FROM " + treeTable + " WHERE NodeText like ?;";
-		List<DbDmozObject> subDbNodes = jdbcTemplate.query(sql, new Object[]{childrenNodesPattern}, dbDmozObjectMapper);		
+		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM " + treeTable + " t " +
+				"LEFT JOIN " + urlDataTable + " u ON t.SemplestPK = u.SemplestFK " +
+				"WHERE t.NodeText like ?";
+		List<DbTreeNodeObject> subDbNodes = jdbcTemplate.query(sql, new Object[]{childrenNodesPattern}, dbTreeNodeObjectMapper);		
 		
 		//make it a map, easier to process
-		Map<Long,DmozTreeNode> subTreeNodes = new HashMap<Long,DmozTreeNode>();
-		for(DbDmozObject dbNode : subDbNodes){
+		Map<Long,List<DmozTreeNode>> subTreeNodes = new HashMap<Long,List<DmozTreeNode>>();
+		for(DbTreeNodeObject dbNode : subDbNodes){
 			DmozTreeNode treeNode = new DmozTreeNode();
-			treeNode.fromDbDmozObject(dbNode);
-			subTreeNodes.put(treeNode.getNodeID(), treeNode);
-		}
-		
-		//get all urls of the sub-tree		
-		Map<String, Set<Long>> params = Collections.singletonMap("semplestFK",  subTreeNodes.keySet());
-		sql = "SELECT UrlDataPK,SemplestFK,URL,URLDescription,Level,ParentURLDataID FROM " + urlDataTable + " WHERE SemplestFK IN (:semplestFK);";
-		sql = "SELECT UrlDataPK FROM " + urlDataTable + " WHERE SemplestFK IN (:semplestFK);";
-		List<DbUrlDataObject> allUrlData = jdbcTemplate.query(sql, dbUrlDataObjectMapper, params);
-		
-		//put urls to the tree nodes they belong to
-		for(DbUrlDataObject urlData : allUrlData){
-			
-		}
-		
-		System.out.println(allUrlData.size());
+			treeNode.fromDbTreeNodeObject(dbNode);
+			Long parentID = treeNode.getParentID();			
+			if(subTreeNodes.containsKey(parentID)){
+				List<DmozTreeNode> nodesList = subTreeNodes.get(parentID);
+				nodesList.add(treeNode);
+				subTreeNodes.put(parentID, nodesList);
+			}
+			else{
+				List<DmozTreeNode> newList = new ArrayList<DmozTreeNode>();
+				newList.add(treeNode);
+				subTreeNodes.put(parentID, newList);
+			}
+		}		
 		
 		//process the nodes and build the tree
+		setChildrenNodes(topNode,subTreeNodes);
 		
-		
-		return null;
+		return topNode;
 	}
 	
-	public static DmozTreeNode loadTreeFromDB_slow(DBType dbType, String categoryName) throws Exception
-	{
-		String treeTable = getTreeTableName(dbType);
-		String urlDataTable = getUrlDataTableName(dbType);		
-		
-		//Get the top node of the sub-tree from DB		
-		String sql = "SELECT SemplestPK,NodeText,ParentNodeID,NodeDescription,DMOZCategoryID FROM " + treeTable + " WHERE NodeText = ?";
-		DbDmozObject topNode = jdbcTemplate.query(sql, new Object[]{categoryName}, dbDmozObjectMapper).get(0);
-		
-		if(topNode == null){
-			//the sub-node does not exist
-			throw new Exception("The input node " + categoryName + " does not exist in the database of " + dbType.name() + ".");
-		}
-		
-		System.out.println("Loading tree data from " + dbType.name() + " and building the tree...");
-		
-		DmozTreeNode dmozTree = new DmozTreeNode();
-		dmozTree.setNodeID(topNode.getSemplestPK());
-		dmozTree.setParentID(topNode.getParentNodeID());
-		dmozTree.setName(topNode.getNodeText());
-		dmozTree.setNodeDescription(topNode.getNodeDescription());
-		
-		//Build the tree
-		setChildrenNodes(dmozTree, treeTable);
-		
-		System.out.println("Loading url data from " + dbType.name() + "...");
-		//Set UrlData
-		setUrlDataThroughTree(dmozTree, urlDataTable);
-		
-		System.out.println("Done.");
-		
-		return dmozTree;
-	}	
-	
-	//helper methods
-	private static void setChildrenNodes (DmozTreeNode currentNode, String treeTable) throws Exception{
-		/*
-		 * Set up children nodes of a node recursively. Thus build the tree.
-		 */
-		//System.out.println(currentNode.getName());
-		
-		String sql = "SELECT SemplestPK,NodeText,ParentNodeID,NodeDescription,DMOZCategoryID FROM " + treeTable + " WHERE ParentNodeID = " + currentNode.getNodeID();
-		List<DbDmozObject> childrenNodes = jdbcTemplate.query(sql, dbDmozObjectMapper);
-		
-		for(DbDmozObject childNode : childrenNodes){
-			DmozTreeNode newNode = new DmozTreeNode();
-			newNode.setNodeID(childNode.getSemplestPK());
-			newNode.setParentID(childNode.getParentNodeID());
-			newNode.setName(childNode.getNodeText());
-			newNode.setNodeDescription(childNode.getNodeDescription());
-			
-			setChildrenNodes(newNode, treeTable);
-			currentNode.addChildNode(newNode);						
-		}
-	}	
-	
-	private static void setUrlDataThroughTree(DmozTreeNode currentNode, String urlDataTable) throws Exception{
-		/*
-		 * get url data for each node from DB, and store to the tree.
-		 */
-		String sql = "SELECT UrlDataPK,SemplestFK,URL,URLDescription,Level,ParentURLDataID FROM " + urlDataTable + " WHERE SemplestFK = " + currentNode.getNodeID();
-		List<DbUrlDataObject> urlsData = jdbcTemplate.query(sql, dbUrlDataObjectMapper);
-		
-		for(DbUrlDataObject urlData : urlsData){
-			currentNode.addUrlData(urlData.getUrlDataPK(), urlData.getURL(), urlData.getURLDescription());			
-		}
-		
-		for(DmozTreeNode childNode : currentNode.getChildrenNodes().values()){
-			setUrlDataThroughTree(childNode, urlDataTable);
-		}
+	//helper method
+	private static void setChildrenNodes(DmozTreeNode currentNode, Map<Long,List<DmozTreeNode>> allNodes){
+		if(allNodes.containsKey(currentNode.getNodeID())){
+			currentNode.addChildrenNodes(allNodes.get(currentNode.getNodeID()));
+			for(DmozTreeNode childNode : currentNode.getChildrenNodes().values()){
+				setChildrenNodes(childNode,allNodes);
+			}
+		}		
 	}
-	
 	
 	public static Long getUniqueIdBase(DBType dbType) throws Exception{
 		String treeTable = getTreeTableName(dbType);

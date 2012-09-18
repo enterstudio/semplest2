@@ -1,11 +1,11 @@
 package semplest.dmoz.tree;
 
-public class DbDmozObject {
+public class DbTreeNodeObject {
 	private Long SemplestPK;
 	private Long ParentNodeID;
 	private String NodeText;
-	private String NodeDescription;
-	private Long DMOZCategoryID;
+	private String URL;
+	private String URLDescription;
 	
 	public Long getSemplestPK() {
 		return SemplestPK;
@@ -25,17 +25,16 @@ public class DbDmozObject {
 	public void setNodeText(String nodeText) {
 		NodeText = nodeText;
 	}
-	public String getNodeDescription() {
-		return NodeDescription;
+	public String getURL() {
+		return URL;
 	}
-	public void setNodeDescription(String nodeDescription) {
-		NodeDescription = nodeDescription;
+	public void setURL(String uRL) {
+		URL = uRL;
 	}
-	public Long getDMOZCategoryID() {
-		return DMOZCategoryID;
+	public String getURLDescription() {
+		return URLDescription;
 	}
-	public void setDMOZCategoryID(Long dmozCategoryID) {
-		DMOZCategoryID = dmozCategoryID;
-	}
-	
+	public void setURLDescription(String uRLDescription) {
+		URLDescription = uRLDescription;
+	}	
 }
