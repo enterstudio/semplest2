@@ -153,10 +153,75 @@ public final class SemplestUtils
 	public static final String DATE_TIME = "DATE_TIME";
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
+	public static final String WORD_DELIMITER = " ";
+	public static final int NUM_MINIMUM_WORDS = 5;
+	
+	//References: http://en.wikipedia.org/wiki/Stop_words and old keyword service
+	public static final Set<String> COMMON_STOP_WORDS = new HashSet<String>(Arrays.asList("a",	"able",	"about",	"above",	"according",	"accordingly",	"across",	"actually",	"after",	"afterwards",	"again",	"against",	"ain't",	"all",	"allow",	"allows",	"almost",	"alone",	"along",	"already",	"also",	"although",	"always",	"am",	"among",	"amongst",	"amoungst",	"amount",	"an",	"and",	"another",	"any",	"anybody",	"anyhow",	"anyone",	"anything",	"anyway",	"anyways",	"anywhere",	"apart",	"appear",	"appreciate",	"appropriate",	"are",	"area",	"areas",	"aren't",	"around",	"as",	"a's",	"aside",	"ask",	"asked",	"asking",	"asks",	"associated",	"at",	"available",	"away",	"awfully",	"b",	"back",	"backed",	"backing",	"backs",	"be",	"became",	"because",	"become",	"becomes",	"becoming",	"been",	"before",	"beforehand",	"began",	"behind",	"being",	"beings",	"believe",	"below",	"beside",	"besides",	"best",	"better",	"between",	"beyond",	"big",	"bill",	"both",	"bottom",	"brief",	"but",	"by",	"c",	"call",	"came",	"can",	"cannot",	"cant",	"can't",	"case",	"cases",	"cause",	"causes",	"certain",	"certainly",	"changes",	"clear",	"clearly",	"c'mon",	"co",	"com",	"come",	"comes",	"computer",	"con",	"concerning",	"consequently",	"consider",	"considering",	"contain",	"containing",	"contains",	"corresponding",	"could",	"couldnt",	"couldn't",	"course",	"cry",	"c's",	"currently",	"d",	"de",	"dear",	"definitely",	"describe",	"described",	"despite",	"detail",	"did",	"didn't",	"differ",	"different",	"differently",	"do",	"does",	"doesn't",	"doing",	"done",	"don't",	"down",	"downed",	"downing",	"downs",	"downwards",	"due",	"during",	"e",	"each",	"early",	"edu",	"eg",	"eight",	"either",	"eleven",	"else",	"elsewhere",	"empty",	"end",	"ended",	"ending",	"ends",	"enough",	"entirely",	"especially",	"et",	"etc",	"even",	"evenly",	"ever",	"every",	"everybody",	"everyone",	"everything",	"everywhere",	"ex",	"exactly",	"example",	"except",	"f",	"face",	"faces",	"fact",	"facts",	"far",	"felt",	"few",	"fifteen",	"fifth",	"fify",	"fill",	"find",	"finds",	"fire",	"first",	"five",	"followed",	"following",	"follows",	"for",	"former",	"formerly",	"forth",	"forty",	"found",	"four",	"from",	"front",	"full",	"fully",	"further",	"furthered",	"furthering",	"furthermore",	"furthers",	"g",	"gave",	"general",	"generally",	"get",	"gets",	"getting",	"give",	"given",	"gives",	"go",	"goes",	"going",	"gone",	"good",	"goods",	"got",	"gotten",	"great",	"greater",	"greatest",	"greetings",	"group",	"grouped",	"grouping",	"groups",	"h",	"had",	"hadn't",	"happens",	"hardly",	"has",	"hasnt",	"hasn't",	"have",	"haven't",	"having",	"he",	"hello",	"help",	"hence",	"her",	"here",	"hereafter",	"hereby",	"herein",	"here's",	"hereupon",	"hers",	"herse",	"herself",	"he's",	"hi",	"high",	"higher",	"highest",	"him",	"himse",	"himself",	"his",	"hither",	"hopefully",	"how",	"howbeit",	"however",	"hundred",	"i",	"i'd",	"ie",	"if",	"ignored",	"i'll",	"i'm",	"immediate",	"important",	"in",	"inasmuch",	"inc",	"indeed",	"indicate",	"indicated",	"indicates",	"inner",	"insofar",	"instead",	"interest",	"interested",	"interesting",	"interests",	"into",	"inward",	"is",	"isn't",	"it",	"it'd",	"it'll",	"its",	"it's",	"itse",	"itself",	"i've",	"j",	"just",	"k",	"keep",	"keeps",	"kept",	"kind",	"knew",	"know",	"known",	"knows",	"l",	"la",	"large",	"largely",	"last",	"lately",	"later",	"latest",	"latter",	"latterly",	"least",	"less",	"lest",	"let",	"lets",	"let's",	"like",	"liked",	"likely",	"little",	"long",	"longer",	"longest",	"look",	"looking",	"looks",	"ltd",	"m",	"made",	"mainly",	"make",	"making",	"man",	"many",	"may",	"maybe",	"me",	"mean",	"meanwhile",	"member",	"members",	"men",	"merely",	"might",	"mill",	"mine",	"more",	"moreover",	"most",	"mostly",	"move",	"mr",	"mrs",	"much",	"must",	"my",	"myse",	"myself",	"n",	"name",	"namely",	"nd",	"near",	"nearly",	"necessary",	"need",	"needed",	"needing",	"needs",	"neither",	"never",	"nevertheless",	"new",	"newer",	"newest",	"next",	"nine",	"no",	"nobody",	"non",	"none",	"noone",	"nor",	"normally",	"not",	"nothing",	"novel",	"now",	"nowhere",	"number",	"numbers",	"o",	"obviously",	"of",	"off",	"often",	"oh",	"ok",	"okay",	"old",	"older",	"oldest",	"on",	"once",	"one",	"ones",	"only",	"onto",	"open",	"opened",	"opening",	"opens",	"or",	"order",	"ordered",	"ordering",	"orders",	"other",	"others",	"otherwise",	"ought",	"our",	"ours",	"ourselves",	"out",	"outside",	"over",	"overall",	"own",	"p",	"part",	"parted",	"particular",	"particularly",	"parting",	"parts",	"pdf",	"per",	"perhaps",	"place",	"placed",	"places",	"please",	"plus",	"point",	"pointed",	"pointing",	"points",	"possible",	"present",	"presented",	"presenting",	"presents",	"presumably",	"probably",	"problem",	"problems",	"provides",	"put",	"puts",	"q",	"que",	"quite",	"qv",	"r",	"rather",	"rd",	"re",	"really",	"reasonably",	"regarding",	"regardless",	"regards",	"relatively",	"respectively",	"right",	"room",	"rooms",	"s",	"said",	"same",	"saw",	"say",	"saying",	"says",	"second",	"secondly",	"seconds",	"see",	"seeing",	"seem",	"seemed",	"seeming",	"seems",	"seen",	"sees",	"self",	"selves",	"sensible",	"sent",	"serious",	"seriously",	"seven",	"several",	"shall",	"she",	"should",	"shouldn't",	"show",	"showed",	"showing",	"shows",	"side",	"sides",	"since",	"sincere",	"six",	"sixty",	"small",	"smaller",	"smallest",	"so",	"some",	"somebody",	"somehow",	"someone",	"something",	"sometime",	"sometimes",	"somewhat",	"somewhere",	"soon",	"sorry",	"specified",	"specify",	"specifying",	"state",	"states",	"still",	"sub",	"such",	"sup",	"sure",	"system",	"t",	"take",	"taken",	"tell",	"ten",	"tends",	"th",	"than",	"thank",	"thanks",	"thanx",	"that",	"thats",	"that's",	"the",	"their",	"theirs",	"them",	"themselves",	"then",	"thence",	"there",	"thereafter",	"thereby",	"therefore",	"therein",	"theres",	"there's",	"thereupon",	"these",	"they",	"they'd",	"they'll",	"they're",	"they've",	"thick",	"thin",	"thing",	"things",	"think",	"thinks",	"third",	"this",	"thorough",	"thoroughly",	"those",	"though",	"thought",	"thoughts",	"three",	"through",	"throughout",	"thru",	"thus",	"tis",	"to",	"today",	"together",	"too",	"took",	"top",	"toward",	"towards",	"tried",	"tries",	"truly",	"try",	"trying",	"t's",	"turn",	"turned",	"turning",	"turns",	"twas",	"twelve",	"twenty",	"twice",	"two",	"u",	"un",	"under",	"unfortunately",	"unless",	"unlikely",	"until",	"unto",	"up",	"upon",	"us",	"use",	"used",	"useful",	"uses",	"using",	"usually",	"v",	"value",	"various",	"very",	"via",	"viz",	"vs",	"w",	"want",	"wanted",	"wanting",	"wants",	"was",	"wasn't",	"way",	"ways",	"we",	"we'd",	"welcome",	"well",	"we'll",	"wells",	"went",	"were",	"we're",	"weren't",	"we've",	"what",	"whatever",	"what's",	"when",	"whence",	"whenever",	"where",	"whereafter",	"whereas",	"whereby",	"wherein",	"where's",	"whereupon",	"wherever",	"whether",	"which",	"while",	"whither",	"who",	"whoever",	"whole",	"whom",	"who's",	"whose",	"why",	"will",	"willing",	"wish",	"with",	"within",	"without",	"wonder",	"won't",	"work",	"worked",	"working",	"works",	"would",	"wouldn't",	"x",	"y",	"year",	"years",	"yes",	"yet",	"you",	"you'd",	"you'll",	"young",	"younger",	"youngest",	"your",	"you're",	"yours",	"yourself",	"yourselves",	"you've",	"z"));
+	public static final Set<String> LOCAL_STOP_WORDS = new HashSet<String>(Arrays.asList("class", "div", "escap", "document", "fals", "file", "function", "floor", "http", "html", "javascript", "math", "pdf", "plugin", "protocol", "true", "tv", "var", "width", "window", "write", "www", "org"));
+	public static final Set<String> STATE_STOP_WORDS = new HashSet<String>(Arrays.asList("north", "south", "east", "west", "alabama", "alaska", "arizona", "arkansas", "california", "canada", "colorado", "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho", "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana", "maine", "maryland", "massachusetts", "mexico", "michigan", "minnesota", "mississippi", "missouri", "montana", "nebraska", "nevada", "hampshire", "jersey", "mexico", "york", "carolina", "dakota", "ohio", "oklahoma", "oregon", "pennsylvania", "rhode", "carolina", "dakota", "tennessee", "texas", "utah", "vermont", "virginia", "washington", "wisconsin", "Wyoming"));
+	public static final Set<String> SITES_STOP_WORDS = new HashSet<String>(Arrays.asList("mozilla", "google", "yahoo", "bing", "wikipedia", "aol", "yippy", "ask", "netscape"));
+	public static final Set<String> ALL_COMMON_WORDS = new HashSet<String>();
 	
 	private static final Object SEMAPHORE = new Object(); 
 	private static Long DMOZ_NODE_PK = 1L;
 	
+	static 
+	{
+		ALL_COMMON_WORDS.addAll(COMMON_STOP_WORDS);
+		ALL_COMMON_WORDS.addAll(LOCAL_STOP_WORDS);
+		ALL_COMMON_WORDS.addAll(STATE_STOP_WORDS);
+		ALL_COMMON_WORDS.addAll(SITES_STOP_WORDS);
+	}
+	
+	public static int getNumWords(final Collection<String> strings, final String delimiter)
+	{
+		int counter = 0;
+		for (final String s : strings)
+		{
+			final String[] words = s.split(delimiter);
+			counter += words.length;
+		}
+		return counter;
+	}
+	
+	public static Set<String> removeStopWords(final Collection<String> terms, final Set<String> stopWords)
+	{
+		final Set<String> nonStopTerms = new HashSet<String>();
+		for (final String term : terms)
+		{
+			final String[] words = term.split("\\s+");
+			final Set<String> nonStopWords = new HashSet<String>();
+			for (final String word : words)
+			{
+				if (!stopWords.contains(word))
+				{
+					nonStopWords.add(word);
+				}
+			}
+			if (!nonStopWords.isEmpty())
+			{
+				final String nonStopTerm = getString(nonStopWords, WORD_DELIMITER);
+				nonStopTerms.add(nonStopTerm);
+			}
+		}
+		return nonStopTerms;
+	}
+	
+	public static String getString(final Collection<?> collection, final String delimiter)
+	{
+		final StringBuilder sb = new StringBuilder();
+		for (final Object o : collection)
+		{
+			if (sb.length() > 0)
+			{
+				sb.append(delimiter);
+			}
+			sb.append(o);
+		}
+		return sb.toString();
+	}
+		 
 	public static Long getNextDmozNodePK()
 	{
 		synchronized(SEMAPHORE)
@@ -1115,6 +1180,23 @@ public final class SemplestUtils
 	{			
 		final String sanitizedRawString = sanitizeString(rawUserName);
 		return getStringOfSpecifiedLength(sanitizedRawString, USER_NAME_MIN_LENGTH, USER_NAME_MAX_LENGTH);
+	}
+	
+	public static Set<String> getTrimmedNonEmptyStrings(final Set<String> strings)
+	{
+		final Set<String> trimmedNonEmptyStrings = new HashSet<String>();
+		for (final String string : strings)
+		{
+			if (string != null)
+			{
+				final String trimmedString = string.trim();
+				if (!trimmedString.equals(""))
+				{
+					trimmedNonEmptyStrings.add(trimmedString);
+				}
+			}
+		}
+		return trimmedNonEmptyStrings;
 	}
 	
 	public static final String sanitizeString(final String s)

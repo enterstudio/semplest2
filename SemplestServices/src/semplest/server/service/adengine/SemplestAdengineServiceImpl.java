@@ -223,6 +223,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// adEng.AddPromotionToAdEngine(74, 171, 183, adEngList);
 			// adEng.AddPromotionToAdEngine(95,182, 197, adEngList);
 			// adEng.AddPromotionToAdEngine(26,51, 60, adEngList);
+			
+			final String ecryptedToken = "qLQ/XrTfdolSNKb8WB9Y9Q==";
+			System.out.println("Will try to validate Account Activation Token [" + ecryptedToken + "]");
+			final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+			final AESBouncyCastle aes = SemplestUtils.getDefaultAESBouncyCastle(semplestEncryptionKey);
+			//final String encryptedTokenUrlDecrypted = URLDecoder.decode(ecryptedToken, "UTF-8");
+			//final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, encryptedTokenUrlDecrypted);
+			//final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, ecryptedToken);
+			//System.out.println(decryptedInfo);
+			System.out.println(aes.decrypt(ecryptedToken));
 
 		}
 		catch (Exception e)
@@ -336,7 +346,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
 			final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines, startBudgetInCycle);
 			final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
-			final Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngines, bidClient);
+			final Map<AdEngine, Map<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngines, bidClient);
 			String companyName = null;
 			for (final AdEngine advertisingEngine : adEngines)
 			{
@@ -992,17 +1002,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return keywordToPkMap;
 	}
 
-	private Map<AdEngine, HashMap<String, Object>> setupAdEngineBudget(Integer PromotionID, List<AdEngine> adEngines, SemplestBiddingServiceClient bidClient) throws Exception
+	private Map<AdEngine, Map<String, Object>> setupAdEngineBudget(Integer PromotionID, List<AdEngine> adEngines, SemplestBiddingServiceClient bidClient) throws Exception
 	{
-		Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = new HashMap<AdEngine, HashMap<String, Object>>();
-		Map<AdEngine, Double> AdEngineBudgetPercent = bidClient.GetMonthlyBudgetPercentPerSE(PromotionID, adEngines);
-		BudgetObject remainingBudget = SemplestDB.getBudget(PromotionID);
-		Iterator<AdEngine> adEngineIT = AdEngineBudgetPercent.keySet().iterator();
+		final Map<AdEngine, Map<String, Object>> remainingBudgetDaysMap = new HashMap<AdEngine, Map<String, Object>>();
+		final Map<AdEngine, Double> AdEngineBudgetPercent = bidClient.GetMonthlyBudgetPercentPerSE(PromotionID, adEngines);
+		final BudgetObject remainingBudget = SemplestDB.getBudget(PromotionID);
+		final Iterator<AdEngine> adEngineIT = AdEngineBudgetPercent.keySet().iterator();
 		while (adEngineIT.hasNext())
 		{
-			AdEngine adEng = adEngineIT.next();
-			Double budgetSplit = remainingBudget.getRemainingBudgetInCycle() * (0.01 * AdEngineBudgetPercent.get(adEng));
-			HashMap<String, Object> data = new HashMap<String, Object>();
+			final AdEngine adEng = adEngineIT.next();
+			final Double budgetSplit = remainingBudget.getRemainingBudgetInCycle() * (0.01 * AdEngineBudgetPercent.get(adEng));
+			final Map<String, Object> data = new HashMap<String, Object>();
 			data.put("RemainingBudgetInCycle", budgetSplit);
 			data.put("RemainingDays", remainingBudget.getRemainingDays());
 			remainingBudgetDaysMap.put(adEng, data);
@@ -1367,7 +1377,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// Call bidding service to split the budget
 			SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
 			// setup the budget for each ad engine
-			Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
+			Map<AdEngine, Map<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
 			// call setBidsUpdate			
 			for (AdEngine adEngine : adEngineList)
 			{

@@ -258,7 +258,7 @@ public class AccountActivationEmailSender
 				object.wait();
 			}
 			final AccountActivationEmailSender emailSender = getDefaultAccountActivationEmailSender();
-			emailSender.sendAccountActivationEmail(24); // for testing only
+			emailSender.sendAccountActivationEmail(13); // for testing only
 		}
 		catch (Throwable t)
 		{
