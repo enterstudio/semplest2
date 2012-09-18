@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import semplest.dmoz.DBType;
@@ -20,9 +21,9 @@ import semplest.dmoz.tree.TreeFunctions;
 
 public class DmozUpdater {
 	
-	private HashMap<String,DmozTreeNode> nodesToBeDeleted;
-	private HashMap<String,DmozTreeNode> nodesToBeAdded;
-	private HashMap<String,DmozTreeNode> nodesToUpdateUrlData;
+	private Map<String,DmozTreeNode> nodesToBeDeleted;
+	private Map<String,DmozTreeNode> nodesToBeAdded;
+	private Map<String,DmozTreeNode> nodesToUpdateUrlData;
 	
 	private static Long uniqueId;
 	
@@ -60,7 +61,7 @@ public class DmozUpdater {
 	public void compareDbTreeAndNewTree() throws Exception{
 		//Get the entire tree from DB
 		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB(DBType.DMOZ_TREE, "top");		
-		HashMap<String,DmozTreeNode> dbTreeMap = TreeFunctions.getTreeInMap(dmozTree);
+		Map<String,DmozTreeNode> dbTreeMap = TreeFunctions.getTreeInMap(dmozTree);
 		
 		//Get the new tree
 		DmozTreeBuilder treeBuilder = new DmozTreeBuilder();
@@ -107,7 +108,7 @@ public class DmozUpdater {
 		writer.close();
 	}
 	
-	private void refreshTreeNodeIDs(HashMap<String,DmozTreeNode> dbTreeMap, DmozTreeNode newTree) throws Exception{
+	private void refreshTreeNodeIDs(Map<String,DmozTreeNode> dbTreeMap, DmozTreeNode newTree) throws Exception{
 		Long nodeId = dbTreeMap.get(newTree.getName()).getNodeID();
 		newTree.setNodeID(nodeId);
 		newTree.setParentID(-1L);
@@ -115,7 +116,7 @@ public class DmozUpdater {
 		assignParentChildrenIDs(dbTreeMap,newTree);
 	}
 	
-	private void assignParentChildrenIDs(HashMap<String,DmozTreeNode> dbTreeMap, DmozTreeNode currentNode) throws Exception{
+	private void assignParentChildrenIDs(Map<String,DmozTreeNode> dbTreeMap, DmozTreeNode currentNode) throws Exception{
 		if(dbTreeMap.containsKey(currentNode.getName())){
 			//this node exists in the old tree
 			DmozTreeNode correspondingNode = dbTreeMap.get(currentNode.getName());		
@@ -136,7 +137,7 @@ public class DmozUpdater {
 		}
 	}
 	
-	private HashMap<String,DmozTreeNode> processNodesToBeDeleted(HashMap<String,DmozTreeNode> dbTreeMap, HashMap<String,DmozTreeNode> newTreeMap) throws Exception{
+	private HashMap<String,DmozTreeNode> processNodesToBeDeleted(Map<String,DmozTreeNode> dbTreeMap, Map<String,DmozTreeNode> newTreeMap) throws Exception{
 		HashMap<String,DmozTreeNode> nodesToBeDeleted = new HashMap<String,DmozTreeNode>();
 		HashMap<String,DmozTreeNode> nodesList = new HashMap<String,DmozTreeNode>();
 		
@@ -152,7 +153,7 @@ public class DmozUpdater {
 		return nodesToBeDeleted;
 	}
 	
-	private HashMap<String,DmozTreeNode> processNodesToBeAdded(HashMap<String,DmozTreeNode> dbTreeMap, HashMap<String,DmozTreeNode> newTreeMap) throws Exception{
+	private HashMap<String,DmozTreeNode> processNodesToBeAdded(Map<String,DmozTreeNode> dbTreeMap, Map<String,DmozTreeNode> newTreeMap) throws Exception{
 		HashMap<String,DmozTreeNode> nodesToBeAdded = new HashMap<String,DmozTreeNode>();
 		
 		nodesToBeAdded.putAll(newTreeMap);
@@ -161,13 +162,13 @@ public class DmozUpdater {
 		return nodesToBeAdded;
 	}
 	
-	private HashMap<String,DmozTreeNode> detectUrlDataChange(HashMap<String,DmozTreeNode> oldTree, HashMap<String,DmozTreeNode> newTree) throws Exception{
-		HashMap<String,DmozTreeNode> urlUpdateNodes = new HashMap<String,DmozTreeNode>();
+	private Map<String,DmozTreeNode> detectUrlDataChange(Map<String,DmozTreeNode> oldTree, Map<String,DmozTreeNode> newTree) throws Exception{
+		Map<String,DmozTreeNode> urlUpdateNodes = new HashMap<String,DmozTreeNode>();
 		for(String cat : oldTree.keySet()){			
 			if(newTree.containsKey(cat)){
 				//if it's an existing node, see if there's any change on urlData in the new tree.				
-				HashMap<String,String> oldUrlData = oldTree.get(cat).getCategoryData().getUrlData();
-				HashMap<String,String> newUrlData = newTree.get(cat).getCategoryData().getUrlData();
+				Map<String,String> oldUrlData = oldTree.get(cat).getCategoryData().getUrlData();
+				Map<String,String> newUrlData = newTree.get(cat).getCategoryData().getUrlData();
 				
 				if(!oldUrlData.keySet().equals(newUrlData.keySet())){
 					//if there's any change, update to new one

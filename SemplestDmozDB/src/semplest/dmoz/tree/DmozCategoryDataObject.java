@@ -1,11 +1,12 @@
 package semplest.dmoz.tree;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class DmozCategoryDataObject {
 	private Long categoryId;
 	private String description;
-	private HashMap<String,String> urlData = new HashMap<String,String>();
+	private Map<String,String> urlData = new HashMap<String,String>();
 	
 	public String getDescription() {
 		return description;
@@ -19,14 +20,14 @@ public class DmozCategoryDataObject {
 	public void setCategoryId(Long categoryId) {
 		this.categoryId = categoryId;
 	}
-	public HashMap<String, String> getUrlData() {
+	public Map<String, String> getUrlData() {
 		return urlData;
 	}
-	public void setUrlData(HashMap<String, String> urlData) {
+	public void setUrlData(Map<String, String> urlData) {
 		this.urlData = urlData;
 	}
 	
-	public void addUrlData(HashMap<String, String> urlData){
+	public void addUrlData(Map<String, String> urlData){
 		this.urlData.putAll(urlData);
 	}
 	

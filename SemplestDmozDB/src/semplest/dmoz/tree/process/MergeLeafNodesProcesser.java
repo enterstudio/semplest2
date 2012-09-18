@@ -45,7 +45,7 @@ public class MergeLeafNodesProcesser implements TreeProcesserInterface{
 			String leafNodeName = topNode.getName();
 			if(leafNodeName.length() == 1 || leafNodeName.matches("[+-]?\\d*(\\.\\d+)?")){
 				//this leaf node is a single-letter node, connect node contents directly with its parent (merge).
-				HashMap<String,String> urlData = topNode.getCategoryData().getUrlData();
+				Map<String,String> urlData = topNode.getCategoryData().getUrlData();
 			}
 		}
 		else{

@@ -9,7 +9,7 @@ public class DmozTreeNode {
 	private Long parentID;
 	private String nodeName;
 	private DmozCategoryDataObject categoryData = new DmozCategoryDataObject();
-	private HashMap<String,DmozTreeNode> childrenNodes = new HashMap<String,DmozTreeNode>();	
+	private Map<String,DmozTreeNode> childrenNodes = new HashMap<String,DmozTreeNode>();	
 	private DmozTreeNode parentNode;
 	
 	private SemplestTreeMapDataObject semplestTreeMapData = new SemplestTreeMapDataObject();
@@ -26,7 +26,7 @@ public class DmozTreeNode {
 		this.childrenNodes.put(newNode.getName(), newNode);
 	}
 
-	public void addUrlData(HashMap<String,String> urlData){
+	public void addUrlData(Map<String,String> urlData){
 		categoryData.addUrlData(urlData);
 	}
 	
@@ -93,7 +93,7 @@ public class DmozTreeNode {
 		return childrenNodes;
 	}
 
-	public void setChildrenNodes(HashMap<String, DmozTreeNode> childrenNodes) {
+	public void setChildrenNodes(Map<String, DmozTreeNode> childrenNodes) {
 		this.childrenNodes = childrenNodes;
 	}
 
