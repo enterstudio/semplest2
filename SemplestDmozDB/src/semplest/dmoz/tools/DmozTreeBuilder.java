@@ -55,15 +55,15 @@ public class DmozTreeBuilder {
 	
 	public void buildDmozTree() throws Exception{
 		System.out.println("Loading Dmoz data...");
-		HashMap<String,DmozCategoryDataObject> inputData = readInData();
+		Map<String,DmozCategoryDataObject> inputData = readInData();
 		System.out.println("Building Dmoz tree...");
 		buildTree(inputData);
 		//assignTreeIDs(topNode);
 		System.out.println("Done.");
 	}
 	
-	private HashMap<String,DmozCategoryDataObject> readInData() throws Exception{
-		HashMap<String,DmozCategoryDataObject> allData = new HashMap<String,DmozCategoryDataObject>();		
+	private Map<String,DmozCategoryDataObject> readInData() throws Exception{
+		Map<String,DmozCategoryDataObject> allData = new HashMap<String,DmozCategoryDataObject>();		
 		
 		FileInputStream fstream;
 		DataInputStream in;
@@ -93,7 +93,7 @@ public class DmozTreeBuilder {
 		while ((strLine = br.readLine()) != null){
 			String[] lineContents = strLine.split(" ");
 			String cat = lineContents[0].trim();
-			HashMap<String,String> urls = parseUrls(strLine);
+			Map<String,String> urls = parseUrls(strLine);
 			String catDesc = parseCategoryDesc(strLine);
 			DmozCategoryDataObject catData;
 			if(!allData.containsKey(cat)){
@@ -111,7 +111,7 @@ public class DmozTreeBuilder {
 		return allData;
 	}
 
-	private DmozTreeNode buildTree(HashMap<String,DmozCategoryDataObject> inputData) throws Exception{		
+	private DmozTreeNode buildTree(Map<String,DmozCategoryDataObject> inputData) throws Exception{		
 		
 		//set up the top node
 		topNode = new DmozTreeNode();
@@ -176,8 +176,8 @@ public class DmozTreeBuilder {
 		return uniqueId;
 	}
 	
-	private HashMap<String,String> parseUrls(String lineContent) throws Exception{
-		HashMap<String,String> urlAndDesc = new HashMap<String,String>();
+	private Map<String,String> parseUrls(String lineContent) throws Exception{
+		Map<String,String> urlAndDesc = new HashMap<String,String>();
 		
 		String urlcluster = lineContent.split(" : ")[1].split(" ::: ")[0].trim();
 		String[] urlAndDescs = urlcluster.split(" :: ");

@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import semplest.dmoz.DBType;
-import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFunctions;
 
@@ -68,7 +67,7 @@ public class DmozUpdater {
 		treeBuilder.buildDmozTree();
 		DmozTreeNode newTree = treeBuilder.getTree();
 		refreshTreeNodeIDs(dbTreeMap, newTree);
-		HashMap<String,DmozTreeNode> newTreeMap = TreeFunctions.getTreeInMap(newTree);
+		Map<String,DmozTreeNode> newTreeMap = TreeFunctions.getTreeInMap(newTree);
 		
 		nodesToBeDeleted = processNodesToBeDeleted(dbTreeMap,newTreeMap);		
 		nodesToBeAdded = processNodesToBeAdded(dbTreeMap,newTreeMap);				
@@ -137,24 +136,24 @@ public class DmozUpdater {
 		}
 	}
 	
-	private HashMap<String,DmozTreeNode> processNodesToBeDeleted(Map<String,DmozTreeNode> dbTreeMap, Map<String,DmozTreeNode> newTreeMap) throws Exception{
-		HashMap<String,DmozTreeNode> nodesToBeDeleted = new HashMap<String,DmozTreeNode>();
-		HashMap<String,DmozTreeNode> nodesList = new HashMap<String,DmozTreeNode>();
+	private Map<String,DmozTreeNode> processNodesToBeDeleted(Map<String,DmozTreeNode> dbTreeMap, Map<String,DmozTreeNode> newTreeMap) throws Exception{
+		Map<String,DmozTreeNode> nodesToBeDeleted = new HashMap<String,DmozTreeNode>();
+		Map<String,DmozTreeNode> nodesList = new HashMap<String,DmozTreeNode>();
 		
 		nodesList.putAll(dbTreeMap);
 		nodesList.keySet().removeAll(newTreeMap.keySet());
 		
 		//get sub-tree of each node
 		for(DmozTreeNode node : nodesList.values()){
-			HashMap<String, DmozTreeNode> subTreeNodes = TreeFunctions.getTreeInMap(node);
+			Map<String, DmozTreeNode> subTreeNodes = TreeFunctions.getTreeInMap(node);
 			nodesToBeDeleted.putAll(subTreeNodes);
 		}
 		
 		return nodesToBeDeleted;
 	}
 	
-	private HashMap<String,DmozTreeNode> processNodesToBeAdded(Map<String,DmozTreeNode> dbTreeMap, Map<String,DmozTreeNode> newTreeMap) throws Exception{
-		HashMap<String,DmozTreeNode> nodesToBeAdded = new HashMap<String,DmozTreeNode>();
+	private Map<String,DmozTreeNode> processNodesToBeAdded(Map<String,DmozTreeNode> dbTreeMap, Map<String,DmozTreeNode> newTreeMap) throws Exception{
+		Map<String,DmozTreeNode> nodesToBeAdded = new HashMap<String,DmozTreeNode>();
 		
 		nodesToBeAdded.putAll(newTreeMap);
 		nodesToBeAdded.keySet().removeAll(dbTreeMap.keySet());		
@@ -206,7 +205,7 @@ public class DmozUpdater {
 		in = new DataInputStream(fstream);
 		br = new BufferedReader(new InputStreamReader(in));
 		
-		HashMap<String,String> cids1 = new HashMap<String,String>();
+		Map<String,String> cids1 = new HashMap<String,String>();
 		while ((strLine = br.readLine()) != null){
 			String[] lineContents = strLine.split(" : ");
 			String cat = lineContents[0].trim();
@@ -221,7 +220,7 @@ public class DmozUpdater {
 		in = new DataInputStream(fstream);
 		br = new BufferedReader(new InputStreamReader(in));
 		
-		HashMap<String,String> cids2 = new HashMap<String,String>();
+		Map<String,String> cids2 = new HashMap<String,String>();
 		while ((strLine = br.readLine()) != null){
 			String[] lineContents = strLine.split(" : ");
 			String cat = lineContents[0].trim();
@@ -244,7 +243,7 @@ public class DmozUpdater {
 				
 		System.out.println("================= Deleted Nodes =================");
 		//check to be deleted nodes
-		HashMap<String,String> checkDelete = new HashMap<String,String>();
+		Map<String,String> checkDelete = new HashMap<String,String>();
 		checkDelete.putAll(cids1);
 		checkDelete.keySet().removeAll(cids2.keySet());
 		for(String cat : checkDelete.keySet()){
@@ -254,7 +253,7 @@ public class DmozUpdater {
 		
 		System.out.println("================= Added Nodes =================");
 		//check new nodes
-		HashMap<String,String> checkAdd = new HashMap<String,String>();
+		Map<String,String> checkAdd = new HashMap<String,String>();
 		checkAdd.putAll(cids2);
 		checkAdd.keySet().removeAll(cids1.keySet());
 		for(String cat : checkAdd.keySet()){

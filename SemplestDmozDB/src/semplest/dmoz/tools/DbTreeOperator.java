@@ -189,7 +189,7 @@ public class DbTreeOperator extends BaseDB
 	public static DmozTreeNode loadTreeFromDB(DBType dbType, String categoryName) throws Exception
 	{
 		String treeTable = getTreeTableName(dbType);
-		String urlDataTable = getUrlDataTableName(dbType);
+		String urlDataTable = getUrlDataTableName(dbType);		
 		
 		String sql;
 		//get the top node of the sub-tree
@@ -205,19 +205,22 @@ public class DbTreeOperator extends BaseDB
 		topNode.fromDbTreeNodeObject(topNodeList.get(0));
 		
 		//get all the nodes of the sub-tree
+		System.out.println("Getting tree data and Url data belong to node " + categoryName + " from database of " + dbType.name() + ".");
+		
 		String childrenNodesPattern = categoryName + "/%";
 		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM " + treeTable + " t " +
 				"LEFT JOIN " + urlDataTable + " u ON t.SemplestPK = u.SemplestFK " +
 				"WHERE t.NodeText like ?";
 		List<DbTreeNodeObject> subDbNodes = jdbcTemplate.query(sql, new Object[]{childrenNodesPattern}, dbTreeNodeObjectMapper);		
 		
+		System.out.println("Processing data and building the tree...");
 		//make it a map, easier to process
-		Map<Long,HashMap<String,DmozTreeNode>> subTreeNodes = new HashMap<Long,HashMap<String,DmozTreeNode>>();
+		Map<Long,Map<String,DmozTreeNode>> subTreeNodes = new HashMap<Long,Map<String,DmozTreeNode>>();
 		for(DbTreeNodeObject dbNode : subDbNodes){		
 			String nodeName = dbNode.getNodeText();
 			Long parentID = dbNode.getParentNodeID();		
 			if(subTreeNodes.containsKey(parentID)){
-				HashMap<String,DmozTreeNode> nodesMap = subTreeNodes.get(parentID);
+				Map<String,DmozTreeNode> nodesMap = subTreeNodes.get(parentID);
 				DmozTreeNode node;
 				if(nodesMap.containsKey(nodeName)){
 					//the node is already there, just need to add url to it.
@@ -232,7 +235,7 @@ public class DbTreeOperator extends BaseDB
 				subTreeNodes.put(parentID, nodesMap);
 			}
 			else{
-				HashMap<String,DmozTreeNode> newMap = new HashMap<String,DmozTreeNode>();
+				Map<String,DmozTreeNode> newMap = new HashMap<String,DmozTreeNode>();
 				DmozTreeNode newNode = new DmozTreeNode();
 				newNode.fromDbTreeNodeObject(dbNode);
 				newMap.put(newNode.getName(), newNode);
@@ -243,11 +246,12 @@ public class DbTreeOperator extends BaseDB
 		//process the nodes and build the tree
 		setChildrenNodes(topNode,subTreeNodes);
 		
+		System.out.println("Done.");		
 		return topNode;
 	}
 	
 	//helper method
-	private static void setChildrenNodes(DmozTreeNode currentNode, Map<Long,HashMap<String,DmozTreeNode>> allNodes){
+	private static void setChildrenNodes(DmozTreeNode currentNode, Map<Long,Map<String,DmozTreeNode>> allNodes){
 		Long nodeId = currentNode.getNodeID();
 		if(allNodes.containsKey(nodeId)){
 			currentNode.setChildrenNodes(allNodes.get(nodeId));

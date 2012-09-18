@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TreeFunctions {
 	
@@ -27,19 +28,18 @@ public class TreeFunctions {
 	}
 	
 	public static List<DmozTreeNode> getTreeInList(DmozTreeNode tree) throws Exception{
-		HashMap<String,DmozTreeNode> map = getTreeInMap(tree);
+		Map<String,DmozTreeNode> map = getTreeInMap(tree);
 		return new ArrayList<DmozTreeNode>(map.values());
 	}
 	
-	public static HashMap<String,DmozTreeNode> getTreeInMap(DmozTreeNode tree) throws Exception{
-		HashMap<String,DmozTreeNode> treeMap = new HashMap<String,DmozTreeNode>();
-		
+	public static Map<String,DmozTreeNode> getTreeInMap(DmozTreeNode tree) throws Exception{
+		Map<String,DmozTreeNode> treeMap = new HashMap<String,DmozTreeNode>();		
 		treeToMap(tree, treeMap);
 		
 		return treeMap;
 	}
 	
-	private static void treeToMap(DmozTreeNode currentNode, HashMap<String,DmozTreeNode> treeMap) throws Exception{
+	private static void treeToMap(DmozTreeNode currentNode, Map<String,DmozTreeNode> treeMap) throws Exception{
 		treeMap.put(currentNode.getName(), currentNode);
 		for(DmozTreeNode node : currentNode.getChildrenNodes().values()){			
 			treeToMap(node, treeMap);
