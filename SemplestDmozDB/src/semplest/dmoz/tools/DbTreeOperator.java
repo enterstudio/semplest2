@@ -1,11 +1,16 @@
 package semplest.dmoz.tools;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import semplest.dmoz.DBType;
 import semplest.dmoz.springjdbc.BaseDB;
@@ -181,8 +186,55 @@ public class DbTreeOperator extends BaseDB
 	}
 	
 	private static RowMapper<DbDmozObject> dbDmozObjectMapper = new BeanPropertyRowMapper<DbDmozObject>(DbDmozObject.class);
+	private static RowMapper<DbUrlDataObject> dbUrlDataObjectMapper = new BeanPropertyRowMapper<DbUrlDataObject>(DbUrlDataObject.class);
 	
 	public static DmozTreeNode loadTreeFromDB(DBType dbType, String categoryName) throws Exception
+	{
+		String treeTable = getTreeTableName(dbType);
+		String urlDataTable = getUrlDataTableName(dbType);
+		
+		String sql;
+		//get the top node of the sub-tree
+		sql = "SELECT SemplestPK,NodeText,ParentNodeID,NodeDescription,DMOZCategoryID FROM " + treeTable + " WHERE NodeText = ?;";
+		DbDmozObject topNode = jdbcTemplate.query(sql, new Object[]{categoryName}, dbDmozObjectMapper).get(0);
+		if(topNode == null){
+			//the sub-node does not exist
+			throw new Exception("The input node " + categoryName + " does not exist in the database of " + dbType.name() + ".");
+		}
+		
+		//get all the nodes of the sub-tree
+		String childrenNodesPattern = categoryName + "/%";
+		sql = "SELECT SemplestPK,NodeText,ParentNodeID,NodeDescription,DMOZCategoryID FROM " + treeTable + " WHERE NodeText like ?;";
+		List<DbDmozObject> subDbNodes = jdbcTemplate.query(sql, new Object[]{childrenNodesPattern}, dbDmozObjectMapper);		
+		
+		//make it a map, easier to process
+		Map<Long,DmozTreeNode> subTreeNodes = new HashMap<Long,DmozTreeNode>();
+		for(DbDmozObject dbNode : subDbNodes){
+			DmozTreeNode treeNode = new DmozTreeNode();
+			treeNode.fromDbDmozObject(dbNode);
+			subTreeNodes.put(treeNode.getNodeID(), treeNode);
+		}
+		
+		//get all urls of the sub-tree		
+		Map<String, Set<Long>> params = Collections.singletonMap("semplestFK",  subTreeNodes.keySet());
+		sql = "SELECT UrlDataPK,SemplestFK,URL,URLDescription,Level,ParentURLDataID FROM " + urlDataTable + " WHERE SemplestFK IN (:semplestFK);";
+		sql = "SELECT UrlDataPK FROM " + urlDataTable + " WHERE SemplestFK IN (:semplestFK);";
+		List<DbUrlDataObject> allUrlData = jdbcTemplate.query(sql, dbUrlDataObjectMapper, params);
+		
+		//put urls to the tree nodes they belong to
+		for(DbUrlDataObject urlData : allUrlData){
+			
+		}
+		
+		System.out.println(allUrlData.size());
+		
+		//process the nodes and build the tree
+		
+		
+		return null;
+	}
+	
+	public static DmozTreeNode loadTreeFromDB_slow(DBType dbType, String categoryName) throws Exception
 	{
 		String treeTable = getTreeTableName(dbType);
 		String urlDataTable = getUrlDataTableName(dbType);		
@@ -236,9 +288,8 @@ public class DbTreeOperator extends BaseDB
 			setChildrenNodes(newNode, treeTable);
 			currentNode.addChildNode(newNode);						
 		}
-	}
+	}	
 	
-	private static RowMapper<DbUrlDataObject> dbUrlDataObjectMapper = new BeanPropertyRowMapper<DbUrlDataObject>(DbUrlDataObject.class);
 	private static void setUrlDataThroughTree(DmozTreeNode currentNode, String urlDataTable) throws Exception{
 		/*
 		 * get url data for each node from DB, and store to the tree.
@@ -287,5 +338,19 @@ public class DbTreeOperator extends BaseDB
 			throw new Exception("Database specified is not available.");
 		}
 	}	
+	
+	//main
+	public static void main(String[] args){
+		try {
+			System.out.println("start...");
+			Long start = System.currentTimeMillis();
+			loadTreeFromDB(DBType.DMOZ_TREE,"top");
+			System.out.println(System.currentTimeMillis()-start);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 }

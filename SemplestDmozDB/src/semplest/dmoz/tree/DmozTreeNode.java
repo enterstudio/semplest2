@@ -40,6 +40,14 @@ public class DmozTreeNode {
 	public void setNodeDescription(String description){
 		categoryData.setDescription(description);
 	}
+	
+	public void fromDbDmozObject(DbDmozObject object){
+		this.nodeID = object.getSemplestPK();
+		this.parentID = object.getParentNodeID();
+		this.nodeName = object.getNodeText();
+		this.categoryData.setCategoryId(object.getDMOZCategoryID());
+		this.categoryData.setDescription(object.getNodeDescription());
+	}
 
 	public Long getNodeID() {
 		return nodeID;
