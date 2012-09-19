@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import semplest.dmoz.DBType;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFunctions;
 
@@ -17,7 +16,7 @@ public class SemplestTreeBuilder {
 		Map<Long,Long> semplestUrlDataMap = new HashMap<Long,Long>();
 		
 		//load the entire tree from the DB
-		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB(DBType.DMOZ_TREE, "top");
+		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB("top");
 		
 		//apply processors on the tree, and convert it
 		//TODO

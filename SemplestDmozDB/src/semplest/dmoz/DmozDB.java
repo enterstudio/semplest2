@@ -2,9 +2,14 @@ package semplest.dmoz;
 
 import java.util.List;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
+
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tools.DbTreeOperator;
 import semplest.dmoz.tools.DmozImporter;
+import semplest.dmoz.tree.DbTreeNodeObject;
+import semplest.dmoz.tree.DbUrlDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
 
 
@@ -12,10 +17,9 @@ public class DmozDB extends BaseDB{
 
 	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 	
-	public static Integer getParentNodeID(DBType dbType, Integer nodeId) throws Exception
+	public static Integer getParentNodeID(Integer nodeId) throws Exception
 	{		
-		String treeTable = DbTreeOperator.getTreeTableName(dbType);		
-		String sql = "SELECT ParentNodeID FROM " + treeTable + " WHERE SemplestPK = ?";
+		String sql = "SELECT ParentNodeID FROM DMOZ WHERE SemplestPK = ?";
 		
 		Integer parentNodeId = jdbcTemplate.queryForInt(sql, new Object[]
 				{nodeId});
@@ -23,11 +27,10 @@ public class DmozDB extends BaseDB{
 		return parentNodeId;
 	}
 	
-	public static List<Integer> getNodeSiblingIDs(DBType dbType, Integer nodeId) throws Exception
+	public static List<Integer> getNodeSiblingIDs(Integer nodeId) throws Exception
 	{
-		String treeTable = DbTreeOperator.getTreeTableName(dbType);	
-		String sql = "SELECT d.SemplestPK FROM " + treeTable + " d WHERE ParentNodeID = " +
-				"(SELECT d2.ParentNodeID FROM " + treeTable + " d2 WHERE SemplestPK = ?)";
+		String sql = "SELECT d.SemplestPK FROM DMOZ d WHERE ParentNodeID = " +
+				"(SELECT d2.ParentNodeID FROM DMOZ d2 WHERE SemplestPK = ?)";
 		
 		List<Integer> siblingNodeIds = jdbcTemplate.queryForList(sql, Integer.class, new Object[]
 				{nodeId});
@@ -35,10 +38,9 @@ public class DmozDB extends BaseDB{
 		return siblingNodeIds;
 	}
 	
-	public static List<Integer> getChildrenNodeIDs(DBType dbType, Integer parentNodeId) throws Exception
+	public static List<Integer> getChildrenNodeIDs(Integer parentNodeId) throws Exception
 	{
-		String treeTable = DbTreeOperator.getTreeTableName(dbType);	
-		String sql = "SELECT SemplestPK FROM " + treeTable + " WHERE ParentNodeID = ?";
+		String sql = "SELECT SemplestPK FROM DMOZ WHERE ParentNodeID = ?";
 		
 		List<Integer> childrenNodes = jdbcTemplate.queryForList(sql, Integer.class, new Object[]
 				{parentNodeId});
@@ -46,10 +48,9 @@ public class DmozDB extends BaseDB{
 		return childrenNodes;
 	}
 	
-	public static String getNodeDescription(DBType dbType, Integer nodeId) throws Exception
+	public static String getNodeDescription(Integer nodeId) throws Exception
 	{
-		String treeTable = DbTreeOperator.getTreeTableName(dbType);	
-		String sql = "SELECT d.NodeDescription FROM " + treeTable + " d WHERE SemplestPK = ?";
+		String sql = "SELECT d.NodeDescription FROM DMOZ d WHERE SemplestPK = ?";
 		
 		String nodeDescription = jdbcTemplate.queryForObject(sql, new Object[]
 				{nodeId}, String.class);
@@ -57,10 +58,9 @@ public class DmozDB extends BaseDB{
 		return nodeDescription;
 	}
 	
-	public static List<String> getUrls(DBType dbType, Integer nodeId, Integer urlLevel) throws Exception
+	public static List<String> getUrls(Integer nodeId, Integer urlLevel) throws Exception
 	{
-		String urlDataTable = DbTreeOperator.getUrlDataTableName(dbType);	
-		String sql = "SELECT u.URL FROM " + urlDataTable + " u WHERE SemplestFK = ? and Level = ?";
+		String sql = "SELECT u.URL FROM URLData u WHERE SemplestFK = ? and Level = ?";
 		
 		List<String> urls = jdbcTemplate.queryForList(sql, String.class, new Object[]
 				{nodeId, urlLevel});
@@ -68,8 +68,8 @@ public class DmozDB extends BaseDB{
 		return urls;
 	}
 	
-	public static DmozTreeNode getTree(DBType dbType, String categoryName) throws Exception{
-		return DbTreeOperator.loadTreeFromDB(dbType, categoryName);
+	public static DmozTreeNode getTree(String categoryName) throws Exception{
+		return DbTreeOperator.loadTreeFromDB(categoryName);
 	}
 	
 }

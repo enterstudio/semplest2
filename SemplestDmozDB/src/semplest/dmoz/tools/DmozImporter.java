@@ -9,7 +9,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
-import semplest.dmoz.DBType;
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.SemplestTreeMapDataObject;
@@ -54,7 +53,7 @@ public class DmozImporter
 		
 		System.out.println("Done.");
 		
-		DbTreeOperator.addTreeNodes(DBType.DMOZ_TREE, dmozTreeNodes);
+		DbTreeOperator.addTreeNodes(dmozTreeNodes);
 		
 		TreeFunctions.endLogError();
 	}

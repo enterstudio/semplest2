@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import semplest.dmoz.DBType;
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tree.DbTreeNodeObject;
 import semplest.dmoz.tree.DmozTreeNode;
@@ -26,13 +25,10 @@ public class DbTreeOperator extends BaseDB
 	private static Integer maxBatchSize = 5000;	
 	
 	
-	public static void addTreeNodes(DBType dbType, List<DmozTreeNode> newNodes) throws Exception
-	{
-		String treeTable = getTreeTableName(dbType);
-		String urlDataTable = getUrlDataTableName(dbType);		
-		
+	public static void addTreeNodes(List<DmozTreeNode> newNodes) throws Exception
+	{		
 		final List<List<DmozTreeNode>> batches = SemplestUtils.getBatches(newNodes, maxBatchSize);
-		System.out.println("Going to store " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to " + dbType.name() + ".");
+		System.out.println("Going to store " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to DB.");
 		Long counter = 0L;		
 		for (final List<DmozTreeNode> batch : batches)
 		{		
@@ -52,7 +48,7 @@ public class DbTreeOperator extends BaseDB
 				String nodeDescription = node.getCategoryData() == null? null : (node.getCategoryData().getDescription() == null? null : node.getCategoryData().getDescription().replace("'", "''"));				
 				
 				//build sql statement for DMOZ table
-				String sqlDmoz = "INSERT INTO " + treeTable + "(SemplestPK,DMOZCategoryID,NodeText,ParentNodeID,NodeDescription) " +
+				String sqlDmoz = "INSERT INTO DMOZ(SemplestPK,DMOZCategoryID,NodeText,ParentNodeID,NodeDescription) " +
 						"VALUES("+ nodeId +"," + nodeCategoryId + ",'" + nodeFullName + "'," + nodeParentId + ",'" + nodeDescription + "');";
 				
 				batchSql.add(sqlDmoz);
@@ -60,7 +56,7 @@ public class DbTreeOperator extends BaseDB
 				//build sql statements for UrlData table
 				for(String url : node.getCategoryData().getUrlData().keySet()){
 					String urlDesc = node.getCategoryData().getUrlData().get(url).replace("'", "''");
-					String sqlUrl = "INSERT INTO " + urlDataTable + "(SemplestFK,URL,Level,URLDescription) " +
+					String sqlUrl = "INSERT INTO URLData(SemplestFK,URL,Level,URLDescription) " +
 							"VALUES(" + nodeId + ",'" + url.replace("'", "''") + "'," + 1 + ",'" + urlDesc + "');";
 					batchSql.add(sqlUrl);
 				}
@@ -76,13 +72,10 @@ public class DbTreeOperator extends BaseDB
 		}		
 	}
 	
-	public static void deleteTreeNodes(DBType dbType, List<DmozTreeNode> nodes) throws Exception
-	{
-		String treeTable = getTreeTableName(dbType);
-		String urlDataTable = getUrlDataTableName(dbType);	
-		
+	public static void deleteTreeNodes(List<DmozTreeNode> nodes) throws Exception
+	{		
 		final List<List<DmozTreeNode>> batches = SemplestUtils.getBatches(nodes, maxBatchSize);
-		System.out.println("Going to delete " + batches.size() + " batchs (of " + maxBatchSize + " node entries) from " + dbType.name() + ".");
+		System.out.println("Going to delete " + batches.size() + " batchs (of " + maxBatchSize + " node entries) from DB.");
 		Long counter = 0L;		
 		for (final List<DmozTreeNode> batch : batches)
 		{		
@@ -97,10 +90,10 @@ public class DbTreeOperator extends BaseDB
 				}
 				Long nodeId = node.getNodeID();	
 				
-				String sqlDmoz = "DELETE FROM " + treeTable + " WHERE SemplestPK = " + nodeId + ";";				
+				String sqlDmoz = "DELETE FROM DMOZ WHERE SemplestPK = " + nodeId + ";";				
 				batchSql.add(sqlDmoz);
 				
-				String sqlUrl = "DELETE FROM " + urlDataTable + " WHERE SemplestFK = " + nodeId + ";";
+				String sqlUrl = "DELETE FROM URLData WHERE SemplestFK = " + nodeId + ";";
 				batchSql.add(sqlUrl);				
 			}
 			
@@ -110,12 +103,10 @@ public class DbTreeOperator extends BaseDB
 		}		
 	}
 		
-	public static void updateTreeNodes(DBType dbType, List<DmozTreeNode> nodes) throws Exception
-	{
-		String treeTable = getTreeTableName(dbType);
-		
+	public static void updateTreeNodes(List<DmozTreeNode> nodes) throws Exception
+	{		
 		final List<List<DmozTreeNode>> batches = SemplestUtils.getBatches(nodes, maxBatchSize);
-		System.out.println("Going to update nodes for " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to " + dbType.name() + ".");
+		System.out.println("Going to update nodes for " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to DB.");
 		Long counter = 0L;		
 		for (final List<DmozTreeNode> batch : batches)
 		{		
@@ -129,7 +120,7 @@ public class DbTreeOperator extends BaseDB
 					continue;
 				}
 				
-				String sqlDmoz = "UPDATE " + treeTable + " SET " +
+				String sqlDmoz = "UPDATE DMOZ SET " +
 						"SemplestPK = " + node.getNodeID()  + "," + 
 						"ParentNodeID = " + node.getParentID() + "," + 		
 						"DMOZCategoryID = " + node.getCategoryData().getCategoryId() + "," + 	
@@ -144,12 +135,10 @@ public class DbTreeOperator extends BaseDB
 		}		
 	}
 	
-	public static void updateUrlData(DBType dbType, List<DmozTreeNode> nodes) throws Exception
-	{
-		String urlDataTable = getUrlDataTableName(dbType);	
-		
+	public static void updateUrlData(List<DmozTreeNode> nodes) throws Exception
+	{		
 		final List<List<DmozTreeNode>> batches = SemplestUtils.getBatches(nodes, maxBatchSize);
-		System.out.println("Going to update UrlData of nodes for " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to " + dbType.name() + ".");
+		System.out.println("Going to update UrlData of nodes for " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to DB.");
 		Long counter = 0L;		
 		for (final List<DmozTreeNode> batch : batches)
 		{		
@@ -164,7 +153,7 @@ public class DbTreeOperator extends BaseDB
 				}
 				Long nodeId = node.getNodeID();	
 				
-				String sqlDeleteOldUrls = "DELETE FROM " + urlDataTable + " WHERE SemplestFK = " + nodeId + ";";
+				String sqlDeleteOldUrls = "DELETE FROM URLData WHERE SemplestFK = " + nodeId + ";";
 				batchSql.add(sqlDeleteOldUrls);
 				
 				if(node.getCategoryData() == null || node.getCategoryData().getUrlData() == null){
@@ -172,7 +161,7 @@ public class DbTreeOperator extends BaseDB
 				}
 				for(String url : node.getCategoryData().getUrlData().keySet()){
 					String urlDesc = node.getCategoryData().getUrlData().get(url);
-					String sqlAddNewUrls = "INSERT INTO " + urlDataTable + "(SemplestFK,URL,Level,URLDescription) " +
+					String sqlAddNewUrls = "INSERT INTO URLData(SemplestFK,URL,Level,URLDescription) " +
 							"VALUES(" + nodeId + ",'" + url.replace("'", "''") + "'," + 1 + ",'" + urlDesc.replace("'", "''") + "');";
 					batchSql.add(sqlAddNewUrls);
 				}	
@@ -186,30 +175,27 @@ public class DbTreeOperator extends BaseDB
 	
 	private static RowMapper<DbTreeNodeObject> dbTreeNodeObjectMapper = new BeanPropertyRowMapper<DbTreeNodeObject>(DbTreeNodeObject.class);
 	
-	public static DmozTreeNode loadTreeFromDB(DBType dbType, String categoryName) throws Exception
-	{
-		String treeTable = getTreeTableName(dbType);
-		String urlDataTable = getUrlDataTableName(dbType);		
-		
+	public static DmozTreeNode loadTreeFromDB(String categoryName) throws Exception
+	{		
 		String sql;
 		//get the top node of the sub-tree
-		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM " + treeTable + " t " +
-				"LEFT JOIN " + urlDataTable + " u ON t.SemplestPK = u.SemplestFK " +
+		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM DMOZ t " +
+				"LEFT JOIN URLData u ON t.SemplestPK = u.SemplestFK " +
 				"WHERE t.NodeText = ?";
 		List<DbTreeNodeObject> topNodeList = jdbcTemplate.query(sql, new Object[]{categoryName}, dbTreeNodeObjectMapper);
 		if(topNodeList == null){
 			//the sub-node does not exist
-			throw new Exception("The input node " + categoryName + " does not exist in the database of " + dbType.name() + ".");
+			throw new Exception("The input node " + categoryName + " does not exist in the database.");
 		}
 		DmozTreeNode topNode = new DmozTreeNode();
 		topNode.fromDbTreeNodeObject(topNodeList.get(0));
 		
 		//get all the nodes of the sub-tree
-		System.out.println("Getting tree data and Url data belong to node " + categoryName + " from database of " + dbType.name() + ".");
+		System.out.println("Getting tree data and Url data belong to node " + categoryName + " from database.");
 		
 		String childrenNodesPattern = categoryName + "/%";
-		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM " + treeTable + " t " +
-				"LEFT JOIN " + urlDataTable + " u ON t.SemplestPK = u.SemplestFK " +
+		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM DMOZ t " +
+				"LEFT JOIN URLData u ON t.SemplestPK = u.SemplestFK " +
 				"WHERE t.NodeText like ?";
 		List<DbTreeNodeObject> subDbNodes = jdbcTemplate.query(sql, new Object[]{childrenNodesPattern}, dbTreeNodeObjectMapper);		
 		
@@ -261,44 +247,19 @@ public class DbTreeOperator extends BaseDB
 		}		
 	}
 	
-	public static Long getUniqueIdBase(DBType dbType) throws Exception{
-		String treeTable = getTreeTableName(dbType);
-		String sql = "SELECT MAX(SemplestPK) FROM " + treeTable;
+	public static Long getUniqueIdBase() throws Exception{
+		String sql = "SELECT MAX(SemplestPK) FROM DMOZ";
 		Long maxIdInDB = jdbcTemplate.queryForLong(sql);
 		
 		return maxIdInDB + 1;
 	}
-	
-	public static String getTreeTableName(DBType dbType) throws Exception{
-		if(dbType.equals(DBType.DMOZ_TREE)){
-			return "DMOZ";
-		}
-		else if(dbType.equals(DBType.SEMPLEST_TREE)){
-			return "SemplestTree";
-		}
-		else{
-			throw new Exception("Database specified is not available.");
-		}
-	}
-	
-	public static String getUrlDataTableName(DBType dbType) throws Exception{
-		if(dbType.equals(DBType.DMOZ_TREE)){
-			return "URLData";
-		}
-		else if(dbType.equals(DBType.SEMPLEST_TREE)){
-			return "SemplestURLData";
-		}
-		else{
-			throw new Exception("Database specified is not available.");
-		}
-	}	
 	
 	//main
 	public static void main(String[] args){
 		try {
 			System.out.println("start...");
 			Long start = System.currentTimeMillis();
-			DmozTreeNode dmozTree =  loadTreeFromDB(DBType.DMOZ_TREE,"top");
+			DmozTreeNode dmozTree =  loadTreeFromDB("top");
 			System.out.println(System.currentTimeMillis()-start);
 			
 			TreeFunctions.printTree(dmozTree, "c:\\dmoz\\tempOutput.txt");
