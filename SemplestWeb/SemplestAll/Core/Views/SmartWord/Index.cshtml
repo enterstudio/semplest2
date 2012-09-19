@@ -231,7 +231,7 @@
                                         <a class="preview" href="@Url.Action("Setup", "SmartWord", new { promotionid = p.PromotionPK })" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
                                             <span>@p.PromotionName</span></a>
                                     </td>
-                                    <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
+                                    <td>&nbsp;
                                     </td>
                                     <td>@Html.ActionLink("Edit", "Setup", "SmartWord", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
                                     </td>
