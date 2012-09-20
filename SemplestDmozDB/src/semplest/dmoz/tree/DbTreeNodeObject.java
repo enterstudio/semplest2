@@ -6,6 +6,7 @@ public class DbTreeNodeObject {
 	private String NodeText;
 	private String URL;
 	private String URLDescription;
+	private Long UrlDataPK;
 	
 	public Long getSemplestPK() {
 		return SemplestPK;
@@ -36,5 +37,11 @@ public class DbTreeNodeObject {
 	}
 	public void setURLDescription(String uRLDescription) {
 		URLDescription = uRLDescription;
+	}
+	public Long getUrlDataPK() {
+		return UrlDataPK;
+	}
+	public void setUrlDataPK(Long urlDataPK) {
+		UrlDataPK = urlDataPK;
 	}	
 }

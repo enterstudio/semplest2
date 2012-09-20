@@ -1,12 +1,15 @@
 package semplest.dmoz.tree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DmozCategoryDataObject {
 	private Long categoryId;
 	private String description;
-	private Map<String,String> urlData = new HashMap<String,String>();
+	private List<UrlDataObject> urlData = new ArrayList<UrlDataObject>();
+	private List<Long> urlDataPKs = new ArrayList<Long>();
 	
 	public String getDescription() {
 		return description;
@@ -20,19 +23,30 @@ public class DmozCategoryDataObject {
 	public void setCategoryId(Long categoryId) {
 		this.categoryId = categoryId;
 	}
-	public Map<String, String> getUrlData() {
+	public List<UrlDataObject> getUrlData() {
 		return urlData;
 	}
-	public void setUrlData(Map<String, String> urlData) {
+	public void setUrlData(List<UrlDataObject> urlData) {
 		this.urlData = urlData;
 	}
 	
-	public void addUrlData(Map<String, String> urlData){
-		this.urlData.putAll(urlData);
+	public void addUrlData(List<UrlDataObject> urlData){
+		this.urlData.addAll(urlData);
 	}
 	
 	public void addUrlData(String url, String urlDesc){
-		this.urlData.put(url, urlDesc);
+		UrlDataObject newData = new UrlDataObject();
+		newData.setUrl(url);
+		newData.setUrlDescription(urlDesc);
+		this.urlData.add(newData);
+	}
+	
+	public void addUrlData(Long urlDataPK, String url, String urlDesc){
+		UrlDataObject newData = new UrlDataObject();
+		newData.setUrlDataPK(urlDataPK);
+		newData.setUrl(url);
+		newData.setUrlDescription(urlDesc);
+		this.urlData.add(newData);
 	}
 	
 	public boolean isEmpty(){
@@ -47,6 +61,15 @@ public class DmozCategoryDataObject {
 			return true;
 		}
 		return false;
+	}
+	public List<Long> getUrlDataPKs() {
+		return urlDataPKs;
+	}
+	public void setUrlDataPKs(List<Long> urlDataPKs) {
+		this.urlDataPKs = urlDataPKs;
+	}
+	public void addUrlDataPK(Long urlDataPK){
+		this.urlDataPKs.add(urlDataPK);
 	}
 	
 }

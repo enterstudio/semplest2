@@ -18,10 +18,20 @@ public class TreeFunctions {
 	}
 	
 	private static void printTree(DmozTreeNode currentNode, FileWriter writer) throws Exception{		
-		writer.append( currentNode.getName() + " : " + currentNode.getNodeID() + " : " + currentNode.getParentID() + " : " + currentNode.getCategoryData().getDescription() + "\n");			
+		writer.append( currentNode.getName() + " : " + currentNode.getNodeID() + " : " + currentNode.getParentID() + " : " + currentNode.getCategoryData().getDescription() + "\n");	
+		for(Long pk : currentNode.getCategoryData().getUrlDataPKs()){
+			writer.append(pk.toString()+"\n");
+		}
+		int sizePks = currentNode.getCategoryData().getUrlDataPKs().size();
+		int sizeUrls = currentNode.getCategoryData().getUrlData().size();
+		if(sizePks != sizeUrls){
+			writer.append("########## PKs:" + sizePks + ", Urls:" + sizeUrls + "\n");
+		}
+		/*
 		for(String url : currentNode.getCategoryData().getUrlData().keySet()){
 			writer.append( "	" + url + " || " + currentNode.getCategoryData().getUrlData().get(url) + "\n");	
 		}
+		*/
 		for(DmozTreeNode node : currentNode.getChildrenNodes().values()){			
 			printTree(node, writer);
 		}		
