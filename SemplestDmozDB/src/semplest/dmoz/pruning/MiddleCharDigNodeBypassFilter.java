@@ -35,18 +35,32 @@ public class MiddleCharDigNodeBypassFilter implements DmozToSemplestFilter {
 	public Set<DmozTreeNode> analyzeNode(DmozTreeNode node) throws Exception {
 		Map<String,DmozTreeNode> childNodes = node.getChildrenNodes();
 		Set<DmozTreeNode> childSet = new HashSet<DmozTreeNode>(); 
+		
+		if(node.getName().equals("top/regional")){
+			return childSet;
+		}
 		boolean detectedNode = false;
+		boolean detectionVetoed = false;
+		Set<String> childrenToCharDigNode = new HashSet<String>();
 		for(String s : childNodes.keySet()){
 			DmozTreeNode child = childNodes.get(s);
 			String [] nameArr = child.getName().split("/");
-			//if(nameArr[nameArr.length-1].matches("[a-z]") && child.getChildrenNodes().size()==0 && !child.getName().startsWith("top/regional")){
-			if(nameArr[nameArr.length-1].matches("[0-9a-z]") && child.getChildrenNodes().size()>0){
+			if(nameArr[nameArr.length-1].matches("[0-9a-z]")){
 				detectedNode = true;
+				for(String ch : child.getChildrenNodes().keySet()){
+					String [] grandChildNameArr = ch.split("/");
+					if(child.getChildrenNodes().get(ch).getChildrenNodes().size()>0){
+						detectionVetoed = true;
+						//writeData(ch+": "+grandChildNameArr[grandChildNameArr.length-1]+" :: "+child.getChildrenNodes().get(ch).getChildrenNodes().size());
+					}
+					childrenToCharDigNode.add(grandChildNameArr[grandChildNameArr.length-1]);
+				}
 			}
 			childSet.add(child);
 		}
-		if(detectedNode) {
-			String text = node.getName();
+		if(detectedNode && !detectionVetoed) {
+			//System.out.println(childrenToCharDigNode.size());
+			String text = node.getName() + " " + detectedNode + " "+detectionVetoed;
 			writeData(text);
 		}
 		return childSet;
@@ -54,7 +68,9 @@ public class MiddleCharDigNodeBypassFilter implements DmozToSemplestFilter {
 
 	@Override
 	public void pruneNode(DmozTreeNode node) throws Exception {
-		// TODO Auto-generated method stub
+		if(node.getName().equals("top/regional")){
+			return;
+		}
 
 	}
 
