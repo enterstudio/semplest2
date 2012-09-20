@@ -67,7 +67,7 @@ public class CharDigLeafFilter implements DmozToSemplestFilter {
 			String [] nameArr = child.getName().split("/");
 			if(nameArr[nameArr.length-1].matches("[0-9a-z]") && child.getChildrenNodes().size()==0){ // detect leaf node
 				writeData(node.getName()+ ":"+nameArr[nameArr.length-1]+": "+node.getCategoryData().getUrlData().size());
-				node.getCategoryData().getUrlData().putAll(child.getCategoryData().getUrlData());
+				node.getCategoryData().getUrlData().addAll(child.getCategoryData().getUrlData());
 				writeData(node.getName()+ ":"+nameArr[nameArr.length-1]+": "+node.getCategoryData().getUrlData().size());
 				copiedNodes.remove(s);
 			}

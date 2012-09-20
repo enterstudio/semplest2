@@ -4,10 +4,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.UrlDataObject;
 
 public class NorthAmericaUSMergingFilter implements DmozToSemplestFilter {
 
@@ -78,9 +81,9 @@ public class NorthAmericaUSMergingFilter implements DmozToSemplestFilter {
 		}
 	}
 
-	private static void mergeRecursively(Map<String, String> urlData, DmozTreeNode node) {
+	private static void mergeRecursively(List<UrlDataObject> urlData, DmozTreeNode node) {
 		Map<String,DmozTreeNode> childNodes = node.getChildrenNodes();
-		urlData.putAll(node.getCategoryData().getUrlData());
+		urlData.addAll(node.getCategoryData().getUrlData());
 		for(String s : childNodes.keySet()){
 			NorthAmericaUSMergingFilter.mergeRecursively(urlData,childNodes.get(s));
 		}
