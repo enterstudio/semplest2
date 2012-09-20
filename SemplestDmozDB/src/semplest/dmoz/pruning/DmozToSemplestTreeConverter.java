@@ -10,6 +10,7 @@ import semplest.dmoz.tree.DmozTreeNode;
 public class DmozToSemplestTreeConverter {
 	
 	private DmozTreeNode root;
+	
 	private Set<DmozToSemplestFilter> filterSet;
 
 	public Set<DmozToSemplestFilter> getFilterSet() {
@@ -22,6 +23,10 @@ public class DmozToSemplestTreeConverter {
 	
 	public void addFilterSet(Set<DmozToSemplestFilter> filterSet) {
 		this.filterSet.addAll(filterSet);
+	}
+	
+	public DmozTreeNode getTree() {
+		return root;
 	}
 	
 	public DmozToSemplestTreeConverter(DmozTreeNode root){
