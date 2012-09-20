@@ -19,38 +19,48 @@
             <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
                 scroll over to see summary
             </label>
-            <div style="width: 320px; height: 200px; overflow: auto">
+            <div style="width: 320px; height: 200px; overflow: auto; padding-left: 20px">
                 <table class="gradient-style" style="width: 300px;">
-                    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
+                    @foreach (SemplestModel.GetCustomerPromotionStatus_Result p in Model.CustomerPromotions.Where(q => q.typePromo == "Launched" && q.PromotionStatus == "Live"))
                     {
-                        foreach (SemplestModel.Promotion p in pg.Promotions)
-                        {
-                            if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
-                            {
                         <tr>
                             <td style="width: 150px;">
-                                <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new { promotionid = p.PromotionPK })" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
-                                <span>@p.PromotionName</span></a>
+                                <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new {promotionid = p.PromotionPK})" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
+                                    <span>@p.PromotionName</span></a>
                                   
                             </td>
-                            @if (p.IsPaused)
-                            {
-                                <td>
-                                    @Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
-                                </td>
-                            }
-                            else
-                            {
-                                <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
-                                </td>
-                            }
-                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
+                            <td>
+                                &hnsp;
                             </td>
-                            <td>@Html.ActionLink("End", "", "", new { @class = "endad", id = p.PromotionPK, name = p.PromotionName })
+              
+                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new {promotionid = p.PromotionPK}, new {@id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK})
                             </td>
-                        </tr>    
-                            }
-                        }
+                            <td>@Html.ActionLink("End", "", "", new {@class = "endad", id = p.PromotionPK, name = p.PromotionName})
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <h4 style="margin-bottom: 0px;">
+                Pending Advertising
+            </h4>
+                <table class="gradient-style" style="width: 300px;">
+                     @foreach (SemplestModel.GetCustomerPromotionStatus_Result p in Model.CustomerPromotions.Where(q => q.typePromo == "Launched" && q.PromotionStatus == "Pending"))
+                    {
+                        <tr>
+                            <td style="width: 150px;">
+                                <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new {promotionid = p.PromotionPK})" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
+                                    <span>@p.PromotionName</span></a>
+                                  
+                            </td>
+                            <td>
+                                &hnsp;
+                            </td>
+              
+                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new {promotionid = p.PromotionPK}, new {@id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK})
+                            </td>
+                            <td>@Html.ActionLink("End", "", "", new {@class = "endad", id = p.PromotionPK, name = p.PromotionName})
+                            </td>
+                        </tr>
                     }
                 </table>
             </div>
@@ -60,30 +70,24 @@
             <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
                 scroll over to see summary
             </label>
-            <div style="width: 320px; height: 350px; overflow: auto">
+            <div style="width: 320px; height: 350px; overflow: auto; padding-left: 20px" >
                 <table class="gradient-style" style="width: 300px">
-                    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-                    {
-                        foreach (SemplestModel.Promotion p in pg.Promotions)
+                        @foreach (SemplestModel.GetCustomerPromotionStatus_Result p in Model.CustomerPromotions.Where(q => q.typePromo == "NotLaunched"))
                         {
-                            if (!p.IsLaunched && !p.IsDeleted)
-                            {
-                        <tr>
-                            <td style="width: 150px;">
-                            <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new { promotionid = p.PromotionPK })" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
-                                    <span>@p.PromotionName</span></a>
-                            </td>
-                            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
-                            </td>
-                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
-                            </td>
-                            <td>
-                                &nbsp;&nbsp;&nbsp;
-                            </td>
-                        </tr>
-                            }
+                            <tr>
+                                <td style="width: 150px;">
+                                    <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new {promotionid = p.PromotionPK})" id = @p.PromotionPK >
+                                        <span>@p.PromotionName</span></a>
+                                </td>
+                                <td>@Html.ActionLink("Delete", "", "", new {@class = "deletead", id = p.PromotionPK, name = p.PromotionName})
+                                </td>
+                                <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new {promotionid = p.PromotionPK}, new {@id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK})
+                                </td>
+                                <td>
+                                    &nbsp;&nbsp;&nbsp;
+                                </td>
+                            </tr>
                         }
-                    }
                 </table>
             </div>
             <div id="RemovePromotionWindow" style="display: none">
@@ -263,7 +267,7 @@
                 <h3 style="margin-left: 22px">
                     Loading Preview...</h3>
             </div>
-            <div id="preview" style="vertical-align: top; height: 650px; width: 460px; overflow: auto" />
+            <div id="preview" style="vertical-align: top; height: 650px; width: 440px; overflow: auto" />
         </td>
     </tr>
 </table>

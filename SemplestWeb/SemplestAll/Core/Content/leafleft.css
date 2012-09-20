@@ -468,7 +468,6 @@ span.k-tooltip
 .preview
 {
     display: list-item;
-    list-style-type: circle;
     list-style-position: inside;
     color: green;
 }

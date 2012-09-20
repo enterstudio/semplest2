@@ -28,7 +28,7 @@ namespace Semplest.Core.Models
             SelectedKeywords = new List<KeywordsModel>();
             KeywordIds = new List<int>();
             SiteLinks = new List<SiteLink>();
-            Configuration = new SemplestModel.Semplest().Configurations.Single();
+            //Configuration = new SemplestModel.Semplest().Configurations.Single();
         }
 
         public Configuration Configuration { get; set; }
@@ -117,7 +117,7 @@ namespace Semplest.Core.Models
         {
             using (var entities = new SemplestModel.Semplest())
             {
-                Configuration = entities.Configurations.FirstOrDefault();
+               // Configuration = entities.Configurations.FirstOrDefault();
                 string filePath = System.Configuration.ConfigurationManager.AppSettings["LogoURL"].ToString();
                 AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1, ImageUrl = filePath + t.LogoURL }).ToList();
                 AdEnginesSelectedList = AdvertisingEngines;

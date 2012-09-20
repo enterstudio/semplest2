@@ -185,5 +185,16 @@ namespace SemplestModel
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetMSNGeoLocation", promotionIDParameter, valueListParameter, valueDelimiterParameter, listDelimiterParameter, totalSize);
         }
+    
+        public virtual ObjectResult<GetCustomerPromotionStatus_Result> GetCustomerPromotionStatus(Nullable<int> customerID)
+        {
+            ((IObjectContextAdapter)this).ObjectContext.MetadataWorkspace.LoadFromAssembly(typeof(GetCustomerPromotionStatus_Result).Assembly);
+    
+            var customerIDParameter = customerID.HasValue ?
+                new ObjectParameter("CustomerID", customerID) :
+                new ObjectParameter("CustomerID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerPromotionStatus_Result>("GetCustomerPromotionStatus", customerIDParameter);
+        }
     }
 }

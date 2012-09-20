@@ -142,6 +142,9 @@
     <Compile Include="GeoTargeting.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="GetCustomerPromotionStatus_Result.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="HelpDefinition.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

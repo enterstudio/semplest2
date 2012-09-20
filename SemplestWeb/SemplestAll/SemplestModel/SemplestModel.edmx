@@ -2901,6 +2901,9 @@
           <Parameter Name="StartDate" Type="datetime2" Mode="In" />
           <Parameter Name="EndDate" Type="datetime2" Mode="In" />
         </Function>
+        <Function Name="GetCustomerPromotionStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetKeywordForAdEngine" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="PromotionPK" Type="int" Mode="In" />
           <Parameter Name="IsTargetGoogle" Type="bit" Mode="In" />
@@ -3456,6 +3459,9 @@
             <End Role="UserType" EntitySet="UserTypes" />
             <End Role="User" EntitySet="Users" />
           </AssociationSet>
+          <FunctionImport Name="GetCustomerPromotionStatus" ReturnType="Collection(SemplestModel.GetCustomerPromotionStatus_Result)">
+            <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
           <Property Type="Int32" Name="RolesFK" Nullable="true" />
@@ -5841,6 +5847,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetCustomerPromotionStatus_Result">
+          <Property Type="String" Name="typePromo" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="PromotionStatus" Nullable="true" MaxLength="25" />
+          <Property Type="Int32" Name="PromotionPK" Nullable="true" />
+          <Property Type="String" Name="PromotionName" Nullable="true" MaxLength="200" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -7016,6 +7028,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetCustomerPromotionStatus" FunctionName="SemplestModel.Store.GetCustomerPromotionStatus">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SemplestModel.GetCustomerPromotionStatus_Result">
+                <ScalarProperty Name="typePromo" ColumnName="typePromo" />
+                <ScalarProperty Name="PromotionStatus" ColumnName="PromotionStatus" />
+                <ScalarProperty Name="PromotionPK" ColumnName="PromotionPK" />
+                <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -62,8 +62,9 @@ namespace SemplestWebApp.Controllers
 
             HomeModelChild child = new HomeModelChild();
             IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
+            var ps = dbContext.GetCustomerPromotionStatus(cCred.Single().User.CustomerFK).OrderBy(q => q.PromotionStatus).ThenBy(q => q.PromotionName).ToList();
             ViewBag.Title = cCred.First().User.FirstName + " " + cCred.First().User.LastName + " - " + cCred.First().User.Customer.Name;
-            child.ProductGroups = cCred.First().User.Customer.ProductGroups;
+            child.CustomerPromotions = ps;
             return View(child);
         }
         [AuthorizeRole]

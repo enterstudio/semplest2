@@ -18,15 +18,13 @@ namespace Semplest.Core.Models
     {
         public HomeModelChild()
         {
-            CampaignSetup = new CampaignSetupModel();
-            CampaignSetup.AdModelProp.Addresses.FirstOrDefault().StateCodeFK = 0;
+            //CampaignSetup = new CampaignSetupModel();
+           // CampaignSetup.AdModelProp.Addresses.FirstOrDefault().StateCodeFK = 0;
         }
 
-        public ICollection<Promotion> LiveAdvertising;
-        public ICollection<Promotion> UnfinishedAdvertising;
-        public ICollection<ProductGroup> ProductGroups;
+        public List<GetCustomerPromotionStatus_Result> CustomerPromotions;
 
-        public CampaignSetupModel CampaignSetup { get; set; }
+       // public CampaignSetupModel CampaignSetup { get; set; }
     }
 
     
