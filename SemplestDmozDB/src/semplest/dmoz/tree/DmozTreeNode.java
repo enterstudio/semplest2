@@ -35,8 +35,7 @@ public class DmozTreeNode {
 	}
 	
 	public void addUrlData(Long urlID, String url, String urlDesc){
-		categoryData.addUrlData(url,urlDesc);
-		semplestTreeMapData.addSemplestUrlDataID(urlID);
+		categoryData.addUrlData(urlID,url,urlDesc);
 	}
 	
 	public void setNodeDescription(String description){
