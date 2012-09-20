@@ -112,7 +112,7 @@ public class TreeViewer implements  ActionListener, MouseListener{
 		
 		
 		StringBuffer statBuff = new StringBuffer();
-		statBuff.append(" Node URLs:   "+dmozTree.getCategoryData().getUrlData().keySet().size());
+		statBuff.append(" Node URLs:   "+dmozTree.getCategoryData().getUrlData().size());
 		statBuff.append(",      Total Tree URLs:   "+ dmozTree.getTreeURLCount());//allNodesUrl.getCount(dmozTree));
 		statBuff.append(",      Total Tree Nodes:   "+ dmozTree.getTreeNodeCount());//allNodeCounter.getCount(dmozTree));
 		statLabel = new JLabel(statBuff.toString());
