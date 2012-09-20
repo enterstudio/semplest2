@@ -35,7 +35,7 @@ namespace Semplest.Core.Controllers
             IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
             ViewBag.Title = cCred.First().User.FirstName + " " + cCred.First().User.LastName + " - " +
                             cCred.First().User.Customer.Name;
-            child.ProductGroups = cCred.First().User.Customer.ProductGroups;
+            //child.ProductGroups = cCred.First().User.Customer.ProductGroups;
             return View(child);
         }
 
