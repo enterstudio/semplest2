@@ -1,21 +1,19 @@
 package semplest.dmoz.tools;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tree.DbTreeNodeObject;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFunctions;
+import semplest.dmoz.tree.UrlDataObject;
 import semplest.util.SemplestUtils;
 
 public class DbTreeOperator extends BaseDB 
@@ -54,10 +52,11 @@ public class DbTreeOperator extends BaseDB
 				batchSql.add(sqlDmoz);
 				
 				//build sql statements for UrlData table
-				for(String url : node.getCategoryData().getUrlData().keySet()){
-					String urlDesc = node.getCategoryData().getUrlData().get(url).replace("'", "''");
+				for(UrlDataObject urlData : node.getCategoryData().getUrlData()){
+					String url = urlData.getUrl().replace("'", "''");
+					String urlDesc = urlData.getUrlDescription().replace("'", "''");
 					String sqlUrl = "INSERT INTO URLData(SemplestFK,URL,Level,URLDescription) " +
-							"VALUES(" + nodeId + ",'" + url.replace("'", "''") + "'," + 1 + ",'" + urlDesc + "');";
+							"VALUES(" + nodeId + ",'" + url + "'," + 1 + ",'" + urlDesc + "');";
 					batchSql.add(sqlUrl);
 				}
 			}
@@ -159,10 +158,11 @@ public class DbTreeOperator extends BaseDB
 				if(node.getCategoryData() == null || node.getCategoryData().getUrlData() == null){
 					continue;
 				}
-				for(String url : node.getCategoryData().getUrlData().keySet()){
-					String urlDesc = node.getCategoryData().getUrlData().get(url);
+				for(UrlDataObject urlData : node.getCategoryData().getUrlData()){
+					String url = urlData.getUrl().replace("'", "''");
+					String urlDesc = urlData.getUrlDescription().replace("'", "''");
 					String sqlAddNewUrls = "INSERT INTO URLData(SemplestFK,URL,Level,URLDescription) " +
-							"VALUES(" + nodeId + ",'" + url.replace("'", "''") + "'," + 1 + ",'" + urlDesc.replace("'", "''") + "');";
+							"VALUES(" + nodeId + ",'" + url + "'," + 1 + ",'" + urlDesc + "');";
 					batchSql.add(sqlAddNewUrls);
 				}	
 			}
@@ -179,7 +179,7 @@ public class DbTreeOperator extends BaseDB
 	{		
 		String sql;
 		//get the top node of the sub-tree
-		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM DMOZ t " +
+		sql = "SELECT SemplestPK,ParentNodeID,NodeText,UrlDataPK,URL,URLDescription FROM DMOZ t " +
 				"LEFT JOIN URLData u ON t.SemplestPK = u.SemplestFK " +
 				"WHERE t.NodeText = ?";
 		List<DbTreeNodeObject> topNodeList = jdbcTemplate.query(sql, new Object[]{categoryName}, dbTreeNodeObjectMapper);
@@ -194,7 +194,7 @@ public class DbTreeOperator extends BaseDB
 		System.out.println("Getting tree data and Url data belong to node " + categoryName + " from database.");
 		
 		String childrenNodesPattern = categoryName + "/%";
-		sql = "SELECT SemplestPK,ParentNodeID,NodeText,URL,URLDescription FROM DMOZ t " +
+		sql = "SELECT SemplestPK,ParentNodeID,NodeText,UrlDataPK,URL,URLDescription FROM DMOZ t " +
 				"LEFT JOIN URLData u ON t.SemplestPK = u.SemplestFK " +
 				"WHERE t.NodeText like ?";
 		List<DbTreeNodeObject> subDbNodes = jdbcTemplate.query(sql, new Object[]{childrenNodesPattern}, dbTreeNodeObjectMapper);		
@@ -211,7 +211,7 @@ public class DbTreeOperator extends BaseDB
 				if(nodesMap.containsKey(nodeName)){
 					//the node is already there, just need to add url to it.
 					node = nodesMap.get(nodeName);
-					node.addUrlData(dbNode.getURL(), dbNode.getURLDescription());
+					node.addUrlData(dbNode.getUrlDataPK(), dbNode.getURL(), dbNode.getURLDescription());					
 				}
 				else{
 					node = new DmozTreeNode();

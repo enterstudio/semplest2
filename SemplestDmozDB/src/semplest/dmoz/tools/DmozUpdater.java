@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFunctions;
+import semplest.dmoz.tree.UrlDataObject;
 
 public class DmozUpdater {
 	
@@ -165,10 +166,10 @@ public class DmozUpdater {
 		for(String cat : oldTree.keySet()){			
 			if(newTree.containsKey(cat)){
 				//if it's an existing node, see if there's any change on urlData in the new tree.				
-				Map<String,String> oldUrlData = oldTree.get(cat).getCategoryData().getUrlData();
-				Map<String,String> newUrlData = newTree.get(cat).getCategoryData().getUrlData();
+				List<UrlDataObject> oldUrlData = oldTree.get(cat).getCategoryData().getUrlData();
+				List<UrlDataObject> newUrlData = newTree.get(cat).getCategoryData().getUrlData();
 				
-				if(!oldUrlData.keySet().equals(newUrlData.keySet())){
+				if(oldUrlData.size() != newUrlData.size()){
 					//if there's any change, update to new one
 					urlUpdateNodes.put(cat, newTree.get(cat));
 				}

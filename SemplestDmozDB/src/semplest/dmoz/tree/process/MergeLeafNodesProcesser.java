@@ -4,10 +4,12 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.UrlDataObject;
 
 public class MergeLeafNodesProcesser implements TreeProcesserInterface{
 	
@@ -45,7 +47,7 @@ public class MergeLeafNodesProcesser implements TreeProcesserInterface{
 			String leafNodeName = topNode.getName();
 			if(leafNodeName.length() == 1 || leafNodeName.matches("[+-]?\\d*(\\.\\d+)?")){
 				//this leaf node is a single-letter node, connect node contents directly with its parent (merge).
-				Map<String,String> urlData = topNode.getCategoryData().getUrlData();
+				List<UrlDataObject> urlData = topNode.getCategoryData().getUrlData();
 			}
 		}
 		else{

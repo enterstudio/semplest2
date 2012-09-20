@@ -11,12 +11,11 @@ public class testJdbc {
 	public static void main(String[] args){
 		try {
 			Long start = System.currentTimeMillis();
-			DmozTreeNode dmozTree = DmozDB.getTree("top/society");
+			DmozTreeNode dmozTree = DmozDB.getTree("top");
 			
 			System.out.println("===> " + (System.currentTimeMillis() - start)/1000);
 			
-			List<DmozTreeNode> treeNodes = TreeFunctions.getTreeInList(dmozTree);			
-			TreeFunctions.storeTreeToFile(treeNodes, "c:\\dmoz\\tempOutput.txt");
+			TreeFunctions.printTree(dmozTree, "c:\\dmoz\\tempOutput.txt");
 			
 			
 		} catch (Exception e) {

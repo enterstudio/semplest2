@@ -4,13 +4,16 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFunctions;
+import semplest.dmoz.tree.UrlDataObject;
 
 public class DmozTreeBuilder {
 	
@@ -93,7 +96,7 @@ public class DmozTreeBuilder {
 		while ((strLine = br.readLine()) != null){
 			String[] lineContents = strLine.split(" ");
 			String cat = lineContents[0].trim();
-			Map<String,String> urls = parseUrls(strLine);
+			List<UrlDataObject> urls = parseUrls(strLine);
 			String catDesc = parseCategoryDesc(strLine);
 			DmozCategoryDataObject catData;
 			if(!allData.containsKey(cat)){
@@ -176,8 +179,8 @@ public class DmozTreeBuilder {
 		return uniqueId;
 	}
 	
-	private Map<String,String> parseUrls(String lineContent) throws Exception{
-		Map<String,String> urlAndDesc = new HashMap<String,String>();
+	private List<UrlDataObject> parseUrls(String lineContent) throws Exception{
+		List<UrlDataObject> urlAndDesc = new ArrayList<UrlDataObject>();
 		
 		String urlcluster = lineContent.split(" : ")[1].split(" ::: ")[0].trim();
 		String[] urlAndDescs = urlcluster.split(" :: ");
@@ -185,7 +188,10 @@ public class DmozTreeBuilder {
 			int index = urlInfo.trim().indexOf(" ");			
 			String url = urlInfo.substring(0,index).trim();
 			String desc = urlInfo.substring(index+1).trim();
-			urlAndDesc.put(url, desc);
+			UrlDataObject urlData = new UrlDataObject();
+			urlData.setUrl(url);
+			urlData.setUrlDescription(desc);
+			urlAndDesc.add(urlData);
 		}
 		
 		return urlAndDesc;

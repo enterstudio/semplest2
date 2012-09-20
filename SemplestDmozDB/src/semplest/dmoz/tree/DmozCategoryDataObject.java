@@ -9,7 +9,6 @@ public class DmozCategoryDataObject {
 	private Long categoryId;
 	private String description;
 	private List<UrlDataObject> urlData = new ArrayList<UrlDataObject>();
-	private List<Long> urlDataPKs = new ArrayList<Long>();
 	
 	public String getDescription() {
 		return description;
@@ -61,15 +60,6 @@ public class DmozCategoryDataObject {
 			return true;
 		}
 		return false;
-	}
-	public List<Long> getUrlDataPKs() {
-		return urlDataPKs;
-	}
-	public void setUrlDataPKs(List<Long> urlDataPKs) {
-		this.urlDataPKs = urlDataPKs;
-	}
-	public void addUrlDataPK(Long urlDataPK){
-		this.urlDataPKs.add(urlDataPK);
 	}
 	
 }

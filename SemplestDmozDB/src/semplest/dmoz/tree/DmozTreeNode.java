@@ -43,16 +43,11 @@ public class DmozTreeNode {
 		categoryData.setDescription(description);
 	}
 	
-	public void addUrlDataPK(Long urlDataPK){
-		categoryData.addUrlDataPK(urlDataPK);
-	}
-	
 	public void fromDbTreeNodeObject(DbTreeNodeObject object){
 		this.nodeID = object.getSemplestPK();
 		this.parentID = object.getParentNodeID();
 		this.nodeName = object.getNodeText();
-		this.categoryData.addUrlData(object.getURL(), object.getURLDescription());
-		this.categoryData.addUrlDataPK(object.getUrlDataPK());
+		this.categoryData.addUrlData(object.getUrlDataPK(), object.getURL(), object.getURLDescription());
 	}
 
 	public Long getNodeID() {
