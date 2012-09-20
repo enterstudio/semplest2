@@ -14,7 +14,8 @@ import semplest.dmoz.tree.UrlDataObject;
 
 public class SemplestTreeDB extends BaseDB{
 	
-	public static void AddSemplestTree(final List<DmozTreeNode> semplestTreeNodes){
+	public static void AddSemplestTree(final List<DmozTreeNode> semplestTreeNodes)
+	{
 		//form the request list
 		final List<AddSemplestTreeRequest> addSemplestTreeRequests = new ArrayList<AddSemplestTreeRequest>();
 		for(DmozTreeNode node : semplestTreeNodes){
@@ -28,6 +29,7 @@ public class SemplestTreeDB extends BaseDB{
 			}
 		}		
 		
+		//call the store proc in batch
 		String sql = "{call AddSemplestTree(?,?,?)}";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter()
 		{
@@ -49,7 +51,8 @@ public class SemplestTreeDB extends BaseDB{
 	}
 	
 	//helper method
-	private static String getDomain(String url){
+	private static String getDomain(String url)
+	{
 		String[] parts = url.split("://");
 		String subUrl;
 		if(parts.length > 1){
