@@ -19,7 +19,8 @@ public class SemplestTreeDB extends BaseDB{
 		//form the request list
 		final List<AddSemplestTreeRequest> addSemplestTreeRequests = new ArrayList<AddSemplestTreeRequest>();
 		for(DmozTreeNode node : semplestTreeNodes){
-			for(UrlDataObject urlData : node.getCategoryData().getUrlData()){				
+			List<UrlDataObject> list = node.getCategoryData().getUrlData();
+			for(UrlDataObject urlData : list){				
 				AddSemplestTreeRequest request = new AddSemplestTreeRequest();
 				request.setDMOZSemplestPK(node.getNodeID());
 				request.setDMOZURLDataPK(urlData.getUrlDataPK());

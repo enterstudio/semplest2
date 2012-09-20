@@ -46,7 +46,9 @@ public class DmozTreeNode {
 		this.nodeID = object.getSemplestPK();
 		this.parentID = object.getParentNodeID();
 		this.nodeName = object.getNodeText();
-		this.categoryData.addUrlData(object.getUrlDataPK(), object.getURL(), object.getURLDescription());
+		if(object.getURL() != null){
+			this.categoryData.addUrlData(object.getUrlDataPK(), object.getURL(), object.getURLDescription());
+		}		
 	}
 
 	public Long getNodeID() {

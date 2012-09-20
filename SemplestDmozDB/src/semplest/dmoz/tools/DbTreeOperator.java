@@ -211,7 +211,9 @@ public class DbTreeOperator extends BaseDB
 				if(nodesMap.containsKey(nodeName)){
 					//the node is already there, just need to add url to it.
 					node = nodesMap.get(nodeName);
-					node.addUrlData(dbNode.getUrlDataPK(), dbNode.getURL(), dbNode.getURLDescription());					
+					if(dbNode.getURL() != null){						
+						node.addUrlData(dbNode.getUrlDataPK(), dbNode.getURL(), dbNode.getURLDescription());
+					}										
 				}
 				else{
 					node = new DmozTreeNode();
