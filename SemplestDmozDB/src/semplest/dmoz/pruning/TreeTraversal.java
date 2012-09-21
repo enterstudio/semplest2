@@ -16,7 +16,10 @@ public class TreeTraversal {
 	}
 
 	public static void prune(DmozTreeNode node, DmozToSemplestFilter filter) throws Exception{
-		filter.pruneNode(node);
+		/* it's important to prune first and then get the children 
+		 *  because they children Map may be altered by the fliter.pruneNode() call
+		 *  */
+		filter.pruneNode(node); 
 		for(DmozTreeNode child : node.getChildrenNodes().values()){
 			TreeTraversal.prune(child, filter);
 		}

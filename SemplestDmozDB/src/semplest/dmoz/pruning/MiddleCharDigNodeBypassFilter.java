@@ -39,7 +39,7 @@ public class MiddleCharDigNodeBypassFilter implements DmozToSemplestFilter {
 		Map<String,DmozTreeNode> childNodes = node.getChildrenNodes();
 		Set<DmozTreeNode> childSet = new HashSet<DmozTreeNode>(); 
 		
-		if(node.getName().equals("top/regional")){
+		if(node.getName().startsWith("top/regional")){
 			return childSet;
 		}
 		boolean detectedNode = false;
@@ -72,7 +72,7 @@ public class MiddleCharDigNodeBypassFilter implements DmozToSemplestFilter {
 
 	@Override
 	public void pruneNode(DmozTreeNode node) throws Exception {
-		if(node.getName().equals("top/regional")){
+		if(node.getName().startsWith("top/regional")){
 			return;
 		}
 		Map<String,DmozTreeNode> childNodes = node.getChildrenNodes();
