@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
+import semplest.dmoz.SemplestTreeSqlCall;
 import semplest.dmoz.objects.AddSemplestTreeRequest;
 import semplest.dmoz.pruning.CharDigLeafFilter;
 import semplest.dmoz.pruning.DmozToSemplestFilter;
@@ -57,11 +58,18 @@ public class testInsertSemplestTree extends BaseDB{
 		//put the tree maps in database
 		List<DmozTreeNode> semplestTreeNodes = TreeFunctions.getTreeInList(semplestTree);	
 		
-		List<List<DmozTreeNode>> batches = SemplestUtils.getBatches(semplestTreeNodes, 1000);
+		List<List<DmozTreeNode>> batches = SemplestUtils.getBatches(semplestTreeNodes, 50);
 		
+		Long start = System.currentTimeMillis();
+		int count = 1;
 		for(List<DmozTreeNode> batch : batches){
-			AddSemplestTree(batch);
+			System.out.println("storing batch #" + count);
+			System.out.println("batch size is " + batch.size());
+			//SemplestTreeSqlCall.runSemplestTree(batch);
+			//AddSemplestTree(batch);
+			count++;
 		}			
+		System.out.println("Storing data to DB took " + (System.currentTimeMillis() - start)/1000 + "secs.");
 		
 	}
 	
@@ -93,6 +101,8 @@ public class testInsertSemplestTree extends BaseDB{
 		//call the store proc in batch
 		Long start = System.currentTimeMillis();
 		
+		
+		/*
 		String sql = "{call AddSemplestTree(?,?,?)}";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter()
 		{
@@ -111,7 +121,7 @@ public class testInsertSemplestTree extends BaseDB{
 				return addSemplestTreeRequests.size();
 			}
 		});
-		
+		*/
 		System.out.println("Storing data to DB took " + (System.currentTimeMillis() - start)/1000 + "secs.");
 	}
 	

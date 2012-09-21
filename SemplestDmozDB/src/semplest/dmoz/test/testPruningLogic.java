@@ -61,7 +61,7 @@ public class testPruningLogic {
 				Integer semplestTreeUrlCount = semplestTreeUrlCountMap.get(node);
 				Integer dmozTreeUrlCount = dmozTreeUrlCountMap.get(node);
 				if(!semplestTreeUrlCount.equals(dmozTreeUrlCount)){
-					System.out.println("Url Count Mismatch: semplestTreeUrlCount = " + semplestTreeUrlCount + ", dmozTreeUrlCount = " + dmozTreeUrlCount);
+					System.out.println("### Url Count Mismatch: semplestTreeUrlCount = " + semplestTreeUrlCount + ", dmozTreeUrlCount = " + dmozTreeUrlCount);
 				}
 			}
 		}
