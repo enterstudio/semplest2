@@ -265,6 +265,9 @@
   	 	</jar>
 	 <echo message="Done."/> 
 		
+		<!-- temp code!!! remove the lucene-core-3.5.0.jar from /dist/lib -->
+		<delete file="${dist}/lib/lucene-core-3.5.0.jar"/>
+		
 	</target>
    
   <target name="compile" depends="depJars" description="Compile all source files">
