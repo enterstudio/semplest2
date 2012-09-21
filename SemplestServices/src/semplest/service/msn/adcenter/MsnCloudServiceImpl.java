@@ -4038,6 +4038,26 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		final Map<String, String[]> ret = getReportData(data.get("reportId"), new Long(data.get("accountId")));
 		return gson.toJson(ret);
 	}
+	
+	public static String getReportString(final List<? extends Object[]> rows, final String delimiter)
+	{
+		final StringBuilder sb = new StringBuilder();
+		for (final Object[] row : rows)
+		{
+			final StringBuilder sbRow = new StringBuilder();
+			for (final Object o : row)
+			{
+				if (sbRow.length() != 0)
+				{
+					sbRow.append(delimiter);
+				}				
+				sbRow.append(o);
+			}
+			final String rowString = sbRow.toString();
+			sb.append(rowString).append("\n");
+		}
+		return sb.toString();
+	}
 
 	@Override
 	public Map<String, String[]> getReportData(String reportId, Long accountId) throws MsnCloudException
@@ -4047,9 +4067,12 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		try
 		{
 			final InputStreamReader streamReader = new InputStreamReader(getReportStream(reportId, accountId));
-			CSVReader reader = new CSVReader(streamReader);
-			HashMap<String, String[]> map = new HashMap<String, String[]>();
-			List<String[]> rows = reader.readAll();
+			final CSVReader reader = new CSVReader(streamReader);
+			final Map<String, String[]> map = new HashMap<String, String[]>();			
+			final List<String[]> rows = reader.readAll();
+			final String reportString = getReportString(rows, ",");
+			final String reportFileName = SemplestUtils.getFileName("data/report/msn", "msn_report_", ".csv", new java.util.Date());
+			SemplestUtils.saveFile(reportFileName, reportString);
 			boolean foundReportDataMarker = false;
 			int scanRow = 0;
 			while (!foundReportDataMarker && (scanRow < rows.size()))

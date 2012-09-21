@@ -17,8 +17,12 @@ public class KeywordService implements ServiceInterface
 		final String operationDescription = "Keyword Service Method [" + methodName + "] with Params [" + jsonStr + "]";
 		try
 		{
-			logger.debug("Running " + operationDescription);
-			final KeywordServiceImpl service = new KeywordServiceImpl();
+			logger.debug("Running " + operationDescription);			
+			final KeywordProperties properties = new KeywordPropertiesImpl();
+			final String luceneDirectory = properties.getLuceneDirectory();
+			final String dmozDescriptionFile = properties.getDmozDescriptionFile();
+			final LuceneProvider luceneProvider = new LuceneProviderImpl(luceneDirectory, dmozDescriptionFile);
+			final KeywordServiceImpl service = new KeywordServiceImpl(properties, luceneProvider);
 			final Class[] parameterTypes = new Class[]{String.class};
 			final Method method = service.getClass().getMethod(methodName, parameterTypes);
 			final String results = (String)method.invoke(service, jsonStr);

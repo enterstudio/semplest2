@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import com.google.gson.Gson;
 
@@ -24,17 +25,27 @@ public class KeywordServiceImpl implements KeywordServiceInterface
 {
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(KeywordServiceImpl.class);
-	
+		
+	private final KeywordProperties properties;
+	private final LuceneProvider luceneProvider;
 	private final PorterStemmer porterStemmer;
 	
-	public KeywordServiceImpl()
-	{
+	public KeywordServiceImpl(final KeywordProperties properties, final LuceneProvider luceneProvider)
+	{		
+		this.properties = properties;
+		this.luceneProvider = luceneProvider;
 		porterStemmer = new PorterStemmer();
 	}
 	
 	public static void main(final String[] args) throws Exception
 	{
-		final KeywordServiceImpl service = new KeywordServiceImpl();
+		final KeywordProperties properties = new KeywordPropertiesImpl();
+		final String log4jPropertyFile = properties.getLog4jPropertyFile();
+		PropertyConfigurator.configure(log4jPropertyFile);
+		final String luceneDirectory = properties.getLuceneDirectory();
+		final String dmozDescriptionFile = properties.getDmozDescriptionFile();
+		final LuceneProvider luceneProvider = new LuceneProviderImpl(luceneDirectory, dmozDescriptionFile);
+		final KeywordServiceImpl service = new KeywordServiceImpl(properties, luceneProvider);
 		final Set<String> searchTerms = new HashSet<String>(Arrays.asList("lypako applicator", "needle mat", "acupressure mat"));
 		final GetCategoriesRequest request = new GetCategoriesRequest(searchTerms);
 		final List<String> categories = service.getCategories(request);
@@ -53,16 +64,16 @@ public class KeywordServiceImpl implements KeywordServiceInterface
 		return gson.toJson(res);
 	}
 	
-	public static String checkIsValid(final Set<String> terms)
+	public String checkIsValid(final Set<String> terms)
 	{
 		if (terms == null || terms.isEmpty())
 		{
 			return "Terms are empty";
 		}
 		final int numWords = SemplestUtils.getNumWords(terms, SemplestUtils.WORD_DELIMITER);
-		if (numWords < SemplestUtils.NUM_MINIMUM_WORDS)
+		if (numWords < properties.getNumMinimumWords())
 		{
-			return "Number of total words [" + numWords + "] is less than minimum of [" + SemplestUtils.NUM_MINIMUM_WORDS + "]";
+			return "Number of total words [" + numWords + "] is less than minimum of [" + properties.getNumMinimumWords() + "]";
 		}
 		return null;
 	}
@@ -81,9 +92,15 @@ public class KeywordServiceImpl implements KeywordServiceInterface
 				throw new Exception(validationErrorMsg);
 			}
 			final Set<String> termsTrimmed = SemplestUtils.getTrimmedNonEmptyStrings(terms);
+			
+			// TODO: see if you can remove stop words using Lucene
 			final Set<String> termsTrimmedWithoutStopWords = SemplestUtils.removeStopWords(termsTrimmed, SemplestUtils.ALL_COMMON_WORDS);
+			
 			final Set<String> termsTrimmedWithoutStopWordsStemmed = stem(termsTrimmedWithoutStopWords);
-			return new ArrayList<String>(termsTrimmedWithoutStopWordsStemmed);
+			final String termsTrimmedWithoutStopWordsStemmedCombined = SemplestUtils.getString(termsTrimmedWithoutStopWordsStemmed, SemplestUtils.WORD_DELIMITER);
+			final List<String> categories = luceneProvider.search(termsTrimmedWithoutStopWordsStemmedCombined, properties.getTargetNumCategories());
+			
+			return new ArrayList<String>(categories);
 		}		
 		catch (Exception e)
 		{
@@ -115,28 +132,6 @@ public class KeywordServiceImpl implements KeywordServiceInterface
 	{
 		return porterStemmer.stem(word);
 	}
-	/*
-	public static String stem(final String string)
-	{
-		final TokenStream tokenizerTokenStream = new StandardTokenizer(Version.LUCENE_30, new StringReader(string));
-		//final TokenStream stopFilterTokenStream = new StopFilter(Version.LUCENE_30, tokenizerTokenStream, SemplestUtils.ALL_COMMON_WORDS, true);
-		final TokenFilter stemFilterTokenStream = new PorterStemFilter(tokenizerTokenStream);
-		stemFilterTokenStream.n
-		
-		
-		
-		final StringBuilder sb = new StringBuilder();
-		
-		
-	  final TermAttribute termAttr = stemFilterTokenStream.getAttribute(TermAttribute.class);
-	    while (tokenStream.incrementToken()) {
-	        if (sb.length() > 0) {
-	            sb.append(" ");
-	        }
-	        sb.append(termAttr.term());
-	    }
-	    return sb.toString();
-	}*/
 	
 	public String getKeywords(String json) throws Exception
 	{

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.util.SemplestUtils;
 
 /**
  * * Helper class to download the specified reportDefinition XML to a temporary
@@ -192,9 +193,8 @@ public class GoogleReportDownloader
 					rdata.setCampaignID(Long.valueOf(data[11]));
 					rdata.setKeyword(data[3]);
 					String maxCpcStr = data[14];
-					if(maxCpcStr.equals(" --"))
-						maxCpcStr = "0";
-					rdata.setMicroBidAmount(Long.valueOf(maxCpcStr));
+					final Long maxCpc = SemplestUtils.getLong(maxCpcStr);
+					rdata.setMicroBidAmount(maxCpc);
 					rdata.setBidMatchType(data[4]);
 					rdata.setNumberImpressions(Integer.valueOf(data[5]));
 					rdata.setNumberClick(Integer.valueOf(data[6]));
