@@ -1,6 +1,5 @@
 package semplest.util;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,7 +14,6 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.CustomerHierarchy;
 import semplest.server.protocol.CustomerType;
 import semplest.server.protocol.EmailTemplate;
@@ -25,6 +23,161 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 
 public class TestSemplestUtils
 {
+	
+	@Test
+	public void testGetSublist_Null() throws Exception
+	{
+		final List<String> list = null;
+		final List<String> actualSubList = SemplestUtils.getSublist(list, 0.79);
+		final List<String> expectedSublist = null;
+		Assert.assertEquals(expectedSublist, actualSubList);
+	}
+	
+	@Test
+	public void testGetSublist_Empty() throws Exception
+	{
+		final List<String> list = new ArrayList<String>();
+		final List<String> actualSubList = SemplestUtils.getSublist(list, 0.79);
+		final List<String> expectedSublist = new ArrayList<String>();
+		Assert.assertEquals(expectedSublist, actualSubList);
+	}
+	
+	@Test
+	public void testGetSublist_RoundPercent() throws Exception
+	{
+		final List<String> list = new ArrayList<String>();
+		final String s1 = "s1";
+		final String s2 = "s2";
+		final String s3 = "s3";
+		final String s4 = "s4";
+		final String s5 = "s5";
+		final String s6 = "s6";
+		final String s7 = "s7";
+		final String s8 = "s8";
+		final String s9 = "s9";
+		final String s10 = "s10";
+		list.add(s1);
+		list.add(s2);
+		list.add(s3);
+		list.add(s4);
+		list.add(s5);
+		list.add(s6);
+		list.add(s7);
+		list.add(s8);
+		list.add(s9);
+		list.add(s10);
+		final List<String> actualSubList = SemplestUtils.getSublist(list, 0.79);
+		final List<String> expectedSublist = new ArrayList<String>();
+		expectedSublist.add(s1);
+		expectedSublist.add(s2);
+		expectedSublist.add(s3);
+		expectedSublist.add(s4);
+		expectedSublist.add(s5);
+		expectedSublist.add(s6);
+		expectedSublist.add(s7);
+		Assert.assertEquals(expectedSublist, actualSubList);
+	}
+	
+	@Test
+	public void testGetSublist_ExactPercent() throws Exception
+	{
+		final List<String> list = new ArrayList<String>();
+		final String s1 = "s1";
+		final String s2 = "s2";
+		final String s3 = "s3";
+		final String s4 = "s4";
+		final String s5 = "s5";
+		final String s6 = "s6";
+		final String s7 = "s7";
+		final String s8 = "s8";
+		final String s9 = "s9";
+		final String s10 = "s10";
+		list.add(s1);
+		list.add(s2);
+		list.add(s3);
+		list.add(s4);
+		list.add(s5);
+		list.add(s6);
+		list.add(s7);
+		list.add(s8);
+		list.add(s9);
+		list.add(s10);
+		final List<String> actualSubList = SemplestUtils.getSublist(list, 0.7);
+		final List<String> expectedSublist = new ArrayList<String>();
+		expectedSublist.add(s1);
+		expectedSublist.add(s2);
+		expectedSublist.add(s3);
+		expectedSublist.add(s4);
+		expectedSublist.add(s5);
+		expectedSublist.add(s6);
+		expectedSublist.add(s7);
+		Assert.assertEquals(expectedSublist, actualSubList);
+	}
+	
+	@Test
+	public void testGetFileName_NoNumbersNeedPadding() throws Exception
+	{
+		final String directory = "/somedir/hello/";
+		final String filePrefix = "myFile";
+		final String fileExtension = ".csv";
+		final Calendar c = Calendar.getInstance();
+		c.set(Calendar.YEAR, 2005);
+		c.set(Calendar.MONTH, Calendar.DECEMBER);
+		c.set(Calendar.DAY_OF_MONTH, 15);
+		c.set(Calendar.HOUR_OF_DAY, 16);
+		c.set(Calendar.MINUTE, 15);
+		c.set(Calendar.SECOND, 45);
+		c.set(Calendar.MILLISECOND, 123);		
+		final java.util.Date date = c.getTime(); 
+		final String actualFileName = SemplestUtils.getFileName(directory, filePrefix, fileExtension, date);
+		final String expectedFileName = "/somedir/hello/myFile_2005_12_15_16_15_45_123.csv";
+		Assert.assertEquals(expectedFileName, actualFileName);
+	}
+	
+	@Test
+	public void testGetFileName_MostNumbersNeedPadding() throws Exception
+	{
+		final String directory = "/somedir/hello/";
+		final String filePrefix = "myFile";
+		final String fileExtension = ".csv";
+		final Calendar c = Calendar.getInstance();
+		c.set(Calendar.YEAR, 2005);
+		c.set(Calendar.MONTH, Calendar.JUNE);
+		c.set(Calendar.DAY_OF_MONTH, 5);
+		c.set(Calendar.HOUR_OF_DAY, 8);
+		c.set(Calendar.MINUTE, 5);
+		c.set(Calendar.SECOND, 9);
+		c.set(Calendar.MILLISECOND, 1);		
+		final java.util.Date date = c.getTime(); 
+		final String actualFileName = SemplestUtils.getFileName(directory, filePrefix, fileExtension, date);
+		final String expectedFileName = "/somedir/hello/myFile_2005_06_05_08_05_09_001.csv";
+		Assert.assertEquals(expectedFileName, actualFileName);
+	}
+	
+	@Test
+	public void testGetLong() throws Exception
+	{
+		final Long actualResult = SemplestUtils.getLong(" sdf 45 -- _");
+		final Long expectedResult = 45L;
+		Assert.assertEquals(expectedResult, actualResult);
+	}
+	
+	@Test
+	public void testGetLong_Empty() throws Exception
+	{
+		final Long actualResult = SemplestUtils.getLong("");
+		final Long expectedResult = 0L;
+		Assert.assertEquals(expectedResult, actualResult);
+	}
+	
+	@Test
+	public void testGetLong_Null() throws Exception
+	{
+		final Long actualResult = SemplestUtils.getLong(null);
+		final Long expectedResult = 0L;
+		Assert.assertEquals(expectedResult, actualResult);
+	}
+	
 	@Test
 	public void testFilterOutDeletedKeywords() throws Exception
 	{ 

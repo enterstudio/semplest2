@@ -1,5 +1,7 @@
 package semplest.util;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -47,6 +49,7 @@ import com.google.api.adwords.v201109.cm.PolicyViolationError;
 import com.google.api.adwords.v201109.cm.PolicyViolationKey;
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.gson.reflect.TypeToken;
+import com.jcraft.jsch.Logger;
 import com.microsoft.adcenter.api.customermanagement.SignupCustomerResponse;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.api.customermanagement.Entities.AccountFinancialStatus;
@@ -154,7 +157,6 @@ public final class SemplestUtils
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
 	public static final String WORD_DELIMITER = " ";
-	public static final int NUM_MINIMUM_WORDS = 5;
 	
 	//References: http://en.wikipedia.org/wiki/Stop_words and old keyword service
 	public static final Set<String> COMMON_STOP_WORDS = new HashSet<String>(Arrays.asList("a",	"able",	"about",	"above",	"according",	"accordingly",	"across",	"actually",	"after",	"afterwards",	"again",	"against",	"ain't",	"all",	"allow",	"allows",	"almost",	"alone",	"along",	"already",	"also",	"although",	"always",	"am",	"among",	"amongst",	"amoungst",	"amount",	"an",	"and",	"another",	"any",	"anybody",	"anyhow",	"anyone",	"anything",	"anyway",	"anyways",	"anywhere",	"apart",	"appear",	"appreciate",	"appropriate",	"are",	"area",	"areas",	"aren't",	"around",	"as",	"a's",	"aside",	"ask",	"asked",	"asking",	"asks",	"associated",	"at",	"available",	"away",	"awfully",	"b",	"back",	"backed",	"backing",	"backs",	"be",	"became",	"because",	"become",	"becomes",	"becoming",	"been",	"before",	"beforehand",	"began",	"behind",	"being",	"beings",	"believe",	"below",	"beside",	"besides",	"best",	"better",	"between",	"beyond",	"big",	"bill",	"both",	"bottom",	"brief",	"but",	"by",	"c",	"call",	"came",	"can",	"cannot",	"cant",	"can't",	"case",	"cases",	"cause",	"causes",	"certain",	"certainly",	"changes",	"clear",	"clearly",	"c'mon",	"co",	"com",	"come",	"comes",	"computer",	"con",	"concerning",	"consequently",	"consider",	"considering",	"contain",	"containing",	"contains",	"corresponding",	"could",	"couldnt",	"couldn't",	"course",	"cry",	"c's",	"currently",	"d",	"de",	"dear",	"definitely",	"describe",	"described",	"despite",	"detail",	"did",	"didn't",	"differ",	"different",	"differently",	"do",	"does",	"doesn't",	"doing",	"done",	"don't",	"down",	"downed",	"downing",	"downs",	"downwards",	"due",	"during",	"e",	"each",	"early",	"edu",	"eg",	"eight",	"either",	"eleven",	"else",	"elsewhere",	"empty",	"end",	"ended",	"ending",	"ends",	"enough",	"entirely",	"especially",	"et",	"etc",	"even",	"evenly",	"ever",	"every",	"everybody",	"everyone",	"everything",	"everywhere",	"ex",	"exactly",	"example",	"except",	"f",	"face",	"faces",	"fact",	"facts",	"far",	"felt",	"few",	"fifteen",	"fifth",	"fify",	"fill",	"find",	"finds",	"fire",	"first",	"five",	"followed",	"following",	"follows",	"for",	"former",	"formerly",	"forth",	"forty",	"found",	"four",	"from",	"front",	"full",	"fully",	"further",	"furthered",	"furthering",	"furthermore",	"furthers",	"g",	"gave",	"general",	"generally",	"get",	"gets",	"getting",	"give",	"given",	"gives",	"go",	"goes",	"going",	"gone",	"good",	"goods",	"got",	"gotten",	"great",	"greater",	"greatest",	"greetings",	"group",	"grouped",	"grouping",	"groups",	"h",	"had",	"hadn't",	"happens",	"hardly",	"has",	"hasnt",	"hasn't",	"have",	"haven't",	"having",	"he",	"hello",	"help",	"hence",	"her",	"here",	"hereafter",	"hereby",	"herein",	"here's",	"hereupon",	"hers",	"herse",	"herself",	"he's",	"hi",	"high",	"higher",	"highest",	"him",	"himse",	"himself",	"his",	"hither",	"hopefully",	"how",	"howbeit",	"however",	"hundred",	"i",	"i'd",	"ie",	"if",	"ignored",	"i'll",	"i'm",	"immediate",	"important",	"in",	"inasmuch",	"inc",	"indeed",	"indicate",	"indicated",	"indicates",	"inner",	"insofar",	"instead",	"interest",	"interested",	"interesting",	"interests",	"into",	"inward",	"is",	"isn't",	"it",	"it'd",	"it'll",	"its",	"it's",	"itse",	"itself",	"i've",	"j",	"just",	"k",	"keep",	"keeps",	"kept",	"kind",	"knew",	"know",	"known",	"knows",	"l",	"la",	"large",	"largely",	"last",	"lately",	"later",	"latest",	"latter",	"latterly",	"least",	"less",	"lest",	"let",	"lets",	"let's",	"like",	"liked",	"likely",	"little",	"long",	"longer",	"longest",	"look",	"looking",	"looks",	"ltd",	"m",	"made",	"mainly",	"make",	"making",	"man",	"many",	"may",	"maybe",	"me",	"mean",	"meanwhile",	"member",	"members",	"men",	"merely",	"might",	"mill",	"mine",	"more",	"moreover",	"most",	"mostly",	"move",	"mr",	"mrs",	"much",	"must",	"my",	"myse",	"myself",	"n",	"name",	"namely",	"nd",	"near",	"nearly",	"necessary",	"need",	"needed",	"needing",	"needs",	"neither",	"never",	"nevertheless",	"new",	"newer",	"newest",	"next",	"nine",	"no",	"nobody",	"non",	"none",	"noone",	"nor",	"normally",	"not",	"nothing",	"novel",	"now",	"nowhere",	"number",	"numbers",	"o",	"obviously",	"of",	"off",	"often",	"oh",	"ok",	"okay",	"old",	"older",	"oldest",	"on",	"once",	"one",	"ones",	"only",	"onto",	"open",	"opened",	"opening",	"opens",	"or",	"order",	"ordered",	"ordering",	"orders",	"other",	"others",	"otherwise",	"ought",	"our",	"ours",	"ourselves",	"out",	"outside",	"over",	"overall",	"own",	"p",	"part",	"parted",	"particular",	"particularly",	"parting",	"parts",	"pdf",	"per",	"perhaps",	"place",	"placed",	"places",	"please",	"plus",	"point",	"pointed",	"pointing",	"points",	"possible",	"present",	"presented",	"presenting",	"presents",	"presumably",	"probably",	"problem",	"problems",	"provides",	"put",	"puts",	"q",	"que",	"quite",	"qv",	"r",	"rather",	"rd",	"re",	"really",	"reasonably",	"regarding",	"regardless",	"regards",	"relatively",	"respectively",	"right",	"room",	"rooms",	"s",	"said",	"same",	"saw",	"say",	"saying",	"says",	"second",	"secondly",	"seconds",	"see",	"seeing",	"seem",	"seemed",	"seeming",	"seems",	"seen",	"sees",	"self",	"selves",	"sensible",	"sent",	"serious",	"seriously",	"seven",	"several",	"shall",	"she",	"should",	"shouldn't",	"show",	"showed",	"showing",	"shows",	"side",	"sides",	"since",	"sincere",	"six",	"sixty",	"small",	"smaller",	"smallest",	"so",	"some",	"somebody",	"somehow",	"someone",	"something",	"sometime",	"sometimes",	"somewhat",	"somewhere",	"soon",	"sorry",	"specified",	"specify",	"specifying",	"state",	"states",	"still",	"sub",	"such",	"sup",	"sure",	"system",	"t",	"take",	"taken",	"tell",	"ten",	"tends",	"th",	"than",	"thank",	"thanks",	"thanx",	"that",	"thats",	"that's",	"the",	"their",	"theirs",	"them",	"themselves",	"then",	"thence",	"there",	"thereafter",	"thereby",	"therefore",	"therein",	"theres",	"there's",	"thereupon",	"these",	"they",	"they'd",	"they'll",	"they're",	"they've",	"thick",	"thin",	"thing",	"things",	"think",	"thinks",	"third",	"this",	"thorough",	"thoroughly",	"those",	"though",	"thought",	"thoughts",	"three",	"through",	"throughout",	"thru",	"thus",	"tis",	"to",	"today",	"together",	"too",	"took",	"top",	"toward",	"towards",	"tried",	"tries",	"truly",	"try",	"trying",	"t's",	"turn",	"turned",	"turning",	"turns",	"twas",	"twelve",	"twenty",	"twice",	"two",	"u",	"un",	"under",	"unfortunately",	"unless",	"unlikely",	"until",	"unto",	"up",	"upon",	"us",	"use",	"used",	"useful",	"uses",	"using",	"usually",	"v",	"value",	"various",	"very",	"via",	"viz",	"vs",	"w",	"want",	"wanted",	"wanting",	"wants",	"was",	"wasn't",	"way",	"ways",	"we",	"we'd",	"welcome",	"well",	"we'll",	"wells",	"went",	"were",	"we're",	"weren't",	"we've",	"what",	"whatever",	"what's",	"when",	"whence",	"whenever",	"where",	"whereafter",	"whereas",	"whereby",	"wherein",	"where's",	"whereupon",	"wherever",	"whether",	"which",	"while",	"whither",	"who",	"whoever",	"whole",	"whom",	"who's",	"whose",	"why",	"will",	"willing",	"wish",	"with",	"within",	"without",	"wonder",	"won't",	"work",	"worked",	"working",	"works",	"would",	"wouldn't",	"x",	"y",	"year",	"years",	"yes",	"yet",	"you",	"you'd",	"you'll",	"young",	"younger",	"youngest",	"your",	"you're",	"yours",	"yourself",	"yourselves",	"you've",	"z"));
@@ -172,6 +174,92 @@ public final class SemplestUtils
 		ALL_COMMON_WORDS.addAll(LOCAL_STOP_WORDS);
 		ALL_COMMON_WORDS.addAll(STATE_STOP_WORDS);
 		ALL_COMMON_WORDS.addAll(SITES_STOP_WORDS);
+	}
+	
+	public static <T> List<T> getSublist(final List<T> list, final Double percent)
+	{
+		if (list == null || list.isEmpty())
+		{
+			return list;
+		}
+		final Integer size = list.size();
+		final double sizeDouble = size.doubleValue();
+		final Double indexDouble = sizeDouble * percent;
+		final int index = indexDouble.intValue();
+		return list.subList(0, index);
+	}
+	
+	public static Long getLong(final String s)
+	{
+		if (s == null || s.equals(""))
+		{
+			return 0L;
+		}
+		final char[] chars = s.toCharArray();
+		final StringBuilder sb = new StringBuilder();
+		for (final char c : chars)
+		{
+			if (Character.isDigit(c))
+			{
+				sb.append(c);
+			}
+		}
+		final String digitString = sb.toString();
+		final Long l = Long.valueOf(digitString);
+		return l;
+	}
+	
+	public static void saveFile(final String fileName, final String content) throws Exception
+	{
+		final FileWriter fstream = new FileWriter(fileName);
+	  final BufferedWriter out = new BufferedWriter(fstream);
+	  out.write(content);
+	  out.close();
+	}
+	
+	public static String getFileName(final String directory, final String filePrefix, final String fileExtension, final java.util.Date date)
+	{
+		final Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		final int year = cal.get(Calendar.YEAR);
+		final int month = cal.get(Calendar.MONTH) + 1;
+		final String monthString = getNumberString(month, 2);
+		final int day = cal.get(Calendar.DAY_OF_MONTH);
+		final String dayString = getNumberString(day, 2);
+		final int hour = cal.get(Calendar.HOUR_OF_DAY);
+		final String hourString = getNumberString(hour, 2);
+		final int minute = cal.get(Calendar.MINUTE);
+		final String minuteString = getNumberString(minute, 2);
+		final int second = cal.get(Calendar.SECOND);
+		final String secondString = getNumberString(second, 2);
+		final int millisecond = cal.get(Calendar.MILLISECOND);
+		final String millisecondString = getNumberString(millisecond, 3);
+		final String fileName = directory + filePrefix + "_" + year + "_" + monthString + "_" + dayString + "_" + hourString + "_" + minuteString + "_" + secondString + "_" + millisecondString + fileExtension;
+		return fileName;
+	}
+	
+	public static String getNumberString(final int number, final int length)
+	{
+		final String numberString = "" + number;
+		if (numberString.length() >= length)
+		{
+			return numberString;
+		}
+		final int lengthDiff = length - numberString.length();
+		final String zerosString = getRepeatedCharString('0', lengthDiff);
+		final String resultNumberString = zerosString + numberString;
+		return resultNumberString;
+	}
+	
+	public static String getRepeatedCharString(final char c, final int num)
+	{
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < num; ++i)
+		{
+			sb.append(c);
+		}
+		final String s = sb.toString();
+		return s;
 	}
 	
 	public static int getNumWords(final Collection<String> strings, final String delimiter)
