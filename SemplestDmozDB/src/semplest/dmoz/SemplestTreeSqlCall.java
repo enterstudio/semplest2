@@ -15,8 +15,8 @@ public class SemplestTreeSqlCall extends DmozDB
 {
 	
 	private static String sql = "DECLARE @url varchar(1000), @urlID int, @domainID int; if not exists (select * from SemplestTree st where st.SemplestPK = ?) " +
-			"Begin insert into SemplestTree(SemplestPK, DMOZCategoryID,NodeText,ParentNodeID,NodeDescription) End " +
-			"select d.SemplestPK, d.DMOZCategoryID,d.NodeText,d.ParentNodeID,d.NodeDescription from DMOZ d where d.SemplestPK = ? " +
+			"Begin insert into SemplestTree(SemplestPK, DMOZCategoryID,NodeText,ParentNodeID,NodeDescription) " +
+			"select d.SemplestPK, d.DMOZCategoryID,d.NodeText,d.ParentNodeID,d.NodeDescription from DMOZ d where d.SemplestPK = ? End " +
 			"if not exists (select * from Domain d where d.Domain = ?) BEGIN insert into Domain(Domain) values (?) set @domainID = @@IDENTITY END ELSE  " +
 			"BEGIN	select @domainID = d.DomainPK from Domain d where d.Domain = ? END " +
 			"select @url = ud.URL from URLData ud where ud.UrlDataPK = ? " +
