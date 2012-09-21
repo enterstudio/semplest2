@@ -266,8 +266,11 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 			}
 			// Get keywords sorted by probability
 			final List<AdEngine> srchE = Arrays.asList(searchEngines);
-			List<KeywordProbabilityObject> keywords = getKeywordsSorted(categories, description, stemdata1, srchE, nGrams, numkw);
-			return keywords.toArray(new KeywordProbabilityObject[keywords.size()]);
+			final List<KeywordProbabilityObject> keywords = getKeywordsSorted(categories, description, stemdata1, srchE, nGrams, numkw);			
+			final Double percent = (Double)configData.get("KeywordTopPercent");
+			final List<KeywordProbabilityObject> keywordsPartial = SemplestUtils.getSublist(keywords, percent);
+			logger.info("Number of Keywords originally [" + keywords.size() + "], Percent to keep [" + percent + "], Final number of keywords [" + keywordsPartial.size() + "]");
+			return keywordsPartial.toArray(new KeywordProbabilityObject[keywordsPartial.size()]);
 		}
 		catch (Exception e)
 		{
@@ -341,7 +344,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		}
 	}
 
-	private List<KeywordProbabilityObject> sortKeywords(List<KeywordProbabilityObject> kwNOTSorted, int numKw)
+	public static List<KeywordProbabilityObject> sortKeywords(List<KeywordProbabilityObject> kwNOTSorted, int numKw)
 	{
 		final List<KeywordProbabilityObject> sortedKw = new ArrayList<KeywordProbabilityObject>();
 		final Map<KeywordProbabilityObject, Double> map = new HashMap<KeywordProbabilityObject, Double>();

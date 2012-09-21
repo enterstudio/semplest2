@@ -65,7 +65,7 @@ public class DmozLuceneWriter
 	{
 		System.out.print("Creating Dmoz Lucene Index...");
 		StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
-		Directory directory = FSDirectory.open(new File(LuceneDir));
+		Directory directory = FSDirectory.open(new File(LuceneDir)); 
 		IndexWriter writer = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(256000));
 
 		System.out.println(".." + DmozDescFile + "..");
