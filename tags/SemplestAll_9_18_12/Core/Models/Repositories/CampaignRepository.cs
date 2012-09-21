@@ -445,7 +445,7 @@ namespace Semplest.Core.Models.Repositories
                     // set negative keywords
                     if (promo.PromotionKeywordAssociations != null)
                         model.AdModelProp.NegativeKeywords =
-                            promo.PromotionKeywordAssociations.Where(m => m.IsNegative && !m.IsDeleted).OrderByDescending(o => o.SemplestProbability).Select(m => m.Keyword.Keyword1).
+                            promo.PromotionKeywordAssociations.Where(m => m.IsNegative && !m.IsDeleted).Select(m => m.Keyword.Keyword1).
                                 ToList();
                 }
 
@@ -455,7 +455,7 @@ namespace Semplest.Core.Models.Repositories
                 if (!preview)
                 {
                     model.AllKeywords.AddRange(
-                        promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).OrderBy(o => o.SemplestProbability).Select(
+                        promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).OrderByDescending(o => o.SemplestProbability).Select(
                             key =>
                             new CampaignSetupModel.KeywordsModel
                                 {Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK}));

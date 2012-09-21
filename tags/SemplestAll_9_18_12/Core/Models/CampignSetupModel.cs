@@ -28,8 +28,10 @@ namespace Semplest.Core.Models
             SelectedKeywords = new List<KeywordsModel>();
             KeywordIds = new List<int>();
             SiteLinks = new List<SiteLink>();
+            Configuration = new SemplestModel.Semplest().Configurations.Single();
         }
 
+        public Configuration Configuration { get; set; }
         public ProductGroupModel ProductGroup { get; set; }
         public AdModel AdModelProp { get; set; }
         public BillingLaunchModel BillingLaunch { get; set; }
