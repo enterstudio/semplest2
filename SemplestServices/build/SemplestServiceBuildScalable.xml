@@ -223,14 +223,14 @@
   	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />	  	 			
   	 	</copy>
 	
-		<!-- compile SemplestServices just for creating the keywords jar -->
-		
-		<delete file="${semplest.keywords.lib}/lucene-core-3.5.0.jar"/>   <!-- temp code!!! remove the lucene-core-3.5.0.jar to compile the services -->
-		
+		<!-- compile SemplestServices just for creating the keywords jar -->		
 		<copy todir="${semplest.keywords.lib}" filtering="off">
   	 		<flattenmapper />
   	 		<fileset dir="${lib}" includes="**/*.jar" />			
-  	 	</copy>		
+  	 	</copy>				
+
+		<delete file="${semplest.keywords.lib}/lucene-core-3.5.0.jar"/>   <!-- temp code!!! remove the lucene-core-3.5.0.jar to compile the services -->
+		
 		<mkdir dir="${semplest.keywords.dir}/semplestservicescompilefiles"/>
 		<echo message="Compiling SemplestServices and making it a jar for Keyword Service..."/>
 	    <javac srcdir="${source}" destdir="${semplest.keywords.dir}/semplestservicescompilefiles" classpathref="class.path"
@@ -246,16 +246,16 @@
   	 	    </manifest>
   	 	</jar>
 	
-  	 	<!-- Compile SemplestKeywords -->
-		
-		<delete file="${semplest.keywords.lib}/lucene-core-3.6.1.jar"/>   <!-- temp code!!! remove the lucene-core-3.6.1.jar to compile the keyword service -->
-		<copy file="${dist}/lib/lucene-core-3.5.0.jar" tofile="${semplest.keywords.lib}/lucene-core-3.5.0.jar"/>   <!-- temp code!!! put the lucene-core-3.5.0.jar to compile the keyword service -->
-		
+  	 	<!-- Compile SemplestKeywords -->		
   	 	<echo message="Creating Jar for SemplestKeywords..."/>
 		<path id="keywords.path">
 		<pathelement location="${classes}"/>
 			<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
 		</path>
+		
+		<delete file="${semplest.keywords.lib}/lucene-core-3.6.1.jar"/>   <!-- temp code!!! remove the lucene-core-3.6.1.jar to compile the keyword service -->
+		<copy file="${dist}/lib/lucene-core-3.5.0.jar" tofile="${semplest.keywords.lib}/lucene-core-3.5.0.jar"/>   <!-- temp code!!! put the lucene-core-3.5.0.jar to compile the keyword service -->
+		
   	 	<mkdir dir="${semplest.keywords.dir}/temp"/>
   	 	<javac srcdir="${semplest.keywords.dir}/src" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
   	 		target="1.6"
@@ -272,7 +272,7 @@
   	 	</jar>
 	 <echo message="Done."/> 	
 		
-		<delete file="${dist}/lib/lucene-core-3.5.0.jar"/>   <!-- temp code!!! remove the lucene-core-3.5.0.jar to compile the semplest services -->
+	<delete file="${dist}/lib/lucene-core-3.5.0.jar"/>   <!-- temp code!!! remove the lucene-core-3.5.0.jar to compile the semplest services -->
 		
 	</target>
    
