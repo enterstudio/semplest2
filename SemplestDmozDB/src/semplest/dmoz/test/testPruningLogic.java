@@ -9,6 +9,7 @@ import java.util.Set;
 import semplest.dmoz.pruning.CharDigLeafFilter;
 import semplest.dmoz.pruning.DmozToSemplestFilter;
 import semplest.dmoz.pruning.DmozToSemplestTreeConverter;
+import semplest.dmoz.pruning.MiddleCharDigNodeBypassFilter;
 import semplest.dmoz.pruning.NorthAmericaUSMergingFilter;
 import semplest.dmoz.pruning.RegionalRemovalFilter;
 import semplest.dmoz.tools.DbTreeOperator;
@@ -27,7 +28,7 @@ public class testPruningLogic {
 	
 	public void compareTwoTrees() throws Exception{
 		//get original tree
-		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB("top/business/financial_services");
+		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB("top");
 		
 		//prune the tree
 		DmozToSemplestTreeConverter dmozToSemplestConv = new DmozToSemplestTreeConverter(dmozTree);
@@ -35,6 +36,7 @@ public class testPruningLogic {
 		filterSet.add(new RegionalRemovalFilter(null));
 		filterSet.add(new CharDigLeafFilter(null));
 		filterSet.add(new NorthAmericaUSMergingFilter(null));
+		filterSet.add(new MiddleCharDigNodeBypassFilter(null));
 		dmozToSemplestConv.setFilterSet(filterSet);
 		dmozToSemplestConv.prune();			
 		
