@@ -33,24 +33,24 @@ public class ConvertDmozToSemplestExample {
 
 
 		// add filter leaf node 
-//			out = new BufferedWriter(new FileWriter("C:/Users/ssom/Dmoz/TreeAnalysis/CharDigLeafNode.txt"));
+			out = new BufferedWriter(new FileWriter("C:/Users/ssom/Dmoz/TreeAnalysis/CharDigLeafNode.txt"));
 			filterSet.add(new CharDigLeafFilter(out));
 
 
-//			// add filter to merge up data from north america and us nodes 
-//			out = new BufferedWriter(new FileWriter("C:/Users/ssom/Dmoz/TreeAnalysis/NorthAmericaUSMerge.txt"));
+			// add filter to merge up data from north america and us nodes 
+			out = new BufferedWriter(new FileWriter("C:/Users/ssom/Dmoz/TreeAnalysis/NorthAmericaUSMerge.txt"));
 			filterSet.add(new NorthAmericaUSMergingFilter(out));
 
 
 			// add filter to bypass charcter digit intermediate nodes 
-//			out = new BufferedWriter(new FileWriter("C:/Users/ssom/Dmoz/TreeAnalysis/MiddleCharDigBypass.txt"));
-//			filterSet.add(new MiddleCharDigNodeBypassFilter(out));
+			out = new BufferedWriter(new FileWriter("C:/Users/ssom/Dmoz/TreeAnalysis/MiddleCharDigBypass.txt"));
+			filterSet.add(new MiddleCharDigNodeBypassFilter(out));
 
 			dmozToSemplestConv.setFilterSet(filterSet);
 
 			//dmozToSemplestConv.analyze();
 			dmozToSemplestConv.prune();
-			dmozToSemplestConv.getTree();
+			// dmozToSemplestConv.getTree();
 
 
 			// close all files
