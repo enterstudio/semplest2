@@ -14,6 +14,7 @@ import semplest.dmoz.pruning.NorthAmericaUSMergingFilter;
 import semplest.dmoz.pruning.RegionalRemovalFilter;
 import semplest.dmoz.tools.DbTreeOperator;
 import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tree.process.NodeCountProcessor;
 
 public class testPruningLogic {
 	
@@ -29,6 +30,11 @@ public class testPruningLogic {
 	public void compareTwoTrees() throws Exception{
 		//get original tree
 		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB("top");
+		
+		NodeCountProcessor semplestCountNodeTreeProc = new NodeCountProcessor();
+		semplestCountNodeTreeProc.analyzeTree(dmozTree);
+		int countNodesInOriginalTree = dmozTree.getTreeNodeCount();
+
 		
 		//prune the tree
 		DmozToSemplestTreeConverter dmozToSemplestConv = new DmozToSemplestTreeConverter(dmozTree);
@@ -59,7 +65,12 @@ public class testPruningLogic {
 				}
 			}
 		}
-		System.out.println("Comparison done.");
+		System.out.println("Comparison done." );
+		
+		semplestCountNodeTreeProc.analyzeTree(semplestTree);
+		
+		System.out.println("Number of nodes before pruning: "+ countNodesInOriginalTree);
+		System.out.println("Number of nodes after pruning: "+ semplestTree.getTreeNodeCount());
 	}
 	
 	public class AllNodesUrlNumProcesser{
