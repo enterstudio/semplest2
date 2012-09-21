@@ -4,12 +4,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import semplest.dmoz.tree.DmozTreeNode;
-import semplest.dmoz.tree.UrlDataObject;
 
 public class MiddleCharDigNodeBypassFilter implements DmozToSemplestFilter {
 
@@ -71,13 +69,6 @@ public class MiddleCharDigNodeBypassFilter implements DmozToSemplestFilter {
 		return childSet;
 	}
 	
-	private static void mergeRecursively(List<UrlDataObject> urlData, DmozTreeNode node) {
-		Map<String, DmozTreeNode> childNodes = node.getChildrenNodes();
-		urlData.addAll(node.getCategoryData().getUrlData());
-		for(String s : childNodes.keySet()){
-			MiddleCharDigNodeBypassFilter.mergeRecursively(urlData,childNodes.get(s));
-		}
-	}
 
 	@Override
 	public void pruneNode(DmozTreeNode node) throws Exception {

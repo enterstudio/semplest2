@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import semplest.dmoz.tree.DmozCategoryDataObject;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.UrlDataObject;
 
