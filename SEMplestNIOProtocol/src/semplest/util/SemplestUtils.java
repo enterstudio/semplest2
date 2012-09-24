@@ -1,6 +1,7 @@
 package semplest.util;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -211,7 +212,12 @@ public final class SemplestUtils
 	
 	public static void saveFile(final String fileName, final String content) throws Exception
 	{
-		final FileWriter fstream = new FileWriter(fileName);
+		final File file = new File(fileName);
+		if (!file.exists())
+		{
+			file.createNewFile();
+		}
+		final FileWriter fstream = new FileWriter(file);
 	  final BufferedWriter out = new BufferedWriter(fstream);
 	  out.write(content);
 	  out.close();
