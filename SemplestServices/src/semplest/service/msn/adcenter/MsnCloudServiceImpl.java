@@ -4070,8 +4070,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			final CSVReader reader = new CSVReader(streamReader);
 			final Map<String, String[]> map = new HashMap<String, String[]>();			
 			final List<String[]> rows = reader.readAll();
+			final String reportFileName = SemplestUtils.getFileName(SemplestUtils.MSN_REPORT_DIR, "msn_report", ".csv", new java.util.Date());
 			final String reportString = getReportString(rows, ",");
-			final String reportFileName = SemplestUtils.getFileName("data/report/msn", "msn_report_", ".csv", new java.util.Date());
 			SemplestUtils.saveFile(reportFileName, reportString);
 			boolean foundReportDataMarker = false;
 			int scanRow = 0;

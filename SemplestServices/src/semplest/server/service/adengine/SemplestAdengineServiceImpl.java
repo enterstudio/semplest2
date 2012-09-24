@@ -171,7 +171,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 */
 			// Schedule for next day at the same time
 
-			adEng.ExecuteBidProcess(136, Arrays.asList(AdEngine.MSN));
+			adEng.ExecuteBidProcess(288, Arrays.asList(AdEngine.Google));
 			// adEng.AddPromotionToAdEngine(16, 55, 121212, Arrays.asList(AdEngine.MSN, AdEngine.Google));
 
 			/*
