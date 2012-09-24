@@ -21,10 +21,10 @@ BEGIN TRY
 	SET NOCOUNT ON;
 	DECLARE @url varchar(1000), @urlID int, @domainID int
 	
-	insert into SemplestTreeTemp(SemplestPK, URLPK, Domain) values (@DMOZSemplestPK, @DMOZURLDataPK, @Domain)
+	--insert into SemplestTreeTemp(SemplestPK, URLPK, Domain) values (@DMOZSemplestPK, @DMOZURLDataPK, @Domain)
 	
 	
-	/*
+	
 	begin transaction
 	
 	--insert into semplest tree
@@ -36,11 +36,17 @@ BEGIN TRY
 	insert into Domain(Domain) select stt.Domain from SemplestTreeTemp stt group by stt.Domain
 
 --URL
-	insert into SemplestURLData(URL, URLDescription, DomainFK) 
-	select ud.URL, ud.URLDescription, d.DomainPK from URLData ud 
+	insert into SemplestURLData(URL, DomainFK) 
+	select ud.URL, d.DomainPK from URLData ud 
 	inner join SemplestTreeTemp stt on stt.URLPK = ud.UrlDataPK
 	inner join Domain d on d.Domain = stt.Domain
-	group by ud.URL, ud.URLDescription, d.DomainPK
+	group by ud.URL, d.DomainPK
+	
+	update SemplestURLData set URLDescription = ud.URLDescription
+	from URLData ud 
+	inner join SemplestURLData sud on sud.URL = ud.URL
+	inner join SemplestTreeTemp stt on stt.URLPK = ud.UrlDataPK
+	inner join Domain d on d.Domain = stt.Domain 
 
 --Associations
 	insert into NodeURLAssociation(SemplestFK, URLDataFK, [Level], ParentURLDataID)
@@ -49,7 +55,7 @@ BEGIN TRY
 	inner join SemplestURLData sud on sud.URL = ud.URL
 	
 	commit transaction
-	*/
+	
 	
 END TRY
 BEGIN CATCH
