@@ -49,7 +49,6 @@ import com.google.api.adwords.v201109.cm.PolicyViolationError;
 import com.google.api.adwords.v201109.cm.PolicyViolationKey;
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.gson.reflect.TypeToken;
-import com.jcraft.jsch.Logger;
 import com.microsoft.adcenter.api.customermanagement.SignupCustomerResponse;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.api.customermanagement.Entities.AccountFinancialStatus;
@@ -178,7 +177,7 @@ public final class SemplestUtils
 	}
 	
 	public static <T> List<T> getSublist(final List<T> list, final Double percent)
-	{
+	{		
 		if (list == null || list.isEmpty())
 		{
 			return list;

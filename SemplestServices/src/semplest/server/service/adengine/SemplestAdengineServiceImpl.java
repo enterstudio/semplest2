@@ -327,8 +327,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * call - semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
 			 */
 			
-			// Setup recurring billing
-			setupRecurringBilling(PromotionID, new java.util.Date());
+			// Setup recurring billing -- TODO: uncomment this when ready
+			//setupRecurringBilling(PromotionID, new java.util.Date());
 						
 			/*
 			TODO: put this back when the GUI initiates the status to PENDING
