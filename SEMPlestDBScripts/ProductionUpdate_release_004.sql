@@ -7,6 +7,7 @@ update the status of existing campaigns
 ALTER TABLE dbo.Configuration ADD KeywordTopPercent float DEFAULT 0.65
 GO
 
+update Configuration set KeywordTopPercent = 0.65
 
 
 --Live
@@ -47,3 +48,4 @@ select paes.PromotionFK from PromotionAdengineStatus paes
 inner join PromotionStatus ps on ps.PromotionStatusPK = paes.PromotionStatusFK
 group by paes.PromotionFK )
 --order by p.PromotionPK
+
