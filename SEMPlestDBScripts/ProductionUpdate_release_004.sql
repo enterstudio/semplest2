@@ -1,6 +1,13 @@
 /*
 update the status of existing campaigns
 */
+---
+--- CREATE COLUMN: KeywordTopPercent
+---
+ALTER TABLE dbo.Configuration ADD KeywordTopPercent float DEFAULT 0.65
+GO
+
+
 
 --Live
 insert into PromotionAdengineStatus(PromotionFK,AdvertisingEngineFK,PromotionStatusFK)
