@@ -18,7 +18,6 @@ namespace SemplestModel
         {
             this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
             this.AdvertisingEngineReportDatas = new HashSet<AdvertisingEngineReportData>();
-            this.CreditCardProfiles = new HashSet<CreditCardProfile>();
             this.GeoTargetings = new HashSet<GeoTargeting>();
             this.KeywordCategories = new HashSet<KeywordCategory>();
             this.PromotionAdEngineSelecteds = new HashSet<PromotionAdEngineSelected>();
@@ -56,11 +55,11 @@ namespace SemplestModel
         public bool IsAutobid { get; set; }
         public Nullable<decimal> AutoBidMaxCPC { get; set; }
         public bool IsKeywordServiceOnly { get; set; }
+        public Nullable<int> CreditCardProfileFK { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
         public virtual BudgetCycle BudgetCycle { get; set; }
-        public virtual ICollection<CreditCardProfile> CreditCardProfiles { get; set; }
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
         public virtual ICollection<KeywordCategory> KeywordCategories { get; set; }
         public virtual ProductGroup ProductGroup { get; set; }
@@ -73,5 +72,6 @@ namespace SemplestModel
         public virtual ICollection<SiteLink> SiteLinks { get; set; }
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
         public virtual ICollection<PromotionBudget> PromotionBudgets { get; set; }
+        public virtual CreditCardProfile CreditCardProfile { get; set; }
     }
 }

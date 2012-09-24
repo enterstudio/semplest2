@@ -241,7 +241,7 @@ namespace Semplest.Core.Controllers
                     IPromotionRepository pr = new PromotionRepository(dbcontext);
                     IKeyWordRepository kwr = new KeyWordRepository(dbcontext);
                     var customerFK = GetCustomerId();
-                    var promo = pr.GetPromoitionFromCampaign(customerFK, model);
+                    var promo = pr.GetPromoitionFromCampaign(customerFK, model.ProductGroupName, model.ProductPromotionName);
                     model.AllKeywords = kwr.SaveNegativeKeywords(model, customerFK, promo);
                     Session["AllKeyWords"] = model.AllKeywords;
                 }

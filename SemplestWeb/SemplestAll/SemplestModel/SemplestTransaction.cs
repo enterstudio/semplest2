@@ -12,16 +12,16 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class TransactionType
+    public partial class SemplestTransaction
     {
-        public TransactionType()
-        {
-            this.SemplestTransactions = new HashSet<SemplestTransaction>();
-        }
+        public int SemplestTransactionPK { get; set; }
+        public Nullable<int> TransactionsFK { get; set; }
+        public Nullable<int> TransactionTypeFK { get; set; }
+        public decimal Amount { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public Nullable<System.DateTime> EditedDate { get; set; }
     
-        public int TransactionTypePK { get; set; }
-        public string TransactionType1 { get; set; }
-    
-        public virtual ICollection<SemplestTransaction> SemplestTransactions { get; set; }
+        public virtual Transaction Transaction { get; set; }
+        public virtual TransactionType TransactionType { get; set; }
     }
 }

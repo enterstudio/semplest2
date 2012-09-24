@@ -136,7 +136,7 @@ namespace Semplest.Core.Models.Repositories
         private List<GeoTargetObject> SerializeToGeoTargetObjectArray(CampaignSetupModel model)
         {
             var geoList = new List<GeoTargetObject>();
-            var sr = new StateRepository();
+            var sr = new StateRepository(new SemplestModel.Semplest());
             foreach (var geo in model.AdModelProp.Addresses)
             {
                 if (!geo.IsState && !geo.Delete && !geo.IsCountry)
@@ -153,24 +153,6 @@ namespace Semplest.Core.Models.Repositories
                 }
             }
             return geoList;
-        }
-
-        public List<string> GetAdEnginesListFromDb()
-        {
-            return GetAdEngines();
-        }
-
-        private static bool _savedCampaign;
-        private static SemplestModel.Semplest _dbcontext;
-        //readonly Func<Semplest, int, Promotion> _promotonIdQuery = CompiledQuery.Compile((Semplest nw, int promoId) => nw.Promotions.FirstOrDefault(p => p.PromotionPK == promoId));
-        private SemplestModel.Semplest InitializeContext()
-        {
-            if (_dbcontext == null || _savedCampaign)
-            {
-                _dbcontext = new SemplestModel.Semplest();
-                _savedCampaign = false;
-            }
-            return _dbcontext;
         }
 
         public void SaveProductPromotion(int customerFk, CampaignSetupModel model, CampaignSetupModel oldModel)
@@ -205,7 +187,6 @@ namespace Semplest.Core.Models.Repositories
                     dbcontext.Promotions.Add(promo);
                     SavePromotionAdEngineSelected(promo,model, dbcontext);
                     dbcontext.SaveChanges();
-                    _savedCampaign = true;
                 }
                 else
                 {//productgroupexists
@@ -246,7 +227,6 @@ namespace Semplest.Core.Models.Repositories
                 }
                 dbcontext.SaveChanges();
                 // we need to set this because the _dbcontext is  and campaign is updated so reflect changes we need to create new context
-                _savedCampaign = true;
             }
         }
             
@@ -311,7 +291,6 @@ namespace Semplest.Core.Models.Repositories
                 var parameter6 = new SqlParameter("AdTVP", at) { SqlDbType = SqlDbType.Structured, TypeName = "PromoAdTableType" };
                 var parameters = new object[] {parameter, parameter2, parameter3, parameter4, parameter5, parameter6};
                 var results = ((IObjectContextAdapter)dbcontext).ObjectContext.ExecuteStoreQuery<RVal>("exec UpdateGeoTargetingPromoAds @PromotionPK, @LandingUrl, @DisplayUrl, @AddressTypeFK, @GeoTVP, @AdTVP", parameters);
-                _savedCampaign = true;
                 foreach (var r in results)
                 {
                     rString.Append(r.UID);
@@ -379,7 +358,7 @@ namespace Semplest.Core.Models.Repositories
         public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId, bool preview = false)
         {
             var model = new CampaignSetupModel();
-            var dbcontext = InitializeContext();
+            var dbcontext = new SemplestModel.Semplest();
             var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
             //only let the user see their promo
             int customerFk =
@@ -759,7 +738,6 @@ namespace Semplest.Core.Models.Repositories
                 var parameter2 = new SqlParameter("SlTVP", st) { SqlDbType = SqlDbType.Structured, TypeName = "SiteLinksTableType" };
                 var parameters = new object[] { parameter, parameter2 };
                 var results = ((IObjectContextAdapter)dbcontext).ObjectContext.ExecuteStoreQuery<RVal>("exec UpdateSiteLinks @PromotionPK, @SlTVP", parameters);
-                _savedCampaign = true;
                 foreach (var r in results)
                 {
                     rString.Append(r.UID);
@@ -767,7 +745,6 @@ namespace Semplest.Core.Models.Repositories
                     rString.Append(r.PKEY);
                     rString.Append(",");
                 }
-                _savedCampaign = true;
                 try
                 {
                     var adEngines = new List<string>();
@@ -996,7 +973,6 @@ namespace Semplest.Core.Models.Repositories
                 {
                     ((IObjectContextAdapter) dbcontext).ObjectContext.CommandTimeout = 100;
                     dbcontext.Database.ExecuteSqlCommand("exec sp_UpdateKeywords @kwa, @PromotionId", parameters);
-                    _savedCampaign = true;
                     
                     //set keyword id's back in the model
                     int userid =
@@ -1149,7 +1125,6 @@ namespace Semplest.Core.Models.Repositories
                     foreach (int dk in addDeletedKiops)
                         promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk).IsDeleted=true;
                     dbcontext.SaveChanges();
-                    _savedCampaign = true;
                     var sw = new ServiceClientWrapper();
                     var adEngines = new List<string>();
                     adEngines.AddRange(
@@ -1180,15 +1155,6 @@ namespace Semplest.Core.Models.Repositories
                     stateName = state.StateAbbr;
             }
             return stateName;
-        }
-
-        public List<string> GetAdEngines()
-        {
-            using (var db = new SemplestModel.Semplest())
-            {
-                return db.AdvertisingEngines.Select(m => m.AdvertisingEngine1).ToList();
-            }
-
         }
 
         public bool IsPromotionLaunched(int promoId)
@@ -1226,7 +1192,6 @@ namespace Semplest.Core.Models.Repositories
                     dbcontext.PromotionKeywordAssociations.Where(key => key.KeywordFK == keywordId).First(
                         key => key.PromotionFK == promoId).IsDeleted = true;
                 dbcontext.SaveChanges();
-                _savedCampaign = true;
                 var adEngines = new List<string>();
                 var promo = dbcontext.Promotions.Single(row => row.PromotionPK == promoId);
                 if (promo.IsLaunched)

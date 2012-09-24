@@ -5,7 +5,6 @@ using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
-using System.Web;
 using Semplest.SharedResources.Services;
 using SemplestModel;
 using SemplestModel.TVP;
@@ -316,7 +315,7 @@ namespace Semplest.Core.Models.Repositories
         private List<GeoTargetObject> SerializeToGeoTargetObjectArray(SmartWordSetupModel model)
         {
             var geoList = new List<GeoTargetObject>();
-            var sr = new StateRepository();
+            var sr = new StateRepository(new SemplestModel.Semplest());
             foreach (var geo in model.Addresses)
             {
                 if (!geo.IsState && !geo.Delete && !geo.IsCountry)

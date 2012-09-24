@@ -29,7 +29,6 @@ namespace Semplest.Core.Models.Repositories
         bool IsNegativeKeyword(string keyword, List<string> negativeKeywords);
         List<CampaignSetupModel.KeywordsModel> SaveNegativeKeywords(CampaignSetupModel model, int customerFk);
         string GetStateNameFromCode(int stateCode);
-        List<string> GetAdEngines();
         bool IsPromotionLaunched(int promoId);
         bool IsPromotionCompleted(int promoId);
         bool IsPromotionLaunchedAndCompleted(int promoId);

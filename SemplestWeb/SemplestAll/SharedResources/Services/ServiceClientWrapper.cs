@@ -4,20 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
-using SemplestModel;
 using System.Threading;
-using Semplest.SharedResources;
 using System.Web;
 
 namespace Semplest.SharedResources.Services
 {
     public class ServiceClientWrapper
     {
-        private static string ADENGINESERVICE = "semplest.server.service.adengine.SemplestAdengineService";
-        private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-        private static String MAILSERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
+        private const string Adengineservice = "semplest.server.service.adengine.SemplestAdengineService";
+        private const String Serviceoffered = "semplest.service.keywords.lda.KeywordGeneratorService";
+        private const String Mailserviceoffered = "semplest.server.service.mail.SemplestMailService";
+        private const string Chaseorbitalservice = "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService";
         private static String _baseURLTest = "http://VMJAVA1:9898/semplest";
-        private static String timeoutMS = "3200000";
+        private const String TimeoutMs = "3200000";
 
         public ServiceClientWrapper()
         {
@@ -39,7 +38,7 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("description", description);
                 jsonHash.Add("url", url);
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
-                returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
+                returnData = runMethod(_baseURLTest, Serviceoffered, "getCategories", jsonstr);
 
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
@@ -84,7 +83,7 @@ namespace Semplest.SharedResources.Services
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
 
                 //string returnData = string.Empty;
-                returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
+                returnData = runMethod(_baseURLTest, Serviceoffered, "getKeywords", jsonstr);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -136,22 +135,29 @@ namespace Semplest.SharedResources.Services
                     throw new Exception("Invalid Promotion Schedule Type");
                     break;
             }
-            return runBooleanMethod(ADENGINESERVICE, requestedService, jsonstr);
+            return runBooleanMethod(Adengineservice, requestedService, jsonstr);
 
         }
 
-        public bool scheduleAddPromotionToAdEngine(int customerID, int productGroupId, int promoId,
+        public bool ScheduleAddPromotionToAdEngine(int customerID, int productGroupId, int promoId,
                                                    string[] adEngineList)
         {
-            string returnData = string.Empty;
-            var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("customerID", customerID.ToString());
-            jsonHash.Add("productGroupID", productGroupId.ToString());
-            jsonHash.Add("promotionID", promoId.ToString());
-            string jsonAdds = JsonConvert.SerializeObject(adEngineList, Formatting.Indented);
-            jsonHash.Add("adEngines", jsonAdds);
-            string jsonstr = JsonConvert.SerializeObject(jsonHash);
-            return runBooleanMethod(ADENGINESERVICE, "scheduleAddPromotionToAdEngine", jsonstr);
+            var retVal = false;
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("customerID", customerID.ToString());
+                jsonHash.Add("productGroupID", productGroupId.ToString());
+                jsonHash.Add("promotionID", promoId.ToString());
+                string jsonAdds = JsonConvert.SerializeObject(adEngineList, Formatting.Indented);
+                jsonHash.Add("adEngines", jsonAdds);
+                string jsonstr = JsonConvert.SerializeObject(jsonHash);
+                retVal = runBooleanMethod(Adengineservice, "scheduleAddPromotionToAdEngine", jsonstr);
+            }
+            catch
+            {
+            }
+            return true;
         }
 
         public bool scheduleAds(int promotionID, List<int> promotionAdIds, List<String> adEngines,
@@ -165,11 +171,11 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("promotionAdIds", jsonAdds);
 
             if (actionType == SEMplestConstants.PromotionAdAction.Add)
-                runBooleanMethod(ADENGINESERVICE, "AddAds", JsonConvert.SerializeObject(jsonHash));
+                runBooleanMethod(Adengineservice, "AddAds", JsonConvert.SerializeObject(jsonHash));
             else if (actionType == SEMplestConstants.PromotionAdAction.Delete)
-                runBooleanMethod(ADENGINESERVICE, "DeleteAds", JsonConvert.SerializeObject(jsonHash));
+                runBooleanMethod(Adengineservice, "DeleteAds", JsonConvert.SerializeObject(jsonHash));
             else
-                runBooleanMethod(ADENGINESERVICE, "UpdateAds", JsonConvert.SerializeObject(jsonHash));
+                runBooleanMethod(Adengineservice, "UpdateAds", JsonConvert.SerializeObject(jsonHash));
             return true;
         }
 
@@ -179,7 +185,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "UpdateGeoTargeting", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(Adengineservice, "UpdateGeoTargeting", JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool scheduleChangePromotionStartDate(int promotionID, DateTime newStartDate,
@@ -190,7 +196,7 @@ namespace Semplest.SharedResources.Services
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
             jsonHash.Add("newStartDate", newStartDate.ToString("yyyymmdd"));
-            return runBooleanMethod(ADENGINESERVICE, "ChangePromotionStartDate",
+            return runBooleanMethod(Adengineservice, "ChangePromotionStartDate",
                                     JsonConvert.SerializeObject(jsonHash));
         }
 
@@ -201,7 +207,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("changeInBudget", changeInBudget.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "UpdateBudget", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(Adengineservice, "UpdateBudget", JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool DeleteKeywords(int promotionID, List<int> keywordIds, List<string> adEngines)
@@ -212,7 +218,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("keywordIds", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "DeleteKeywords", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(Adengineservice, "DeleteKeywords", JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool AddNegativeKeywords(int promotionID,
@@ -225,7 +231,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("keywordIdRemoveOppositePairs", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-                return runBooleanMethod(ADENGINESERVICE, "AddNegativeKeywords",
+                return runBooleanMethod(Adengineservice, "AddNegativeKeywords",
                                         JsonConvert.SerializeObject(jsonHash));
         }
 
@@ -239,7 +245,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("keywordIds", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-                return runBooleanMethod(ADENGINESERVICE, "DeleteNegativeKeywords",
+                return runBooleanMethod(Adengineservice, "DeleteNegativeKeywords",
                                         JsonConvert.SerializeObject(jsonHash));
         }
 
@@ -250,7 +256,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "RefreshSiteLinks", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(Adengineservice, "RefreshSiteLinks", JsonConvert.SerializeObject(jsonHash));
         }
 
         #endregion
@@ -267,8 +273,8 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("displayURL", displayURL);
                 String adsStr = JsonConvert.SerializeObject(ads, Formatting.Indented);
                 jsonHash.Add("ads", adsStr);
-                returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleAd",
-                                       JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                returnData = runMethod(_baseURLTest, Adengineservice, "validateGoogleAd",
+                                       JsonConvert.SerializeObject(jsonHash));
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -289,8 +295,8 @@ namespace Semplest.SharedResources.Services
                 var jsonHash = new Dictionary<string, string>();
                 String slStr = JsonConvert.SerializeObject(sl, Formatting.Indented);
                 jsonHash.Add("siteLinks", slStr);
-                returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleRefreshSiteLinks",
-                                       JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                returnData = runMethod(_baseURLTest, Adengineservice, "validateGoogleRefreshSiteLinks",
+                                       JsonConvert.SerializeObject(jsonHash));
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -311,8 +317,8 @@ namespace Semplest.SharedResources.Services
                 var jsonHash = new Dictionary<string, string>();
                 String gtoStr = JsonConvert.SerializeObject(gto, Formatting.Indented);
                 jsonHash.Add("geoTargets", gtoStr);
-                returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleGeoTargets",
-                                       JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                returnData = runMethod(_baseURLTest, Adengineservice, "validateGoogleGeoTargets",
+                                       JsonConvert.SerializeObject(jsonHash));
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -333,8 +339,8 @@ namespace Semplest.SharedResources.Services
                 var jsonHash = new Dictionary<string, string>();
                 String negativeKeywordsStr = JsonConvert.SerializeObject(negativeKeywords, Formatting.Indented);
                 jsonHash.Add("negativeKeywords", negativeKeywordsStr);
-                returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleNegativeKeywords",
-                                       JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                returnData = runMethod(_baseURLTest, Adengineservice, "validateGoogleNegativeKeywords",
+                                       JsonConvert.SerializeObject(jsonHash));
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -355,7 +361,7 @@ namespace Semplest.SharedResources.Services
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("userID", userId.ToString());
-            return runBooleanMethod(ADENGINESERVICE, "sendAccountActivationEmail", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(Adengineservice, "sendAccountActivationEmail", JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool ValidateAccountActivationToken(string token)
@@ -365,8 +371,8 @@ namespace Semplest.SharedResources.Services
             {
                 var jsonHash = new Dictionary<string, string>();
                 jsonHash.Add("ecryptedToken", token);
-                string returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateAccountActivation",
-                                              JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                string returnData = runMethod(_baseURLTest, Adengineservice, "validateAccountActivation",
+                                              JsonConvert.SerializeObject(jsonHash));
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -388,26 +394,13 @@ namespace Semplest.SharedResources.Services
             var retVal = false;
             if (!dbContext.Configurations.First().DoNotLaunchAdServices)
             {
-                //ThreadData tData = new ThreadData(serviceRequested, methodRequested, jsonStr);
-                //_workerThread = new Thread(new ParameterizedThreadStart(runBooleanMethodAsync));
-                //_workerThread.Start(tData);
-                //return runBooleanMethodAsync(tData);
-                
                 string returnData = string.Empty;
                 try
                 {
-                    returnData = runMethod(_baseURLTest, serviceRequested, methodRequested, jsonStr,
-                                           timeoutMS);
+                    returnData = runMethod(_baseURLTest, serviceRequested, methodRequested, jsonStr);
                     var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                     List<string> lis = dict.Values.ToList();
-                    string jsonstrlist = lis[0];
-                    //this should be the case but we are always going to return true so this line has been commented out
-                    if (!bool.Parse(lis[0]))
-                        throw new Exception("Json Call returned a false");
-                    else
-                    {
-                        retVal = true;
-                    }
+                    retVal = bool.Parse(lis[0]);
                 }
                 catch (Exception ex)
                 {
@@ -425,7 +418,7 @@ namespace Semplest.SharedResources.Services
                     stemp.Append(returnData);
                     stemp.Append(Environment.NewLine);
                     stemp.Append(ex.ToString());
-                    Semplest.SharedResources.Helpers.ExceptionHelper.LogException(new Exception(stemp.ToString()));
+                    Helpers.ExceptionHelper.LogException(new Exception(stemp.ToString()));
                     throw new Exception(returnData);
                 }
             }
@@ -440,8 +433,7 @@ namespace Semplest.SharedResources.Services
             string returnData = string.Empty;
             try
             {
-                returnData = runMethod(_baseURLTest, param.ServiceRequested, param.MethodRequested, param.JsonStr,
-                                       timeoutMS);
+                returnData = runMethod(_baseURLTest, param.ServiceRequested, param.MethodRequested, param.JsonStr);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -500,9 +492,9 @@ namespace Semplest.SharedResources.Services
                 try
                 {
 
-                    returnData = runMethod("http://VMDEVJAVA1:9898/semplest",
-                                           "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService",
-                                           "CreateProfile", jsonstr, "0");
+                    returnData = runMethod(_baseURLTest,
+                                           Chaseorbitalservice,
+                                           "CreateProfile", jsonstr);
                 }
                 catch (Exception ex)
                 {
@@ -556,9 +548,8 @@ namespace Semplest.SharedResources.Services
                 try
                 {
 
-                    returnData = runMethod("http://VMDEVJAVA1:9898/semplest",
-                                           "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService",
-                                           "AuthorizeAndCapture", jsonstr, "0");
+                    returnData = runMethod(_baseURLTest, Chaseorbitalservice,
+                                           "AuthorizeAndCapture", jsonstr);
                 }
                 catch (Exception ex)
                 {
@@ -579,7 +570,9 @@ namespace Semplest.SharedResources.Services
                 ReturnGatewayReturnObject.isDeclined = Convert.ToBoolean(objval["isDeclined"]);
                 ReturnGatewayReturnObject.Status = objval["Status"];
                 ReturnGatewayReturnObject.Message = objval["Message"];
-                ReturnGatewayReturnObject.CustomerRefNum = objval["CustomerRefNum"];
+                ReturnGatewayReturnObject.TxRefNum = objval["TxRefNum"];
+                ReturnGatewayReturnObject.AuthCode = objval["AuthCode"];
+                
 
 
             }
@@ -608,7 +601,7 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("msgTxt", msgTxt);
                 jsonHash.Add("msgType", "text/html; charset=utf-8;"); //"text/plain
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
-                string returnData = runMethod(_baseURLTest, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
+                string returnData = runMethod(_baseURLTest, Mailserviceoffered, "SendEmail", jsonstr);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 string boolResult = dict.Values.First();
                 return Convert.ToBoolean(boolResult);
@@ -620,7 +613,7 @@ namespace Semplest.SharedResources.Services
             return false;
         }
 
-        public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr, String timeoutMS)
+        public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr)
         {
             string returnData = string.Empty;
             try
@@ -630,14 +623,8 @@ namespace Semplest.SharedResources.Services
                 client.QueryString.Add("jsonStr", jsonStr);
                 client.QueryString.Add("service", serviceName);
                 client.QueryString.Add("method", methodName);
-
-                if (timeoutMS != null)
-                {
-                    client.QueryString.Add("timeout", timeoutMS);
-                }
-
+                client.QueryString.Add("timeout", TimeoutMs);
                 client.BaseAddress = baseURL;
-                string qs = client.QueryString.ToString();
                 Stream data = client.OpenRead(baseURL);
                 var reader = new StreamReader(data);
                 returnData = reader.ReadToEnd();

@@ -108,6 +108,7 @@ namespace SemplestModel
         public DbSet<TransactionType> TransactionTypes { get; set; }
         public DbSet<ZipCode> ZipCodes { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
+        public DbSet<SemplestTransaction> SemplestTransactions { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

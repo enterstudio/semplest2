@@ -141,5 +141,6 @@ namespace SemplestModel
         public string SemplestKeywordsbdbdir { get; set; }
         public string SemplestKeywordsdffile { get; set; }
         public string numTopics { get; set; }
+        public Nullable<double> KeywordTopPercent { get; set; }
     }
 }

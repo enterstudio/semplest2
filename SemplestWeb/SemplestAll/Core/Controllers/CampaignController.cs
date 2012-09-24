@@ -16,6 +16,7 @@ using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using System.Configuration;
 using Semplest.SharedResources.Services;
+using SharedResources.Models.Repositories;
 
 namespace Semplest.Core.Controllers
 {
@@ -297,44 +298,43 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "LaunchAdProduct")]
         public ActionResult LaunchAdProduct(CampaignSetupModel model)
         {
-            ServiceClientWrapper sw = new ServiceClientWrapper();
-            List<string> adEngines = new List<string>();
-            if (ModelState.IsValid)
-            {
-                model = (CampaignSetupModel)Session["CampaignSetupModel"];
-                //SemplestDataService ds = new SemplestDataService();
-                //ds.SaveAd(model);
-            }
             var dbContext = new SemplestModel.Semplest();
-            //ProductGroup pg = dbContext.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First();
-            //Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
-            var userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-            int customerFk = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
-            var pm =
-                dbContext.Users.First(x => x.UserPK == userid).Customer.ProductGroups.First(
-                    x => x.ProductGroupName == model.ProductGroup.ProductGroupName).Promotions.First(
-                    p => p.PromotionName == model.ProductGroup.ProductPromotionName);
-            foreach (PromotionAdEngineSelected pades in pm.PromotionAdEngineSelecteds)
-                adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-            try
-            {
-                pm.IsLaunched = sw.scheduleAddPromotionToAdEngine(customerFk, pm.ProductGroupFK, pm.PromotionPK, adEngines.ToArray()); ;
-            }
-            catch (Exception ex)
-            {
-                var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = ex.Message };
-                Logger.Write(logEnty);
-                pm.IsLaunched = true;
-            }
+            var cr = new CreditCardRepository(dbContext);
+            var sr = new StateRepository(dbContext);
+            var success = cr.ChargeCreditCard(new CustomerObject
+                                                  {
+                                                      Address1 = model.BillingLaunch.Address,
+                                                      City = model.BillingLaunch.City,
+                                                      Email = model.BillingLaunch.Email,
+                                                      StateAbbr =
+                                                          sr.GetStateNameFromCode(
+                                                              int.Parse(model.BillingLaunch.StateCodeFK)),
+                                                      ExpireDateMMYY = "0912",
+                                                      FirstName = model.BillingLaunch.FirstName,
+                                                      LastName = model.BillingLaunch.LastName,
+                                                      Phone = model.BillingLaunch.Phone,
+                                                      ZipCode = model.BillingLaunch.Zip,
+                                                      creditCardNumber = model.BillingLaunch.CardNumber.ToString()
+                                                  }, GetCustomerId(), model.BillType);
             dbContext.SaveChanges();
-            //return PartialView("KeyWords", model);
-
-            //return View();
-            //return Json("Congratulations, Your Product has Launched!!!");
-            // now we are showing the image with wait window so we don't to show this in message box
+            if (success)
+            {
+                var adEngines = new List<string>();
+                var pr = new PromotionRepository(dbContext);
+                var promo = pr.GetPromoitionFromCampaign(GetCustomerId(), model.ProductGroup.ProductGroupName,
+                                                         model.ProductGroup.ProductPromotionName);
+                adEngines.AddRange(
+                    promo.PromotionAdEngineSelecteds.Select(
+                        pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                var sw = new ServiceClientWrapper();
+                if (sw.ScheduleAddPromotionToAdEngine(GetCustomerId(), promo.ProductGroupFK,
+                                                      promo.PromotionPK, adEngines.ToArray()))
+                {
+                    pr.SetPromotionToLaunched(promo.PromotionPK);
+                    dbContext.SaveChanges();
+                }
+            }
             return Json("");
-            //return Json("LaunchAdProduct");
-
         }
 
 
@@ -354,30 +354,7 @@ namespace Semplest.Core.Controllers
 
         #endregion
 
-        //public ActionResult AdditionalLinks(string model)
-        //{
-        //    //if (Session["AdTitle"] == null)
-        //    //    Session.Add("AdTitle", model);
-        //    //else
-        //    //    Session["AdTitle"] = model;
-        //    //var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
-        //    //PromotionAd promotionAd;
-        //    //if (addsStoreModel != null)
-        //    //{
-        //    //    promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model));
-        //    //    if (promotionAd != null)
-        //    //        promotionAd.SiteLinks = promotionAd.SiteLinks.Where(t => !t.Delete).ToList();
-        //    //}
-        //    //else
-        //    //{
-        //    //    promotionAd = new PromotionAd {AdTitle = model};
-        //    //}
-        //    //return PartialView(promotionAd);
-        //    return PartialView();
-        //    //return PartialView(model);
-        //}
-
-        public ActionResult AdditionalLinks()
+       public ActionResult AdditionalLinks()
         {
             var siteLInks = (List<SiteLink>)Session["SiteLinks"];
             var campaignModel = (CampaignSetupModel)Session["CampaignSetupModel"];
@@ -783,6 +760,14 @@ namespace Semplest.Core.Controllers
                 MediaSpend = product.MediaSpend,
                 SEMplestFee = product.SEMplestFee
             });
+        }
+
+        private int GetCustomerId()
+        {
+            var customerFk =
+                ((Credential)System.Web.HttpContext.Current.Session[SharedResources.SEMplestConstants.SESSION_USERID]).
+                    User.CustomerFK;
+            return customerFk.Value;
         }
     }
 }

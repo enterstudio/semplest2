@@ -101,20 +101,6 @@
             </label>
             <a href="#" id="viewSelectedKeywords" style="margin-left: 105px;">View selected keywords</a>
         </li>
-                @if (Model.BillType == 2)
-                {
-                    <li>
-                        <div>
-                            <label id="lblYourCreditInvoice">
-                                Please select payment method</label>
-                            <select id="dropDownCreditCard" class="k-select" name="dropDownCreditCard">
-                                <option>VISA ending in 8971 Expires8/24/14</option>
-                            </select>
-                            @Html.ActionLink("Add new card", "AddNewCard", null, new {@class = "addnewcard"})
-                            <a href="#" id="deleteRecord" style="margin-left: 20px;">Delete card</a>
-                        </div>
-                    </li>
-                }
         <li>
             <label id="lblbudget">
                 Budget</label>
@@ -133,6 +119,62 @@
         </li>
         @if (Model.BillType == 2)
         {
+            <div class="table">
+                <ul class="accept">
+                    <li><label>Billing Information</label></li>
+                    
+                    @{
+                        IEnumerable<SelectListItem> slemo = new SelectList(new[] {"-Select Month-", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}, "-Select Month-");
+                        IEnumerable<SelectListItem> sleyr = new SelectList(new[] {"-Select Year-", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"}, "-Select Year-");
+                    }
+                    <li>
+                        <label class="creditCardlabel">
+                            First Name</label>
+                        @Html.TextBoxFor(f => f.BillingLaunch.FirstName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Title" })
+                    
+                        <label class="creditCardlabel" style="padding-left:25px;">
+                            Last Name</label>
+                        @Html.TextBoxFor(l => l.BillingLaunch.LastName, new { @class = "k-textbox" })
+                    </li>
+                    <li>
+                        <label class="creditCardlabel">
+                            Address</label>
+                        @Html.TextBoxFor(a => a.BillingLaunch.Address, new { @class = "k-textbox" })
+                        <label class="creditCardlabel" style="padding-left:25px;">
+                            City / Town</label>
+                        @Html.TextBoxFor(c => c.BillingLaunch.City, new { @class = "k-textbox" })
+                    </li>
+                    <li>
+                        <label class="creditCardlabel">
+                            State </label>
+                        @Html.DropDownListFor(s => Model.BillingLaunch.StateCodeFK, Model.BillingLaunch.StateCodeList, Model.BillingLaunch.StateCodeFK)
+
+                        <label class="creditCardlabel" style="padding-left:114px;">
+                            Zip</label>
+                        @Html.TextBoxFor(z => z.BillingLaunch.Zip, new { @class = "k-textbox" })
+                    </li>
+                    <li>
+                        <label class="creditCardlabel">
+                            Phone Number</label>
+                        @Html.TextBoxFor(p => p.BillingLaunch.Phone, new { @class = "k-textbox" })
+
+                        <label class="creditCardlabel" style="padding-left:25px;">
+                            Email</label>
+                        @Html.TextBoxFor(e => e.BillingLaunch.Email, new { @class = "k-textbox" })
+                    </li>
+                </ul>
+            </div>
+                                <li>
+                        <label class="creditCardlabel">
+                            Card Number</label>
+                        @Html.TextBoxFor(c => c.BillingLaunch.CardNumber, new { @class = "k-textbox" })
+                    </li>
+                    <li>
+                        <label class="creditCardlabel">
+                            Expiry Date</label>
+                        @Html.DropDownList("ExpirationMonth", slemo, new { @id = "creditcardMonth" })
+                        @Html.DropDownList("ExpirationDate", sleyr, new { @id = "creditcardYear" })
+                    </li>
             <li>
                 <div>
                     <input type="checkbox" id="agreecheckbox" /><label style="margin-left: 5px; color: grey;">I
@@ -171,89 +213,6 @@
         min-width: 100px;
     }
 </style>
-<div id="creditCardWindow">
-    <form name="hiddenButton" id="hiddenButton" action="AddNewCard" method="post">
-        <div class="table">
-            <ul class="accept">
-                @{
-              
-                    //IEnumerable<SelectListItem> slct = new SelectList(new[] { "-Select One-", "Visa", "MastercCard", "Discover Card", "American Express" }, "-Select One-");
-                    IEnumerable<SelectListItem> slemo = new SelectList(new[] { "-Select Month-", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" }, "-Select Month-");
-                    IEnumerable<SelectListItem> sleyr = new SelectList(new[] { "-Select Year-", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" }, "-Select Year-");
-                
-                }
-                @*<li>
-                <label class="creditCardlabel">
-                    Card Type</label>
-                @Html.DropDownList("CardType", slct, new { @id = "creditcatdType" })
-            </li>*@
-                <li>
-                    <label class="creditCardlabel">
-                        Card Number</label>
-                    @Html.TextBox("CardNumber", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <label class="creditCardlabel">
-                        Expiry Date</label>
-                    @Html.DropDownList("ExpirationDate", slemo, new { @id = "creditcardMonth" })
-                    @Html.DropDownList("ExpirationDate", sleyr, new { @id = "creditcardYear" })
-                </li>
-                @* <li>
-                <label class="creditCardlabel">
-                    CVV</label>
-                @Html.TextBox("CVCCpde", null, new { @class = "k-textbox" })
-            </li>*@
-                <li>
-                    <label class="creditCardlabel">
-                        First Name</label>
-                    @Html.TextBox("FirstName", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <label class="creditCardlabel">
-                        Last Name</label>
-                    @Html.TextBox("LastName", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <label class="creditCardlabel">
-                        Address</label>
-                    @Html.TextBox("Address", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <label class="creditCardlabel">
-                        City / Town</label>
-                    @Html.TextBox("City", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <label class="creditCardlabel">
-                        State Code</label>
-                    @Html.TextBox("State", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <label class="creditCardlabel">
-                        Zip</label>
-                    @Html.TextBox("Zip", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <label class="creditCardlabel">
-                        Phone Number</label>
-                    @Html.TextBox("Phone", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <label class="creditCardlabel">
-                        Email</label>
-                    @Html.TextBox("Email", null, new { @class = "k-textbox" })
-                </li>
-                <li>
-                    <div style="text-align: center">
-                        <input type="button" id="btnAdd" value="Add" class="k-button" />
-                        <input type="button" id="btnCancel" value="Cancel" class="k-button" style="margin-left: 10px;" />
-                    </div>
-                </li>
-            </ul>
-        </div>
-    @*@Html.TextBox("newproductgroupname")*@
-    </form>
-</div>
 <script language="javascript">
     $(document).ready(function () {
         enableDisable();
@@ -261,22 +220,7 @@
             $('#getLaunchAdProduct').attr("disabled", true);
             $('#agreecheckbox').attr("disabled", true);
         }
-        var creditCardWindow = $('#creditCardWindow').kendoWindow({
-            modal: true,
-            resizable: false,
-            title: "Credit Card"
-        }).data("kendoWindow");
-        creditCardWindow.close();
-        $(".addnewcard").click(function (event) {
-            //$.blockUI(({ message: $('#hiddenButton') }));
-            creditCardWindow.center();
-            creditCardWindow.open();
-            event.preventDefault();
-        });
 
-        $("#btnAdd").click(function (event) {
-            $("#hiddenButton").submit();
-        });
 
         $("#btnCancel").click(function (event) {
             $.unblockUI();

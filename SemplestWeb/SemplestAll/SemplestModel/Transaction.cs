@@ -17,6 +17,7 @@ namespace SemplestModel
         public Transaction()
         {
             this.PromotionBudgets = new HashSet<PromotionBudget>();
+            this.SemplestTransactions = new HashSet<SemplestTransaction>();
         }
     
         public int TransactionsPK { get; set; }
@@ -32,5 +33,6 @@ namespace SemplestModel
         public virtual Customer Customer { get; set; }
         public virtual PayType PayType { get; set; }
         public virtual ICollection<PromotionBudget> PromotionBudgets { get; set; }
+        public virtual ICollection<SemplestTransaction> SemplestTransactions { get; set; }
     }
 }

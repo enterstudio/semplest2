@@ -40,14 +40,14 @@ namespace Semplest.Core.Models.Repositories
             return -1;
         }
 
-        public Promotion GetPromoitionFromCampaign(int customerFK, SmartWordSetupModel model)
+        public Promotion GetPromoitionFromCampaign(int customerFK, string productGroupName, string productPromotionName)
         {
             var queryProd = (from c in _dbcontext.ProductGroups
                              where
                                  c.CustomerFK == customerFK &&
-                                 c.ProductGroupName == model.ProductGroup.ProductGroupName
+                                 c.ProductGroupName == productGroupName
                              select c).Single();
-            return GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
+            return GetPromotionFromProductGroup(queryProd, productPromotionName);
         }
 
         public Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)

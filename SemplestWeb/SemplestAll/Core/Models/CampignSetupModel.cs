@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 using SemplestModel;
 using SemplestModel.Validations;
 using System.Linq;
 using Semplest.SharedResources.Services;
-using System;
-using SharedResources.Models;
 
 
 namespace Semplest.Core.Models
@@ -150,7 +149,36 @@ namespace Semplest.Core.Models
     public class BillingLaunchModel
     {
         public int KeywordsCount { get; set; }
-        public string Range { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        [Required]
+        public string Address { get; set; }
+        [Required]
+        public string City { get; set; }
+        public string StateCodeFK { get; set; }
+        [Required]
+        public IEnumerable<SelectListItem> StateCodeList
+        {
+            get
+            {
+               return new SemplestModel.Semplest().StateCodes.OrderBy(t => t.StateAbbr).ToList().Select(c => new SelectListItem
+                {
+                    Value = c.StateAbbrPK.ToString(),
+                    Text = c.StateAbbr
+                });
+            }
+        }
+        [Required]
+        public string Phone { get; set; }
+        [Required]
+        public string Zip { get; set; }
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public int CardNumber { get; set; }
+
     }
 
     public class AdditionalLinks
