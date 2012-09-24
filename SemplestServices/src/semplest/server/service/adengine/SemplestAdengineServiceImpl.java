@@ -171,8 +171,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 */
 			// Schedule for next day at the same time
 
-			adEng.ExecuteBidProcess(288, Arrays.asList(AdEngine.Google));
-			// adEng.AddPromotionToAdEngine(16, 55, 121212, Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			//adEng.ExecuteBidProcess(288, Arrays.asList(AdEngine.Google));
+			adEng.AddPromotionToAdEngine(16, 227, 325, Arrays.asList(AdEngine.MSN, AdEngine.Google));
 
 			/*
 			 * Date now = new Date(); cal.setTime(now); // get yesterday cal.add(Calendar.DAY_OF_MONTH, -1); Date yesterday = cal.getTime();

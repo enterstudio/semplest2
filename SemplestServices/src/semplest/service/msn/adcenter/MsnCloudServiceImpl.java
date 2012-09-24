@@ -4072,6 +4072,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			final List<String[]> rows = reader.readAll();
 			final String reportFileName = SemplestUtils.getFileName(SemplestUtils.MSN_REPORT_DIR, "msn_report", ".csv", new java.util.Date());
 			final String reportString = getReportString(rows, ",");
+			logger.info("Will try to save MSN report in file [" + reportFileName + "]");
 			SemplestUtils.saveFile(reportFileName, reportString);
 			boolean foundReportDataMarker = false;
 			int scanRow = 0;
