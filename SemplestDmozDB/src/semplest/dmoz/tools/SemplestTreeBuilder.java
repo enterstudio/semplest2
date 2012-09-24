@@ -22,14 +22,14 @@ public class SemplestTreeBuilder {
 	
 	public static void main(String[] args)
 	{		
-		try{
-			String treeName = "top/business/financial_services";		
+		try{			
+			String treeName = "top/business/financial_services";	
 			Integer maxBatchSize = 500;
 			
 			TreeFunctions.startLogError("SemplestTreeBuilder", "c:\\dmoz\\");
 			
 			//load the entire tree from the DB
-			DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB(treeName);
+			DmozTreeNode dmozTree = DbDmozTreeOperator.loadTreeFromDB(treeName);
 			
 			//apply processors on the tree, and convert it
 			DmozTreeNode semplestTree = applyFilters(dmozTree);
@@ -45,6 +45,7 @@ public class SemplestTreeBuilder {
 			Long start = System.currentTimeMillis();
 			int count = 0;
 			for(List<AddSemplestTreeRequest> batch : batches){
+				Long startBatch = System.currentTimeMillis();
 				System.out.println(" - Storing batch #" + count);
 				try{
 					SemplestTreeDB.AddSemplestTree(batch);
@@ -53,10 +54,10 @@ public class SemplestTreeBuilder {
 					TreeFunctions.logError(e.getMessage());
 				}
 				count++;
-				System.out.println("	So far took " + (System.currentTimeMillis() - start)/1000 + " secs.");
+				System.out.println("	this batch took " + (System.currentTimeMillis() - startBatch)/1000 + " secs.");
 			}		
 				
-			System.out.println("In total took " + (System.currentTimeMillis() - start)/1000 + " secs.");		
+			System.out.println("In total took " + (System.currentTimeMillis() - start)/1000 + " secs.");	
 		}
 		catch(Exception e){
 			e.printStackTrace();

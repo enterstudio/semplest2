@@ -16,7 +16,7 @@ import semplest.dmoz.tree.TreeFunctions;
 import semplest.dmoz.tree.UrlDataObject;
 import semplest.util.SemplestUtils;
 
-public class DbTreeOperator extends BaseDB 
+public class DbDmozTreeOperator extends BaseDB 
 {
 	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 
@@ -182,13 +182,22 @@ public class DbTreeOperator extends BaseDB
 		sql = "SELECT SemplestPK,ParentNodeID,NodeText,UrlDataPK,URL,URLDescription FROM DMOZ t " +
 				"LEFT JOIN URLData u ON t.SemplestPK = u.SemplestFK " +
 				"WHERE t.NodeText = ?";
-		List<DbTreeNodeObject> topNodeList = jdbcTemplate.query(sql, new Object[]{categoryName}, dbTreeNodeObjectMapper);
-		if(topNodeList == null){
+		List<DbTreeNodeObject> topNodeEntries = jdbcTemplate.query(sql, new Object[]{categoryName}, dbTreeNodeObjectMapper);
+		if(topNodeEntries == null || topNodeEntries.size() == 0){
 			//the sub-node does not exist
 			throw new Exception("The input node " + categoryName + " does not exist in the database.");
 		}
 		DmozTreeNode topNode = new DmozTreeNode();
-		topNode.fromDbTreeNodeObject(topNodeList.get(0));
+		DbTreeNodeObject anEntry = topNodeEntries.get(0);
+		topNode.setNodeID(anEntry.getSemplestPK());
+		topNode.setParentID(anEntry.getParentNodeID());
+		topNode.setName(anEntry.getNodeText());		
+		for(DbTreeNodeObject entry : topNodeEntries){
+			Long urlID = entry.getUrlDataPK();
+			String url = entry.getURL();
+			String urlDesc = entry.getURLDescription();
+			topNode.addUrlData(urlID, url, urlDesc);
+		}
 		
 		//get all the nodes of the sub-tree
 		System.out.println("Getting tree data and Url data belong to node " + categoryName + " from database.");

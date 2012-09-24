@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import semplest.dmoz.springjdbc.BaseDB;
-import semplest.dmoz.tools.DbTreeOperator;
+import semplest.dmoz.tools.DbDmozTreeOperator;
 import semplest.dmoz.tools.DmozImporter;
 import semplest.dmoz.tree.DbTreeNodeObject;
 import semplest.dmoz.tree.DbUrlDataObject;
@@ -68,8 +68,8 @@ public class DmozDB extends BaseDB{
 		return urls;
 	}
 	
-	public static DmozTreeNode getTree(String categoryName) throws Exception{
-		return DbTreeOperator.loadTreeFromDB(categoryName);
+	public static DmozTreeNode getDmozTree(String categoryName) throws Exception{
+		return DbDmozTreeOperator.loadTreeFromDB(categoryName);
 	}
 	
 }

@@ -39,9 +39,9 @@ public class DmozUpdater {
 	public void updateNodesInDB() throws Exception{
 		setUniqueIdBase();
 		compareDbTreeAndNewTree();
-		DbTreeOperator.deleteTreeNodes(getNodesToBeDeleted());
-		DbTreeOperator.addTreeNodes(getNodesToBeAdded());
-		DbTreeOperator.updateUrlData(getNodesToUpdateUrlData());
+		DbDmozTreeOperator.deleteTreeNodes(getNodesToBeDeleted());
+		DbDmozTreeOperator.addTreeNodes(getNodesToBeAdded());
+		DbDmozTreeOperator.updateUrlData(getNodesToUpdateUrlData());
 		saveChangeToLog();
 	}
 	
@@ -59,7 +59,7 @@ public class DmozUpdater {
 	
 	public void compareDbTreeAndNewTree() throws Exception{
 		//Get the entire tree from DB
-		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB("top");		
+		DmozTreeNode dmozTree = DbDmozTreeOperator.loadTreeFromDB("top");		
 		Map<String,DmozTreeNode> dbTreeMap = TreeFunctions.getTreeInMap(dmozTree);
 		
 		//Get the new tree
@@ -185,7 +185,7 @@ public class DmozUpdater {
 	}
 	
 	public void setUniqueIdBase() throws Exception{
-		uniqueId = DbTreeOperator.getUniqueIdBase();
+		uniqueId = DbDmozTreeOperator.getUniqueIdBase();
 	}
 	
 	public void compareCidFiles() throws Exception{		

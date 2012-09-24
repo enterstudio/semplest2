@@ -12,7 +12,7 @@ import semplest.dmoz.pruning.DmozToSemplestTreeConverter;
 import semplest.dmoz.pruning.MiddleCharDigNodeBypassFilter;
 import semplest.dmoz.pruning.NorthAmericaUSMergingFilter;
 import semplest.dmoz.pruning.RegionalRemovalFilter;
-import semplest.dmoz.tools.DbTreeOperator;
+import semplest.dmoz.tools.DbDmozTreeOperator;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.process.NodeCountProcessor;
 
@@ -29,7 +29,7 @@ public class testPruningLogic {
 	
 	public void compareTwoTrees() throws Exception{
 		//get original tree
-		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB("top");
+		DmozTreeNode dmozTree = DbDmozTreeOperator.loadTreeFromDB("top");
 		
 		NodeCountProcessor semplestCountNodeTreeProc = new NodeCountProcessor();
 		semplestCountNodeTreeProc.analyzeTree(dmozTree);

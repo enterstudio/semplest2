@@ -53,7 +53,7 @@ public class DmozImporter
 		
 		System.out.println("Done.");
 		
-		DbTreeOperator.addTreeNodes(dmozTreeNodes);
+		DbDmozTreeOperator.addTreeNodes(dmozTreeNodes);
 		
 		TreeFunctions.endLogError();
 	}

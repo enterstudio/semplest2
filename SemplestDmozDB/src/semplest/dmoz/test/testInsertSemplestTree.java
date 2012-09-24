@@ -17,7 +17,7 @@ import semplest.dmoz.pruning.DmozToSemplestTreeConverter;
 import semplest.dmoz.pruning.NorthAmericaUSMergingFilter;
 import semplest.dmoz.pruning.RegionalRemovalFilter;
 import semplest.dmoz.springjdbc.BaseDB;
-import semplest.dmoz.tools.DbTreeOperator;
+import semplest.dmoz.tools.DbDmozTreeOperator;
 import semplest.dmoz.tree.DmozTreeNode;
 import semplest.dmoz.tree.TreeFunctions;
 import semplest.dmoz.tree.UrlDataObject;
@@ -30,7 +30,7 @@ public class testInsertSemplestTree extends BaseDB{
 			testInsertSemplestTree test = new testInsertSemplestTree();
 			test.insertTreeToDB();
 			/*
-			DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB("top");
+			DmozTreeNode dmozTree = DbDmozTreeOperator.loadTreeFromDB("top");
 			List<DmozTreeNode> treeNodes = TreeFunctions.getTreeInList(dmozTree);
 			AddSemplestTree(treeNodes);
 			*/
@@ -41,7 +41,7 @@ public class testInsertSemplestTree extends BaseDB{
 	
 	public void insertTreeToDB() throws Exception{
 		//load the entire tree from the DB
-		DmozTreeNode dmozTree = DbTreeOperator.loadTreeFromDB("top/business/financial_services");
+		DmozTreeNode dmozTree = DbDmozTreeOperator.loadTreeFromDB("top/business/financial_services");
 		
 		//apply processors on the tree, and convert it
 		//TODO				

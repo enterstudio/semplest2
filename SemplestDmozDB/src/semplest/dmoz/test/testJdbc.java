@@ -10,7 +10,7 @@ public class testJdbc {
 		try {
 			
 			Long start = System.currentTimeMillis();
-			DmozTreeNode dmozTree = DmozDB.getTree("top/business/financial_services");
+			DmozTreeNode dmozTree = DmozDB.getDmozTree("top/business/financial_services");
 			
 			System.out.println("===> " + (System.currentTimeMillis() - start)/1000);
 			
