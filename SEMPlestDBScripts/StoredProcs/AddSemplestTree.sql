@@ -20,40 +20,36 @@ AS
 BEGIN TRY
 	SET NOCOUNT ON;
 	DECLARE @url varchar(1000), @urlID int, @domainID int
+	
+	insert into SemplestTreeTemp(SemplestPK, URLPK, Domain) values (@DMOZSemplestPK, @DMOZURLDataPK, @Domain)
+	
+	
+	/*
 	begin transaction
 	
-	--add the data to the Semplest treefrom DMOZ
+	--insert into semplest tree
 	insert into SemplestTree(SemplestPK, DMOZCategoryID,NodeText,ParentNodeID,NodeDescription)
-	select d.SemplestPK, d.DMOZCategoryID,d.NodeText,d.ParentNodeID,d.NodeDescription from DMOZ d where d.SemplestPK = @DMOZSemplestPK
-	
-	--get the domain
-	if not exists (select * from Domain d where d.Domain = @Domain)
-	BEGIN
-		insert into Domain(Domain) values (@Domain)
-		set @domainID = @@IDENTITY
-	END 
-	ELSE
-	BEGIN
-		select @domainID = d.DomainPK from Domain d where d.Domain = @Domain
-	END
-	--if the URL does not exist then add it
-	select @url = ud.URL from URLData ud where ud.UrlDataPK = @DMOZURLDataPK
-	if not exists (select * from SemplestURLData sud where sud.URL = @url)
-	BEGIN
-		insert into SemplestURLData(URL, URLDescription, DomainFK) 
-			select ud.URL, ud.URLDescription, @domainID from URLData ud where ud.UrlDataPK = @DMOZURLDataPK
-		set @urlID = @@IDENTITY	
-	END
-	ELSE --url exists
-	BEGIN
-		select @urlID = sud.UrlDataPK from SemplestURLData sud where sud.URL = @url
-	END
-	
-	--Associate Semplest Node to URL
+	select d.SemplestPK, d.DMOZCategoryID,d.NodeText,d.ParentNodeID,d.NodeDescription from DMOZ d 
+	inner join (select stt.SemplestPK from SemplestTreeTemp stt group by stt.SemplestPK) stt on stt.SemplestPK = d.SemplestPK
+
+--insert domain 
+	insert into Domain(Domain) select stt.Domain from SemplestTreeTemp stt group by stt.Domain
+
+--URL
+	insert into SemplestURLData(URL, URLDescription, DomainFK) 
+	select ud.URL, ud.URLDescription, d.DomainPK from URLData ud 
+	inner join SemplestTreeTemp stt on stt.URLPK = ud.UrlDataPK
+	inner join Domain d on d.Domain = stt.Domain
+	group by ud.URL, ud.URLDescription, d.DomainPK
+
+--Associations
 	insert into NodeURLAssociation(SemplestFK, URLDataFK, [Level], ParentURLDataID)
-		select @DMOZSemplestPK, @urlID, ud.Level,ud.ParentURLDataID from URLData ud where ud.UrlDataPK = @DMOZURLDataPK
+	select stt.SemplestPK, sud.UrlDataPK, ud.Level, ud.ParentURLDataID from SemplestTreeTemp stt
+	inner join URLData ud on ud.UrlDataPK = stt.URLPK and ud.SemplestFK = stt.SemplestPK
+	inner join SemplestURLData sud on sud.URL = ud.URL
 	
 	commit transaction
+	*/
 	
 END TRY
 BEGIN CATCH
