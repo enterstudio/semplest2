@@ -43,10 +43,8 @@ BEGIN TRY
 	group by ud.URL, d.DomainPK
 	
 	update SemplestURLData set URLDescription = ud.URLDescription
-	from URLData ud 
+	from URLData ud 	
 	inner join SemplestURLData sud on sud.URL = ud.URL
-	inner join SemplestTreeTemp stt on stt.URLPK = ud.UrlDataPK
-	inner join Domain d on d.Domain = stt.Domain 
 
 --Associations
 	insert into NodeURLAssociation(SemplestFK, URLDataFK, [Level], ParentURLDataID)
