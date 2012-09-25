@@ -301,7 +301,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	 * AdGroup and Ads
 	 */
 	@Override
-	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception
+	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid, Boolean isAutoBid) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -309,6 +309,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		jsonHash.put("AdGroupName", AdGroupName);
 		jsonHash.put("status", status.getValue());
 		jsonHash.put("defaultMicroBid", String.valueOf(defaultMicroBid));
+		jsonHash.put("isAutoBid", String.valueOf(isAutoBid));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "AddAdGroup", json,timeoutMS);
@@ -684,7 +685,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 	@Override
 	public Boolean addUpdateKeywords(String accountID, Long campaignID, Long adGroupID,
-			Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount)
+			Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount, Boolean isAutoBid)
 			throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -699,7 +700,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public Map<GoogleAddKeywordRequest, Long> addKeywords(String accountId, Long adGroupId, List<GoogleAddKeywordRequest> requests, final Integer promotionID) throws Exception
+	public Map<GoogleAddKeywordRequest, Long> addKeywords(String accountId, Long adGroupId, List<GoogleAddKeywordRequest> requests, final Integer promotionID, final Boolean isAutoBid) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

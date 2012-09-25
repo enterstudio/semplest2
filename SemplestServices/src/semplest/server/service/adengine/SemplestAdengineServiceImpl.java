@@ -171,8 +171,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 */
 			// Schedule for next day at the same time
 
-			//adEng.ExecuteBidProcess(288, Arrays.asList(AdEngine.Google));
-			adEng.AddPromotionToAdEngine(16, 227, 325, Arrays.asList(AdEngine.MSN, AdEngine.Google));
+			//adEng.ExecuteBidProcess(339, Arrays.asList(AdEngine.Google));
+			adEng.AddPromotionToAdEngine(16, 241, 339, Arrays.asList(AdEngine.Google));
 
 			/*
 			 * Date now = new Date(); cal.setTime(now); // get yesterday cal.add(Calendar.DAY_OF_MONTH, -1); Date yesterday = cal.getTime();
@@ -394,7 +394,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					emailMessageSB.append("\t").append("Created AdEngine Campaign ID: ").append(campaignID).append("\n");
 					SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, monthlyBudget, dailyBudget);
 					// Create Ad group and Ads
-					final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
+					final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid(), isAutoBid);
 					final Long adGroupId = adGroupData.getAdGroupID();
 					emailMessageSB.append("\t").append("Created AdEngine AdGroup ID: ").append(adGroupId).append("\n");
 					storeAdGroupData(advertisingEngine, campaignID, adGroupData);
@@ -404,16 +404,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					emailMessageSB.append("\t").append("Keywords").append("\n");
 					final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 					emailMessageSB.append("\t\t").append("Match Type: ").append(semplestMatchType).append("\n");
-					addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupId, advertisingEngine, keywordList, semplestMatchType, null, emailMessageSB);
+					addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupId, advertisingEngine, keywordList, semplestMatchType, null, emailMessageSB, isAutoBid);
 					// Set initial bidding
 					final BudgetObject budgetData = new BudgetObject();
 					budgetData.setRemainingBudgetInCycle(monthlyBudget);
-					budgetData.setRemainingDays(daysLeft);
-
-					logger.info("About to Set Initial Bids for " + advertisingEngine);
-					bidClient.setBidsInitial(PromotionID, advertisingEngine, budgetData);
-					logger.info("Done setting Initial Bids for " + advertisingEngine);
-
+					budgetData.setRemainingDays(daysLeft);					
+					if (advertisingEngine == AdEngine.Google && isAutoBid)
+					{
+						logger.info("Currently processing Google and IsAutoBid=true, so NOT doing intitial bidding for PromotionID [" + PromotionID + "]");
+					}
+					else
+					{
+						logger.info("About to Set Initial Bids for " + advertisingEngine);
+						bidClient.setBidsInitial(PromotionID, advertisingEngine, budgetData);
+						logger.info("Done setting Initial Bids for " + advertisingEngine);
+					}
 					// Schedule ongoing bidding
 					final String scheduleName = getPromoDataSP.getPromotionData().getPromotionName() + "_OnGoingBidding";
 					cal.setTime(new Date());
@@ -821,10 +826,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return addKeywordRequests;
 	}
 
-	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, AdEngine adEngine, List<KeywordProbabilityObject> keywordList, final String semplestMatchType, Long microBidAmount, final StringBuilder emailMessageSB) throws Exception
+	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, AdEngine adEngine, List<KeywordProbabilityObject> keywordList, final String semplestMatchType, Long microBidAmount, final StringBuilder emailMessageSB, final Boolean isAutoBid) throws Exception
 	{
 		logger.info("Will try to add keywords to ad group for AccountID [" + accountID + "], CampaignID [" + campaignID + "], PromotionID [" + promotionID + "], AdGroupID [" + adGroupID + "], AdEngine [" + adEngine + "], SemplestMatchType [" + semplestMatchType + "], MicroBidAmount ["
-				+ microBidAmount + "], " + keywordList.size() + " Keywords [<not printing because can be way too many to realistically print>]");
+				+ microBidAmount + "], " + keywordList.size() + " Keywords [<not printing because can be way too many to realistically print>], IsAutoBid [" + isAutoBid + "]");
 		AddBidSP addKeywordBidSP = new AddBidSP();
 		if (adEngine == AdEngine.Google)
 		{
@@ -875,7 +880,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
 			for (final List<GoogleAddKeywordRequest> requestBatch : positiveKeywordRequestBatches)
 			{
-				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch, promotionID);
+				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch, promotionID, isAutoBid);
 				requestToGoogleIdMap.putAll(requestToGoogleIdMapForBatch);
 			}
 			final Integer numPositiveKeywordsAdded = requestToGoogleIdMap.size();
@@ -1048,9 +1053,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return nonDeletedAds;
 	}
 
-	private AdgroupData createAdGroupAndAds(String accountID, Long campaignID, AdEngine adEngine, AdGroupStatus status, GetAllPromotionDataSP getPromoDataSP, Long defaultMicroBid) throws Exception
+	private AdgroupData createAdGroupAndAds(String accountID, Long campaignID, AdEngine adEngine, AdGroupStatus status, GetAllPromotionDataSP getPromoDataSP, Long defaultMicroBid, Boolean isAutoBid) throws Exception
 	{
-		logger.info("Will try AdGroup and Ads for AccountID [" + accountID + "], CampaignID [" + campaignID + "], AdEngine [" + adEngine + "], AdGroupStatus [" + status + "], DefaultMicroBid [" + defaultMicroBid + "]");
+		logger.info("Will try AdGroup and Ads for AccountID [" + accountID + "], CampaignID [" + campaignID + "], AdEngine [" + adEngine + "], AdGroupStatus [" + status + "], DefaultMicroBid [" + defaultMicroBid + "], IsAutoBid [" + isAutoBid + "]");
 		AdgroupData adGrpData = new AdgroupData();
 		List<AdsObject> adList = getPromoDataSP.getAds();
 		PromotionObj promotionData = getPromoDataSP.getPromotionData();
@@ -1063,7 +1068,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (adEngine == AdEngine.Google)
 		{
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			final Long adGroupID = google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status, defaultMicroBid);
+			final Long adGroupID = google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status, defaultMicroBid, isAutoBid);
 			adGrpData.setAdGroupID(adGroupID);
 			final List<GoogleAddAdRequest> textRequests = new ArrayList<GoogleAddAdRequest>();
 			for (AdsObject ad : nonDeletedAds)
@@ -2109,7 +2114,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs");
 		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString, SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
-		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);		
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
 		AddNegativeKeywords(promotionID, keywordIdRemoveOppositePairs, adEngines);
@@ -2123,6 +2128,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
 		final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		final Boolean isAutoBid = promotionData.getIsAutobid();
 		final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
@@ -2154,7 +2160,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
 				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
 				final GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-				final Boolean processedSuccessfully = google.addUpdateKeywords(accountID, campaignID, adGroupID, keywordToRemoveOppositeMap, keywordMatchType, null);
+				final Boolean processedSuccessfully = google.addUpdateKeywords(accountID, campaignID, adGroupID, keywordToRemoveOppositeMap, keywordMatchType, null, isAutoBid);
 				if (processedSuccessfully)
 				{
 					logger.info("Processed successfully");
@@ -2367,6 +2373,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		final Boolean ret = getPromoDataSP.execute(promotionID);
 		final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		final Boolean isAutoBid = promotionData.getIsAutobid();
 		final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
 		final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
@@ -2395,7 +2402,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long campaignID = adEngineData.getCampaignID();
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
 				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
-				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, semplestMatchType, null, new StringBuilder());
+				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, semplestMatchType, null, new StringBuilder(), isAutoBid);
 			}
 			else if (AdEngine.MSN == adEngine)
 			{

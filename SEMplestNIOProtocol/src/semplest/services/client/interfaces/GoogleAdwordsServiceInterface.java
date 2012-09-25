@@ -53,7 +53,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception;
 	Boolean ChangeCampaignStartDate(String accountID, Long campaignID, java.util.Date newStartDate) throws Exception;
 	
-	Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception;
+	Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid, Boolean isAutoBid) throws Exception;
 	Map<GoogleAddAdRequest, Long> addTextAds(GoogleAddAdsRequest request) throws Exception;
     List<GoogleViolation> validateAd(String accountID,Long adgroupID,String landingPageURL, String displayURL,String headline,String description1,String description2) throws Exception;	
 	GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception;
@@ -68,11 +68,11 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	GoogleRelatedKeywordObject GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
 	String[] getAllAdGroupKeywords(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
 		
-	Boolean addUpdateKeywords(String accountID, Long campaignID, Long adGroupID, Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount) throws Exception;
+	Boolean addUpdateKeywords(String accountID, Long campaignID, Long adGroupID, Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount, Boolean isAutoBid) throws Exception;
 	Boolean deleteNegativeKeywords(String accountID, Long campaignID, List<String> keywords, KeywordMatchType matchType) throws Exception;
 	KeywordDataObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
 	KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
-	Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> requests, Integer promotionID) throws Exception;
+	Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> requests, Integer promotionID, Boolean isAutoBid) throws Exception;
 	Boolean deleteKeyWords(String accountID, Long adGroupID, List<String> keywords) throws Exception;
 	KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, KeywordProbabilityObject negativeKeyword, KeywordMatchType matchType, Integer promotionID) throws Exception;
 	List<GoogleViolation> validateNegativeKeywords(final String validationAccountID, final Long validationCampaignId, final List<String> negativeKeywords) throws Exception;

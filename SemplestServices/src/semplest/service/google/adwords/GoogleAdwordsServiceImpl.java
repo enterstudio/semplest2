@@ -745,14 +745,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
 		Long defaultMicroBid = Long.parseLong(data.get("defaultMicroBid"));
-		Long adGroupID = AddAdGroup(data.get("accountID"), campaignID, data.get("AdGroupName"), AdGroupStatus.fromString(data.get("status")), defaultMicroBid);
+		Boolean isAutoBid = Boolean.parseBoolean(data.get("isAutoBid"));
+		Long adGroupID = AddAdGroup(data.get("accountID"), campaignID, data.get("AdGroupName"), AdGroupStatus.fromString(data.get("status")), defaultMicroBid, isAutoBid);
 		return gson.toJson(adGroupID);
 	}
 
 	@Override
-	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception
+	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid, Boolean isAutoBid) throws Exception
 	{
-		logger.info("Will try to Add AdGroup for AccountID [" + accountID + "], CampaignID [" + campaignID + "], AdGroupName [" + AdGroupName + "], AdGroupStatus [" + status + "], DefaultMicroBid [" + defaultMicroBid + "]");
+		logger.info("Will try to Add AdGroup for AccountID [" + accountID + "], CampaignID [" + campaignID + "], AdGroupName [" + AdGroupName + "], AdGroupStatus [" + status + "], DefaultMicroBid [" + defaultMicroBid + "], IsAutoBid [" + isAutoBid + "]");
 		try
 		{
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -761,11 +762,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			adGroup.setName(AdGroupName);
 			adGroup.setStatus(status);
 			adGroup.setCampaignId(campaignID);
-			final ManualCPCAdGroupBids adGroupBids = new ManualCPCAdGroupBids();
-			final Money money = new Money();
-			money.setMicroAmount(defaultMicroBid);
-			adGroupBids.setKeywordMaxCpc(new Bid(money));
-			adGroup.setBids(adGroupBids);
+			
+			if (isAutoBid != null && isAutoBid != Boolean.TRUE)
+			{
+				final ManualCPCAdGroupBids adGroupBids = new ManualCPCAdGroupBids();						
+				final Money money = new Money();
+				money.setMicroAmount(defaultMicroBid);
+				adGroupBids.setKeywordMaxCpc(new Bid(money));
+				adGroup.setBids(adGroupBids);
+			}
+			
 			final AdGroupOperation operation = new AdGroupOperation();
 			operation.setOperand(adGroup);
 			operation.setOperator(Operator.ADD);
@@ -1523,7 +1529,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return gson.toJson(res);
 	}
 
-	public List<AdGroupCriterionOperation> getAddKeywordOperations(final Long adGroupId, final List<GoogleAddKeywordRequest> requests)
+	public List<AdGroupCriterionOperation> getAddKeywordOperations(final Long adGroupId, final List<GoogleAddKeywordRequest> requests, final Boolean isAutoBid)
 	{
 		final List<AdGroupCriterionOperation> addKeywordOperations = new ArrayList<AdGroupCriterionOperation>();
 		for (final GoogleAddKeywordRequest request : requests)
@@ -1531,7 +1537,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final String keywordString = request.getKeyword();
 			final KeywordMatchType matchType = request.getMatchType();
 			final Long microBidAmount = request.getMicroBidAmount();
-			final AdGroupCriterionOperation addKeywordOperation = getRegularKeywordAddOperation(adGroupId, keywordString, matchType, microBidAmount, true);
+			final AdGroupCriterionOperation addKeywordOperation = getRegularKeywordAddOperation(adGroupId, keywordString, matchType, microBidAmount, true, isAutoBid);
 			addKeywordOperations.add(addKeywordOperation);
 		}
 		return addKeywordOperations;
@@ -1551,13 +1557,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return null;
 	}
 
-	public List<GoogleAddKeywordRequest> getValidatedGoogleAddKeywordRequests(final List<GoogleAddKeywordRequest> requests) throws Exception
+	public List<GoogleAddKeywordRequest> getValidatedGoogleAddKeywordRequests(final List<GoogleAddKeywordRequest> requests, final Boolean isAutoBid) throws Exception
 	{
-		logger.info("Will try to validate adding " + requests.size() + " keywords");
-
+		logger.info("Will try to validate adding " + requests.size() + " keywords with IsAutoBid [" + isAutoBid + "]");
 		final AdWordsUser user = new AdWordsUser(email, password, "" + AdwordsValidationAccountID, userAgent, developerToken, useSandbox);
 		final AdGroupCriterionServiceInterface adGroupCriterionService = user.getValidationService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
-		final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(AdwordsValidationAdGroupID, requests);
+		final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(AdwordsValidationAdGroupID, requests, isAutoBid);
 		final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
 		final AdGroupCriterionMutateRetriableFilterableGoogleOperation retriableFilterableOperation = new AdGroupCriterionMutateRetriableFilterableGoogleOperation(adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
 		final AdGroupCriterionReturnValue regularKeywordResult = retriableFilterableOperation.performOperation();
@@ -1629,14 +1634,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> originalRequests, final Integer promotionID) throws Exception
+	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> originalRequests, final Integer promotionID, final Boolean isAutoBid) throws Exception
 	{
-		logger.info("Will try to Add Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + originalRequests.size() + " GoogleAddKeywordRequests:\n" + SemplestUtils.getEasilyReadableString(originalRequests));
+		logger.info("Will try to Add Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], IsAutoBid [" + isAutoBid + "], " + originalRequests.size() + " GoogleAddKeywordRequests:\n" + SemplestUtils.getEasilyReadableString(originalRequests));
 		try
 		{
-			final List<GoogleAddKeywordRequest> requests = getValidatedGoogleAddKeywordRequests(originalRequests);
+			final List<GoogleAddKeywordRequest> requests = getValidatedGoogleAddKeywordRequests(originalRequests, isAutoBid);
 			final Map<GoogleAddKeywordRequest, Long> requestToIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
-			final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(adGroupId, requests);
+			final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(adGroupId, requests, isAutoBid);
 			final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
 			final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
 			final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
@@ -2684,7 +2689,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return operation;
 	}
 
-	public static AdGroupCriterionOperation getRegularKeywordUpdateOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Long criterionId, Boolean isActive)
+	public static AdGroupCriterionOperation getRegularKeywordUpdateOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Long criterionId, Boolean isActive, Boolean isAutoBid)
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(keywordString);
@@ -2694,19 +2699,22 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
 		keywordBiddableAdGroupCriterion.setCriterion(keyword);
 		keywordBiddableAdGroupCriterion.setUserStatus((isActive == true)? UserStatus.ACTIVE : UserStatus.PAUSED);
-		final ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
-		final Money money = new Money();
-		money.setMicroAmount(microBidAmount);
-		final Bid moneyBid = new Bid(money);
-		bid.setMaxCpc(moneyBid);
-		keywordBiddableAdGroupCriterion.setBids(bid);
+		if (isAutoBid != Boolean.TRUE)
+		{
+			final ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
+			final Money money = new Money();
+			money.setMicroAmount(microBidAmount);
+			final Bid moneyBid = new Bid(money);
+			bid.setMaxCpc(moneyBid);
+			keywordBiddableAdGroupCriterion.setBids(bid);
+		}
 		final AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
 		operation.setOperand(keywordBiddableAdGroupCriterion);
 		operation.setOperator(Operator.ADD);
 		return operation;
 	}
 
-	public static AdGroupCriterionOperation getRegularKeywordAddOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Boolean isActive)
+	public static AdGroupCriterionOperation getRegularKeywordAddOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Boolean isActive, Boolean isAutoBid)
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(keywordString);
@@ -2715,12 +2723,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
 		keywordBiddableAdGroupCriterion.setCriterion(keyword);
 		keywordBiddableAdGroupCriterion.setUserStatus((isActive == true)? UserStatus.ACTIVE : UserStatus.PAUSED);
-		final ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
-		final Money money = new Money();
-		money.setMicroAmount(microBidAmount);
-		final Bid moneyBid = new Bid(money);
-		bid.setMaxCpc(moneyBid);
-		keywordBiddableAdGroupCriterion.setBids(bid);
+		if (isAutoBid != Boolean.TRUE)
+		{
+			final ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
+			final Money money = new Money();
+			money.setMicroAmount(microBidAmount);
+			final Bid moneyBid = new Bid(money);
+			bid.setMaxCpc(moneyBid);
+			keywordBiddableAdGroupCriterion.setBids(bid);
+		}
 		final AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
 		operation.setOperand(keywordBiddableAdGroupCriterion);
 		operation.setOperator(Operator.ADD);
@@ -2728,7 +2739,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	public void populateKeywordOperations(Long campaignID, Long adGroupID, Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount, List<AdGroupCriterionOperation> regularKeywordOperations,
-			List<CampaignCriterionOperation> negativeKeywordOperations, Map<String, Long> existingRegularKeywordsToCriterionIdMap, Map<String, Long> existingNegativeKeywordsToCriterionIdMap)
+			List<CampaignCriterionOperation> negativeKeywordOperations, Map<String, Long> existingRegularKeywordsToCriterionIdMap, Map<String, Long> existingNegativeKeywordsToCriterionIdMap, Boolean isAutoBid)
 	{
 		final Set<Entry<KeywordProbabilityObject, Boolean>> entrySet = keywordProbabilityToRemoveOppositeMap.entrySet();
 		for (final Entry<KeywordProbabilityObject, Boolean> entry : entrySet)
@@ -2776,11 +2787,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					{
 						throw new RuntimeException("CriterionID is null for Keyword [" + keywordString + "]");
 					}
-					regularKeywordAddUpdateOperation = getRegularKeywordUpdateOperation(adGroupID, keywordString, matchType, microBidAmount, criterionId, isActive);
+					regularKeywordAddUpdateOperation = getRegularKeywordUpdateOperation(adGroupID, keywordString, matchType, microBidAmount, criterionId, isActive, isAutoBid);
 				}
 				else
 				{
-					regularKeywordAddUpdateOperation = getRegularKeywordAddOperation(adGroupID, keywordString, matchType, microBidAmount, isActive);
+					regularKeywordAddUpdateOperation = getRegularKeywordAddOperation(adGroupID, keywordString, matchType, microBidAmount, isActive, isAutoBid);
 				}
 				regularKeywordOperations.add(regularKeywordAddUpdateOperation);
 				if (removeOpposite)
@@ -2860,9 +2871,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public Boolean addUpdateKeywords(String accountID, Long campaignID, Long adGroupID, Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount) throws Exception
+	public Boolean addUpdateKeywords(String accountID, Long campaignID, Long adGroupID, Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount, Boolean isAutoBid) throws Exception
 	{
-		logger.info("Will try to Add/Update Keywords for AccountID [" + accountID + "], AgGroupID [" + adGroupID + "], KeywordMatchType [" + matchType + "], MicroBidAmount [" + microBidAmount + "], " + keywordProbabilityToRemoveOppositeMap.size() + " Map of KeywordProbabilities<->RemoveOpposite:\n"
+		logger.info("Will try to Add/Update Keywords for AccountID [" + accountID + "], AgGroupID [" + adGroupID + "], KeywordMatchType [" + matchType + "], MicroBidAmount [" + microBidAmount + "], IsAutoBid [" + isAutoBid + "], " + keywordProbabilityToRemoveOppositeMap.size() + " Map of KeywordProbabilities<->RemoveOpposite:\n"
 				+ SemplestUtils.getEasilyReadableString(keywordProbabilityToRemoveOppositeMap));
 		try
 		{
@@ -2872,7 +2883,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					+ "]");
 			final List<AdGroupCriterionOperation> regularKeywordOperationList = new ArrayList<AdGroupCriterionOperation>();
 			final List<CampaignCriterionOperation> negativeKeywordOperationList = new ArrayList<CampaignCriterionOperation>();
-			populateKeywordOperations(campaignID, adGroupID, keywordProbabilityToRemoveOppositeMap, matchType, microBidAmount, regularKeywordOperationList, negativeKeywordOperationList, existingRegularKeywordsToCriterionIdMap, existingNegativeKeywordsToCriterionIdMap);
+			populateKeywordOperations(campaignID, adGroupID, keywordProbabilityToRemoveOppositeMap, matchType, microBidAmount, regularKeywordOperationList, negativeKeywordOperationList, existingRegularKeywordsToCriterionIdMap, existingNegativeKeywordsToCriterionIdMap, isAutoBid);
 			logger.info("Out of " + keywordProbabilityToRemoveOppositeMap.size() + " KeywordProbabilities<->RemoveOpposite Mappings, generated " + regularKeywordOperationList.size() + " RegularKeyword Operations and " + negativeKeywordOperationList.size() + " NegativeKeyword Operations");
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			if (regularKeywordOperationList.isEmpty())
@@ -3761,7 +3772,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	
 	public Long getUsaLocationId()
 	{
-		return 2480L;
+		return 2840L;
 	}
 	
 	public Long getLocationId(final String state) throws Exception  
@@ -3868,11 +3879,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		final String operationDescription = "Add Geo Locations for AccountID [" + accountId + "], CampaignID [" + campaignId + "], " + geoTargetVsTypeMap.size() + " Geo Locations";
 		logger.info("Will try to " + operationDescription);
-		if (geoTargetVsTypeMap.isEmpty())
-		{
-			logger.info("No GeoTarget data to add");
-			return;
-		}
 		final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
 		final CampaignCriterionServiceInterface campaignCriterionService;
 		try
