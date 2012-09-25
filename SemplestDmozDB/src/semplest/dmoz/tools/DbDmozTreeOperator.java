@@ -196,7 +196,9 @@ public class DbDmozTreeOperator extends BaseDB
 			Long urlID = entry.getUrlDataPK();
 			String url = entry.getURL();
 			String urlDesc = entry.getURLDescription();
-			topNode.addUrlData(urlID, url, urlDesc);
+			if(url != null){
+				topNode.addUrlData(urlID, url, urlDesc);
+			}
 		}
 		
 		//get all the nodes of the sub-tree

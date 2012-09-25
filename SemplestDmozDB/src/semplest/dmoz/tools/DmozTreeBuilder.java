@@ -88,7 +88,7 @@ public class DmozTreeBuilder {
 		}
 		in.close();
 
-		// 2 --load category description, and all urls/url descs.
+		// 2 --load category description, and all urlData/url descs.
 		fstream = new FileInputStream(categoryUrlsFile);
 		in = new DataInputStream(fstream);
 		br = new BufferedReader(new InputStreamReader(in));

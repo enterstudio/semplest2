@@ -29,6 +29,24 @@ public class DmozCategoryDataObject {
 		this.urlData = urlData;
 	}
 	
+	public List<Long> getUrlPKs(){
+		List<Long> urlPKs = new ArrayList<Long>();		
+		for(UrlDataObject data : urlData){
+			urlPKs.add(data.getUrlDataPK());
+		}
+		
+		return urlPKs;
+	}
+	
+	public List<String> getUrls(){
+		List<String> urls = new ArrayList<String>();		
+		for(UrlDataObject data : urlData){
+			urls.add(data.getUrl());
+		}
+		
+		return urls;
+	}
+	
 	public void addUrlData(List<UrlDataObject> urlData){
 		this.urlData.addAll(urlData);
 	}

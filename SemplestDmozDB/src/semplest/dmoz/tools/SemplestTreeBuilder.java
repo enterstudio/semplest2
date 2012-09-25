@@ -1,10 +1,12 @@
 package semplest.dmoz.tools;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import semplest.dmoz.DmozDB;
 import semplest.dmoz.SemplestTreeDB;
 import semplest.dmoz.objects.AddSemplestTreeRequest;
 import semplest.dmoz.pruning.CharDigLeafFilter;
@@ -22,14 +24,13 @@ public class SemplestTreeBuilder {
 	
 	public static void main(String[] args)
 	{		
-		try{			
-			String treeName = "top/business/financial_services";	
-			Integer maxBatchSize = 500;
+		try{		
+			String treeName = "top";	
 			
 			TreeFunctions.startLogError("SemplestTreeBuilder", "c:\\dmoz\\");
 			
 			//load the entire tree from the DB
-			DmozTreeNode dmozTree = DbDmozTreeOperator.loadTreeFromDB(treeName);
+			DmozTreeNode dmozTree = DmozDB.getDmozTree(treeName);
 			
 			//apply processors on the tree, and convert it
 			DmozTreeNode semplestTree = applyFilters(dmozTree);
@@ -38,26 +39,13 @@ public class SemplestTreeBuilder {
 			List<DmozTreeNode> semplestTreeNodes = TreeFunctions.getTreeInList(semplestTree);
 			List<AddSemplestTreeRequest> requests = formAddSemplestTreeRequest(semplestTreeNodes);
 			
-			//put the tree maps in database
-			List<List<AddSemplestTreeRequest>> batches = SemplestUtils.getBatches(requests, maxBatchSize);
-			
-			System.out.println("Start to store " + batches.size() + " batchs (of " + maxBatchSize + " node entries) to DB.");
-			Long start = System.currentTimeMillis();
-			int count = 0;
-			for(List<AddSemplestTreeRequest> batch : batches){
-				Long startBatch = System.currentTimeMillis();
-				System.out.println(" - Storing batch #" + count);
-				try{
-					SemplestTreeDB.AddSemplestTree(batch);
-				}
-				catch(Exception e){
-					TreeFunctions.logError(e.getMessage());
-				}
-				count++;
-				System.out.println("	this batch took " + (System.currentTimeMillis() - startBatch)/1000 + " secs.");
-			}		
-				
-			System.out.println("In total took " + (System.currentTimeMillis() - start)/1000 + " secs.");	
+			//write the data to a file
+			FileWriter writer = new FileWriter("c:\\dmoz\\SemplestTree.txt");
+			writer.write("");
+			for(AddSemplestTreeRequest req : requests){
+				writer.append(req.getDMOZSemplestPK() + "," + req.getDMOZURLDataPK() + "," + req.getDomain() + "\r\n");
+			}
+			writer.close();
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -95,7 +83,7 @@ public class SemplestTreeBuilder {
 			for(UrlDataObject urlData : list){				
 				AddSemplestTreeRequest request = new AddSemplestTreeRequest();
 				request.setDMOZSemplestPK(node.getNodeID());
-				request.setDMOZURLDataPK(urlData.getUrlDataPK());
+				request.setDMOZURLDataPK(urlData.getUrlDataPK());				
 				request.setDomain(getDomain(urlData.getUrl()));
 				
 				addSemplestTreeRequests.add(request);
@@ -106,7 +94,7 @@ public class SemplestTreeBuilder {
 	}	
 	
 	//helper method
-	private static String getDomain(String url)
+	private static String getDomain(String url) throws Exception
 	{
 		String[] parts = url.split("://");
 		String subUrl;
@@ -126,6 +114,47 @@ public class SemplestTreeBuilder {
 		}
 		
 		return domain;
+	}
+	
+	//verification method
+	public static void verifySemplestTree() throws Exception{
+		String treeName = "top";
+		DmozTreeNode dmozTree = DmozDB.getDmozTree(treeName);
+		DmozTreeNode semplestTree = applyFilters(dmozTree);
+		
+		System.out.println("Start to verify the Semplest Tree...");
+		
+		//randomly choose 100 nodes to verify the db
+		List<DmozTreeNode> semplestTreeNodes = TreeFunctions.getTreeInList(semplestTree);
+		for(int i = 0; i < 100; i++){
+			//choose random node
+			int randomNum = (int)(Math.random()*(semplestTreeNodes.size()-1)); 
+			DmozTreeNode randomNode = semplestTreeNodes.get(randomNum);
+			
+			Long nodeID = randomNode.getNodeID();
+			String nodeName = randomNode.getName();
+			
+			System.out.println("# " + i + ": Verifying node " + nodeID + "-" + nodeName);
+								
+			//get url info of the tree			
+			List<String> treeUrls = randomNode.getCategoryData().getUrls();			
+			//get url info from the db
+			List<String> DbUrls = DbSemplestTreeOperator.getUrlsByNode(nodeID);
+			
+			//compare the url info from tree and from db
+			if(treeUrls.size() != DbUrls.size()){
+				//number of urlData in tree and in db doesn't match
+				System.out.println("	ERROR: number of urlData in tree = " + treeUrls.size() + ", number of urlData in db = " + DbUrls.size());
+			}
+			for(String url : treeUrls){
+				if(!DbUrls.contains(url.trim())){
+					//there's an url missing in the db
+					System.out.println("	ERROR: url " + url + " is missing in the DB.");
+				}
+			}
+		}
+		
+		System.out.println("Done.");
 	}
 	
 }

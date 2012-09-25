@@ -2,20 +2,22 @@ package semplest.dmoz;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import semplest.dmoz.objects.AddSemplestTreeRequest;
 import semplest.dmoz.springjdbc.BaseDB;
-import semplest.dmoz.tree.DmozTreeNode;
+import semplest.dmoz.tools.DbSemplestTreeOperator;
 import semplest.dmoz.tree.UrlDataObject;
 
 public class SemplestTreeDB extends BaseDB{	
 		
-	public static void AddSemplestTree(final List<AddSemplestTreeRequest> addSemplestTreeRequests)
-	{				
+	public static void AddSemplestTree(final List<AddSemplestTreeRequest> addSemplestTreeRequests) throws Exception
+	{
 		//call the store proc in batch
 		String sql = "{call AddSemplestTree(?,?,?)}";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter()
@@ -34,6 +36,26 @@ public class SemplestTreeDB extends BaseDB{
 			{
 				return addSemplestTreeRequests.size();
 			}
-		});
+		});		
 	}
+	
+	public static Map<String,List<UrlDataObject>> getUrlsByDomain(String categoryName) throws Exception{
+		Map<String,List<UrlDataObject>> domainUrlsMap = new HashMap<String,List<UrlDataObject>>();
+		String sql;
+		
+		Set<Long> domainPKs = DbSemplestTreeOperator.getDomainPKsOfTree(categoryName);
+		
+		//for each domain, get all the urlData
+		for(Long domainPK : domainPKs){
+			sql = "SELECT u.UrlDataPK,u.URL FROM SemplestURLData u " +
+					"WHERE u.DomainFK = ?";
+			
+			List<UrlDataObject> urls = jdbcTemplate.queryForList(sql, new Object[]{domainPK}, UrlDataObject.class);
+			
+			domainUrlsMap.put(domainPK.toString(), urls);
+		}
+		
+		return domainUrlsMap;
+	}	
+	
 }
