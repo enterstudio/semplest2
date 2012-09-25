@@ -50,6 +50,7 @@ namespace Semplest.Core.Controllers
                 ((Credential)System.Web.HttpContext.Current.Session[SharedResources.SEMplestConstants.SESSION_USERID]).
                     UsersFK;
             cs.BillType = dbContext.Users.First(key => key.UserPK == userid).Customer.BillTypeFK;
+            cs.ProductGroup.AllowAutoBid = dbContext.Users.Single(key => key.UserPK == userid).Customer.AllowAutobid;
             return View(cs);
         }
 
