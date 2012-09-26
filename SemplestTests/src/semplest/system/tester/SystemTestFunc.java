@@ -245,13 +245,10 @@ public class SystemTestFunc extends BaseDB
 					"DELETE FROM PromotionAdengineStatus WHERE PromotionFK = ?;" + 
 					"DELETE FROM PromotionBidding WHERE PromotionFK = ?;" + 
 					"DELETE FROM TargetedDailyBudget WHERE PromotionFK = ?;" + 
-					"DELETE FROM CreditCardProfile WHERE PromotionFK = ?;" + 
-					"DELETE FROM CreditCardProfile WHERE PromotionFK = ?;" +
 					"DELETE FROM PromotionBudget WHERE PromotionFK = ?;" + 
-					"DELETE FROM Transactions WHERE CustomerFK = ?;" +
 					"DELETE FROM Promotion WHERE PromotionPK = ?;";
 
-			jdbcTemplate.update(sql, new Object[] { promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, SystemTestDataModel.semplestCustomerId, promoId});
+			jdbcTemplate.update(sql, new Object[] { promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId, promoId});
 
 			System.out.println("  	> deleted all the other data for PromotionID " + promoId);
 		}
