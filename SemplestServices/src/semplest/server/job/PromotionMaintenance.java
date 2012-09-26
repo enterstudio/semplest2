@@ -145,7 +145,7 @@ public class PromotionMaintenance
 		try
 		{
 			log.info("Starting Promotion Maintenance process");
-			PropertyConfigurator.configure("C:/SemplestAdengineService/properties/log4j_server.properties");
+			PropertyConfigurator.configure("properties/log4j_server.properties");
 			BasicConfigurator.configure();	
 			new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
