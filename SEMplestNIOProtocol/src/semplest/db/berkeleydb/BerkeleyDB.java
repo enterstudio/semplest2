@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import com.sleepycat.je.*;
 
 /* Utilities to store/retrieve key/value tuples in a Berkeley Database
- * This is the object/class version of bdb which is a simpler static version  
+ * This is the object/class version of BerkeleyDB_Static which is a simpler static version  
  *
- * cdb also allows duplicate keys, and allows alternate directories
+ * BerkeleyDB also allows duplicate keys, and allows alternate directories
  */
-public class cdb
+public class BerkeleyDB
 {
 
 	Environment e;
@@ -21,7 +21,7 @@ public class cdb
 
   // - Ctr ------------------------------------
   // Default ctr, Read-only no duplicate keys
-	public cdb(String dir, String id)
+	public BerkeleyDB(String dir, String id)
 	{
 		e = getEnv(dir, true);
 		db = getDB(id, e, true, false);
@@ -29,7 +29,7 @@ public class cdb
 	}
 
   // Full ctr, allows specifying Write, and duplicate keys
-	public cdb(String dir, String id, Boolean read, Boolean dups)
+	public BerkeleyDB(String dir, String id, Boolean read, Boolean dups)
 	{
 		e = getEnv(dir, read);
 		db = getDB(id, e, read, dups);
@@ -233,7 +233,7 @@ public class cdb
 	public static void readTest(String dir, String dbname) throws Exception
 	{
 		String key = "top/news/satire";
-		cdb db = new cdb(dir, dbname);
+		BerkeleyDB db = new BerkeleyDB(dir, dbname);
 		long st = System.currentTimeMillis();
 		Map<String, String> res = db.getAll();
 		String[] keys = db.getKeys();
@@ -244,14 +244,14 @@ public class cdb
 
 	public static void dupTest(String dir, String dbname) throws Exception
 	{
-		cdb db = new cdb(dir, dbname, false, true);
+		BerkeleyDB db = new BerkeleyDB(dir, dbname, false, true);
 		db.add("a", "10");
 		db.add("a", "20");
 		db.add("a", "30");
 		db.add("a", "50");
 		db.close();
 
-		db = new cdb(dir, dbname);
+		db = new BerkeleyDB(dir, dbname);
 		for (String s : db.gets("a"))
 		{
 			System.out.println(s);
@@ -261,7 +261,7 @@ public class cdb
 	// ---------------------------------------------------------------------
 	public static void main(String[] args) throws Exception
 	{
-		String dir = "/tmp/bdb/";
+		String dir = "/tmp/BerkeleyDB_Static/";
 		String dbname = "testd";
 		// createTest( dir, dbname );
 		// readTest( dir, dbname );
