@@ -14,6 +14,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import semplest.server.protocol.Job;
+import semplest.server.protocol.JobName;
+import semplest.server.service.springjdbc.SemplestDB;
 import semplest.util.SemplestUtils;
 
 public class Cleaner
@@ -64,5 +67,26 @@ public class Cleaner
 				}
 			}
 		}
+	}
+	
+	public static String lastRunAsExpected() throws Exception
+	{
+		final Job job = SemplestDB.getJob(JobName.CLEANER);
+		final java.util.Date lastRunTime = job.getLastRunTime();		
+		if (lastRunTime == null)
+		{
+			return null;
+		}
+		final java.util.Date now = new java.util.Date();
+		final long lastRunTimeMillis = lastRunTime.getTime();		
+		final long nowMillis = now.getTime();
+		final long timeDiffMillis = nowMillis - lastRunTimeMillis;
+		final long hoursDiff = timeDiffMillis / SemplestUtils.HOUR;
+		if (hoursDiff > 24)
+		{
+			final String errMsg = JobName.CLEANER + ": last successfully ran " + hoursDiff + " hours ago, which is more then the expected max limit of 24.  Something went wrong with the previous run.";
+			return errMsg;
+		}
+		return null;
 	}
 }

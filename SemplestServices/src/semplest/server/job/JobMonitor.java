@@ -33,6 +33,7 @@ public class JobMonitor
 	{
 		final List<String> errorMessages = new ArrayList<String>();
 		checkExpiredCredentialsEmailSender(errorMessages);
+		checkCleaner(errorMessages);
 		if (errorMessages.isEmpty())
 		{
 			log.info("All Jobs ran as expected");
@@ -46,12 +47,21 @@ public class JobMonitor
 		}
 	}
 	
+	public void checkCleaner(List<String> errorMessages) throws Exception
+	{
+		final String status = Cleaner.lastRunAsExpected();
+		if (status != null)
+		{
+			errorMessages.add(status + "\n");
+		}
+	}
+	
 	public void checkExpiredCredentialsEmailSender(List<String> errorMessages) throws Exception
 	{
-		final String expiredCredentialsEmailSenderStatus = ExpiredCredentialsEmailSender.lastRunAsExpected();
-		if (expiredCredentialsEmailSenderStatus != null)
+		final String status = ExpiredCredentialsEmailSender.lastRunAsExpected();
+		if (status != null)
 		{
-			errorMessages.add(expiredCredentialsEmailSenderStatus + "\n");
+			errorMessages.add(status + "\n");
 		}
 	}
 	
