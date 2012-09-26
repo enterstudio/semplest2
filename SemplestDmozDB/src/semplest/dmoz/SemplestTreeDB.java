@@ -2,19 +2,26 @@ package semplest.dmoz;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
 import semplest.dmoz.objects.AddSemplestTreeRequest;
 import semplest.dmoz.springjdbc.BaseDB;
 import semplest.dmoz.tools.DbSemplestTreeOperator;
+import semplest.dmoz.tree.DbTreeNodeObject;
 import semplest.dmoz.tree.UrlDataObject;
 
 public class SemplestTreeDB extends BaseDB{	
+	
+	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 		
 	public static void AddSemplestTree(final List<AddSemplestTreeRequest> addSemplestTreeRequests) throws Exception
 	{
@@ -37,22 +44,22 @@ public class SemplestTreeDB extends BaseDB{
 				return addSemplestTreeRequests.size();
 			}
 		});		
-	}
+	}	
 	
 	public static Map<String,List<UrlDataObject>> getUrlsByDomain(String categoryName) throws Exception{
 		Map<String,List<UrlDataObject>> domainUrlsMap = new HashMap<String,List<UrlDataObject>>();
-		String sql;
 		
-		Set<Long> domainPKs = DbSemplestTreeOperator.getDomainPKsOfTree(categoryName);
+		//get all the urls		
+		List<UrlDataObject> allUrlData = DbSemplestTreeOperator.getUrlsOfTree(categoryName);
 		
-		//for each domain, get all the urlData
-		for(Long domainPK : domainPKs){
-			sql = "SELECT u.UrlDataPK,u.URL FROM SemplestURLData u " +
-					"WHERE u.DomainFK = ?";
-			
-			List<UrlDataObject> urls = jdbcTemplate.queryForList(sql, new Object[]{domainPK}, UrlDataObject.class);
-			
-			domainUrlsMap.put(domainPK.toString(), urls);
+		//organize urls by domain
+		for(UrlDataObject urlData : allUrlData){
+			String domainID = urlData.getDomainFK().toString();
+			if(!domainUrlsMap.containsKey(domainID)){
+				List<UrlDataObject> urlList = new ArrayList<UrlDataObject>();
+				domainUrlsMap.put(domainID, urlList);
+			}
+			domainUrlsMap.get(domainID).add(urlData);			
 		}
 		
 		return domainUrlsMap;

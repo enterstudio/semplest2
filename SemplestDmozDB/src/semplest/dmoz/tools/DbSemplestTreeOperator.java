@@ -1,15 +1,18 @@
 package semplest.dmoz.tools;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import semplest.dmoz.DmozDB;
-import semplest.dmoz.springjdbc.BaseDB;
-import semplest.dmoz.tree.DmozTreeNode;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
-public class DbSemplestTreeOperator extends BaseDB{
+import semplest.dmoz.springjdbc.BaseDB;
+import semplest.dmoz.tree.UrlDataObject;
+
+public class DbSemplestTreeOperator extends BaseDB
+{	
+	private static RowMapper<UrlDataObject> urlDataObjectMapper = new BeanPropertyRowMapper<UrlDataObject>(UrlDataObject.class);
 	
 	public static List<Long> getNodeIDsOfTree(String categoryName) throws Exception{
 		//get all the nodeIDs of this sub-tree
@@ -33,10 +36,18 @@ public class DbSemplestTreeOperator extends BaseDB{
 		Set<Long> domainPkSet = new HashSet<Long>();		
 		String sql;		
 		
+		System.out.println("Getting nodeIDs of the tree...");
+		
 		List<Long> nodeIDs = getNodeIDsOfTree(categoryName);
+		
+		System.out.println("Done.");
 				
+		System.out.println("Getting domainPKs of the nodes...");
+		
 		//for each node, get its domain list
 		for(Long nodeID : nodeIDs){			
+			System.out.println("getting domainPKs of node " + nodeID);
+			
 			sql = "SELECT d.DomainPK FROM Domain d " +
 					"INNER JOIN SemplestURLData u ON d.DomainPK = u.DomainFK " +
 					"INNER JOIN NodeURLAssociation n ON n.URLDataFK = u.UrlDataPK " +
@@ -49,7 +60,25 @@ public class DbSemplestTreeOperator extends BaseDB{
 			}
 		}		
 		
+		System.out.println("Done.");
+		
 		return domainPkSet;
+	}
+	
+	public static List<UrlDataObject> getUrlsOfTree(String categoryName) throws Exception
+	{		
+		String sql;
+		String topNodeText = categoryName;
+		String childrenNodesPattern = categoryName + "/%";
+		
+		sql = "SELECT su.UrlDataPK,su.URL,su.DomainFK FROM SemplestURLData su " +
+				"INNER JOIN NodeURLAssociation nua ON su.UrlDataPK = nua.URLDataFK " +
+				"INNER JOIN SemplestTree st ON st.SemplestPK = nua.SemplestFK " +
+				"WHERE NodeText = ? or NodeText like ? ";
+		
+		List<UrlDataObject> allUrlData = jdbcTemplate.query(sql, new Object[]{topNodeText,childrenNodesPattern}, urlDataObjectMapper);
+		
+		return allUrlData;
 	}
 	
 	public static List<Long> getUrlPKsByNode(Long nodeID) throws Exception
