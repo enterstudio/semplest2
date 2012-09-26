@@ -223,7 +223,7 @@
   	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />	  	 			
   	 	</copy>
 		
-		<delete file="${lib}/lucene-core-3.5.0.jar"/>   <!-- temp code!!! remove the lucene-core-3.5.0.jar to compile the services -->
+		<delete file="${lib}/lucene-core-3.5.0.jar"/>   <!--nxnx temp code!!! remove the lucene-core-3.5.0.jar to compile the services -->
 	
 		<!-- compile SemplestServices just for creating the keywords jar -->		
 		<copy todir="${semplest.keywords.lib}" filtering="off">

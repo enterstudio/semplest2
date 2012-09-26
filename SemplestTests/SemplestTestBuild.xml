@@ -80,6 +80,9 @@
 	 		<flattenmapper />
 	 		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
 	 	</copy>
+		
+	 	<delete file="${lib}/lucene-core-3.5.0.jar"/>   <!--nxnx temp code!!! remove the lucene-core-3.5.0.jar to compile the services -->
+		
 		<path id="keywords.path">
 			<pathelement location="${classes}"/>
 				<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
