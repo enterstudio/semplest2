@@ -9,6 +9,7 @@ GO
 
 update Configuration set KeywordTopPercent = 0.65
 
+insert into Job values ('CLEANER', GETDATE())
 
 --Live
 insert into PromotionAdengineStatus(PromotionFK,AdvertisingEngineFK,PromotionStatusFK)
