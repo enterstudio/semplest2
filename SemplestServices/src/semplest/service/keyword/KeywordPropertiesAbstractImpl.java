@@ -1,5 +1,7 @@
 package semplest.service.keyword;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public abstract class KeywordPropertiesAbstractImpl implements KeywordProperties
@@ -9,6 +11,8 @@ public abstract class KeywordPropertiesAbstractImpl implements KeywordProperties
 	private String luceneDirectory;
 	private String dmozDescriptionFile;
 	private String log4jPropertyFile;
+	private List<String> validCategoryTypes;
+	private Integer numTargetKeywords;
 	
 	protected void initialize(final Properties properties)
 	{
@@ -19,6 +23,21 @@ public abstract class KeywordPropertiesAbstractImpl implements KeywordProperties
 		luceneDirectory = properties.getProperty("LUCENE_DIRECTORY");
 		dmozDescriptionFile = properties.getProperty("DMOZ_DESCRIPTION_FILE");	
 		log4jPropertyFile = properties.getProperty("LOG4J_PROPERTY_FILE");
+		final String validCategoryTypesString = properties.getProperty("VALID_CATEGORY_TYPES");
+		final String[] validCategoryTypesTokens = validCategoryTypesString.split(",");
+		validCategoryTypes = Arrays.asList(validCategoryTypesTokens);		
+		final String numTargetKeywordsString = properties.getProperty("TARGET_NUM_KEYWORDS");
+		numTargetKeywords = Integer.valueOf(numTargetKeywordsString);
+	}
+	
+	public List<String> getValidCategoryTypes()
+	{
+		return validCategoryTypes;
+	}
+	
+	public Integer getTargetNumKeywords()
+	{
+		return numTargetKeywords;
 	}
 
 	public Integer getNumMinimumWords()

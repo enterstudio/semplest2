@@ -108,7 +108,6 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 		{
 			String qs = "";
 			String[] res;
-			String categories;
 			List<String> optList = new ArrayList<String>();
 			List<String> optInitial = new ArrayList<String>();
 			int numresults = 100; // Number of results from the query
@@ -119,7 +118,7 @@ public class KWGenDmozLDAServer3 implements SemplestKeywordLDAServiceInterface
 				res = data.dl.search(qsStem, numresults);
 				for (int i = 0; i < res.length; i++)
 				{
-					categories = res[i].trim();
+					String categories = res[i].trim();
 					if (catUtils.validcat(categories))
 					{
 						optInitial.add(categories);

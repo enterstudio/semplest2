@@ -18,10 +18,10 @@ import semplest.server.protocol.adengine.GetCategoriesRequest;
 import semplest.server.protocol.adengine.GetKeywordsRequest;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.service.SemplestConfiguration;
-import semplest.services.client.interfaces.KeywordServiceInterface;
+import semplest.services.client.interfaces.KeywordService;
 import semplest.util.SemplestUtils;
 
-public class KeywordServiceImpl implements KeywordServiceInterface
+public class KeywordServiceImpl implements KeywordService
 {
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(KeywordServiceImpl.class);
@@ -45,11 +45,14 @@ public class KeywordServiceImpl implements KeywordServiceInterface
 		final String luceneDirectory = properties.getLuceneDirectory();
 		final String dmozDescriptionFile = properties.getDmozDescriptionFile();
 		final LuceneProvider luceneProvider = new LuceneProviderImpl(luceneDirectory, dmozDescriptionFile);
-		final KeywordServiceImpl service = new KeywordServiceImpl(properties, luceneProvider);
+		final KeywordService keywordService = new KeywordServiceImpl(properties, luceneProvider);
 		final Set<String> searchTerms = new HashSet<String>(Arrays.asList("lypako applicator", "needle mat", "acupressure mat"));
-		final GetCategoriesRequest request = new GetCategoriesRequest(searchTerms);
-		final List<String> categories = service.getCategories(request);
-		logger.info("\n" + SemplestUtils.getEasilyReadableString(categories));
+		final GetCategoriesRequest categoriesRequest = new GetCategoriesRequest(searchTerms);
+		final List<String> categories = keywordService.getCategories(categoriesRequest);
+		logger.info("Categories:\n" + SemplestUtils.getEasilyReadableString(categories));
+		final GetKeywordsRequest keywordsRequest = new GetKeywordsRequest();
+		final List<KeywordProbabilityObject> keywordProbabilities = keywordService.getKeywords(keywordsRequest);
+		logger.info("Keywords:\n" + SemplestUtils.getEasilyReadableString(keywordProbabilities));
 		logger.info("Done");
 	}
 	
@@ -92,15 +95,15 @@ public class KeywordServiceImpl implements KeywordServiceInterface
 				throw new Exception(validationErrorMsg);
 			}
 			final Set<String> termsTrimmed = SemplestUtils.getTrimmedNonEmptyStrings(terms);
-			
-			// TODO: see if you can remove stop words using Lucene
-			final Set<String> termsTrimmedWithoutStopWords = SemplestUtils.removeStopWords(termsTrimmed, SemplestUtils.ALL_COMMON_WORDS);
-			
+			final Set<String> termsTrimmedWithoutStopWords = SemplestUtils.removeStopWords(termsTrimmed, SemplestUtils.ALL_COMMON_WORDS);			
 			final Set<String> termsTrimmedWithoutStopWordsStemmed = stem(termsTrimmedWithoutStopWords);
 			final String termsTrimmedWithoutStopWordsStemmedCombined = SemplestUtils.getString(termsTrimmedWithoutStopWordsStemmed, SemplestUtils.WORD_DELIMITER);
-			final List<String> categories = luceneProvider.search(termsTrimmedWithoutStopWordsStemmedCombined, properties.getTargetNumCategories());
-			
-			return new ArrayList<String>(categories);
+			final int targetNumCategories = properties.getTargetNumCategories();
+			final List<String> categories = luceneProvider.search(termsTrimmedWithoutStopWordsStemmedCombined, targetNumCategories);
+			final List<String> sanitizedCategories = getSanitizedCategories(categories);
+			final List<String> validCategoryTypes = properties.getValidCategoryTypes();
+			final List<String> validSanitizedCategories = getValidCategories(sanitizedCategories, validCategoryTypes);
+			return validSanitizedCategories;
 		}		
 		catch (Exception e)
 		{
@@ -108,6 +111,49 @@ public class KeywordServiceImpl implements KeywordServiceInterface
 			logger.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
+	}
+	
+	public static List<String> getValidCategories(final List<String> categories, final List<String> validCategoryTypes)
+	{
+		final List<String> validCategories = new ArrayList<String>();
+		for (final String category : categories)
+		{
+			final String[] categoryTokens = category.split("/");
+			if (categoryTokens.length > 1)
+			{
+				final String categoryType = categoryTokens[1];
+				if (validCategoryTypes.contains(categoryType))
+				{
+					validCategories.add(category);
+				}
+			}
+		}
+		return validCategories;
+	}
+	
+	public static List<String> getSanitizedCategories(final List<String> categories)
+	{
+		final List<String> sanitizedCategories = new ArrayList<String>();
+		for (final String category : categories)
+		{
+			if (category != null)
+			{
+				final String trimmedCategory = category.trim();
+				if (trimmedCategory.startsWith("top"))
+				{
+					final String[] categoryTokens = trimmedCategory.split("/");
+					if (categoryTokens.length > 3)
+					{
+						final String lastToken = categoryTokens[categoryTokens.length - 1];
+						if (lastToken.length() > 1)
+						{
+							sanitizedCategories.add(trimmedCategory);
+						}
+					}
+				}
+			}
+		}
+		return sanitizedCategories;
 	}
 	
 	public Set<String> stem(final Set<String> terms)

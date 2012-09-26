@@ -1,10 +1,14 @@
 package semplest.service.keyword;
 
+import java.util.List;
+
 public interface KeywordProperties
 {
-	public Integer getNumMinimumWords();
-	public Integer getTargetNumCategories();
-	public String getLuceneDirectory();
-	public String getDmozDescriptionFile();
-	public String getLog4jPropertyFile();
+	Integer getNumMinimumWords();
+	Integer getTargetNumCategories();
+	Integer getTargetNumKeywords();	
+	String getLuceneDirectory();
+	String getDmozDescriptionFile();
+	String getLog4jPropertyFile();
+	List<String> getValidCategoryTypes();
 }
