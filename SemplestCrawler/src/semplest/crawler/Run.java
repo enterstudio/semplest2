@@ -1,4 +1,4 @@
-package semplest.dmoz.crawl;
+package semplest.crawler;
 
 import akka.actor.*;
 import akka.event.Logging;
@@ -6,10 +6,17 @@ import akka.event.LoggingAdapter;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.Config;
 
+import java.io.FileInputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
+import semplest.db.berkeleydb.BerkeleyDB;
+import semplest.db.berkeleydb.BerkeleyDB_Static;
 import semplest.dmoz.SemplestTreeDB;
 import semplest.dmoz.tree.UrlDataObject;
 
@@ -26,13 +33,13 @@ import semplest.dmoz.tree.UrlDataObject;
 //        It doe *not* do retries. It is up to the user to keep track of
 //        completion and do retries.
 
-public class Run {
-
+public class Run 
+{
   private final static int COLLECT_INTERVAL = 5000;
 
   private ActorRef cactor;
   public int todo = 0;
-  Map<Long,String> res;
+  Map<String,String> res;
 
   // The Actor that talks to the Collector
   public class RActor extends UntypedActor {
@@ -42,7 +49,7 @@ public class Run {
     // Actor Ctr
     public RActor( ActorRef cltr){
       collector = cltr;
-      res = new HashMap<Long,String>();
+      res = new HashMap<String,String>();
       collectResults();
     }
     public void collectResults(){
@@ -73,7 +80,7 @@ public class Run {
   // -Interface -------------------------------------------------
   // - Ctr -
   public Run() throws Exception {
-    res = new HashMap<Long,String>();
+    res = new HashMap<String,String>();
     initialize();     // start the collector and local actor
   }
 
@@ -103,8 +110,8 @@ public class Run {
     for( Map.Entry<String,List<UrlDataObject>> w: work.entrySet() )
       cactor.tell( new Collector.Work( w.getKey(), w.getValue()));
   }
-  public Map<Long,String> results(){ 
-    Map<Long,String> ret = new HashMap<Long,String>();
+  public Map<String,String> results(){ 
+    Map<String,String> ret = new HashMap<String,String>();
     ret.putAll(res);
     res.clear();
     return ret;
@@ -112,23 +119,47 @@ public class Run {
   public int todo(){ return todo; }
 
 
-  public static void main( String[] args ) throws Exception 
-  {    
-    Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain("top");
-
-    Run r = new Run();
-    r.add( work );
-    while( true ){
-      Map<Long,String> res = r.results();
-      if( res.size() > 0 ){
-        System.out.println("R:Got " + res.size() + " results, " + r.todo() + " todo");
-        for( Map.Entry<Long,String> e: res.entrySet())
-        	//implement how to store results
-          System.out.println( e.getKey() + " : " + e.getValue() );
-      }
-      Thread.sleep( 5000 );
-    }
+  public static void main( String[] args )
+  {    	  		
+		String dbDir = CrawlerProperties.BerkeleyDbDirectory;
+		String dbID = CrawlerProperties.BerkeleyDbID;
+		String logFile = CrawlerProperties.MasterLogFile;
+		
+		SimpleLogger logger = new SimpleLogger(logFile);
+		BerkeleyDB_Static.setDirectory(dbDir);
+	  
+		try
+		{							  
+			System.out.println("Starting master and loading work. Please wait...");
+			
+			//Generate work. group urls by domain.
+			Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain("top/business/financial_services/insurance/agents_and_marketers/employee_benefits");
+			Status.TotalWorkSize = work.size();
+			
+			System.out.println("Work loaded. Master is ready to go.");
+			logger.info("Master Started.");
+			logger.info("Total amount of work: " + Status.TotalWorkSize);			
+			
+			//Run the master, and collect results.
+			Run r = new Run();
+			r.add( work );
+			while( !Status.isDone() ){
+			  Map<String,String> res = r.results();
+			  if( res.size() > 0 ){
+				  logger.info("Work Queue length: " + Status.WorkQueueSize + ", Results Collected: " + Status.NumOfResultsCollected);
+			    //Store results to BerkeleyDB
+			    BerkeleyDB_Static.add(dbID, res);
+			  }
+			  Thread.sleep( 5000 );
+			}
+			logger.info("Crawler finished at " + new Date() + ". Total amount of work: " + Status.TotalWorkSize + ". Work finished by crawler: " + Status.NumOfResultsCollected);
+		}
+		catch(Exception e){
+			e.printStackTrace();		 
+			logger.error(e.getMessage());
+		}
   }
+	  
 }
 
 

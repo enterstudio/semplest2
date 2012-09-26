@@ -1,4 +1,4 @@
-package semplest.dmoz.crawl;
+package semplest.crawler;
 
 import akka.actor.*;
 import akka.event.Logging;
@@ -24,8 +24,8 @@ import semplest.dmoz.tree.UrlDataObject;
 //  A worker needs an imlementation the interface Collector.Computer
 //    which requires the function "String Compute(String w)"
 
-public class Worker {
-
+public class Worker {	
+	
   // - The Actor ------------------------------------------------
   public static class WActor extends UntypedActor  {
     boolean working = false;
@@ -96,27 +96,41 @@ public class Worker {
 
   }
   
-  public static void main( String[] args ){
-    //String ip = "127.0.1.1";
-	  String ip = "172.18.11.213";
+  public static void main( String[] args )
+  {
+	String ip = "172.18.11.213";
     if( args.length > 0 ) ip = args[0];
     int workers = 3;
-    if( args.length > 1 ) workers = Integer.parseInt( args[1]);
-
-    Collector.Computer c = new Collector.Computer(){
-      public Map<Long,String> compute( List<UrlDataObject> urlData) {
-    	  Map<Long,String> resMap = new HashMap<Long,String>();
-        for( UrlDataObject url : urlData)
-          try {
-        	  //implement how does worker process the contents
-            String res = crawlUtils.htmlText( url.getUrl() );
-            resMap.put(url.getUrlDataPK(), res);
-          } catch( Exception e){ e.printStackTrace(); }
-        return resMap;
-      }
-    };
+    if( args.length > 1 ) workers = Integer.parseInt( args[1]);   
     
-    Worker worker = new Worker( ip, workers, c); 
+	  final SimpleLogger logger = new SimpleLogger(CrawlerProperties.WorkerLogFile);	  
+	  try{
+		    Collector.Computer c = new Collector.Computer(){
+		      public Map<String,String> compute( List<UrlDataObject> urlData) {
+		    	  Map<String,String> resMap = new HashMap<String,String>();
+		        for( UrlDataObject url : urlData){
+		          try {
+		        	  //get raw html data from url
+		            String res = crawlUtils.htmlText( url.getUrl() );
+		            resMap.put(url.getUrlDataPK().toString(), res);
+		            
+		            System.out.println(url.getUrl());
+		          } 
+		          catch( Exception e)
+		          { 
+		        	  e.printStackTrace();
+		        	  logger.error(e.getMessage());
+		          }
+		        }
+		        return resMap;
+		      }
+		    };
+		    
+		    Worker worker = new Worker( ip, workers, c); 
+	  }
+	  catch(Exception e){
+		  logger.error(e.getMessage());
+	  }
   }
 }
 

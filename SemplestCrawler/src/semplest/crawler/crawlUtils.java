@@ -1,4 +1,4 @@
-package semplest.dmoz.crawl;
+package semplest.crawler;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -31,10 +31,6 @@ public class crawlUtils {
           line.substring(index+1).trim());
     }
     return hash;
-  }
-  
-  public static void getUrlsByDomain(){
-	  
   }
   
   // Jsoup

@@ -1,4 +1,4 @@
-package semplest.dmoz.crawl;
+package semplest.crawler;
 
 import akka.actor.*;
 import akka.event.Logging;
@@ -23,7 +23,7 @@ public class Collector {
   
   // - Interfaces --------
   public interface Computer {
-    public Map<Long,String> compute( List<UrlDataObject> urlData );
+    public Map<String,String> compute( List<UrlDataObject> urlData );
   }
   public interface Msgs extends Serializable {}
   
@@ -34,8 +34,8 @@ public class Collector {
     public Work( String i, List<UrlDataObject> u ){ id = i; urlData = u; }
   }
   public static class Answer implements Msgs {
-    public final Map<Long,String> result;
-    public Answer( Map<Long,String> r ){ result = r; }
+    public final Map<String,String> result;
+    public Answer( Map<String,String> r ){ result = r; }
   }
   public static class Ready implements Msgs {
     public final String id;
@@ -60,7 +60,8 @@ public class Collector {
     LoggingAdapter log = Logging.getLogger( getContext().system(), this );
     public ArrayBlockingQueue<Work> workQ = new ArrayBlockingQueue<Work>( 
         Collector.QSIZE);
-    public HashSet<Answer> results = new HashSet<Answer>();
+    public HashSet<Answer> results = new HashSet<Answer>();    
+    public Integer resultsReturned = 0;
 
     public CActor(){}
 
@@ -73,23 +74,28 @@ public class Collector {
         if( w != null ) getSender().tell( w );
       }
       else if ( msg instanceof Result ){
-        getSender().tell( results.toArray( new Answer[]{} ));
+        getSender().tell( results.toArray( new Answer[]{} ));        
         results.clear();
         System.out.printf("C: Result:: (done/todo): %d,%d\n", 
-            workQ.size(), results.size());
+            workQ.size(), results.size());        
       }
-      else if ( msg instanceof Work )
+      else if ( msg instanceof Work ){
         workQ.add( (Work) msg );
+      }
       else if (msg instanceof Answer ){
         results.add( (Answer) msg );
-        Work w = workQ.poll();
-        if( w != null ) getSender().tell( w );
+        resultsReturned++;
+        //Work w = workQ.poll();
+        //if( w != null ) getSender().tell( w );
       }
       else if (msg instanceof Todo ){
         getSender().tell( new Todo( workQ.size()));
       }
-      else 
-        System.out.println("Errro" + msg.getClass().getName());
+      else{
+        System.out.println("Error" + msg.getClass().getName());
+      }
+      Status.WorkQueueSize = workQ.size();
+      Status.NumOfResultsCollected = resultsReturned;
     }
   }
 
