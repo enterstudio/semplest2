@@ -121,8 +121,9 @@ public class Worker {
 		        	  //get raw html data from url
 		            String res = crawlUtils.htmlText( url.getUrl() );
 		            resMap.put(url.getUrlDataPK().toString(), res);
-		            
-		            System.out.println(url.getUrl());
+		            if(res.length() == 0){
+		            	logger.message(url.getUrl());
+		            }
 		          } 
 		          catch( Exception e)
 		          { 

@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 public class CrawlerProperties {
-	final public static String PROPSFILE = "bin/system.properties";
+	final public static String PROPSFILE = "system.properties";
 
 	public static Properties properties;
 	

@@ -121,6 +121,11 @@ public class Run
 
   public static void main( String[] args )
   {    	  		
+	  String treeName = "top";
+	  if( args.length > 0 ) {
+		  treeName = args[0];
+	  }
+	  
 		String dbDir = CrawlerProperties.BerkeleyDbDirectory;
 		String dbID = CrawlerProperties.BerkeleyDbID;
 		String logFile = CrawlerProperties.MasterLogFile;
@@ -133,7 +138,7 @@ public class Run
 			System.out.println("Starting master and loading work. Please wait...");
 			
 			//Generate work. group urls by domain.
-			Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain("top/business/financial_services/insurance");
+			Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain(treeName);
 			Status.TotalWorkSize = work.size();
 			
 			System.out.println("Work loaded. Master is ready to go.");
