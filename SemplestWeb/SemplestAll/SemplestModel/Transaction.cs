@@ -21,7 +21,6 @@ namespace SemplestModel
         }
     
         public int TransactionsPK { get; set; }
-        public int CustomerFK { get; set; }
         public Nullable<int> CreditCardProfileFK { get; set; }
         public decimal Amount { get; set; }
         public System.DateTime CreatedDate { get; set; }
@@ -30,7 +29,6 @@ namespace SemplestModel
         public string TxRefNum { get; set; }
     
         public virtual CreditCardProfile CreditCardProfile { get; set; }
-        public virtual Customer Customer { get; set; }
         public virtual ICollection<PromotionBudget> PromotionBudgets { get; set; }
         public virtual ICollection<SemplestTransaction> SemplestTransactions { get; set; }
     }

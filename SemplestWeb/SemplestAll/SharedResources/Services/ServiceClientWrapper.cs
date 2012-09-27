@@ -568,6 +568,7 @@ namespace Semplest.SharedResources.Services
                 ReturnGatewayReturnObject.isError = Convert.ToBoolean(objval["isError"]);
                 ReturnGatewayReturnObject.isApproved = Convert.ToBoolean(objval["isApproved"]);
                 ReturnGatewayReturnObject.isDeclined = Convert.ToBoolean(objval["isDeclined"]);
+                ReturnGatewayReturnObject.ResponseCode = objval["ResponseCode"];
                 ReturnGatewayReturnObject.Status = objval["Status"];
                 ReturnGatewayReturnObject.Message = objval["Message"];
                 ReturnGatewayReturnObject.TxRefNum = objval["TxRefNum"];

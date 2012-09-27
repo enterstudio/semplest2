@@ -31,9 +31,9 @@
     });
 
 
-    $('#creditcatdType').kendoDropDownList();
-    $('#dropDownRange').kendoDropDownList();
-    $('#dropDownCreditCard').kendoDropDownList();
+    $('#BillingLaunch_StateCodeFK').kendoDropDownList();
+    $('#creditcardMonth').kendoDropDownList();
+    $('#creditcardYear').kendoDropDownList();
 
     $("#viewSelectedKeywords").click(function () {
         //alert('in viewSelectedKeywords');

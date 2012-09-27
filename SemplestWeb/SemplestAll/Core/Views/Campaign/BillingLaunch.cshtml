@@ -144,7 +144,7 @@
                             State </label>
                         @Html.DropDownListFor(s => Model.BillingLaunch.StateCodeFK, Model.BillingLaunch.StateCodeList, Model.BillingLaunch.StateCodeFK)
 
-                        <label class="creditCardlabel" style="padding-left:114px;">
+                        <label class="creditCardlabel" style="padding-left:10px;">
                             Zip</label>
                         @Html.TextBoxFor(z => z.BillingLaunch.Zip, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
                     </li>

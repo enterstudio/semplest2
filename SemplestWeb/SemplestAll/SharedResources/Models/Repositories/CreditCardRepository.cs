@@ -24,16 +24,16 @@ namespace SharedResources.Models.Repositories
             {
                 var refNum = gr.CustomerRefNum;
                 gr = sw.AuthorizeAndCapture(refNum, double.Parse(budget.ToString()));
-                if (gr.isApproved && !gr.isDeclined)
+                if (gr.isApproved && !gr.isDeclined && gr.ResponseCode =="00")
                 {
                     var tr = new TransactionRepository(_dbcontext);
                     var amount = decimal.Parse(gr.amountRedeemedNoDecimal);
-                    var cp = _dbcontext.CreditCardProfiles.Add(new CreditCardProfile {CustomerRefNum = refNum});
+                    var cp = _dbcontext.CreditCardProfiles.Add(new CreditCardProfile { CustomerRefNum = refNum, CustomerFK = promo.ProductGroup.CustomerFK });
                     var tran = _dbcontext.Transactions.Add(new Transaction
                                                                {
                                                                    CreatedDate = DateTime.Now,
                                                                    Amount = amount,
-                                                                   CustomerFK = promo.ProductGroup.CustomerFK,
+                                                                   CreditCardProfileFK = cp.CreditCardProfilePK,
                                                                    AuthCode =  gr.AuthCode,
                                                                    TxRefNum = gr.TxRefNum
                                                                });

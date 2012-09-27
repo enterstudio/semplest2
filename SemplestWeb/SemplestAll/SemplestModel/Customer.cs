@@ -31,7 +31,6 @@ namespace SemplestModel
             this.Schedules = new HashSet<Schedule>();
             this.WebContents = new HashSet<WebContent>();
             this.Users = new HashSet<User>();
-            this.Transactions = new HashSet<Transaction>();
         }
     
         public int CustomerPK { get; set; }
@@ -67,6 +66,5 @@ namespace SemplestModel
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<WebContent> WebContents { get; set; }
         public virtual ICollection<User> Users { get; set; }
-        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }
