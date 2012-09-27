@@ -133,7 +133,7 @@ public class Run
 			System.out.println("Starting master and loading work. Please wait...");
 			
 			//Generate work. group urls by domain.
-			Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain("top/business/financial_services/insurance/agents_and_marketers/employee_benefits");
+			Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain("top/business/financial_services/insurance");
 			Status.TotalWorkSize = work.size();
 			
 			System.out.println("Work loaded. Master is ready to go.");

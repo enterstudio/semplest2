@@ -26,23 +26,25 @@ public class testBerkeleyDB {
 			BerkeleyDB_Static.setDirectory(dbDir);
 			
 			Map<String,String> ret = BerkeleyDB_Static.getAll(dbID);
-			
+			/*
 			for(Map.Entry<String, String> e : ret.entrySet()){
 				System.out.println(e.getKey());				
 			}
-			
+			*/
 			System.out.println("===> " + ret.size());
 			
-			Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain("top/business/financial_services/insurance/agents_and_marketers/employee_benefits");
+			Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain("top/business/financial_services/insurance");
 			HashSet<String> urls = new HashSet<String>();
 			for(List<UrlDataObject> ul : work.values()){
 				for(UrlDataObject ud : ul){
 					urls.add(ud.getUrl());
 				}
 			}
+			/*
 			for(String u : urls){
 				System.out.println(u);
 			}
+			*/
 			System.out.println(urls.size());
 		}
 		catch(Exception e){

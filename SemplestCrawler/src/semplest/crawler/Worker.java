@@ -46,22 +46,30 @@ public class Worker {
 
     // Actor Message processing
     public void askForWork(){
-      try {
-        Thread.sleep( 5000 );
-      } catch (Exception e){ e.printStackTrace(); }
+      try 
+      {
+        Thread.sleep( 50 );
+      } 
+      catch (Exception e)
+      {
+    	  e.printStackTrace(); 
+      }
       getSelf().tell( new Collector.Wakeup() );
     }
 
     public void onReceive( Object msg){
-      if( msg instanceof Collector.Work ){
+      if( msg instanceof Collector.Work )
+      {
         working = true;
         System.out.println("Got Work !");
         Collector.Work w = (Collector.Work)msg;
         collector.tell( new Collector.Answer( computor.compute( w.urlData ) ) );
         working = false;
       }
-      else if( msg instanceof Collector.Wakeup ){
-        if( ! working ){
+      else if( msg instanceof Collector.Wakeup )
+      {
+        if( !working )
+        {
           collector.tell( new Collector.Ready( id ), getSelf() );
           System.out.println(id + " :: Sending Ready Message");
           askForWork();
@@ -100,7 +108,7 @@ public class Worker {
   {
 	String ip = "172.18.11.213";
     if( args.length > 0 ) ip = args[0];
-    int workers = 3;
+    int workers = 500;
     if( args.length > 1 ) workers = Integer.parseInt( args[1]);   
     
 	  final SimpleLogger logger = new SimpleLogger(CrawlerProperties.WorkerLogFile);	  
