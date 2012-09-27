@@ -244,6 +244,7 @@
     <Content Include="Dynamic Expressions.html" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\AdditionalLinks.js" />
+    <Content Include="Scripts\billingLaunch.js" />
     <Content Include="Scripts\CampaignSetup.js" />
     <Content Include="Scripts\conditional-validation.js" />
     <Content Include="Scripts\enabledisable.js" />
