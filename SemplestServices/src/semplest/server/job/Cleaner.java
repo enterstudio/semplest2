@@ -23,49 +23,62 @@ public class Cleaner
 {
 	private static final Logger log = Logger.getLogger(Cleaner.class);
 	
-	public static void main(final String[] args)
+	private static final JobName JOB_NAME = JobName.CLEANER;
+	
+	public static void main(final String[] args) throws Exception
 	{
 		PropertyConfigurator.configure("properties/log4j_server.properties");
-		BasicConfigurator.configure();	
-		final List<String> dirsToClean = Arrays.asList("C:/SemplestCommon/data/msn");
-		final int numDaysBack = 30;
-		
-		log.info("Will prune files these " + dirsToClean.size() + " directories older than " + numDaysBack + " days back:\n" + SemplestUtils.getEasilyReadableString(dirsToClean));
-		final long currentTimeMillis = System.currentTimeMillis();
-		for (final String dir : dirsToClean)
+		BasicConfigurator.configure();
+		try
 		{
-			log.info("Will prune dir [" + dir + "]");
-			final File dirFile = new File(dir);
-			final File[] files = dirFile.listFiles();
-			final Map<String, Long> fileToAgeMap = new HashMap<String, Long>();
-			for (final File file : files)
+			final Job job = SemplestDB.getJob(JOB_NAME);
+			log.info("State of the job before running the current iteration: " + job);
+			final List<String> dirsToClean = Arrays.asList("C:/SemplestCommon/data/msn");
+			final int numDaysBack = 30;		
+			log.info("Will prune files these " + dirsToClean.size() + " directories older than " + numDaysBack + " days back:\n" + SemplestUtils.getEasilyReadableString(dirsToClean));
+			final long currentTimeMillis = System.currentTimeMillis();
+			for (final String dir : dirsToClean)
 			{
-				if (!file.isDirectory())
+				log.info("Will prune dir [" + dir + "]");
+				final File dirFile = new File(dir);
+				final File[] files = dirFile.listFiles();
+				final Map<String, Long> fileToAgeMap = new HashMap<String, Long>();
+				for (final File file : files)
 				{
-					final long lastModifiedMillis = file.lastModified();
-					final long diffMillis = currentTimeMillis - lastModifiedMillis;
-					final long diffDays = diffMillis / SemplestUtils.DAY;
-					final String filePath = file.getAbsolutePath();
-					fileToAgeMap.put(filePath, diffDays);
-				}
-			}
-			System.out.println("Found " + fileToAgeMap.size() + " non-directory files.  File <-> Age map:\n" + SemplestUtils.getEasilyReadableString(fileToAgeMap));
-			final Set<Entry<String, Long>> entrySet = fileToAgeMap.entrySet();
-			for (final Entry<String, Long> entry : entrySet)
-			{
-				final String fileName = entry.getKey();
-				final Long daysOld = entry.getValue();
-				if (daysOld > numDaysBack)
-				{
-					log.info("Will need to delete file [" + fileName + "] because it's " + daysOld + " days old, which is more than the limit of [" + numDaysBack + "]");
-					final File file = new File(fileName);	
-					final boolean isDeleteSuccessful = file.delete();					
-					if (!isDeleteSuccessful)
+					if (!file.isDirectory())
 					{
-						log.warn("Problem deleting file [" + fileName + "]");
+						final long lastModifiedMillis = file.lastModified();
+						final long diffMillis = currentTimeMillis - lastModifiedMillis;
+						final long diffDays = diffMillis / SemplestUtils.DAY;
+						final String filePath = file.getAbsolutePath();
+						fileToAgeMap.put(filePath, diffDays);
+					}
+				}
+				System.out.println("Found " + fileToAgeMap.size() + " non-directory files.  File <-> Age map:\n" + SemplestUtils.getEasilyReadableString(fileToAgeMap));
+				final Set<Entry<String, Long>> entrySet = fileToAgeMap.entrySet();
+				for (final Entry<String, Long> entry : entrySet)
+				{
+					final String fileName = entry.getKey();
+					final Long daysOld = entry.getValue();
+					if (daysOld > numDaysBack)
+					{
+						log.info("Will need to delete file [" + fileName + "] because it's " + daysOld + " days old, which is more than the limit of [" + numDaysBack + "]");
+						final File file = new File(fileName);	
+						final boolean isDeleteSuccessful = file.delete();					
+						if (!isDeleteSuccessful)
+						{
+							log.warn("Problem deleting file [" + fileName + "]");
+						}
 					}
 				}
 			}
+			SemplestDB.updateJobLastSuccessfulRunTime(JOB_NAME);
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem running the cleaner";
+			log.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 	
