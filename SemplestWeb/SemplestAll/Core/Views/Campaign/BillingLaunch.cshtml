@@ -122,27 +122,22 @@
             <div class="table">
                 <ul class="accept">
                     <li><label>Billing Information</label></li>
-                    
-                    @{
-                        IEnumerable<SelectListItem> slemo = new SelectList(new[] {"-Select Month-", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}, "-Select Month-");
-                        IEnumerable<SelectListItem> sleyr = new SelectList(new[] {"-Select Year-", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"}, "-Select Year-");
-                    }
                     <li>
                         <label class="creditCardlabel">
                             First Name</label>
-                        @Html.TextBoxFor(f => f.BillingLaunch.FirstName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Title" })
+                        @Html.TextBoxFor(f => f.BillingLaunch.FirstName, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
                     
                         <label class="creditCardlabel" style="padding-left:25px;">
                             Last Name</label>
-                        @Html.TextBoxFor(l => l.BillingLaunch.LastName, new { @class = "k-textbox" })
+                        @Html.TextBoxFor(l => l.BillingLaunch.LastName, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
                     </li>
                     <li>
                         <label class="creditCardlabel">
                             Address</label>
-                        @Html.TextBoxFor(a => a.BillingLaunch.Address, new { @class = "k-textbox" })
+                        @Html.TextBoxFor(a => a.BillingLaunch.Address, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
                         <label class="creditCardlabel" style="padding-left:25px;">
                             City / Town</label>
-                        @Html.TextBoxFor(c => c.BillingLaunch.City, new { @class = "k-textbox" })
+                        @Html.TextBoxFor(c => c.BillingLaunch.City, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
                     </li>
                     <li>
                         <label class="creditCardlabel">
@@ -151,29 +146,29 @@
 
                         <label class="creditCardlabel" style="padding-left:114px;">
                             Zip</label>
-                        @Html.TextBoxFor(z => z.BillingLaunch.Zip, new { @class = "k-textbox" })
+                        @Html.TextBoxFor(z => z.BillingLaunch.Zip, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
                     </li>
                     <li>
                         <label class="creditCardlabel">
                             Phone Number</label>
-                        @Html.TextBoxFor(p => p.BillingLaunch.Phone, new { @class = "k-textbox" })
+                        @Html.TextBoxFor(p => p.BillingLaunch.Phone, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
 
                         <label class="creditCardlabel" style="padding-left:25px;">
                             Email</label>
-                        @Html.TextBoxFor(e => e.BillingLaunch.Email, new { @class = "k-textbox" })
+                        @Html.TextBoxFor(e => e.BillingLaunch.Email, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
                     </li>
                 </ul>
             </div>
                                 <li>
                         <label class="creditCardlabel">
                             Card Number</label>
-                        @Html.TextBoxFor(c => c.BillingLaunch.CardNumber, new { @class = "k-textbox" })
+                        @Html.TextBoxFor(c => c.BillingLaunch.CardNumber, new { @class = "k-textbox", @required = true, @validationmessage = "Required" })
                     </li>
                     <li>
                         <label class="creditCardlabel">
                             Expiry Date</label>
-                        @Html.DropDownList("ExpirationMonth", slemo, new { @id = "creditcardMonth" })
-                        @Html.DropDownList("ExpirationDate", sleyr, new { @id = "creditcardYear" })
+                            @Html.DropDownListFor(s => Model.BillingLaunch.ExpiryMonth, Model.BillingLaunch.ExpiryMonths, Model.BillingLaunch.ExpiryMonth, new { @id = "creditcardMonth" })
+                        @Html.DropDownListFor(s => Model.BillingLaunch.ExpiryYear, Model.BillingLaunch.ExpiryYears, Model.BillingLaunch.ExpiryYear, new { @id = "creditcardYear" })
                     </li>
             <li>
                 <div>
@@ -213,79 +208,9 @@
         min-width: 100px;
     }
 </style>
-<script language="javascript">
-    $(document).ready(function () {
-        enableDisable();
-        if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
-            $('#getLaunchAdProduct').attr("disabled", true);
-            $('#agreecheckbox').attr("disabled", true);
-        }
 
-
-        $("#btnCancel").click(function (event) {
-            $.unblockUI();
-        });
-
-        if ($("#agreecheckbox:checked").val()) {
-            $("#getLaunchAdProduct").attr('disabled', false);
-        }
-        else {
-            if (@Model.BillType == 2) {
-                $("#getLaunchAdProduct").attr('disabled', true);
-            }
-        }
-    });
-</script>
 <script type="text/javascript">
-    $('#creditcatdType').kendoDropDownList();
-    $('#creditcardMonth').kendoDropDownList();
-    $('#creditcardYear').kendoDropDownList();
-    $('#dropDownRange').kendoDropDownList();
-    $('#dropDownCreditCard').kendoDropDownList();
-
-    $("#viewSelectedKeywords").click(function () {
-        //alert('in viewSelectedKeywords');
-        var length = tabStrip.items().length;
-        var isSelectedKeywordsAdded = false;
-        for (var item = 0; item < length; item++) {
-            if (tabStrip.items().item(item).innerText == "View Keywords") {
-                isSelectedKeywordsAdded = true;
-                break;
-            }
-        }
-        var keywordsUrl = $("#ViewSelectedKeywordsUrl").val();
-        if (!isSelectedKeywordsAdded)
-            tabStrip.append({
-                text: "View Keywords",
-                contentUrl: keywordsUrl
-            });
-        var tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
-        tabStrip.select(tab);
-    });
-
-    $("#editadproduct").click(function () {
-        tabChange1();
-    });
-
-    $("#getLaunchAdProduct").click(function () {
-        var urlStr = $('#LogoUrlStr').val() + 'congratulations.jpg';
-        $('#displayBox').attr('src', urlStr);
-    });
-
-    $("#agreecheckbox").click(function () {
-        if ($("#agreecheckbox:checked").val()) {
-            $("#getLaunchAdProduct").attr('disabled', false);
-        }
-        else {
-            $("#getLaunchAdProduct").attr('disabled', true);
-        }
-    });
-
-    function tabChange1(parameters) {
-        var tab = tabStrip.select();
-        tabStrip.remove(tab);
-        var reqtab = tabStrip.tabGroup.children('li:contains("Define Product")');
-        tabStrip.select(reqtab);
-    }
+   
 
 </script>
+<script src="@Url.Content("~/Scripts/billingLaunch.js")" type="text/javascript"> </script>

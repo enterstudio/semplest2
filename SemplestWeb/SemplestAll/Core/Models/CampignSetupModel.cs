@@ -153,7 +153,6 @@ namespace Semplest.Core.Models
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        [Required]
         public string Address { get; set; }
         [Required]
         public string City { get; set; }
@@ -177,8 +176,30 @@ namespace Semplest.Core.Models
         [Required]
         public string Email { get; set; }
         [Required]
-        public int CardNumber { get; set; }
+        public string CardNumber { get; set; }
 
+        [Required]
+        public string ExpiryMonth { get; set; }
+        public IEnumerable<SelectListItem> ExpiryMonths
+        {
+            get
+            {
+                return new SelectList(
+                    new[] {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"},
+                    "01");
+            }
+        }
+
+        [Required]
+        public string ExpiryYear { get; set; }
+        public IEnumerable<SelectListItem> ExpiryYears
+        {
+            get
+            {
+                return new SelectList(new[] {"2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"},
+                                      "2012");
+            }
+        }
     }
 
     public class AdditionalLinks

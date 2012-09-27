@@ -94,12 +94,6 @@ namespace Semplest.Core.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return Json("ModelState Invalid required data is missing");
-                }
-                else
-                {
                     model.SiteLinks = (List<SiteLink>) Session["SiteLinks"];
                     model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
 
@@ -130,7 +124,6 @@ namespace Semplest.Core.Controllers
                     model = _campaignRepository.GetCategories(model);
                     Session.Add("AllCategories", model.AllCategories);
                     return Json(new {newKeys = newIds, name = "Categories"});
-                }
             }
             catch (Exception ex)
             {
@@ -299,9 +292,14 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "LaunchAdProduct")]
         public ActionResult LaunchAdProduct(CampaignSetupModel model)
         {
+            
             var dbContext = new SemplestModel.Semplest();
             var cr = new CreditCardRepository(dbContext);
             var sr = new StateRepository(dbContext);
+            var pr = new PromotionRepository(dbContext);
+
+            var promo = pr.GetPromoitionFromCampaign(GetCustomerId(), model.ProductGroup.ProductGroupName,
+                                                     model.ProductGroup.ProductPromotionName);
             var success = cr.ChargeCreditCard(new CustomerObject
                                                   {
                                                       Address1 = model.BillingLaunch.Address,
@@ -310,20 +308,18 @@ namespace Semplest.Core.Controllers
                                                       StateAbbr =
                                                           sr.GetStateNameFromCode(
                                                               int.Parse(model.BillingLaunch.StateCodeFK)),
-                                                      ExpireDateMMYY = "0912",
+                                                      ExpireDateMMYY = model.BillingLaunch.ExpiryMonth + model.BillingLaunch.ExpiryYear,
                                                       FirstName = model.BillingLaunch.FirstName,
                                                       LastName = model.BillingLaunch.LastName,
                                                       Phone = model.BillingLaunch.Phone,
                                                       ZipCode = model.BillingLaunch.Zip,
-                                                      creditCardNumber = model.BillingLaunch.CardNumber.ToString()
-                                                  }, GetCustomerId(), model.BillType);
+                                                      creditCardNumber = model.BillingLaunch.CardNumber
+                                                  }, promo, model.BillType, model.ProductGroup.Budget);
             dbContext.SaveChanges();
             if (success)
             {
                 var adEngines = new List<string>();
-                var pr = new PromotionRepository(dbContext);
-                var promo = pr.GetPromoitionFromCampaign(GetCustomerId(), model.ProductGroup.ProductGroupName,
-                                                         model.ProductGroup.ProductPromotionName);
+
                 adEngines.AddRange(
                     promo.PromotionAdEngineSelecteds.Select(
                         pades => pades.AdvertisingEngine.AdvertisingEngine1));
@@ -335,7 +331,7 @@ namespace Semplest.Core.Controllers
                     dbContext.SaveChanges();
                 }
             }
-            return Json("");
+            return Json("");   
         }
 
 
