@@ -86,6 +86,8 @@ import semplest.util.SemplestUtils;
 public class SemplestDB extends BaseDB
 {
 	private static final Logger logger = Logger.getLogger(SemplestDB.class);
+	
+	public static final String SQL_INSERT_TRANSACTION = "insert into Transactions(CreditCardProfileFK, Amount, CreatedDate, EditedDate, AuthCode, TxRefNum) values (?, ?, ?, ?, ?, ?)";
 
 	public static final String SQL_SET_AD_ID_FOR_AD_GROUP = "insert into AdvertisingEngineAds(AdvertisingEngineAdPK, AdvertisingEngineFK, PromotionAdsFK) "
 			+ "select ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
@@ -236,14 +238,25 @@ public class SemplestDB extends BaseDB
 			{
 				final Integer creditCardProfilePk = rs.getInt("CreditCardProfilePK");
 				final String customerRefNum = rs.getString("CustomerRefNum");
-				final String authCode = rs.getString("AuthCode");
-				final String txRefNum = rs.getString("TxRefNum");
-				final Integer promotionFk = rs.getInt("PromotionFK");
 				final Integer customerFk = rs.getInt("CustomerFK");
-				final CreditCardProfile creditCardProfile = new CreditCardProfile(creditCardProfilePk, customerRefNum, authCode, txRefNum, promotionFk, customerFk);
+				final CreditCardProfile creditCardProfile = new CreditCardProfile(creditCardProfilePk, customerRefNum, customerFk);
 				return creditCardProfile;
 			}	
 		}; 
+	}
+	
+	public static CreditCardProfile getCreditCardProfile(final String profileRefNum) throws Exception
+	{
+		final List<CreditCardProfile> creditCardProfiles = jdbcTemplate.query("select CreditCardProfilePK, CustomerRefNum, CustomerFK from CreditCardProfile where CustomerRefNum = ?", CREDIT_CARD_PROFILE_ROW_MAPPER, profileRefNum);
+		if (creditCardProfiles == null || creditCardProfiles.isEmpty() || creditCardProfiles.size() > 1)
+		{
+			throw new Exception("Did not find any CreditCardProfiles for CustomerRefNum [" + profileRefNum + "]");
+		}
+		if (creditCardProfiles.size() > 1)
+		{
+			throw new Exception("Found " + creditCardProfiles.size() + " CreditCardProfiles for CustomerRefNum [" + profileRefNum + "], but expecting exactly 1");
+		}
+		return creditCardProfiles.get(0);
 	}
 	
 	public static List<CreditCardProfile> getCreditCardProfiles(final Integer promotionId)
@@ -1681,11 +1694,20 @@ public class SemplestDB extends BaseDB
 		{ advertisingEngineAdGroupID, adEngineCampaignID });
 
 	}
+	
+	public static Integer insertChaseFileTransaction(final int creditCardProfileFK, final BigDecimal amount, final java.util.Date createdDate, final java.util.Date editedDate, final String authCode, final String txRefNum) throws Exception
+	{
+		final int rowCount = jdbcTemplate.update(SQL_INSERT_TRANSACTION, new Object[]{creditCardProfileFK, amount, createdDate, editedDate, authCode, txRefNum});
+		if (rowCount != 1)
+		{
+			throw new Exception("Rowcount returned should be 1 but was " + rowCount + " when trying to insert a new Chase File Transaction for CreditCardProfileFK [" + creditCardProfileFK + "], Amount [" + amount + "], CreatedDate [" + createdDate + "], EditedDate [" + editedDate + "], AuthCode [" + authCode + "], TxRefNum [" + txRefNum + "]");
+		}
+		return rowCount;
+	}
 
 	public static Integer setAdIDForAdGroup(Long advertisingEngineAdPK, AdEngine advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
-		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[]
-		{ advertisingEngineAdPK, promotionAdsFK, advertisingEngine.name() });
+		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[]{ advertisingEngineAdPK, promotionAdsFK, advertisingEngine.name() });
 	}
 
 	public static Map<Integer, Integer> getDeletedAdMappingCountMap(final List<Integer> deletedAdIds, int[] rowCounts)

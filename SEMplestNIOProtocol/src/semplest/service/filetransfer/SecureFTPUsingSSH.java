@@ -245,7 +245,7 @@ public class SecureFTPUsingSSH
 		}
 		catch (SftpException e)
 		{
-			throw new IOException("Error in getting remote file : " + remoteFile + " and storing local " + localFile + ": " + e.getMessage());
+			throw new IOException("Error in getting remote file : " + remoteFile + " and storing local " + localFile + ": " + e.getMessage(), e);
 		}
 		return true;
 	}

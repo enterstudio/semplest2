@@ -58,7 +58,7 @@ public class TestChaseOrbitalGateway
 			// Update
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DAY_OF_MONTH, 1);
-			GatewayReturnObject update = gatew.UpdateProfileRecurringBilling(r.getCustomerRefNum(), 100.99, cal.getTime());
+			GatewayReturnObject update = gatew.UpdateProfileRecurringBilling(r.getCustomerRefNum(), 100.99, cal.getTime(), 25);
 			logger.info(update.getOrderID() + ":" + update.getIsGood());
 			logger.info("GatewayReturnObject response (from UpdateProfileRecurringBilling): " + update.toStringPretty());
 			logger.info("------------------------------------------------------------");

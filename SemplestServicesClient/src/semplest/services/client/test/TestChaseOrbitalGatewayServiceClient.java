@@ -66,7 +66,7 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		final Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_YEAR, 2);
 		final java.util.Date startDate = cal.getTime();
-		final GatewayReturnObject response = client.UpdateProfileRecurringBilling(gatewayReturnObject.getCustomerRefNum(), 45.95, startDate);
+		final GatewayReturnObject response = client.UpdateProfileRecurringBilling(gatewayReturnObject.getCustomerRefNum(), 45.95, startDate, 25);
 		logger.info("Response from UpdateProfileRecurringBilling(...): " + response.toStringPretty());
 	}
 	

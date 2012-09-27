@@ -1,7 +1,6 @@
 package semplest.services.client.api;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -91,7 +90,7 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 			Calendar cal = Calendar.getInstance();
 			cal.set(2012, 9, 1);
 			Date startDate = cal.getTime();
-			GatewayReturnObject ret1 = test.UpdateProfileRecurringBilling(ret.getCustomerRefNum(), 100.00, startDate);
+			GatewayReturnObject ret1 = test.UpdateProfileRecurringBilling(ret.getCustomerRefNum(), 100.00, startDate, 25);
 			
 			System.out.println(ret1.toStringPretty());
 			
@@ -233,9 +232,9 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	}
 
 	@Override
-	public GatewayReturnObject UpdateProfileRecurringBilling(String customerProfileRefNumber, Double recurringAmount, Date startDate) throws Exception 
+	public GatewayReturnObject UpdateProfileRecurringBilling(String customerProfileRefNumber, Double recurringAmount, Date startDate, int dayOfMonth) throws Exception 
 	{
-		logger.info("Got request to update profile recurring billing for customerProfileRefNumber [" + customerProfileRefNumber + "], recurringAmount [" + recurringAmount + "], startDate [" + startDate + "]");		
+		logger.info("Got request to update profile recurring billing for customerProfileRefNumber [" + customerProfileRefNumber + "], recurringAmount [" + recurringAmount + "], startDate [" + startDate + "], dayOfMonth [" + dayOfMonth + "]");		
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerProfileRefNumber", customerProfileRefNumber);
 		jsonHash.put("recurringAmount", String.valueOf(recurringAmount));		

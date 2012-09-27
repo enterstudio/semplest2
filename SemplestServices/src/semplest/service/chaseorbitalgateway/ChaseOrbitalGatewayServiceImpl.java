@@ -302,15 +302,17 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
 		final Double recurringAmount = Double.parseDouble(data.get("recurringAmount"));
 		final String startDateString = data.get("startDate");
+		final String dayOfMonthString = data.get("dayOfMonth");
+		final Integer dayOfMonth = Integer.valueOf(dayOfMonthString); 		
 		final java.util.Date startDate = ChaseOrbitalGatewayObject.MMDDYYYY.parse(startDateString);
-		final GatewayReturnObject response = UpdateProfileRecurringBilling(customerProfileRefNumber, recurringAmount, startDate);
+		final GatewayReturnObject response = UpdateProfileRecurringBilling(customerProfileRefNumber, recurringAmount, startDate, dayOfMonth);
 		return gson.toJson(response);
 	}
 	
 	@Override
-	public GatewayReturnObject UpdateProfileRecurringBilling(String customerProfileRefNumber, Double recurringAmount, java.util.Date startDate) throws Exception
+	public GatewayReturnObject UpdateProfileRecurringBilling(String customerProfileRefNumber, Double recurringAmount, java.util.Date startDate, final int dayOfMonth) throws Exception
 	{
-		logger.info("Will try to UpdateProfileRecurringBilling for CustomerProfileRefNumber [" + customerProfileRefNumber + "], RecurringAmount [" + recurringAmount + "], StartDate [" + startDate + "]");
+		logger.info("Will try to UpdateProfileRecurringBilling for CustomerProfileRefNumber [" + customerProfileRefNumber + "], RecurringAmount [" + recurringAmount + "], StartDate [" + startDate + "], DayOfMonth [" + dayOfMonth + "]");
 		RequestIF request = null;
 		try
 		{
@@ -319,9 +321,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			endDateCal.add(Calendar.YEAR, 10);
 			final java.util.Date endDate = endDateCal.getTime();
 			final String endingDate = ChaseOrbitalGatewayObject.MMDDYYYY.format(endDate);
-			final String startingDate = ChaseOrbitalGatewayObject.MMDDYYYY.format(startDate);
-			final String dayOfMonth = recurringDayOfMonth(startDate);
-			
+			final String startingDate = ChaseOrbitalGatewayObject.MMDDYYYY.format(startDate);			
 			request = new Request(RequestIF.PROFILE_TRANSACTION);
 
 			// the follow will create a profile that can be used in
@@ -345,7 +345,8 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("MBOrderIdGenerationMethod", "DI"); //Dynamically generate orderID
 			request.setFieldValue("MBRecurringStartDate", startingDate);
 			request.setFieldValue("MBRecurringEndDate", endingDate);
-			request.setFieldValue("MBRecurringFrequency", dayOfMonth + " * ?");  //Bill Monthly
+			
+			request.setFieldValue("MBRecurringFrequency", dayOfMonth + " * ?");  //Bill Monthly			
 			// Display the request
 			//logger.debug("\nProfile Request:\n" + request.getXML());
 		}
@@ -399,12 +400,12 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		return ret;
 	}
 
-	private String recurringDayOfMonth(java.util.Date date)
+	private int recurringDayOfMonth(java.util.Date date)
 	{
 		final Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		final int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-		return String.valueOf(dayOfMonth);
+		return dayOfMonth;
 	}
 	
 	public String terminateRecurringPayments(String json) throws Exception
