@@ -572,7 +572,9 @@ namespace Semplest.SharedResources.Services
                 ReturnGatewayReturnObject.Message = objval["Message"];
                 ReturnGatewayReturnObject.TxRefNum = objval["TxRefNum"];
                 ReturnGatewayReturnObject.AuthCode = objval["AuthCode"];
-                
+                ReturnGatewayReturnObject.amountRedeemedNoDecimal = objval["amountRedeemedNoDecimal"];
+                ReturnGatewayReturnObject.amountRequestedNoDecimal = objval["amountRequestedNoDecimal"];
+
 
 
             }

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Semplest.SharedResources.Services;
+﻿using Semplest.SharedResources.Services;
+using SemplestModel;
 
 namespace SharedResources.Models.Repositories
 {
     public interface ICreditCardRepository
     {
-        bool ChargeCreditCard(CustomerObject co, int customerFk, int payTypeFk);
+        bool ChargeCreditCard(CustomerObject co, Promotion promo, int payTypeFk, decimal budget);
     }
 }

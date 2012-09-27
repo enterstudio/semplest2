@@ -110,6 +110,8 @@
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Models\Repositories\CreditCardRepository.cs" />
     <Compile Include="Models\Repositories\ICreditCardRepository.cs" />
+    <Compile Include="Models\Repositories\ITransactionRepository.cs" />
+    <Compile Include="Models\Repositories\TransactionRepository.cs" />
     <Compile Include="Models\StaticModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SEMplestConstants.cs" />
@@ -254,7 +256,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>64475</DevelopmentServerPort>
+          <DevelopmentServerPort>53450</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

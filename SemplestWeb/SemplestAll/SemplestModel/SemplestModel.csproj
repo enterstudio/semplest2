@@ -182,9 +182,6 @@
     <Compile Include="NickNameProfileAssociation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="PayType.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="Phone.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

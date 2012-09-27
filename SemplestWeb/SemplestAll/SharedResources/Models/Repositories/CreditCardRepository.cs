@@ -16,28 +16,42 @@ namespace SharedResources.Models.Repositories
             _dbcontext = dbcontext;
         }
 
-        public bool ChargeCreditCard(CustomerObject co, int customerFk, int payTypeFk)
+        public bool ChargeCreditCard(CustomerObject co, Promotion promo, int payTypeFk, decimal budget)
         {
             var sw = new ServiceClientWrapper();
             var gr = sw.CreateProfile(co);
             if (gr.isGood && !gr.isError)
             {
-                _dbcontext.CreditCardProfiles.Add(new CreditCardProfile {CustomerRefNum = gr.CustomerRefNum});
-                gr = sw.AuthorizeAndCapture(gr.CustomerRefNum, 1000);
+                var refNum = gr.CustomerRefNum;
+                gr = sw.AuthorizeAndCapture(refNum, double.Parse(budget.ToString()));
                 if (gr.isApproved && !gr.isDeclined)
                 {
+                    var tr = new TransactionRepository(_dbcontext);
+                    var amount = decimal.Parse(gr.amountRedeemedNoDecimal);
+                    var cp = _dbcontext.CreditCardProfiles.Add(new CreditCardProfile {CustomerRefNum = refNum});
                     var tran = _dbcontext.Transactions.Add(new Transaction
                                                                {
                                                                    CreatedDate = DateTime.Now,
-                                                                   Amount = decimal.Parse(gr.amountRedeemedNoDecimal),
-                                                                   TransactionTypeFK = 1,
-                                                                   PayTypeFK = payTypeFk,
-                                                                   CustomerFK = customerFk
+                                                                   Amount = amount,
+                                                                   CustomerFK = promo.ProductGroup.CustomerFK,
+                                                                   AuthCode =  gr.AuthCode,
+                                                                   TxRefNum = gr.TxRefNum
                                                                });
-                    tran.SemplestTransactions.Add(new SemplestTransaction
-                                                      {CreatedDate = DateTime.Now, Amount = 1, TransactionTypeFK = 1});
-                    tran.SemplestTransactions.Add(new SemplestTransaction
-                                                      {CreatedDate = DateTime.Now, Amount = 1, TransactionTypeFK = 2});
+                    tran.SemplestTransactions.Add(new SemplestTransaction { CreatedDate = DateTime.Now, Amount = amount, TransactionTypeFK = tr.GetTransactionTypeCode("MediaSpend")});
+                    promo.RemainingBudgetInCycle += amount;
+                    promo.StartBudgetInCycle += amount;
+                    promo.CreditCardProfileFK = cp.CreditCardProfilePK;
+                    _dbcontext.PromotionBudgets.Add(new PromotionBudget
+                                                        {
+                                                            TransactionsFK = tran.TransactionsPK,
+                                                            PromotionFK = promo.PromotionPK,
+                                                            BudgetCarryOverAmount = 0,
+                                                            BudgetToAddAmount = amount,
+                                                            BudgetToAddDate = DateTime.Now,
+                                                            CreatedDate = DateTime.Now,
+                                                            IsValid = true,
+                                                            IsAppliedToPromotion = true
+                                                        });
                 }
             }
             return true;

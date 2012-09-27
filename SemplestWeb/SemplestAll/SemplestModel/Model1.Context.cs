@@ -102,7 +102,6 @@ namespace SemplestModel
         public DbSet<Job> Jobs { get; set; }
         public DbSet<MSNGeoLocation> MSNGeoLocations { get; set; }
         public DbSet<NickNameProfileAssociation> NickNameProfileAssociations { get; set; }
-        public DbSet<PayType> PayTypes { get; set; }
         public DbSet<PromotionBudget> PromotionBudgets { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<TransactionType> TransactionTypes { get; set; }

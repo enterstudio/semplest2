@@ -71,7 +71,6 @@
           </EntitySet>
           <EntitySet Name="MSNGeoLocation" EntityType="SemplestModel.Store.MSNGeoLocation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="NickNameProfileAssociation" EntityType="SemplestModel.Store.NickNameProfileAssociation" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PayType" EntityType="SemplestModel.Store.PayType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Phone" EntityType="SemplestModel.Store.Phone" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PhoneType" EntityType="SemplestModel.Store.PhoneType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ProductGroup" EntityType="SemplestModel.Store.ProductGroup" store:Type="Tables" Schema="dbo" />
@@ -424,10 +423,6 @@
           <AssociationSet Name="REL_KeywordBid_TrafficEstimator_1" Association="SemplestModel.Store.REL_KeywordBid_TrafficEstimator_1">
             <End Role="KeywordBid" EntitySet="KeywordBid" />
             <End Role="TrafficEstimator" EntitySet="TrafficEstimator" />
-          </AssociationSet>
-          <AssociationSet Name="REL_PayType_Transactions_3" Association="SemplestModel.Store.REL_PayType_Transactions_3">
-            <End Role="PayType" EntitySet="PayType" />
-            <End Role="Transactions" EntitySet="Transactions" />
           </AssociationSet>
           <AssociationSet Name="REL_Phone_EmployeePhoneAssociation_1" Association="SemplestModel.Store.REL_Phone_EmployeePhoneAssociation_1">
             <End Role="Phone" EntitySet="Phone" />
@@ -1130,13 +1125,6 @@
           <Property Name="IsMasterProfile" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
-        <EntityType Name="PayType">
-          <Key>
-            <PropertyRef Name="PayTypePK" />
-          </Key>
-          <Property Name="PayTypePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="PayType" Type="varchar" Nullable="false" MaxLength="50" />
-        </EntityType>
         <EntityType Name="Phone">
           <Key>
             <PropertyRef Name="PhonePK" />
@@ -1472,12 +1460,12 @@
           </Key>
           <Property Name="TransactionsPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="CustomerFK" Type="int" Nullable="false" />
-          <Property Name="PayTypeFK" Type="int" Nullable="false" />
-          <Property Name="TransactionTypeFK" Type="int" Nullable="false" />
           <Property Name="CreditCardProfileFK" Type="int" />
           <Property Name="Amount" Type="money" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
           <Property Name="EditedDate" Type="datetime2" />
+          <Property Name="AuthCode" Type="varchar" MaxLength="6" />
+          <Property Name="TxRefNum" Type="varchar" MaxLength="40" />
         </EntityType>
         <EntityType Name="TransactionType">
           <Key>
@@ -2372,18 +2360,6 @@
             </Principal>
             <Dependent Role="TrafficEstimator">
               <PropertyRef Name="KeywordBidFK" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="REL_PayType_Transactions_3">
-          <End Role="PayType" Type="SemplestModel.Store.PayType" Multiplicity="1" />
-          <End Role="Transactions" Type="SemplestModel.Store.Transactions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PayType">
-              <PropertyRef Name="PayTypePK" />
-            </Principal>
-            <Dependent Role="Transactions">
-              <PropertyRef Name="PayTypeFK" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3460,7 +3436,6 @@
           <EntitySet Name="Jobs" EntityType="SemplestModel.Job" />
           <EntitySet Name="MSNGeoLocations" EntityType="SemplestModel.MSNGeoLocation" />
           <EntitySet Name="NickNameProfileAssociations" EntityType="SemplestModel.NickNameProfileAssociation" />
-          <EntitySet Name="PayTypes" EntityType="SemplestModel.PayType" />
           <EntitySet Name="PromotionBudgets" EntityType="SemplestModel.PromotionBudget" />
           <EntitySet Name="Transactions" EntityType="SemplestModel.Transaction" />
           <EntitySet Name="TransactionTypes" EntityType="SemplestModel.TransactionType" />
@@ -3479,10 +3454,6 @@
           </AssociationSet>
           <AssociationSet Name="REL_Customer_Transactions_4" Association="SemplestModel.REL_Customer_Transactions_4">
             <End Role="Customer" EntitySet="Customers" />
-            <End Role="Transaction" EntitySet="Transactions" />
-          </AssociationSet>
-          <AssociationSet Name="REL_PayType_Transactions_3" Association="SemplestModel.REL_PayType_Transactions_3">
-            <End Role="PayType" EntitySet="PayTypes" />
             <End Role="Transaction" EntitySet="Transactions" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_PromotionBudget_1" Association="SemplestModel.REL_Promotion_PromotionBudget_1">
@@ -5719,14 +5690,6 @@
           <NavigationProperty Name="CreditCardNickName" Relationship="SemplestModel.REL_CreditCardNickName_NickNameProfileAssociation_2" FromRole="NickNameProfileAssociation" ToRole="CreditCardNickName" />
           <NavigationProperty Name="CreditCardProfile" Relationship="SemplestModel.REL_CreditCardProfile_NickNameProfileAssociation_1" FromRole="NickNameProfileAssociation" ToRole="CreditCardProfile" />
         </EntityType>
-        <EntityType Name="PayType">
-          <Key>
-            <PropertyRef Name="PayTypePK" />
-          </Key>
-          <Property Type="Int32" Name="PayTypePK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="PayType1" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Transactions" Relationship="SemplestModel.REL_PayType_Transactions_3" FromRole="PayType" ToRole="Transaction" />
-        </EntityType>
         <EntityType Name="PromotionBudget">
           <Key>
             <PropertyRef Name="PromotionBudgetPK" />
@@ -5749,17 +5712,16 @@
           </Key>
           <Property Type="Int32" Name="TransactionsPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="CustomerFK" Nullable="false" />
-          <Property Type="Int32" Name="PayTypeFK" Nullable="false" />
-          <Property Type="Int32" Name="TransactionTypeFK" Nullable="false" />
           <Property Type="Int32" Name="CreditCardProfileFK" />
           <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" Scale="4" />
           <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
           <Property Type="DateTime" Name="EditedDate" />
           <NavigationProperty Name="CreditCardProfile" Relationship="SemplestModel.REL_CreditCardProfile_Transactions_2" FromRole="Transaction" ToRole="CreditCardProfile" />
           <NavigationProperty Name="Customer" Relationship="SemplestModel.REL_Customer_Transactions_4" FromRole="Transaction" ToRole="Customer" />
-          <NavigationProperty Name="PayType" Relationship="SemplestModel.REL_PayType_Transactions_3" FromRole="Transaction" ToRole="PayType" />
           <NavigationProperty Name="PromotionBudgets" Relationship="SemplestModel.REL_Transactions_PromotionBudget_2" FromRole="Transaction" ToRole="PromotionBudget" />
           <NavigationProperty Name="SemplestTransactions" Relationship="SemplestModel.REL_Transactions_SemplestTransaction_1" FromRole="Transaction" ToRole="SemplestTransaction" />
+          <Property Type="String" Name="AuthCode" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="TxRefNum" MaxLength="40" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="TransactionType">
           <Key>
@@ -5829,18 +5791,6 @@
             </Principal>
             <Dependent Role="Transaction">
               <PropertyRef Name="CustomerFK" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="REL_PayType_Transactions_3">
-          <End Type="SemplestModel.PayType" Role="PayType" Multiplicity="1" />
-          <End Type="SemplestModel.Transaction" Role="Transaction" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PayType">
-              <PropertyRef Name="PayTypePK" />
-            </Principal>
-            <Dependent Role="Transaction">
-              <PropertyRef Name="PayTypeFK" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -7050,14 +7000,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="PayTypes">
-            <EntityTypeMapping TypeName="SemplestModel.PayType">
-              <MappingFragment StoreEntitySet="PayType">
-                <ScalarProperty Name="PayType1" ColumnName="PayType" />
-                <ScalarProperty Name="PayTypePK" ColumnName="PayTypePK" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PromotionBudgets">
             <EntityTypeMapping TypeName="SemplestModel.PromotionBudget">
               <MappingFragment StoreEntitySet="PromotionBudget">
@@ -7076,12 +7018,12 @@
           <EntitySetMapping Name="Transactions">
             <EntityTypeMapping TypeName="SemplestModel.Transaction">
               <MappingFragment StoreEntitySet="Transactions">
+                <ScalarProperty Name="TxRefNum" ColumnName="TxRefNum" />
+                <ScalarProperty Name="AuthCode" ColumnName="AuthCode" />
                 <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="Amount" ColumnName="Amount" />
                 <ScalarProperty Name="CreditCardProfileFK" ColumnName="CreditCardProfileFK" />
-                <ScalarProperty Name="TransactionTypeFK" ColumnName="TransactionTypeFK" />
-                <ScalarProperty Name="PayTypeFK" ColumnName="PayTypeFK" />
                 <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
                 <ScalarProperty Name="TransactionsPK" ColumnName="TransactionsPK" />
               </MappingFragment>
@@ -7238,8 +7180,10 @@
           <ConnectorPoint PointX="7.458333333333333" PointY="40.25" />
           <ConnectorPoint PointX="7.291666666666667" PointY="40.25" />
           <ConnectorPoint PointX="7" PointY="40.25" />
-          <ConnectorPoint PointX="7" PointY="59.326795688802079" />
-          <ConnectorPoint PointX="8.25" PointY="59.326795688802079" />
+          <ConnectorPoint PointX="7" PointY="59.5624995" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="59.5624995" />
+          <ConnectorPoint PointX="8.0833333333333339" PointY="59.5624995" />
+          <ConnectorPoint PointX="8.25" PointY="59.5624995" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Address_StateCode" >
           <ConnectorPoint PointX="5.25" PointY="29.518992513020862" />
@@ -7258,50 +7202,56 @@
           <ConnectorPoint PointX="8.25" PointY="54.65625" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_AdvertisingEngineAds_2" >
-          <ConnectorPoint PointX="7.5" PointY="34.736500421756951" />
-          <ConnectorPoint PointX="7.666666666666667" PointY="34.736500421756951" />
-          <ConnectorPoint PointX="7.833333333333333" PointY="34.736500421756951" />
-          <ConnectorPoint PointX="11.041666666666666" PointY="34.736500421756951" />
-          <ConnectorPoint PointX="11.208333333333334" PointY="34.736500421756951" />
-          <ConnectorPoint PointX="14.197919166666667" PointY="34.736500421756951" />
-          <ConnectorPoint PointX="14.364585833333335" PointY="34.736500421756951" />
-          <ConnectorPoint PointX="15.307291666666666" PointY="34.736500421756951" />
-          <ConnectorPoint PointX="15.307291666666666" PointY="82.25" />
+          <ConnectorPoint PointX="7.5" PointY="35.039978841145839" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="35.039978841145839" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="35.039978841145839" />
+          <ConnectorPoint PointX="12.791666666666666" PointY="35.039978841145839" />
+          <ConnectorPoint PointX="12.958333333333334" PointY="35.039978841145839" />
+          <ConnectorPoint PointX="14.085127018229166" PointY="35.039978841145839" />
+          <ConnectorPoint PointX="14.251793684895834" PointY="35.039978841145839" />
+          <ConnectorPoint PointX="15.3125" PointY="35.039978841145839" />
+          <ConnectorPoint PointX="15.3125" PointY="82.25" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_AdvertisingEngineReportData_5" >
-          <ConnectorPoint PointX="7.5" PointY="33.267406098958332" />
-          <ConnectorPoint PointX="7.666666666666667" PointY="33.267406098958332" />
-          <ConnectorPoint PointX="7.833333333333333" PointY="33.267406098958332" />
-          <ConnectorPoint PointX="10.916666666666666" PointY="33.267406098958332" />
-          <ConnectorPoint PointX="11.083333333333334" PointY="33.267406098958332" />
-          <ConnectorPoint PointX="11.125" PointY="33.267406098958332" />
-          <ConnectorPoint PointX="11.125" PointY="34.883362630208332" />
-          <ConnectorPoint PointX="12.875" PointY="34.883362630208332" />
-          <ConnectorPoint PointX="12.875" PointY="54.375" />
-          <ConnectorPoint PointX="13.25" PointY="54.375" />
+          <ConnectorPoint PointX="7.5" PointY="33.345531098958332" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="33.345531098958332" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="33.345531098958332" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="33.345531098958332" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="33.345531098958332" />
+          <ConnectorPoint PointX="10.916666666666666" PointY="33.345531098958332" />
+          <ConnectorPoint PointX="11.083333333333334" PointY="33.345531098958332" />
+          <ConnectorPoint PointX="11.25" PointY="33.345531098958332" />
+          <ConnectorPoint PointX="11.25" PointY="34.570862630208332" />
+          <ConnectorPoint PointX="12.875" PointY="34.570862630208332" />
+          <ConnectorPoint PointX="12.875" PointY="54.25" />
+          <ConnectorPoint PointX="13.25" PointY="54.25" />
           <ConnectorPoint PointX="13.25" PointY="62.25" />
           <ConnectorPoint PointX="13.114583333333334" PointY="62.25" />
           <ConnectorPoint PointX="12.947916666666666" PointY="62.25" />
+          <ConnectorPoint PointX="12.708333333333334" PointY="62.25" />
+          <ConnectorPoint PointX="12.541666666666666" PointY="62.25" />
           <ConnectorPoint PointX="12.5" PointY="62.25" />
           <ConnectorPoint PointX="12.5" PointY="67.125" />
-          <ConnectorPoint PointX="12.541666666666666" PointY="67.125" />
-          <ConnectorPoint PointX="12.708333333333334" PointY="67.125" />
           <ConnectorPoint PointX="13.5" PointY="67.125" />
           <ConnectorPoint PointX="13.5" PointY="67.5" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_KeywordBid_3" >
-          <ConnectorPoint PointX="7.5" PointY="32.688388549479164" />
-          <ConnectorPoint PointX="7.666666666666667" PointY="32.688388549479164" />
-          <ConnectorPoint PointX="7.833333333333333" PointY="32.688388549479164" />
-          <ConnectorPoint PointX="10.916666666666666" PointY="32.688388549479164" />
-          <ConnectorPoint PointX="11.083333333333334" PointY="32.688388549479164" />
-          <ConnectorPoint PointX="11.25" PointY="32.688388549479164" />
-          <ConnectorPoint PointX="11.25" PointY="34.441061197916667" />
-          <ConnectorPoint PointX="14.197919166666667" PointY="34.441061197916667" />
-          <ConnectorPoint PointX="14.364585833333335" PointY="34.441061197916667" />
-          <ConnectorPoint PointX="17.041666666666668" PointY="34.441061197916667" />
-          <ConnectorPoint PointX="17.208333333333332" PointY="34.441061197916667" />
-          <ConnectorPoint PointX="20.75" PointY="34.441061197916667" />
+          <ConnectorPoint PointX="7.5" PointY="33.987048648437494" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="33.987048648437494" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="33.987048648437494" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="33.987048648437494" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="33.987048648437494" />
+          <ConnectorPoint PointX="10.875" PointY="33.987048648437494" />
+          <ConnectorPoint PointX="10.875" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="11.041666666666666" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="11.208333333333334" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="14.085127018229166" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="14.251793684895834" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="15.416666666666666" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="15.583333333333334" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="17.041666666666668" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="17.208333333333332" PointY="34.633362630208332" />
+          <ConnectorPoint PointX="20.75" PointY="34.633362630208332" />
           <ConnectorPoint PointX="20.75" PointY="58.25" />
           <ConnectorPoint PointX="21.979166666666668" PointY="58.25" />
           <ConnectorPoint PointX="22.145833333333332" PointY="58.25" />
@@ -7311,75 +7261,81 @@
           <ConnectorPoint PointX="21.75" PointY="61.75" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_PromotionAdEngineSelected_2" >
-          <ConnectorPoint PointX="7.5" PointY="35.251017129006435" />
-          <ConnectorPoint PointX="7.6910744349011217" PointY="35.442091563907553" />
-          <ConnectorPoint PointX="7.8089255650988791" PointY="35.559942694105317" />
-          <ConnectorPoint PointX="7.9143279230769181" PointY="35.665345052083353" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="35.665345052083353" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="35.665345052083353" />
-          <ConnectorPoint PointX="14.197919166666667" PointY="35.665345052083353" />
-          <ConnectorPoint PointX="14.364585833333335" PointY="35.665345052083353" />
-          <ConnectorPoint PointX="15.375" PointY="35.665345052083353" />
+          <ConnectorPoint PointX="7.5" PointY="35.232555590544891" />
+          <ConnectorPoint PointX="7.6910744349011217" PointY="35.423630025446009" />
+          <ConnectorPoint PointX="7.8089255650988791" PointY="35.541481155643773" />
+          <ConnectorPoint PointX="7.9015394615384622" PointY="35.634095052083353" />
+          <ConnectorPoint PointX="12.791666666666666" PointY="35.634095052083353" />
+          <ConnectorPoint PointX="12.958333333333334" PointY="35.634095052083353" />
+          <ConnectorPoint PointX="14.085127018229166" PointY="35.634095052083353" />
+          <ConnectorPoint PointX="14.251793684895834" PointY="35.634095052083353" />
+          <ConnectorPoint PointX="15.375" PointY="35.634095052083353" />
           <ConnectorPoint PointX="15.375" PointY="62.625" />
-          <ConnectorPoint PointX="15.441074434901122" PointY="62.691074434901118" />
+          <ConnectorPoint PointX="15.378574434901122" PointY="62.628574434901118" />
           <ConnectorPoint PointX="15.590175565098878" PointY="62.840175565098882" />
           <ConnectorPoint PointX="15.75" PointY="63" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_PromotionAdengineStatus_3" >
-          <ConnectorPoint PointX="7.5" PointY="35.232555590544891" />
-          <ConnectorPoint PointX="7.6910744349011217" PointY="35.423630025446009" />
-          <ConnectorPoint PointX="7.8089255650988791" PointY="35.541481155643773" />
-          <ConnectorPoint PointX="7.8390394615384622" PointY="35.571595052083353" />
+          <ConnectorPoint PointX="7.4757692307692318" PointY="35.259095052083353" />
+          <ConnectorPoint PointX="7.7882692307692309" PointY="35.571595052083353" />
           <ConnectorPoint PointX="12.791666666666666" PointY="35.571595052083353" />
           <ConnectorPoint PointX="12.958333333333334" PointY="35.571595052083353" />
-          <ConnectorPoint PointX="14.197919166666667" PointY="35.571595052083353" />
-          <ConnectorPoint PointX="14.364585833333335" PointY="35.571595052083353" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="35.571595052083353" />
-          <ConnectorPoint PointX="15.390625" PointY="35.571595052083353" />
-          <ConnectorPoint PointX="15.40625" PointY="35.571595052083353" />
-          <ConnectorPoint PointX="15.40625" PointY="70.53125" />
+          <ConnectorPoint PointX="14.085127018229166" PointY="35.571595052083353" />
+          <ConnectorPoint PointX="14.251793684895834" PointY="35.571595052083353" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="35.571595052083353" />
+          <ConnectorPoint PointX="15.395833333333334" PointY="35.571595052083353" />
+          <ConnectorPoint PointX="15.4375" PointY="35.571595052083353" />
+          <ConnectorPoint PointX="15.4375" PointY="70.5625" />
           <ConnectorPoint PointX="15.75" PointY="70.875" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_PromotionBidding_2" >
-          <ConnectorPoint PointX="7.5" PointY="33.8464236484375" />
-          <ConnectorPoint PointX="7.666666666666667" PointY="33.8464236484375" />
-          <ConnectorPoint PointX="7.833333333333333" PointY="33.8464236484375" />
-          <ConnectorPoint PointX="10.875" PointY="33.8464236484375" />
-          <ConnectorPoint PointX="10.875" PointY="34.378561197916667" />
-          <ConnectorPoint PointX="10.916666666666666" PointY="34.378561197916667" />
-          <ConnectorPoint PointX="11.208333333333334" PointY="34.378561197916667" />
-          <ConnectorPoint PointX="14.197919166666667" PointY="34.378561197916667" />
-          <ConnectorPoint PointX="14.364585833333335" PointY="34.378561197916667" />
-          <ConnectorPoint PointX="17.041666666666668" PointY="34.378561197916667" />
-          <ConnectorPoint PointX="17.208333333333332" PointY="34.378561197916667" />
-          <ConnectorPoint PointX="18.5" PointY="34.378561197916667" />
+          <ConnectorPoint PointX="7.5" PointY="32.704013549479171" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="32.704013549479171" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="32.704013549479171" />
+          <ConnectorPoint PointX="10.75" PointY="32.704013549479171" />
+          <ConnectorPoint PointX="10.75" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="11.041666666666666" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="11.208333333333334" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="12.791666666666666" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="12.958333333333334" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="14.085127018229166" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="14.251793684895834" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="15.416666666666666" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="15.583333333333334" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="17.041666666666668" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="17.208333333333332" PointY="34.695862630208332" />
+          <ConnectorPoint PointX="18.5" PointY="34.695862630208332" />
           <ConnectorPoint PointX="18.5" PointY="58" />
-          <ConnectorPoint PointX="19.8125" PointY="58" />
-          <ConnectorPoint PointX="19.8125" PointY="61.75" />
-          <ConnectorPoint PointX="18.5" PointY="61.75" />
+          <ConnectorPoint PointX="19.75" PointY="58" />
+          <ConnectorPoint PointX="19.75" PointY="62" />
+          <ConnectorPoint PointX="18.5" PointY="62" />
           <ConnectorPoint PointX="18.5" PointY="66.5" />
-          <ConnectorPoint PointX="19.1250005" PointY="66.5" />
-          <ConnectorPoint PointX="19.1250005" PointY="66.875" />
+          <ConnectorPoint PointX="19.5" PointY="66.5" />
+          <ConnectorPoint PointX="19.5" PointY="66.875" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngine_TargetedDailyBudget_2" >
-          <ConnectorPoint PointX="7.5" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="7.666666666666667" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="7.833333333333333" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="14.197919166666667" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="14.364585833333335" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="15.390625" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="17.041666666666668" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="17.208333333333332" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="18.541666666666668" PointY="35.029049736920157" />
-          <ConnectorPoint PointX="18.541666666666668" PointY="57.75" />
-          <ConnectorPoint PointX="19.75" PointY="57.75" />
-          <ConnectorPoint PointX="19.75" PointY="62" />
-          <ConnectorPoint PointX="19.5" PointY="62" />
+          <ConnectorPoint PointX="7.5" PointY="34.307807423177074" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="34.307807423177074" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="34.307807423177074" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="34.307807423177074" />
+          <ConnectorPoint PointX="11.083333333333334" PointY="34.307807423177074" />
+          <ConnectorPoint PointX="11.125" PointY="34.307807423177074" />
+          <ConnectorPoint PointX="11.125" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="12.791666666666666" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="12.958333333333334" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="14.085127018229166" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="14.251793684895834" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="15.416666666666666" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="15.583333333333334" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="17.041666666666668" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="17.208333333333332" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="18.5" PointY="34.820862630208332" />
+          <ConnectorPoint PointX="18.5" PointY="57.75" />
+          <ConnectorPoint PointX="19.8125" PointY="57.75" />
+          <ConnectorPoint PointX="19.8125" PointY="61.75" />
+          <ConnectorPoint PointX="18.4375" PointY="61.75" />
+          <ConnectorPoint PointX="18.4375" PointY="70.25" />
+          <ConnectorPoint PointX="19.5" PointY="70.25" />
           <ConnectorPoint PointX="19.5" PointY="70.625" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngineAccount_AdvertisingEngineAPICharge_1" >
@@ -7391,7 +7347,7 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngineAccount_AdvertisingEnginePromotion_3" >
           <ConnectorPoint PointX="9.75" PointY="54.46875" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="54.46875" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="54.46875" />
           <ConnectorPoint PointX="10.145833333333334" PointY="54.46875" />
           <ConnectorPoint PointX="13.03125" PointY="54.46875" />
           <ConnectorPoint PointX="13.03125" PointY="62.5" />
@@ -7410,24 +7366,26 @@
           <ConnectorPoint PointX="12" PointY="64.913198242187491" />
           <ConnectorPoint PointX="12.135416666666666" PointY="64.913198242187491" />
           <ConnectorPoint PointX="12.302083333333334" PointY="64.913198242187491" />
-          <ConnectorPoint PointX="12.385416666666666" PointY="64.913198242187491" />
+          <ConnectorPoint PointX="12.322916666666666" PointY="64.913198242187491" />
           <ConnectorPoint PointX="12.614583333333334" PointY="64.913198242187491" />
           <ConnectorPoint PointX="12.75" PointY="64.913198242187491" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_BidType_AdvertisingEngineReportData_2" >
-          <ConnectorPoint PointX="18.75" PointY="52.932572114583337" />
-          <ConnectorPoint PointX="18.625" PointY="52.932572114583337" />
-          <ConnectorPoint PointX="18.416666666666671" PointY="52.932572114583337" />
-          <ConnectorPoint PointX="17.208333333333332" PointY="52.932572114583337" />
-          <ConnectorPoint PointX="17.041666666666668" PointY="52.932572114583337" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="52.932572114583337" />
-          <ConnectorPoint PointX="15.22395833333333" PointY="52.932572114583337" />
-          <ConnectorPoint PointX="14.875" PointY="52.932572114583337" />
+          <ConnectorPoint PointX="18.75" PointY="52.8750005" />
+          <ConnectorPoint PointX="18.583333333333332" PointY="52.8750005" />
+          <ConnectorPoint PointX="18.416666666666668" PointY="52.8750005" />
+          <ConnectorPoint PointX="17.208333333333332" PointY="52.8750005" />
+          <ConnectorPoint PointX="17.041666666666668" PointY="52.8750005" />
+          <ConnectorPoint PointX="15.583333333333334" PointY="52.8750005" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="52.8750005" />
+          <ConnectorPoint PointX="14.875" PointY="52.8750005" />
           <ConnectorPoint PointX="14.875" PointY="55.625" />
           <ConnectorPoint PointX="13.28125" PointY="55.625" />
           <ConnectorPoint PointX="13.28125" PointY="62.234375" />
           <ConnectorPoint PointX="13.114583333333334" PointY="62.234375" />
           <ConnectorPoint PointX="12.947916666666666" PointY="62.234375" />
+          <ConnectorPoint PointX="12.708333333333334" PointY="62.234375" />
+          <ConnectorPoint PointX="12.541666666666666" PointY="62.234375" />
           <ConnectorPoint PointX="12.53125" PointY="62.234375" />
           <ConnectorPoint PointX="12.53125" PointY="67" />
           <ConnectorPoint PointX="13.906252" PointY="67" />
@@ -7438,10 +7396,8 @@
           <ConnectorPoint PointX="17.5468725" PointY="70.398771100260419" />
           <ConnectorPoint PointX="16.614585333333331" PointY="70.398771100260419" />
           <ConnectorPoint PointX="16.447918666666666" PointY="70.398771100260419" />
-          <ConnectorPoint PointX="15.489583333333334" PointY="70.398771100260419" />
-          <ConnectorPoint PointX="15.22395833333333" PointY="70.398771100260419" />
-          <ConnectorPoint PointX="15.145833333333334" PointY="70.398771100260419" />
-          <ConnectorPoint PointX="14.979166666666666" PointY="70.398771100260419" />
+          <ConnectorPoint PointX="15.520833333333334" PointY="70.398771100260419" />
+          <ConnectorPoint PointX="15.104166666666666" PointY="70.398771100260419" />
           <ConnectorPoint PointX="14.25" PointY="70.398771100260419" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_AdvertisingEngineReportData_4" >
@@ -7591,25 +7547,31 @@
           <ConnectorPoint PointX="12.40625" PointY="56.605286458333353" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_Schedule_3" >
-          <ConnectorPoint PointX="4.5" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="4.916666666666667" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="6.916666666666667" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="7.083333333333333" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="7.291666666666667" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="7.458333333333333" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="8.1666666666666661" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="8.3333333333333339" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="14.791666666666666" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="14.958333333333334" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="15.614583333333332" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="16.09375" PointY="53.740143229166677" />
-          <ConnectorPoint PointX="16.09375" PointY="57" />
+          <ConnectorPoint PointX="3.26757565625" PointY="59.364726562499996" />
+          <ConnectorPoint PointX="3.26757565625" PointY="60.057190755208339" />
+          <ConnectorPoint PointX="3.5143219791666667" PointY="60.057190755208339" />
+          <ConnectorPoint PointX="3.6809886458333336" PointY="60.057190755208339" />
+          <ConnectorPoint PointX="3.9470327844551281" PointY="60.057190755208339" />
+          <ConnectorPoint PointX="4.1136994511217946" PointY="60.057190755208339" />
+          <ConnectorPoint PointX="4.791666666666667" PointY="60.057190755208339" />
+          <ConnectorPoint PointX="5.083333333333333" PointY="60.057190755208339" />
+          <ConnectorPoint PointX="8" PointY="60.057190755208339" />
+          <ConnectorPoint PointX="8" PointY="58.25" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="58.25" />
+          <ConnectorPoint PointX="10.145833333333334" PointY="58.25" />
+          <ConnectorPoint PointX="10.25" PointY="58.25" />
+          <ConnectorPoint PointX="10.25" PointY="59.922587890624982" />
+          <ConnectorPoint PointX="12.135416666666666" PointY="59.922587890624982" />
+          <ConnectorPoint PointX="12.302083333333334" PointY="59.922587890624982" />
+          <ConnectorPoint PointX="12.947916666666666" PointY="59.922587890624982" />
+          <ConnectorPoint PointX="13.114583333333334" PointY="59.922587890624982" />
+          <ConnectorPoint PointX="13.166666666666666" PointY="59.922587890624982" />
+          <ConnectorPoint PointX="13.364583333333334" PointY="59.922587890624982" />
+          <ConnectorPoint PointX="15.125" PointY="59.922587890624982" />
+          <ConnectorPoint PointX="15.125" PointY="59.004082472656307" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="59.004082472656307" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="59.004082472656307" />
+          <ConnectorPoint PointX="15.75" PointY="59.004082472656307" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_WebContent_1" >
           <ConnectorPoint PointX="4.5" PointY="59.3324178701923" />
@@ -7626,9 +7588,9 @@
           <ConnectorPoint PointX="5.25" PointY="75.182403971354162" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.PhoneCust_rel" >
-          <ConnectorPoint PointX="9.5" PointY="37.624746093749991" />
-          <ConnectorPoint PointX="10.53125" PointY="37.624746093749991" />
-          <ConnectorPoint PointX="10.53125" PointY="51.625" />
+          <ConnectorPoint PointX="9.5" PointY="37.265433320312468" />
+          <ConnectorPoint PointX="10.65625" PointY="37.265433320312468" />
+          <ConnectorPoint PointX="10.65625" PointY="51.625" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Employee_EmployeeCustomerAssociation_1" >
           <ConnectorPoint PointX="9" PointY="76.208639322916667" />
@@ -7659,9 +7621,9 @@
           <ConnectorPoint PointX="7.5" PointY="74.421717308593742" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Phone_EmployeePhoneAssociation_1" >
-          <ConnectorPoint PointX="9.5" PointY="38.34337164062498" />
-          <ConnectorPoint PointX="9.9218725" PointY="38.34337164062498" />
-          <ConnectorPoint PointX="9.9218725" PointY="77" />
+          <ConnectorPoint PointX="9.5" PointY="38.343371640625037" />
+          <ConnectorPoint PointX="9.90625" PointY="38.343371640625037" />
+          <ConnectorPoint PointX="9.90625" PointY="77" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Error_1" >
           <ConnectorPoint PointX="6.75" PointY="77.257538913602247" />
@@ -7671,17 +7633,17 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Frequency_Schedule_1" >
           <ConnectorPoint PointX="15" PointY="57.235341796874991" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="57.235341796874991" />
-          <ConnectorPoint PointX="15.614583333333332" PointY="57.235341796874991" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="57.235341796874991" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="57.235341796874991" />
           <ConnectorPoint PointX="15.75" PointY="57.235341796874991" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_GeoTargeting_1" >
           <ConnectorPoint PointX="12" PointY="66.6875" />
           <ConnectorPoint PointX="12.135416666666666" PointY="66.6875" />
-          <ConnectorPoint PointX="12.302083333333334" PointY="66.6875" />
-          <ConnectorPoint PointX="12.322916666666666" PointY="66.6875" />
           <ConnectorPoint PointX="12.614583333333334" PointY="66.6875" />
-          <ConnectorPoint PointX="14.979166666666666" PointY="66.6875" />
+          <ConnectorPoint PointX="14.916666666666666" PointY="66.6875" />
+          <ConnectorPoint PointX="15.083333333333334" PointY="66.6875" />
+          <ConnectorPoint PointX="15.104166666666666" PointY="66.6875" />
           <ConnectorPoint PointX="15.614583333333334" PointY="66.6875" />
           <ConnectorPoint PointX="15.75" PointY="66.6875" />
         </AssociationConnector>
@@ -7694,13 +7656,15 @@
           <ConnectorPoint PointX="6.666666666666667" PointY="31.191793619791667" />
           <ConnectorPoint PointX="6.833333333333333" PointY="31.191793619791667" />
           <ConnectorPoint PointX="11" PointY="31.191793619791667" />
-          <ConnectorPoint PointX="11" PointY="34.566061197916667" />
-          <ConnectorPoint PointX="11.041666666666666" PointY="34.566061197916667" />
-          <ConnectorPoint PointX="11.208333333333334" PointY="34.566061197916667" />
-          <ConnectorPoint PointX="14.197919166666667" PointY="34.566061197916667" />
-          <ConnectorPoint PointX="14.364585833333335" PointY="34.566061197916667" />
-          <ConnectorPoint PointX="15.5" PointY="34.566061197916667" />
+          <ConnectorPoint PointX="11" PointY="34.508362630208332" />
+          <ConnectorPoint PointX="11.041666666666666" PointY="34.508362630208332" />
+          <ConnectorPoint PointX="11.208333333333334" PointY="34.508362630208332" />
+          <ConnectorPoint PointX="14.085127018229166" PointY="34.508362630208332" />
+          <ConnectorPoint PointX="14.251793684895834" PointY="34.508362630208332" />
+          <ConnectorPoint PointX="15.5" PointY="34.508362630208332" />
           <ConnectorPoint PointX="15.5" PointY="66.125" />
+          <ConnectorPoint PointX="16.041667166666667" PointY="66.125" />
+          <ConnectorPoint PointX="16.208333833333331" PointY="66.125" />
           <ConnectorPoint PointX="16.5" PointY="66.125" />
           <ConnectorPoint PointX="16.5" PointY="66.5" />
         </AssociationConnector>
@@ -7713,8 +7677,8 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_KeywordBid_TrafficEstimator_1" >
           <ConnectorPoint PointX="22.5" PointY="65.240102539062491" />
-          <ConnectorPoint PointX="22.557290416666667" PointY="65.240102539062491" />
-          <ConnectorPoint PointX="22.723957083333332" PointY="65.240102539062491" />
+          <ConnectorPoint PointX="22.561196354166668" PointY="65.240102539062491" />
+          <ConnectorPoint PointX="22.727863020833333" PointY="65.240102539062491" />
           <ConnectorPoint PointX="23.25" PointY="65.240102539062491" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_PromotionKeywordAssociation_KeywordBid_1" >
@@ -7752,52 +7716,44 @@
           <ConnectorPoint PointX="6.833333333333333" PointY="62.662985026041667" />
           <ConnectorPoint PointX="9.2916666666666661" PointY="62.662985026041667" />
           <ConnectorPoint PointX="9.4583333333333339" PointY="62.662985026041667" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="62.662985026041667" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="62.662985026041667" />
           <ConnectorPoint PointX="10.145833333333334" PointY="62.662985026041667" />
-          <ConnectorPoint PointX="10.25" PointY="62.662985026041667" />
-          <ConnectorPoint PointX="10.25" PointY="59.922587890624982" />
-          <ConnectorPoint PointX="12.135416666666666" PointY="59.922587890624982" />
-          <ConnectorPoint PointX="12.302083333333334" PointY="59.922587890624982" />
-          <ConnectorPoint PointX="12.947916666666666" PointY="59.922587890624982" />
-          <ConnectorPoint PointX="13.114583333333334" PointY="59.922587890624982" />
-          <ConnectorPoint PointX="13.166666666666666" PointY="59.922587890624982" />
-          <ConnectorPoint PointX="13.364583333333334" PointY="59.922587890624982" />
-          <ConnectorPoint PointX="15.125" PointY="59.922587890624982" />
-          <ConnectorPoint PointX="15.125" PointY="59.004082472656251" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="59.004082472656251" />
-          <ConnectorPoint PointX="15.614583333333332" PointY="59.004082472656251" />
-          <ConnectorPoint PointX="15.75" PointY="59.004082472656251" />
+          <ConnectorPoint PointX="10.1875" PointY="62.662985026041667" />
+          <ConnectorPoint PointX="10.1875" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="12.135416666666666" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="12.302083333333334" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="12.947916666666666" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="13.114583333333334" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="13.166666666666666" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="13.364583333333334" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="15.625" PointY="60.172587890624982" />
+          <ConnectorPoint PointX="15.625" PointY="60.0373757089844" />
+          <ConnectorPoint PointX="15.75" PointY="60.0373757089844" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAdEngineSelected_1" >
-          <ConnectorPoint PointX="11.272460875" PointY="64" />
-          <ConnectorPoint PointX="11.272460875" PointY="63.71875" />
-          <ConnectorPoint PointX="12.135416666666666" PointY="63.71875" />
-          <ConnectorPoint PointX="12.364583333333334" PointY="63.71875" />
-          <ConnectorPoint PointX="12.416666666666666" PointY="63.71875" />
-          <ConnectorPoint PointX="12.614583333333334" PointY="63.71875" />
-          <ConnectorPoint PointX="12.6875" PointY="63.71875" />
-          <ConnectorPoint PointX="12.6875" PointY="62.21875" />
-          <ConnectorPoint PointX="12.947916666666666" PointY="62.21875" />
-          <ConnectorPoint PointX="13.114583333333334" PointY="62.21875" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="62.21875" />
-          <ConnectorPoint PointX="15.614583333333332" PointY="62.21875" />
-          <ConnectorPoint PointX="15.625" PointY="62.21875" />
-          <ConnectorPoint PointX="15.625" PointY="64.021395229166671" />
-          <ConnectorPoint PointX="15.75" PointY="64.021395229166671" />
+          <ConnectorPoint PointX="12" PointY="71.7827299034161" />
+          <ConnectorPoint PointX="12.135416666666666" PointY="71.7827299034161" />
+          <ConnectorPoint PointX="12.411458333333334" PointY="71.7827299034161" />
+          <ConnectorPoint PointX="12.4375" PointY="71.7827299034161" />
+          <ConnectorPoint PointX="12.4375" PointY="66.25" />
+          <ConnectorPoint PointX="12.447916666666666" PointY="66.25" />
+          <ConnectorPoint PointX="12.614583333333334" PointY="66.25" />
+          <ConnectorPoint PointX="14.916666666666666" PointY="66.25" />
+          <ConnectorPoint PointX="15.083333333333334" PointY="66.25" />
+          <ConnectorPoint PointX="15.104166666666666" PointY="66.25" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="66.25" />
+          <ConnectorPoint PointX="16.1250005" PointY="66.25" />
+          <ConnectorPoint PointX="16.1250005" PointY="64.980286458333353" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAdengineStatus_1" >
-          <ConnectorPoint PointX="12" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="12.135416666666666" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="12.302083333333334" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="12.322916666666666" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="12.489583333333334" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="14.979166666666666" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="15.145833333333334" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="15.390625" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="72.70783204169021" />
-          <ConnectorPoint PointX="15.75" PointY="72.70783204169021" />
+          <ConnectorPoint PointX="12" PointY="72.713966851762876" />
+          <ConnectorPoint PointX="12.135416666666666" PointY="72.713966851762876" />
+          <ConnectorPoint PointX="12.411458333333334" PointY="72.713966851762876" />
+          <ConnectorPoint PointX="15.104166666666666" PointY="72.713966851762876" />
+          <ConnectorPoint PointX="15.395833333333334" PointY="72.713966851762876" />
+          <ConnectorPoint PointX="15.75" PointY="72.713966851762876" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAds_1" >
           <ConnectorPoint PointX="11.983846153846169" PointY="73.095439453125" />
@@ -7808,38 +7764,40 @@
           <ConnectorPoint PointX="12.75" PointY="83.220896809895862" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionBidding_1" >
-          <ConnectorPoint PointX="12" PointY="68.892557076134921" />
-          <ConnectorPoint PointX="12.135416666666666" PointY="68.892557076134921" />
-          <ConnectorPoint PointX="12.302083333333334" PointY="68.892557076134921" />
-          <ConnectorPoint PointX="12.4375" PointY="68.892557076134921" />
-          <ConnectorPoint PointX="12.4375" PointY="66.25" />
-          <ConnectorPoint PointX="12.447916666666666" PointY="66.25" />
-          <ConnectorPoint PointX="12.614583333333334" PointY="66.25" />
-          <ConnectorPoint PointX="14.979166666666666" PointY="66.25" />
-          <ConnectorPoint PointX="15.614583333333334" PointY="66.25" />
-          <ConnectorPoint PointX="16.416666666666668" PointY="66.25" />
-          <ConnectorPoint PointX="16.583333333333332" PointY="66.25" />
-          <ConnectorPoint PointX="17.463539166666667" PointY="66.25" />
-          <ConnectorPoint PointX="17.630205833333331" PointY="66.25" />
-          <ConnectorPoint PointX="18.416666666666668" PointY="66.25" />
-          <ConnectorPoint PointX="18.583333333333332" PointY="66.25" />
-          <ConnectorPoint PointX="19.416666666666668" PointY="66.25" />
-          <ConnectorPoint PointX="19.583333333333332" PointY="66.25" />
-          <ConnectorPoint PointX="19.8749995" PointY="66.25" />
-          <ConnectorPoint PointX="19.8749995" PointY="66.875" />
+          <ConnectorPoint PointX="11.25" PointY="64" />
+          <ConnectorPoint PointX="11.25" PointY="63.75" />
+          <ConnectorPoint PointX="12.135416666666666" PointY="63.75" />
+          <ConnectorPoint PointX="12.333333333333341" PointY="63.75" />
+          <ConnectorPoint PointX="12.40625" PointY="63.75" />
+          <ConnectorPoint PointX="12.40625" PointY="66.234375" />
+          <ConnectorPoint PointX="12.416666666666666" PointY="66.234375" />
+          <ConnectorPoint PointX="12.614583333333334" PointY="66.234375" />
+          <ConnectorPoint PointX="14.916666666666666" PointY="66.234375" />
+          <ConnectorPoint PointX="15.083333333333334" PointY="66.234375" />
+          <ConnectorPoint PointX="15.104166666666666" PointY="66.234375" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="66.234375" />
+          <ConnectorPoint PointX="16.416666666666668" PointY="66.234375" />
+          <ConnectorPoint PointX="16.583333333333332" PointY="66.234375" />
+          <ConnectorPoint PointX="17.463539166666667" PointY="66.234375" />
+          <ConnectorPoint PointX="17.630205833333331" PointY="66.234375" />
+          <ConnectorPoint PointX="18.125" PointY="66.234375" />
+          <ConnectorPoint PointX="18.125" PointY="68.057444661458362" />
+          <ConnectorPoint PointX="18.354166666666668" PointY="68.057444661458362" />
+          <ConnectorPoint PointX="18.520833333333332" PointY="68.057444661458362" />
+          <ConnectorPoint PointX="18.75" PointY="68.057444661458362" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" >
-          <ConnectorPoint PointX="12" PointY="73.052746145432664" />
-          <ConnectorPoint PointX="12.159824434901122" PointY="73.212570580333789" />
-          <ConnectorPoint PointX="12.277675565098878" PointY="73.330421710531539" />
-          <ConnectorPoint PointX="12.40625" PointY="73.458996145432664" />
-          <ConnectorPoint PointX="12.40625" PointY="66.018697916666724" />
+          <ConnectorPoint PointX="12" PointY="72.860444713141035" />
+          <ConnectorPoint PointX="12.159824434901122" PointY="73.020269148042161" />
+          <ConnectorPoint PointX="12.277675565098878" PointY="73.13812027823991" />
+          <ConnectorPoint PointX="12.328125" PointY="73.188569713141035" />
+          <ConnectorPoint PointX="12.328125" PointY="66.018697916666724" />
           <ConnectorPoint PointX="12.416666666666666" PointY="66.018697916666724" />
           <ConnectorPoint PointX="12.614583333333334" PointY="66.018697916666724" />
-          <ConnectorPoint PointX="14.979166666666666" PointY="66.018697916666724" />
-          <ConnectorPoint PointX="15.145833333333334" PointY="66.018697916666724" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="66.018697916666724" />
-          <ConnectorPoint PointX="15.614583333333332" PointY="66.018697916666724" />
+          <ConnectorPoint PointX="15.104166666666666" PointY="66.018697916666724" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="66.018697916666724" />
+          <ConnectorPoint PointX="16.041667166666667" PointY="66.018697916666724" />
+          <ConnectorPoint PointX="16.208333833333331" PointY="66.018697916666724" />
           <ConnectorPoint PointX="17.463539166666667" PointY="66.018697916666724" />
           <ConnectorPoint PointX="17.630205833333331" PointY="66.018697916666724" />
           <ConnectorPoint PointX="18.5" PointY="66.018697916666724" />
@@ -7847,17 +7805,19 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_Schedule_2" >
           <ConnectorPoint PointX="12.000000000000002" PointY="64" />
-          <ConnectorPoint PointX="12.15982443490112" PointY="63.840175565098882" />
-          <ConnectorPoint PointX="12.277675565098878" PointY="63.722324434901118" />
-          <ConnectorPoint PointX="12.375" PointY="63.625" />
-          <ConnectorPoint PointX="12.375" PointY="61.070668945312491" />
-          <ConnectorPoint PointX="12.947916666666666" PointY="61.070668945312491" />
-          <ConnectorPoint PointX="13.114583333333334" PointY="61.070668945312491" />
-          <ConnectorPoint PointX="13.166666666666666" PointY="61.070668945312491" />
-          <ConnectorPoint PointX="13.364583333333334" PointY="61.070668945312491" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="61.070668945312491" />
-          <ConnectorPoint PointX="15.614583333333332" PointY="61.070668945312491" />
-          <ConnectorPoint PointX="15.75" PointY="61.070668945312491" />
+          <ConnectorPoint PointX="12.15982443490112" PointY="63.840175565098889" />
+          <ConnectorPoint PointX="12.277675565098878" PointY="63.722324434901125" />
+          <ConnectorPoint PointX="12.44107443490112" PointY="63.558925565098889" />
+          <ConnectorPoint PointX="12.590175565098878" PointY="63.409824434901125" />
+          <ConnectorPoint PointX="12.625" PointY="63.375" />
+          <ConnectorPoint PointX="12.625" PointY="61.203481445312491" />
+          <ConnectorPoint PointX="12.947916666666666" PointY="61.203481445312491" />
+          <ConnectorPoint PointX="13.114583333333334" PointY="61.203481445312491" />
+          <ConnectorPoint PointX="13.166666666666666" PointY="61.203481445312491" />
+          <ConnectorPoint PointX="13.364583333333334" PointY="61.203481445312491" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="61.203481445312491" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="61.203481445312491" />
+          <ConnectorPoint PointX="15.75" PointY="61.203481445312491" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_SiteLinks_1" >
           <ConnectorPoint PointX="11.955000000000016" PointY="73.095439453125" />
@@ -7868,27 +7828,25 @@
           <ConnectorPoint PointX="12.75" PointY="99.865143229166677" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_TargetedDailyBudget_1" >
-          <ConnectorPoint PointX="11.196248000000008" PointY="73.095439453125" />
-          <ConnectorPoint PointX="11.196248000000008" PointY="73.345439453124982" />
-          <ConnectorPoint PointX="12.121666666666668" PointY="73.345439453124982" />
-          <ConnectorPoint PointX="12.489583333333334" PointY="73.345439453124982" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="73.345439453124982" />
-          <ConnectorPoint PointX="15.390625" PointY="73.345439453124982" />
-          <ConnectorPoint PointX="15.5" PointY="73.345439453124982" />
-          <ConnectorPoint PointX="15.5" PointY="70.625" />
-          <ConnectorPoint PointX="16.447918666666666" PointY="70.625" />
-          <ConnectorPoint PointX="16.614585333333331" PointY="70.625" />
-          <ConnectorPoint PointX="18.375" PointY="70.625" />
-          <ConnectorPoint PointX="18.375" PointY="71.999746093749991" />
-          <ConnectorPoint PointX="18.75" PointY="71.999746093749991" />
+          <ConnectorPoint PointX="11.196247499999995" PointY="72.903138020833339" />
+          <ConnectorPoint PointX="11.196247499999995" PointY="73.338440755208325" />
+          <ConnectorPoint PointX="12.135416666666666" PointY="73.338440755208325" />
+          <ConnectorPoint PointX="12.302083333333334" PointY="73.338440755208325" />
+          <ConnectorPoint PointX="12.365816554887795" PointY="73.338440755208325" />
+          <ConnectorPoint PointX="12.532483221554463" PointY="73.338440755208325" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="73.338440755208325" />
+          <ConnectorPoint PointX="15.395833333333334" PointY="73.338440755208325" />
+          <ConnectorPoint PointX="18.75" PointY="73.338440755208325" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Rights_RolesRightsAssociation_2" >
           <ConnectorPoint PointX="9" PointY="45.912985026041724" />
           <ConnectorPoint PointX="9" PointY="47.875" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="47.875" />
+          <ConnectorPoint PointX="9.9895833333333339" PointY="47.875" />
           <ConnectorPoint PointX="10" PointY="47.875" />
           <ConnectorPoint PointX="10" PointY="61.290744506510421" />
-          <ConnectorPoint PointX="10.166666666666666" PointY="61.290744506510421" />
-          <ConnectorPoint PointX="10.333333333333334" PointY="61.290744506510421" />
+          <ConnectorPoint PointX="10.104166666666666" PointY="61.290744506510421" />
+          <ConnectorPoint PointX="10.270833333333334" PointY="61.290744506510421" />
           <ConnectorPoint PointX="10.5" PointY="61.290744506510421" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Roles_RolesRightsAssociation_1" >
@@ -7931,21 +7889,19 @@
           <ConnectorPoint PointX="21" PointY="57.302643229166677" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Schedule_5" >
-          <ConnectorPoint PointX="6.75" PointY="73.576087187011666" />
-          <ConnectorPoint PointX="7.25" PointY="73.576087187011666" />
-          <ConnectorPoint PointX="7.25" PointY="73.125" />
-          <ConnectorPoint PointX="9.8229166666666661" PointY="73.125" />
-          <ConnectorPoint PointX="9.9895833333333339" PointY="73.125" />
-          <ConnectorPoint PointX="10.104166666666666" PointY="73.125" />
-          <ConnectorPoint PointX="10.270833333333334" PointY="73.125" />
-          <ConnectorPoint PointX="11.988920521234002" PointY="73.125" />
-          <ConnectorPoint PointX="12.302083333333334" PointY="73.125" />
-          <ConnectorPoint PointX="12.322916666666666" PointY="73.125" />
-          <ConnectorPoint PointX="12.489583333333334" PointY="73.125" />
-          <ConnectorPoint PointX="15.0625" PointY="73.125" />
-          <ConnectorPoint PointX="15.0625" PointY="62.624410807291724" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="62.624410807291724" />
-          <ConnectorPoint PointX="15.708333333333332" PointY="62.624410807291724" />
+          <ConnectorPoint PointX="6.75" PointY="73.57608718701178" />
+          <ConnectorPoint PointX="7.25" PointY="73.57608718701178" />
+          <ConnectorPoint PointX="7.25" PointY="73.375" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="73.375" />
+          <ConnectorPoint PointX="9.9895833333333339" PointY="73.375" />
+          <ConnectorPoint PointX="10.104166666666666" PointY="73.375" />
+          <ConnectorPoint PointX="10.270833333333334" PointY="73.375" />
+          <ConnectorPoint PointX="12.135416666666666" PointY="73.375" />
+          <ConnectorPoint PointX="12.302083333333334" PointY="73.375" />
+          <ConnectorPoint PointX="15.1875" PointY="73.375" />
+          <ConnectorPoint PointX="15.1875" PointY="62.624410807291724" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="62.624410807291724" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="62.624410807291724" />
           <ConnectorPoint PointX="16.5" PointY="62.624410807291724" />
           <ConnectorPoint PointX="16.5" PointY="62.249410807291724" />
         </AssociationConnector>
@@ -8000,8 +7956,8 @@
           <ConnectorPoint PointX="16.041666666666668" PointY="7.5956835937499987" />
           <ConnectorPoint PointX="16.208333333333332" PointY="7.59568359375" />
           <ConnectorPoint PointX="17.125" PointY="7.59568359375" />
-          <ConnectorPoint PointX="17.125" PointY="53.375" />
-          <ConnectorPoint PointX="15.53125" PointY="53.375" />
+          <ConnectorPoint PointX="17.125" PointY="53.625" />
+          <ConnectorPoint PointX="15.53125" PointY="53.625" />
           <ConnectorPoint PointX="15.53125" PointY="70.25" />
           <ConnectorPoint PointX="16.531252" PointY="70.25" />
           <ConnectorPoint PointX="16.531252" PointY="70.875" />
@@ -8012,8 +7968,8 @@
         <EntityTypeShape EntityType="SemplestModel.KeywordBidData" Width="1.5" PointX="23.25" PointY="60.75" Height="2.557190755208353" />
         <AssociationConnector Association="SemplestModel.REL_KeywordBid_KeywordBidData_1" >
           <ConnectorPoint PointX="22.5" PointY="62.528595377604177" />
-          <ConnectorPoint PointX="22.557290416666667" PointY="62.528595377604177" />
-          <ConnectorPoint PointX="22.723957083333332" PointY="62.528595377604177" />
+          <ConnectorPoint PointX="22.561196354166668" PointY="62.528595377604177" />
+          <ConnectorPoint PointX="22.727863020833333" PointY="62.528595377604177" />
           <ConnectorPoint PointX="23.25" PointY="62.528595377604177" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AddressType_GeoTargeting_3" >
@@ -8021,26 +7977,23 @@
           <ConnectorPoint PointX="6.75" PointY="63.734375" />
           <ConnectorPoint PointX="9.2916666666666661" PointY="63.734375" />
           <ConnectorPoint PointX="9.4583333333333339" PointY="63.734375" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="63.734375" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="63.734375" />
           <ConnectorPoint PointX="10.145833333333334" PointY="63.734375" />
           <ConnectorPoint PointX="12.135416666666666" PointY="63.734375" />
-          <ConnectorPoint PointX="12.348958333333334" PointY="63.734375" />
-          <ConnectorPoint PointX="12.4375" PointY="63.734375" />
-          <ConnectorPoint PointX="12.4375" PointY="65.951396484374982" />
-          <ConnectorPoint PointX="12.447916666666666" PointY="65.951396484374982" />
-          <ConnectorPoint PointX="12.614583333333334" PointY="65.951396484374982" />
+          <ConnectorPoint PointX="12.348958333333341" PointY="63.734375" />
+          <ConnectorPoint PointX="12.46875" PointY="63.734375" />
+          <ConnectorPoint PointX="12.46875" PointY="65.951396484374982" />
           <ConnectorPoint PointX="15" PointY="65.951396484374982" />
-          <ConnectorPoint PointX="15" PointY="68.384350958333329" />
-          <ConnectorPoint PointX="15.104166666666666" PointY="68.384350958333329" />
-          <ConnectorPoint PointX="15.614583333333334" PointY="68.384350958333329" />
-          <ConnectorPoint PointX="15.75" PointY="68.384350958333329" />
+          <ConnectorPoint PointX="15" PointY="68.384350958333386" />
+          <ConnectorPoint PointX="15.104166666666666" PointY="68.384350958333386" />
+          <ConnectorPoint PointX="15.614583333333334" PointY="68.384350958333386" />
+          <ConnectorPoint PointX="15.75" PointY="68.384350958333386" />
         </AssociationConnector>
         <EntityTypeShape EntityType="SemplestModel.Job" Width="1.5" PointX="9.75" PointY="4.75" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.MSNGeoLocation" Width="1.5" PointX="13.75" PointY="0.75" Height="3.7109993489583246" />
         <EntityTypeShape EntityType="SemplestModel.NickNameProfileAssociation" Width="1.5" PointX="11.125" PointY="43.875" Height="2.1725878906249818" />
-        <EntityTypeShape EntityType="SemplestModel.PayType" Width="1.5" PointX="10.875" PointY="41.125" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.PromotionBudget" Width="1.5" PointX="21.375" PointY="68" Height="3.1340950520833246" />
-        <EntityTypeShape EntityType="SemplestModel.Transaction" Width="1.5" PointX="13.125" PointY="50.25" Height="3.3263964843749818" />
+        <EntityTypeShape EntityType="SemplestModel.Transaction" Width="1.5" PointX="13.125" PointY="50.25" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.TransactionType" Width="1.5" PointX="11.75" PointY="5.75" Height="1.4033821614583246" />
         <EntityTypeShape EntityType="SemplestModel.ZipCode" Width="1.5" PointX="0.75" PointY="13.75" Height="2.5571907552083246" />
         <AssociationConnector Association="SemplestModel.REL_CreditCardNickName_NickNameProfileAssociation_2" >
@@ -8050,10 +8003,10 @@
           <ConnectorPoint PointX="7.083333333333333" PointY="43.96875" />
           <ConnectorPoint PointX="7.291666666666667" PointY="43.96875" />
           <ConnectorPoint PointX="7.458333333333333" PointY="43.96875" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="43.96875" />
-          <ConnectorPoint PointX="10.005205833333333" PointY="43.96875" />
-          <ConnectorPoint PointX="10.447916666666666" PointY="43.96875" />
-          <ConnectorPoint PointX="10.614583333333334" PointY="43.96875" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="43.96875" />
+          <ConnectorPoint PointX="9.9895833333333339" PointY="43.96875" />
+          <ConnectorPoint PointX="10.572916666666666" PointY="43.96875" />
+          <ConnectorPoint PointX="10.739583333333334" PointY="43.96875" />
           <ConnectorPoint PointX="11.125" PointY="43.96875" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_CreditCardProfile_NickNameProfileAssociation_1" >
@@ -8061,80 +8014,73 @@
           <ConnectorPoint PointX="7.84375" PointY="46.011536458333353" />
           <ConnectorPoint PointX="8.9166666666666661" PointY="46.011536458333353" />
           <ConnectorPoint PointX="9.0833333333333339" PointY="46.011536458333353" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="46.011536458333353" />
-          <ConnectorPoint PointX="10.005205833333333" PointY="46.011536458333353" />
-          <ConnectorPoint PointX="10.447916666666666" PointY="46.011536458333353" />
-          <ConnectorPoint PointX="10.614583333333334" PointY="46.011536458333353" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="46.011536458333353" />
+          <ConnectorPoint PointX="9.9895833333333339" PointY="46.011536458333353" />
+          <ConnectorPoint PointX="10.572916666666666" PointY="46.011536458333353" />
+          <ConnectorPoint PointX="10.739583333333334" PointY="46.011536458333353" />
           <ConnectorPoint PointX="11.125" PointY="46.011536458333353" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_CreditCardProfile_Transactions_2" >
-          <ConnectorPoint PointX="9" PointY="49.1562475" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="49.1562475" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="49.1562475" />
-          <ConnectorPoint PointX="10.447916666666666" PointY="49.1562475" />
-          <ConnectorPoint PointX="10.614583333333334" PointY="49.1562475" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="49.1562475" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="49.1562475" />
-          <ConnectorPoint PointX="13.4687475" PointY="49.1562475" />
-          <ConnectorPoint PointX="13.4687475" PointY="50.25" />
+          <ConnectorPoint PointX="9" PointY="49.1874995" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="49.1874995" />
+          <ConnectorPoint PointX="10.083333333333334" PointY="49.1874995" />
+          <ConnectorPoint PointX="10.572916666666666" PointY="49.1874995" />
+          <ConnectorPoint PointX="10.739583333333334" PointY="49.1874995" />
+          <ConnectorPoint PointX="12.791666666666666" PointY="49.1874995" />
+          <ConnectorPoint PointX="12.958333333333334" PointY="49.1874995" />
+          <ConnectorPoint PointX="13.649415703125" PointY="49.1874995" />
+          <ConnectorPoint PointX="13.649415703125" PointY="50.25" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_Transactions_4" >
-          <ConnectorPoint PointX="4.5" PointY="54.21875" />
-          <ConnectorPoint PointX="4.916666666666667" PointY="54.21875" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="54.21875" />
-          <ConnectorPoint PointX="6.916666666666667" PointY="54.21875" />
-          <ConnectorPoint PointX="7.083333333333333" PointY="54.21875" />
-          <ConnectorPoint PointX="7.291666666666667" PointY="54.21875" />
-          <ConnectorPoint PointX="7.458333333333333" PointY="54.21875" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="54.21875" />
-          <ConnectorPoint PointX="10.145833333333334" PointY="54.21875" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="54.21875" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="54.21875" />
-          <ConnectorPoint PointX="13.359375" PointY="54.21875" />
-          <ConnectorPoint PointX="13.359375" PointY="53.768697916666667" />
-        </AssociationConnector>
-        <AssociationConnector Association="SemplestModel.REL_PayType_Transactions_3" >
-          <ConnectorPoint PointX="12.375" PointY="41.922841796874991" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="41.922841796874991" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="41.922841796874991" />
-          <ConnectorPoint PointX="13.875" PointY="41.922841796874991" />
-          <ConnectorPoint PointX="13.875" PointY="50.25" />
+          <ConnectorPoint PointX="4.5" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="4.916666666666667" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="5.083333333333333" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="6.916666666666667" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="7.083333333333333" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="7.291666666666667" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="7.458333333333333" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="8.1666666666666661" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="8.3333333333333339" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="10.083333333333334" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="12.791666666666666" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="12.958333333333334" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="13.359375" PointY="53.896393229166677" />
+          <ConnectorPoint PointX="13.359375" PointY="53.191793619791667" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionBudget_1" >
           <ConnectorPoint PointX="12" PointY="66.365102539062491" />
           <ConnectorPoint PointX="12.135416666666666" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="12.302083333333334" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="12.322916666666666" PointY="66.365102539062491" />
           <ConnectorPoint PointX="12.614583333333334" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="14.979166666666666" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="14.916666666666666" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="15.083333333333334" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="15.104166666666666" PointY="66.365102539062491" />
           <ConnectorPoint PointX="15.614583333333334" PointY="66.365102539062491" />
           <ConnectorPoint PointX="16.416666666666668" PointY="66.365102539062491" />
           <ConnectorPoint PointX="16.583333333333332" PointY="66.365102539062491" />
           <ConnectorPoint PointX="17.463539166666667" PointY="66.365102539062491" />
           <ConnectorPoint PointX="17.630205833333331" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="18.416666666666668" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="18.041666666666668" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="18.208333333333332" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="18.354166666666668" PointY="66.365102539062491" />
           <ConnectorPoint PointX="18.583333333333332" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="19.416666666666668" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="19.583333333333332" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="19.791666166666669" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="19.958332833333333" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="22.557290416666667" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="22.723957083333332" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="22.7812525" PointY="66.365102539062491" />
-          <ConnectorPoint PointX="22.7812525" PointY="68" />
+          <ConnectorPoint PointX="22.561196354166668" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="22.727863020833333" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="22.789064375000002" PointY="66.365102539062491" />
+          <ConnectorPoint PointX="22.789064375000002" PointY="68" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Transactions_PromotionBudget_2" >
           <ConnectorPoint PointX="14.625" PointY="51.15625" />
-          <ConnectorPoint PointX="15.223958333333332" PointY="51.15625" />
-          <ConnectorPoint PointX="15.583333333333332" PointY="51.15625" />
+          <ConnectorPoint PointX="15.229166666666666" PointY="51.15625" />
+          <ConnectorPoint PointX="15.583333333333334" PointY="51.15625" />
           <ConnectorPoint PointX="17.041666666666668" PointY="51.15625" />
           <ConnectorPoint PointX="17.208333333333332" PointY="51.15625" />
           <ConnectorPoint PointX="18.416666666666668" PointY="51.15625" />
-          <ConnectorPoint PointX="18.625000000000004" PointY="51.15625" />
+          <ConnectorPoint PointX="18.583333333333332" PointY="51.15625" />
           <ConnectorPoint PointX="20.666666666666668" PointY="51.15625" />
           <ConnectorPoint PointX="20.833333333333332" PointY="51.15625" />
-          <ConnectorPoint PointX="22.64062375" PointY="51.15625" />
-          <ConnectorPoint PointX="22.64062375" PointY="68" />
+          <ConnectorPoint PointX="22.6445296875" PointY="51.15625" />
+          <ConnectorPoint PointX="22.6445296875" PointY="68" />
         </AssociationConnector>
         <EntityTypeShape EntityType="SemplestModel.UserType" Width="1.5" PointX="3" PointY="74.375" Height="1.5956835937499818" />
         <AssociationConnector Association="SemplestModel.REL_UserType_Users_2" >
@@ -8146,16 +8092,16 @@
         <EntityTypeShape EntityType="SemplestModel.SemplestTransaction" Width="1.5" PointX="15.375" PointY="28.5" Height="2.5571907552083246" />
         <AssociationConnector Association="SemplestModel.REL_CreditCardProfile_Promotion_3" >
           <ConnectorPoint PointX="8.25" PointY="50.489889322916667" />
-          <ConnectorPoint PointX="8.25" PointY="54" />
-          <ConnectorPoint PointX="9.8385391666666653" PointY="54" />
-          <ConnectorPoint PointX="10.005205833333333" PointY="54" />
-          <ConnectorPoint PointX="10.0625" PointY="54" />
-          <ConnectorPoint PointX="10.0625" PointY="65.992668898437444" />
-          <ConnectorPoint PointX="10.5" PointY="65.992668898437444" />
+          <ConnectorPoint PointX="8.25" PointY="54.125" />
+          <ConnectorPoint PointX="9.8229166666666661" PointY="54.125" />
+          <ConnectorPoint PointX="9.9895833333333339" PointY="54.125" />
+          <ConnectorPoint PointX="10.0625" PointY="54.125" />
+          <ConnectorPoint PointX="10.0625" PointY="65.992668898437557" />
+          <ConnectorPoint PointX="10.5" PointY="65.992668898437557" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Transactions_SemplestTransaction_1" >
-          <ConnectorPoint PointX="14.2812525" PointY="50.25" />
-          <ConnectorPoint PointX="14.2812525" PointY="29.778595377604162" />
+          <ConnectorPoint PointX="14.1684603515625" PointY="50.25" />
+          <ConnectorPoint PointX="14.1684603515625" PointY="29.778595377604162" />
           <ConnectorPoint PointX="15.375" PointY="29.778595377604162" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_TransactionType_SemplestTransaction_2" >
