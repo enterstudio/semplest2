@@ -56,6 +56,7 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOp
 			catch (ApiException e)
 			{
 				handleApiException(e);
+				Thread.sleep(1 * SemplestUtils.SECOND);
 			}
 		}
 		throw new Exception("Problem performing operation because maximum num of retries reached [" + maxRetries + "]");

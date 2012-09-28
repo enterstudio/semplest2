@@ -46,6 +46,7 @@ public abstract class AbstractRetriableMsnOperation<T> implements RetriableOpera
 			catch (EditorialApiFaultDetail e)
 			{
 				handleEditorialApiFaultDetailException(e);
+				Thread.sleep(1 * SemplestUtils.SECOND);
 			}
 		}
 		throw new Exception("Problem performing operation because maximum num of retries reached [" + maxRetries + "]");
