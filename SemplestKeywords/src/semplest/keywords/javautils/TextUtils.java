@@ -229,7 +229,7 @@ public class TextUtils
 	public static Boolean isValidUrl(String url) throws Exception
 	{
 		final int CONNECT_TIMEOUT = 1000;
-		final int READ_TIMEOUT = 1000;
+		final int READ_TIMEOUT = 5000;
 		try
 		{
 			java.net.URLConnection conn = (new java.net.URL(url)).openConnection();
