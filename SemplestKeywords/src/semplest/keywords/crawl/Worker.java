@@ -59,7 +59,8 @@ public class Worker {
         working = true;
         System.out.println("Got Work !");
         Collector.Work w = (Collector.Work)msg;
-        collector.tell( new Collector.Answer( w.id, computor.compute(w.data)) );
+        collector.tell( new Collector.Answer( w.id, computor.compute(w.data)),
+            getSelf() );
         working = false;
       }
       else if( msg instanceof Collector.Wakeup ){
