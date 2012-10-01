@@ -283,10 +283,10 @@ public class ChaseIntegration
 	public static void main(final String[] args) throws Exception
 	{
 		try
-		{
-			log.info("Starting Chase Integration process");
+		{			
 			PropertyConfigurator.configure("properties/log4j_server.properties");
-			BasicConfigurator.configure();	
+			BasicConfigurator.configure();
+			log.info("Starting Chase Integration process");
 			new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
 			final SemplestConfiguration configDB = new SemplestConfiguration(object);

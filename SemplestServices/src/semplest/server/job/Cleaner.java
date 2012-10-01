@@ -13,9 +13,11 @@ import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.Job;
 import semplest.server.protocol.JobName;
+import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.util.SemplestUtils;
 
@@ -26,11 +28,21 @@ public class Cleaner
 	private static final JobName JOB_NAME = JobName.CLEANER;
 	
 	public static void main(final String[] args) throws Exception
-	{
+	{		
 		PropertyConfigurator.configure("properties/log4j_server.properties");
 		BasicConfigurator.configure();
 		try
-		{
+		{			
+			log.info("Starting " + JOB_NAME);
+			new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			final SemplestConfiguration configDB = new SemplestConfiguration(object);
+			final Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object)
+			{
+				object.wait();
+			}
 			final Job job = SemplestDB.getJob(JOB_NAME);
 			log.info("State of the job before running the current iteration: " + job);
 			final List<String> dirsToClean = Arrays.asList("C:/SemplestCommon/data/msn");
