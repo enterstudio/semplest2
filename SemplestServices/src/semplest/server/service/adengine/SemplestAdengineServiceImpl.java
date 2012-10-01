@@ -299,7 +299,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final java.util.Date recurringBillingDate = SemplestUtils.getDate(asOfDate, billingDaysOffset);
 		final Double budgetAmountDouble = budgetAmount.doubleValue();
 		
-		final Integer dayOfMonthBuffer = (Integer)SemplestConfiguration.configData.get("ChaseRecurrentBillingBuffer");
+		//TODO: which this gets put into Configuration table, then don't hardcode it
+		//final Integer dayOfMonthBuffer = (Integer)SemplestConfiguration.configData.get("ChaseRecurrentBillingBuffer");
+		final Integer dayOfMonthBuffer = 5;
 		final int dayOfMonth = 28 - dayOfMonthBuffer;
 		
 		final GatewayReturnObject response = chaseOrbitalClient.UpdateProfileRecurringBilling(creditCardProfileRefNum, budgetAmountDouble, recurringBillingDate, dayOfMonth);
