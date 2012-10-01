@@ -130,7 +130,7 @@ public class SemplestDB extends BaseDB
 	
 	public static final String GET_PROMOTION_BUDGET_FOR_MAINTENANCE_SQL = "select PromotionBudgetPK, TransactionsFK, PromotionFK, BudgetToAddDate, IsValid, IsAppliedToPromotion, BudgetCarryOverAmount, BudgetToAddAmount, CreatedDate from PromotionBudget where BudgetToAddDate < ? and IsAppliedToPromotion = 0 and IsValid = 1";
 		
-	public static final String GET_TRANSACTION_FOR_MAINTENANCE_SQL = "select TransactionsPK, CustomerFK, PayTypeFK, TransactionTypeFK, CreditCardProfileFK, Amount, CreatedDate, EditedDate from Transactions where TransactionsPK = ?";
+	public static final String GET_TRANSACTION_FOR_MAINTENANCE_SQL = "select TransactionsPK, CreditCardProfileFK, Amount, CreatedDate, EditedDate, AuthCode, TxRefNum from Transactions where TransactionsPK = ?";
 
 	public static final RowMapper<User> USER_ROW_MAPPER;
 	public static final RowMapper<CustomerHierarchy> CUSTOMER_HIERARCHY_ROW_MAPPER;
@@ -197,16 +197,13 @@ public class SemplestDB extends BaseDB
 			public Transaction mapRow(final ResultSet rs, final int index) throws SQLException
 			{
 				final Integer transactionPK = rs.getInt("TransactionsPK");				
-				final Integer customerFK = rs.getInt("CustomerFK");
-				final Integer payTypeFK = rs.getInt("PayTypeFK");
-				final PayType payType = PayType.fromCode(payTypeFK);				
-				final Integer transactionTypeFK = rs.getInt("TransactionTypeFK");
-				final TransactionType transactionType = TransactionType.fromCode(transactionTypeFK);
 				final Integer creditCardProfileFK = rs.getInt("CreditCardProfileFK");				
 				final BigDecimal amount = rs.getBigDecimal("Amount");				
 				final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
 				final java.util.Date editedDate = rs.getTimestamp("EditedDate");
-				final Transaction transaction = new Transaction(transactionPK, customerFK, payType, transactionType, creditCardProfileFK, amount, createdDate, editedDate);
+				final String authCode = rs.getString("AuthCode");
+				final String txRefNum = rs.getString("TxRefNum");
+				final Transaction transaction = new Transaction(transactionPK, creditCardProfileFK, amount, createdDate, editedDate, authCode, txRefNum);
 				return transaction;
 			}	
 		};

@@ -65,7 +65,9 @@ public class PromotionMaintenance
 				final Boolean result = getPromotionSP.execute(promotionId);
 				final PromotionObj promotion = getPromotionSP.getPromotionData();
 				final Transaction transaction = budget.getTransaction();
-				final PayType payType = transaction.getPayType();				
+				//final PayType payType = transaction.getPayType();		
+				
+				
 				final Integer promotionID = promotion.getPromotionPK();
 				final Double remainingBudgetDouble = promotion.getRemainingBudgetInCycle();
 				final BigDecimal remainingBudget = BigDecimal.valueOf(remainingBudgetDouble); 						
@@ -89,21 +91,21 @@ public class PromotionMaintenance
 				final BigDecimal carryOverAmount = amountToRefill.subtract(spendIncurredThisMonth);		
 				final BigDecimal budgetToAddAmount = budget.getBudgetToAddAmount();
 				final BigDecimal newRemainingBudget = remainingBudget.subtract(amountToRefill);
-				final Integer customerID = transaction.getCustomerFK();
+				//final Integer customerID = transaction.getCustomerFK();
 				final Integer transactionID = transaction.getPk();
-				final ApplyPromotionBudgetRequest request = new ApplyPromotionBudgetRequest(promotionID, newCycleStartDate, newCycleEndDate, newRemainingBudget, transactionID, promotionBudgetID, spendIncurredThisMonth, carryOverAmount, newBudgetToAddDate, budgetToAddAmount, customerID);
-				if (payType == PayType.INVOICE)
-				{
-					SemplestDB.applyInvoicePromotionBudget(request);
-				}
-				else if (payType == PayType.CREDIT_CARD)
-				{
+				final ApplyPromotionBudgetRequest request = new ApplyPromotionBudgetRequest(promotionID, newCycleStartDate, newCycleEndDate, newRemainingBudget, transactionID, promotionBudgetID, spendIncurredThisMonth, carryOverAmount, newBudgetToAddDate, budgetToAddAmount, null /*customerID*/);
+				//if (payType == PayType.INVOICE)
+			//	{
+			//		SemplestDB.applyInvoicePromotionBudget(request);
+		//		}
+				//else if (payType == PayType.CREDIT_CARD)
+				//{
 					SemplestDB.applyCreditCardPromotionBudget(request);
-				}
-				else
-				{
-					throw new Exception("Cannot process request [" + request + "] because encountered unknown PayType [" + payType + "] encountred");
-				}
+			//	}
+				//else
+			//	{
+		//			throw new Exception("Cannot process request [" + request + "] because encountered unknown PayType [" + payType + "] encountred");
+		//		}
 				promotionsProcessed.add(promotionId);
 			}
 			catch (Exception e)

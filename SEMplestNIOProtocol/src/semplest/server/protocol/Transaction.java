@@ -6,44 +6,27 @@ import java.util.Date;
 public class Transaction
 {
 	private final Integer pk;
-	private final Integer customerFK;
-	private final PayType payType;
-	private final TransactionType transactionType;
 	private final Integer creditCardProfileFK;
 	private final BigDecimal amount;
 	private final java.util.Date createdDate;
 	private final java.util.Date editedDate;
+	private final String authCode;
+	private final String txRefNum;
 	
-	public Transaction(Integer pk, Integer customerFK, PayType payType, TransactionType transactionType, Integer creditCardProfileFK, BigDecimal amount, Date createdDate, Date editedDate)
+	public Transaction(Integer pk, Integer creditCardProfileFK, BigDecimal amount, Date createdDate, Date editedDate, String authCode, String txRefNum)
 	{
 		this.pk = pk;
-		this.customerFK = customerFK;
-		this.payType = payType;
-		this.transactionType = transactionType;
 		this.creditCardProfileFK = creditCardProfileFK;
 		this.amount = amount;
 		this.createdDate = createdDate;
 		this.editedDate = editedDate;
+		this.authCode = authCode;
+		this.txRefNum = txRefNum;
 	}
 
 	public Integer getPk()
 	{
 		return pk;
-	}
-
-	public Integer getCustomerFK()
-	{
-		return customerFK;
-	}
-
-	public PayType getPayType()
-	{
-		return payType;
-	}
-
-	public TransactionType getTransactionType()
-	{
-		return transactionType;
 	}
 
 	public Integer getCreditCardProfileFK()
@@ -66,19 +49,28 @@ public class Transaction
 		return editedDate;
 	}
 
+	public String getAuthCode()
+	{
+		return authCode;
+	}
+
+	public String getTxRefNum()
+	{
+		return txRefNum;
+	}
+
 	@Override
 	public int hashCode()
 	{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
+		result = prime * result + ((authCode == null) ? 0 : authCode.hashCode());
 		result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
 		result = prime * result + ((creditCardProfileFK == null) ? 0 : creditCardProfileFK.hashCode());
-		result = prime * result + ((customerFK == null) ? 0 : customerFK.hashCode());
 		result = prime * result + ((editedDate == null) ? 0 : editedDate.hashCode());
-		result = prime * result + ((payType == null) ? 0 : payType.hashCode());
 		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
-		result = prime * result + ((transactionType == null) ? 0 : transactionType.hashCode());
+		result = prime * result + ((txRefNum == null) ? 0 : txRefNum.hashCode());
 		return result;
 	}
 
@@ -99,6 +91,13 @@ public class Transaction
 		}
 		else if (!amount.equals(other.amount))
 			return false;
+		if (authCode == null)
+		{
+			if (other.authCode != null)
+				return false;
+		}
+		else if (!authCode.equals(other.authCode))
+			return false;
 		if (createdDate == null)
 		{
 			if (other.createdDate != null)
@@ -113,21 +112,12 @@ public class Transaction
 		}
 		else if (!creditCardProfileFK.equals(other.creditCardProfileFK))
 			return false;
-		if (customerFK == null)
-		{
-			if (other.customerFK != null)
-				return false;
-		}
-		else if (!customerFK.equals(other.customerFK))
-			return false;
 		if (editedDate == null)
 		{
 			if (other.editedDate != null)
 				return false;
 		}
 		else if (!editedDate.equals(other.editedDate))
-			return false;
-		if (payType != other.payType)
 			return false;
 		if (pk == null)
 		{
@@ -136,7 +126,12 @@ public class Transaction
 		}
 		else if (!pk.equals(other.pk))
 			return false;
-		if (transactionType != other.transactionType)
+		if (txRefNum == null)
+		{
+			if (other.txRefNum != null)
+				return false;
+		}
+		else if (!txRefNum.equals(other.txRefNum))
 			return false;
 		return true;
 	}
@@ -144,8 +139,8 @@ public class Transaction
 	@Override
 	public String toString()
 	{
-		return "Transaction [pk=" + pk + ", customerFK=" + customerFK + ", payType=" + payType + ", transactionType=" + transactionType + ", creditCardProfileFK=" + creditCardProfileFK + ", amount=" + amount + ", createdDate=" + createdDate + ", editedDate=" + editedDate + "]";
+		return "Transaction [pk=" + pk + ", creditCardProfileFK=" + creditCardProfileFK + ", amount=" + amount + ", createdDate=" + createdDate + ", editedDate=" + editedDate + ", authCode=" + authCode + ", txRefNum=" + txRefNum + "]";
 	}
-
+	
 	
 }
