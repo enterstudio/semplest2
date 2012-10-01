@@ -37,6 +37,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
 	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
+	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest"; // production
 	//private static String BASEURLTEST = "http://10.80.130.64:9898/semplest";
 	//private static String BASEURLTEST = "http://172.18.9.26:9898/semplest";
 	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";

@@ -330,9 +330,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 7. Set Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE // 8. Service
 			 * call - semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
 			 */
-			
-			// Setup recurring billing -- TODO: uncomment this when ready
-			//setupRecurringBilling(PromotionID, new java.util.Date());
+
+			setupRecurringBilling(PromotionID, new java.util.Date());
 						
 			/*
 			TODO: put this back when the GUI initiates the status to PENDING
