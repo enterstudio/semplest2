@@ -8,22 +8,14 @@ public class SimpleLogger {
 	private String logFile;
 	
 	public SimpleLogger(String fileName){
-		logFile = fileName;
-		try {			
-			FileWriter logWriter = new FileWriter(logFile);		
-			logWriter.write(new Date() + "\r\n");
-			logWriter.close();
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		logFile = fileName;		
 	}
 	
 	public void info(String info)
 	{
 		try{
 			FileWriter logWriter = new FileWriter(logFile,true);
-			logWriter.append("[INFO] " + info + "\r\n");
+			logWriter.append(new Date() + " [INFO] " + info + "\r\n");
 			logWriter.close();
 		} 
 		catch (IOException e) {
@@ -35,7 +27,7 @@ public class SimpleLogger {
 	{
 		try{
 			FileWriter logWriter = new FileWriter(logFile,true);
-			logWriter.append("[ERROR] " + error + "\r\n");
+			logWriter.append(new Date() + " [ERROR] " + error + "\r\n");
 			logWriter.close();
 		} 
 		catch (IOException e) {
@@ -47,7 +39,7 @@ public class SimpleLogger {
 	{
 		try{
 			FileWriter logWriter = new FileWriter(logFile,true);
-			logWriter.append("[DEBUG] " + debug + "\r\n");
+			logWriter.append(new Date() + " [DEBUG] " + debug + "\r\n");
 			logWriter.close();
 		} 
 		catch (IOException e) {
@@ -59,7 +51,7 @@ public class SimpleLogger {
 	{
 		try{
 			FileWriter logWriter = new FileWriter(logFile,true);
-			logWriter.append("[MSG] " + message + "\r\n");
+			logWriter.append(new Date() + " [MSG] " + message + "\r\n");
 			logWriter.close();
 		} 
 		catch (IOException e) {

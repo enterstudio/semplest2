@@ -3,11 +3,14 @@ package semplest.crawler;
 import akka.actor.*;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.util.Duration;
+
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.Config;
 
 import java.io.Serializable;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,58 +32,51 @@ public class Worker {
 	
   // - The Actor ------------------------------------------------
   public static class WActor extends UntypedActor  {
-    boolean working = false;
-    ActorRef collector;
-    Collector.Computer computor;
-    String id;
-    Integer askForWorkInterval = CrawlerProperties.AskForWorkInterval * 1000;
-
-    // Actor Ctr
-    public WActor( ActorRef cltr, Collector.Computer c){
-      collector = cltr;
-      computor  = c;
-      try {
-        id = java.net.InetAddress.getLocalHost().getHostName() + ":" +
-          Thread.currentThread().getId();
-      } catch (Exception e){ e.printStackTrace(); }
-      askForWork();
-    }
-
-    // Actor Message processing
-    public void askForWork()
-    {
-    	getSelf().tell( new Collector.Wakeup() );
-    	
-      try 
-      {
-        Thread.sleep( askForWorkInterval );
-      } 
-      catch (Exception e)
-      {
-    	  e.printStackTrace(); 
-      }       
-    }
-
-    public void onReceive( Object msg){
-      if( msg instanceof Collector.Work )
-      {
-        working = true;
-        System.out.println("Got Work !");
-        Collector.Work w = (Collector.Work)msg;
-        collector.tell( new Collector.Answer( computor.compute( w.urlData ) ), getSelf() );
-        working = false;
-      }
-      else if( msg instanceof Collector.Wakeup )
-      {
-        if( !working )
-        {
-          collector.tell( new Collector.Ready( id ), getSelf() );
-          System.out.println(id + " :: Sending Ready Message");
-          askForWork();
-        }
-      }
-    }
-
+	  boolean working = false;
+	    ActorRef collector;
+	    Collector.Computer computor;
+	    String id;
+	    SimpleLogger logger = new SimpleLogger(CrawlerProperties.WorkerLogFile);
+	    Integer askForWorkInterval = CrawlerProperties.AskForWorkInterval;
+	
+	    // Actor Prestart. Use this to send a periodic wakup call
+	    @Override
+	    public void preStart(){
+	      Cancellable c = getContext().system().scheduler().schedule( 
+	          Duration.Zero(),
+	          Duration.create( askForWorkInterval, TimeUnit.MILLISECONDS), getSelf(), 
+	          new Collector.Wakeup());
+	    }
+	
+	    // Actor Ctr
+	    public WActor( ActorRef cltr, Collector.Computer c){
+	      collector = cltr;
+	      computor  = c;
+	      try {
+	        id = java.net.InetAddress.getLocalHost().getHostName() + ":" +
+	          Thread.currentThread().getId();
+	      } catch (Exception e){ 
+	    	  logger.error(e.getMessage());                    // logging
+	      }       
+	    }
+	
+	    // Actor Message Processing
+	    public void onReceive( Object msg){
+	      if( msg instanceof Collector.Work ){
+	        working = true;
+	        System.out.println("Got Work !");
+	        Collector.Work w = (Collector.Work)msg;
+	        collector.tell( new Collector.Answer( computor.compute(w.urlData)),
+	            getSelf() );
+	        working = false;
+	      }
+	      else if( msg instanceof Collector.Wakeup ){
+	        if( ! working ){
+	          collector.tell( new Collector.Ready( id ), getSelf() );
+	          System.out.println(id + " :: Sending Ready Message");
+	        }
+	      }
+	    }
   }
 
   // The Interface -------------------------------------------------------

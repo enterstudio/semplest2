@@ -36,11 +36,13 @@ import semplest.dmoz.tree.UrlDataObject;
 
 public class Run 
 {
-  private final static int COLLECT_INTERVAL = 5000;
+  private final static int COLLECT_INTERVAL = CrawlerProperties.ResultCollectingInterval;
 
   private ActorRef cactor;
   public int todo = 0;
-  Map<String,String> res;
+  static Map<String,String> res;
+  
+  private static boolean collecting = false;
 
   // The Actor that talks to the Collector
   public class RActor extends UntypedActor {
@@ -63,8 +65,11 @@ public class Run
     // Message Processing
     public void onReceive( Object msg){
       if( msg instanceof Collector.Answer[] ){
-        for( Collector.Answer a : (Collector.Answer[])msg)
+    	  collecting = true;
+        for( Collector.Answer a : (Collector.Answer[])msg){
           res.putAll( a.result );
+        }
+        collecting = false;
       }
       else if( msg instanceof Collector.Wakeup ){
         collector.tell( new Collector.Result(), getSelf());
@@ -134,7 +139,7 @@ public class Run
 		String logFile = CrawlerProperties.MasterLogFile;
 		Integer bucketNum = CrawlerProperties.BucketNumber;
 		Integer bucketSize = CrawlerProperties.BucketSize;
-		Integer resultCollectingInterval = CrawlerProperties.ResultCollectingInterval * 1000;
+		Integer resultBufferSize = CrawlerProperties.ResultBufferSize;
 		
 		SimpleLogger logger = new SimpleLogger(logFile);
 		BerkeleyDB_Static.setDirectory(dbDir);
@@ -148,20 +153,19 @@ public class Run
 			Status.TotalWorkSize = work.size();
 			
 			System.out.println("Work loaded. Master is ready to go.");
-			logger.info("Master Started.");
+			logger.info("##### Master Started #####");
 			logger.info("Total amount of work: " + Status.TotalWorkSize);			
 			
 			//Run the master, and collect results.
 			Run r = new Run();
 			r.add( work );
 			while( !Status.isDone() ){
-			  Map<String,String> res = r.results();
-			  if( res.size() > 0 ){
-				  logger.info("Work Queue length: " + Status.WorkQueueSize + ", Results Collected: " + Status.NumOfResultsCollected);
-			    //Store results to BerkeleyDB
-			    BerkeleyDB_Static.add(dbID, res);
-			  }
-			  Thread.sleep( resultCollectingInterval );
+				if((!collecting) && ((res.size() > resultBufferSize) || (Status.WorkQueueSize == 0 && res.size() > 0))){
+					Map<String,String> res = r.results();
+					logger.info("Work Queue length: " + Status.WorkQueueSize + ", Results Collected: " + Status.NumOfResultsCollected);
+				    //Store results to BerkeleyDB
+				    BerkeleyDB_Static.add(dbID, res);
+				}
 			}
 			logger.info("Crawler finished at " + new Date() + ". Total amount of work: " + Status.TotalWorkSize + ". Work finished by crawler: " + Status.NumOfResultsCollected);
 		}
