@@ -256,11 +256,11 @@ namespace Semplest.Core.Controllers
                                                          ZipCode = model.BillingLaunch.Zip,
                                                          creditCardNumber = model.BillingLaunch.CardNumber
                                                      }, promo, model.BillType, model.ProductGroup.Budget);
-                dbContext.SaveChanges();
                 try
                 {
                     if (!retVal.IsException && !retVal.IsValidationError)
                     {
+                        dbContext.SaveChanges();
                         var adEngines = new List<string>();
                         adEngines.AddRange(
                             promo.PromotionAdEngineSelecteds.Select(

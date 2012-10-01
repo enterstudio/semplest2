@@ -60,17 +60,16 @@ namespace SharedResources.Models.Repositories
                                                             IsValid = true,
                                                             IsAppliedToPromotion = true
                                                         });
+                    return new ReturnState(false, false, string.Empty, null);
                 }
-                else
-                {
-                    return gr == null ? new ReturnState(true, false, "Server Exception", null) : new ReturnState(true, true, gr.Message, null);
-                }
+                return gr == null
+                           ? new ReturnState(true, false, "Server Exception", null)
+                           : new ReturnState(true, true, gr.Message, null);
             }
-            else
-            {
-                return gr == null ? new ReturnState(true, false, "Server Exception", null) : new ReturnState(true, true, "Card Declined", null);
-            }
-            return new ReturnState(false, false, string.Empty, null);
+
+            return gr == null
+                       ? new ReturnState(true, false, "Server Exception", null)
+                       : new ReturnState(true, true, "Card Declined", null);
         }
     }
 }
