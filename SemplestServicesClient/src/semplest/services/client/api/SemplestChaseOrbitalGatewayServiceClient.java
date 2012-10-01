@@ -178,6 +178,7 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	
 	public SemplestChaseOrbitalGatewayServiceClient(String baseurl)
 	{
+		logger.info("Initialising with Base URL [" + baseurl + "]");
 		if (baseurl == null)
 		{
 			this.baseurl = BASEURLTEST;

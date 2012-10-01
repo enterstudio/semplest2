@@ -304,6 +304,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Integer dayOfMonthBuffer = 5;
 		final int dayOfMonth = 28 - dayOfMonthBuffer;
 		
+		final String ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
+		final SemplestChaseOrbitalGatewayServiceClient chaseOrbitalClient = new SemplestChaseOrbitalGatewayServiceClient(ESBWebServerURL);
 		final GatewayReturnObject response = chaseOrbitalClient.UpdateProfileRecurringBilling(creditCardProfileRefNum, budgetAmountDouble, recurringBillingDate, dayOfMonth);
 		logger.info("Chase response:\n" + response.toStringPretty());
 	}
