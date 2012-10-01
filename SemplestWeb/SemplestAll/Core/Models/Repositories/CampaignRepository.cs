@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
+using System.Text;
 using Semplest.SharedResources.Services;
 using SemplestModel;
 using Semplest.SharedResources;
@@ -239,7 +239,7 @@ namespace Semplest.Core.Models.Repositories
                     if (gv == null)
                         return new ReturnState(true,false, string.Empty, null);
                     if (gv.Length > 0)
-                        return new ReturnState(false, true, gv.First().shortFieldPath + ": " + gv.First().errorMessage, null);
+                        return new ReturnState(false, true, GoogleValidationMessage(gv), null);
                 }
                 GeoTargetTableType gt;
                 int addressCode =-1;
@@ -709,7 +709,7 @@ namespace Semplest.Core.Models.Repositories
                     if (gv == null)
                         return new ReturnState (true,false,string.Empty,null);
                     if (gv.Length > 0)
-                        return new ReturnState(false,true,gv.First().shortFieldPath + ": " + gv.First().errorMessage,null);
+                        return new ReturnState(false, true, GoogleValidationMessage(gv), null);
                 }
                 SiteLinksTableType st;
                 shouldRefreshSiteLinks = AddSiteLinksToPromotion(promo, model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel, out st);
@@ -1036,7 +1036,7 @@ namespace Semplest.Core.Models.Repositories
                 if (gv == null)
                     return new ReturnState(true, false, string.Empty, null);
                 if (gv.Length > 0)
-                    return new ReturnState(false, true, gv.First().shortFieldPath + ": " + gv.First().errorMessage, null);
+                    return new ReturnState(false, true, GoogleValidationMessage(gv), null);
             }
             IEnumerable<CampaignSetupModel.KeywordsModel> akw;
             using (var dbcontext = new SemplestModel.Semplest())
@@ -1129,7 +1129,6 @@ namespace Semplest.Core.Models.Repositories
                     if (deletedKeywords.Any())
                         sw.DeleteKeywords(promo.PromotionPK, deletedKeywords, adEngines);
                 }
-
                 akw = promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
                     key =>
                     new CampaignSetupModel.KeywordsModel {Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK});
@@ -1205,6 +1204,38 @@ namespace Semplest.Core.Models.Repositories
 
                 return queryProdGrp.Any();
             }
+        }
+
+        private string GoogleValidationMessage(GoogleViolation[] gvs)
+        {
+            var gv = gvs.First();
+            var retval = new StringBuilder();
+            if (gv.isPolicyViolationError)
+            {
+                retval.Append("Policy Name");
+                retval.Append(" : ");
+                retval.Append(gv.policyName);
+                retval.Append("<br>");
+                retval.Append("Policy Violating Text");
+                retval.Append(" : ");
+                retval.Append(gv.policyViolatingText);
+                retval.Append("<br>");
+                retval.Append("Policy Description");
+                retval.Append(" : ");
+                retval.Append(gv.policyDescription.Replace("<a href", "<a target='_blank' href"));
+            }
+            else
+            {
+                retval.Append("Invalid Field");
+                retval.Append(" : ");
+                retval.Append(gv.shortFieldPath);
+                retval.Append("<br>");
+                retval.Append("Error Message");
+                retval.Append(" : ");
+                retval.Append(gv.errorMessage);
+                retval.Append("<br>");
+            }
+            return retval.ToString();
         }
     }
 }
