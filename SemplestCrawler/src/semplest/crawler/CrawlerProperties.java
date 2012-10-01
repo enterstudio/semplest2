@@ -16,13 +16,14 @@ public class CrawlerProperties
 	public static Integer SleepIntervalBetweenUrls;
 	public static String AkkaMessageFrameSize;
 	public static Integer ResultCollectingInterval;
+	public static Integer AskForWorkInterval;
 	
 	static
 	{
 		try
 		{	
-			String PROPSFILE = "/semplest/Crawler/crawler.properties";
-			//String PROPSFILE = "c:\\BerkeleyDB\\crawler.properties";
+			//String PROPSFILE = "/semplest/Crawler/crawler.properties";
+			String PROPSFILE = "c:\\BerkeleyDB\\crawler.properties";
 			properties = new Properties();
 			properties.load(new FileInputStream(PROPSFILE));
 			
@@ -35,6 +36,7 @@ public class CrawlerProperties
 			SleepIntervalBetweenUrls = Integer.valueOf(properties.getProperty("worker.sleepBetweenUrls"));
 			AkkaMessageFrameSize = properties.getProperty("akka.messageFrameSize");
 			ResultCollectingInterval = Integer.valueOf(properties.getProperty("master.resultCollectingInterval"));
+			AskForWorkInterval = Integer.valueOf(properties.getProperty("worker.askForWorkInterval"));
 			
 		}
 		catch (Exception e)

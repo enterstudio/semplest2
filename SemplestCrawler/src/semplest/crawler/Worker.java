@@ -33,6 +33,7 @@ public class Worker {
     ActorRef collector;
     Collector.Computer computor;
     String id;
+    Integer askForWorkInterval = CrawlerProperties.AskForWorkInterval * 1000;
 
     // Actor Ctr
     public WActor( ActorRef cltr, Collector.Computer c){
@@ -46,21 +47,18 @@ public class Worker {
     }
 
     // Actor Message processing
-    public void askForWork(){
+    public void askForWork()
+    {
+    	getSelf().tell( new Collector.Wakeup() );
+    	
       try 
       {
-        Thread.sleep( 10000 );
+        Thread.sleep( askForWorkInterval );
       } 
       catch (Exception e)
       {
     	  e.printStackTrace(); 
-      }
-      
-      
-      
-      
-      
-      getSelf().tell( new Collector.Wakeup() );
+      }       
     }
 
     public void onReceive( Object msg){

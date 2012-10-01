@@ -54,7 +54,6 @@ public class crawlUtils {
     }
   }
   
-  //Generate work for Master
   public static List<List<Queue<UrlDataObject>>> generateWork(String treeName, int bucketNum, int minBucketSize) throws Exception
   {	  	  
 	  List<List<Queue<UrlDataObject>>> work = new ArrayList<List<Queue<UrlDataObject>>>();
@@ -72,7 +71,7 @@ public class crawlUtils {
 	  return work;
   }
   
-  public static List<Queue<UrlDataObject>> filloutWorkBlock(Queue<List<UrlDataObject>> domainQ, int numOfBuckets, int bucketSize)
+  private static List<Queue<UrlDataObject>> filloutWorkBlock(Queue<List<UrlDataObject>> domainQ, int numOfBuckets, int bucketSize)
   {
 	  int threshold = 10;
 	  int leftoverSize = numOfBuckets;
