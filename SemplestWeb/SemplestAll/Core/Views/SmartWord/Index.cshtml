@@ -19,12 +19,8 @@
             </h3>
             <div style="width: 320px; height: 200px; overflow: auto">
                 <table class="gradient-style" style="width: 300px;">
-                    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
+                    @foreach (SemplestModel.GetCustomerPromotionStatus_Result p in Model.CustomerPromotions.Where(q => q.typePromo == "Launched" && q.PromotionStatus == "Live"))
                     {
-                        foreach (SemplestModel.Promotion p in pg.Promotions)
-                        {
-                            if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
-                            {
                         <tr>
                             <td style="width: 150px;">
                                 <a class="preview" href="@Url.Action("Setup", "SmartWord", new { promotionid = p.PromotionPK })" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
@@ -40,8 +36,6 @@
                             <td>@Html.ActionLink("End", "", "", new { @class = "endad", id = p.PromotionPK, name = p.PromotionName })
                             </td>
                         </tr>    
-                            }
-                        }
                     }
                 </table>
             </div>
@@ -220,27 +214,21 @@
                        Unfinished SmartWords Lists</h3>
             <div style="width: 320px; height: 350px; overflow: auto">
                 <table class="gradient-style" style="width: 300px">
-                    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
+                    @foreach (SemplestModel.GetCustomerPromotionStatus_Result p in Model.CustomerPromotions.Where(q => q.typePromo == "NotLaunched"))
                     {
-                        foreach (SemplestModel.Promotion p in pg.Promotions)
-                        {
-                            if (!p.IsLaunched && !p.IsDeleted)
-                            {
-                                <tr>
-                                    <td style="width: 150px;">
-                                        <a class="preview" href="@Url.Action("Setup", "SmartWord", new { promotionid = p.PromotionPK })" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
-                                            <span>@p.PromotionName</span></a>
-                                    </td>
-                                    <td>&nbsp;
-                                    </td>
-                                    <td>@Html.ActionLink("Edit", "Setup", "SmartWord", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
-                                    </td>
-                                    <td>
-                                        &nbsp;&nbsp;&nbsp;
-                                    </td>
-                                </tr>
-                            }
-                        }
+                        <tr>
+                            <td style="width: 150px;">
+                                <a class="preview" href="@Url.Action("Setup", "SmartWord", new {promotionid = p.PromotionPK})" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
+                                    <span>@p.PromotionName</span></a>
+                            </td>
+                            <td>&nbsp;
+                            </td>
+                            <td>@Html.ActionLink("Edit", "Setup", "SmartWord", new {promotionid = p.PromotionPK}, new {@id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK})
+                            </td>
+                            <td>
+                                &nbsp;&nbsp;&nbsp;
+                            </td>
+                        </tr>
                     }
                 </table>
             </div>
