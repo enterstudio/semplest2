@@ -103,12 +103,13 @@ public class Collector {
   // - Ctr ---------
   public Collector(){
     String myip = crawlUtils.getIp();
-
+    String messageFrameSize = CrawlerProperties.AkkaMessageFrameSize;
     Config conf = ConfigFactory.parseString(
         "akka {"+
         " actor { provider = \"akka.remote.RemoteActorRefProvider\" } \n" + 
         " remote { netty { hostname = \"" + myip + "\" } } \n" +
-        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" " +
+        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" \n" +
+        " remote.netty.message-frame-size = " + messageFrameSize + " \n" +
         "} ");
     ActorSystem system = ActorSystem.create("Collector", ConfigFactory.load( conf ));
     cactor = system.actorOf(new Props( new UntypedActorFactory(){

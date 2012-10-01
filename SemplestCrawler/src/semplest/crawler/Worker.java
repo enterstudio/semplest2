@@ -89,11 +89,13 @@ public class Worker {
   // - Ctr ------------------------------------------------------
   public Worker( String ip, int workers, final Collector.Computer c ){
     String port = "2552";
+    String messageFrameSize = CrawlerProperties.AkkaMessageFrameSize;
     Config conf = ConfigFactory.parseString(
         "akka {" +
         "  actor  { provider = \"akka.remote.RemoteActorRefProvider\" } \n " +
         "  remote { netty { port = 2553 } } \n" +
-        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" " +
+        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" \n" +
+        " remote.netty.message-frame-size = " + messageFrameSize + " \n" +
         "} "
         );
     String remoteAddr = "akka://Collector@" + ip + ":" + port + "/user/cactor";
@@ -116,6 +118,7 @@ public class Worker {
     if( args.length > 0 ) ip = args[0];
     int workers = 3;
     if( args.length > 1 ) workers = Integer.parseInt( args[1]);   
+    final Integer sleepIntervalBetweenUrls = CrawlerProperties.SleepIntervalBetweenUrls;
     
 	  final SimpleLogger logger = new SimpleLogger(CrawlerProperties.WorkerLogFile);	  
 	  try{
@@ -123,11 +126,13 @@ public class Worker {
 		      public Map<String,String> compute( List<Queue<UrlDataObject>> urlData) {
 		    	  Map<String,String> resMap = new HashMap<String,String>();
 		    	  RoundRobin work = new RoundRobin(urlData);
+		    	  Integer sleepInterval = sleepIntervalBetweenUrls / urlData.size();
+		    	  
 		    	  while(!work.isEmpty()){
 		    		  UrlDataObject url = work.getNextWork();
 		    		  try {
 		    			  if(url == null){
-		    				  Thread.sleep(200);
+		    				  Thread.sleep(sleepInterval);
 		    			  }
 		    			  else{
 		    				  //get raw html data from url

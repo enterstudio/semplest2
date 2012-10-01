@@ -88,11 +88,13 @@ public class Run
   private void initialize(){
     cactor = (new Collector()).cactor;
     String myip = crawlUtils.getIp();
+    String messageFrameSize = CrawlerProperties.AkkaMessageFrameSize;
     Config conf = ConfigFactory.parseString(
         "akka {" +
         "  actor  { provider = \"akka.remote.RemoteActorRefProvider\" } \n " +
         " remote { netty { hostname = \"" + myip + "\" \n  port = 2554 } } \n" +
-        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" " +
+        " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" \n" +
+        " remote.netty.message-frame-size = " + messageFrameSize + " \n" +
         "} "
         );
 
@@ -130,6 +132,9 @@ public class Run
 		String dbDir = CrawlerProperties.BerkeleyDbDirectory;
 		String dbID = CrawlerProperties.BerkeleyDbID;
 		String logFile = CrawlerProperties.MasterLogFile;
+		Integer bucketNum = CrawlerProperties.BucketNumber;
+		Integer bucketSize = CrawlerProperties.BucketSize;
+		Integer resultCollectingInterval = CrawlerProperties.ResultCollectingInterval * 1000;
 		
 		SimpleLogger logger = new SimpleLogger(logFile);
 		BerkeleyDB_Static.setDirectory(dbDir);
@@ -139,7 +144,7 @@ public class Run
 			System.out.println("Starting master and loading work. Please wait...");
 			
 			//Generate work. group urls by domain.
-			List<List<Queue<UrlDataObject>>> work = crawlUtils.generateWork(treeName, 3, 20);
+			List<List<Queue<UrlDataObject>>> work = crawlUtils.generateWork(treeName, bucketNum, bucketSize);
 			Status.TotalWorkSize = work.size();
 			
 			System.out.println("Work loaded. Master is ready to go.");
@@ -156,7 +161,7 @@ public class Run
 			    //Store results to BerkeleyDB
 			    BerkeleyDB_Static.add(dbID, res);
 			  }
-			  Thread.sleep( 30000 );
+			  Thread.sleep( resultCollectingInterval );
 			}
 			logger.info("Crawler finished at " + new Date() + ". Total amount of work: " + Status.TotalWorkSize + ". Work finished by crawler: " + Status.NumOfResultsCollected);
 		}

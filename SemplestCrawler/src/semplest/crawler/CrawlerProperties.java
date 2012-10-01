@@ -11,13 +11,18 @@ public class CrawlerProperties
 	public static String BerkeleyDbID;
 	public static String MasterLogFile;
 	public static String WorkerLogFile;
+	public static Integer BucketNumber;
+	public static Integer BucketSize;
+	public static Integer SleepIntervalBetweenUrls;
+	public static String AkkaMessageFrameSize;
+	public static Integer ResultCollectingInterval;
 	
 	static
 	{
 		try
 		{	
-			//String PROPSFILE = "/semplest/Crawler/crawler.properties";
-			String PROPSFILE = "c:\\BerkeleyDB\\crawler.properties";
+			String PROPSFILE = "/semplest/Crawler/crawler.properties";
+			//String PROPSFILE = "c:\\BerkeleyDB\\crawler.properties";
 			properties = new Properties();
 			properties.load(new FileInputStream(PROPSFILE));
 			
@@ -25,6 +30,11 @@ public class CrawlerProperties
 			BerkeleyDbID = properties.getProperty("berkeleyDb.id");
 			MasterLogFile = properties.getProperty("crawler.masterLog");
 			WorkerLogFile = properties.getProperty("crawler.workerLog");
+			BucketNumber = Integer.valueOf(properties.getProperty("work.bucketNumber"));
+			BucketSize = Integer.valueOf(properties.getProperty("work.bucketSize"));
+			SleepIntervalBetweenUrls = Integer.valueOf(properties.getProperty("worker.sleepBetweenUrls"));
+			AkkaMessageFrameSize = properties.getProperty("akka.messageFrameSize");
+			ResultCollectingInterval = Integer.valueOf(properties.getProperty("master.resultCollectingInterval"));
 			
 		}
 		catch (Exception e)
