@@ -10,6 +10,7 @@ using SemplestModel;
 using Semplest.SharedResources;
 using System.Data.Entity.Infrastructure;
 using SemplestModel.TVP;
+using SharedResources.Helpers;
 
 
 namespace Semplest.Core.Models.Repositories
@@ -34,10 +35,6 @@ namespace Semplest.Core.Models.Repositories
         public CampaignSetupModel GetCategories(CampaignSetupModel model)
         {
             var scw = new ServiceClientWrapper();
-
-            // create AdCopy array
-
-            // get categories or classifications
             var categories = scw.GetCategories(null, model.ProductGroup.ProductPromotionName,
                                                model.ProductGroup.Words,
                                                model.AdModelProp.Ads.Select(
@@ -55,34 +52,19 @@ namespace Semplest.Core.Models.Repositories
             }
             else
             {
-                var logEnty = new LogEntry
-                                  {ActivityId = Guid.NewGuid(), Message = "Could not get Categories from web service"};
-                Logger.Write(logEnty);
+                return null;
             }
             return model;
-            // save this some how while getting the keywords this is becoming null
         }
 
         public CampaignSetupModel GetKeyWords(CampaignSetupModel model, int promoId)
         {
-            if (model.AllCategories.Count == 0)
-            {
-                //model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
-            }
-
             var catList = new List<string>();
-
             foreach (var cat in model.AllCategories)
-            {
                 catList.AddRange(from t in model.CategoryIds where cat.Id == t select cat.Name);
-            }
 
             var scw = new ServiceClientWrapper();
-            // create AdCopy array
-
-
             // get keywords from the web service
-            //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
             var keywords = scw.GetKeywords(catList, null, SerializeAdEnginesSelectedToStringArray(model).ToArray(),
                                            model.ProductGroup.ProductPromotionName,
                                            model.ProductGroup.Words,
@@ -90,11 +72,8 @@ namespace Semplest.Core.Models.Repositories
                                                pad => pad.AdTitle + " " + pad.AdTextLine1 + " " + pad.AdTextLine2).
                                                ToArray(), model.AdModelProp.LandingUrl,
                                            SerializeToGeoTargetObjectArray(model).ToArray());
-
-
             if (keywords != null && keywords.Length > 0)
             {
-
                 model.AllKeywordProbabilityObjects.AddRange(keywords);
                 SaveKeywords(promoId, model.AllKeywordProbabilityObjects, model.AdModelProp.NegativeKeywords,
                              model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
@@ -105,14 +84,9 @@ namespace Semplest.Core.Models.Repositories
                 {
                     model.AllKeywords.Add(kwm);
                 }
+                return model;
             }
-            else
-            {
-                var logEnty = new LogEntry
-                                  {ActivityId = Guid.NewGuid(), Message = "Could not get Keywords from web service"};
-                Logger.Write(logEnty);
-            }
-            return model;
+            return null;
         }
 
         public List<string> SerializeAdEnginesSelectedToStringArray(CampaignSetupModel model)
@@ -230,7 +204,7 @@ namespace Semplest.Core.Models.Repositories
             }
         }
             
-        public string SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel)
+        public ReturnState SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel)
         {
             var rString = new System.Text.StringBuilder();
             using (var dbcontext = new SemplestModel.Semplest())
@@ -261,10 +235,11 @@ namespace Semplest.Core.Models.Repositories
                           description2 =
                               pad.AdTextLine2
                       }).ToList();
-                    gv = ValidateAds(model.AdModelProp.LandingUrl,
-                                                                           model.AdModelProp.DisplayUrl, verifyAds);
+                    gv = ValidateAds(model.AdModelProp.LandingUrl, model.AdModelProp.DisplayUrl, verifyAds);
+                    if (gv == null)
+                        return new ReturnState(true,false, string.Empty, null);
                     if (gv.Length > 0)
-                        throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                        return new ReturnState(false, true, gv.First().shortFieldPath + ": " + gv.First().errorMessage, null);
                 }
                 GeoTargetTableType gt;
                 int addressCode =-1;
@@ -278,11 +253,12 @@ namespace Semplest.Core.Models.Repositories
                     if (gtos.Any())
                     {
                         gv = ValidateGeotargeting(gtos);
+                        if (gv == null)
+                            return new ReturnState(true, false, string.Empty,null);
                         if (gv.Length > 0)
-                            throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                            return new ReturnState(false,true,gv.First().shortFieldPath + ": " + gv.First().errorMessage,null);
                     }
                 }
-
                 var parameter = new SqlParameter("PromotionPK", promo.PromotionPK) { SqlDbType = SqlDbType.Int };
                 var parameter2 = new SqlParameter("LandingUrl", model.AdModelProp.LandingUrl.Trim()) { SqlDbType = SqlDbType.NVarChar };
                 var parameter3 = new SqlParameter("DisplayUrl", model.AdModelProp.DisplayUrl.Trim()) { SqlDbType = SqlDbType.NVarChar };
@@ -332,7 +308,9 @@ namespace Semplest.Core.Models.Repositories
                         sw.scheduleUpdateGeoTargeting(promo.PromotionPK, adEngines);
                 }
             }
-            return string.IsNullOrEmpty(rString.ToString()) ? String.Empty : rString.ToString().Substring(0, rString.ToString().Length - 1);
+            return new ReturnState(false,false,string.IsNullOrEmpty(rString.ToString())
+                                   ? String.Empty
+                                   : rString.ToString().Substring(0, rString.ToString().Length - 1),null);
         }
 
         public Promotion GetPromoitionFromCampaign(int customerFK, CampaignSetupModel model)
@@ -707,7 +685,7 @@ namespace Semplest.Core.Models.Repositories
             return shouldUpdateGeoTargeting;
         }
 
-        public string SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel)
+        public ReturnState SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel)
         {
             bool shouldRefreshSiteLinks = false;
             var rString = new System.Text.StringBuilder();
@@ -728,8 +706,10 @@ namespace Semplest.Core.Models.Repositories
                 if (sl.Any())
                 {
                     GoogleViolation[] gv = ValidateSiteLinks(sl);
+                    if (gv == null)
+                        return new ReturnState (true,false,string.Empty,null);
                     if (gv.Length > 0)
-                        throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                        return new ReturnState(false,true,gv.First().shortFieldPath + ": " + gv.First().errorMessage,null);
                 }
                 SiteLinksTableType st;
                 shouldRefreshSiteLinks = AddSiteLinksToPromotion(promo, model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext, oldModel, out st);
@@ -761,7 +741,10 @@ namespace Semplest.Core.Models.Repositories
                     SharedResources.Helpers.ExceptionHelper.LogException(ex);
                 }
             }
-            return string.IsNullOrEmpty(rString.ToString()) ? String.Empty : rString.ToString().Substring(0, rString.ToString().Length - 1);
+            return new ReturnState(false,false,
+                               string.IsNullOrEmpty(rString.ToString())
+                                   ? String.Empty
+                                   : rString.ToString().Substring(0, rString.ToString().Length - 1),null);
         }
 
         private bool AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, System.Data.Objects.ObjectContext context, CampaignSetupModel oldModel, out SiteLinksTableType st)
@@ -1045,19 +1028,24 @@ namespace Semplest.Core.Models.Repositories
                              model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
             }
         }
-        public List<CampaignSetupModel.KeywordsModel> SaveNegativeKeywords(CampaignSetupModel model, int customerFk)
+        public ReturnState SaveNegativeKeywords(CampaignSetupModel model, int customerFk)
         {
             if (model.AdModelProp.NegativeKeywords.Any())
             {
                 GoogleViolation[] gv = ValidateGoogleNegativeKeywords(model.AdModelProp.NegativeKeywords);
+                if (gv == null)
+                    return new ReturnState(true, false, string.Empty, null);
                 if (gv.Length > 0)
-                    throw new Exception(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    return new ReturnState(false, true, gv.First().shortFieldPath + ": " + gv.First().errorMessage, null);
             }
+            IEnumerable<CampaignSetupModel.KeywordsModel> akw;
             using (var dbcontext = new SemplestModel.Semplest())
             {
                 var promo = GetPromoitionFromCampaign(dbcontext, customerFk, model);
                 if (!promo.IsLaunched)
-                { RefreshKeywords(model, promo); }
+                {
+                    RefreshKeywords(model, promo);
+                }
                 else
                 {
                     var addKiops = new List<KeywordIdRemoveOppositePair>();
@@ -1091,7 +1079,8 @@ namespace Semplest.Core.Models.Repositories
                                     kiop.removeOpposite = false;
                                     addKiops.Add(kiop);
                                 }
-                                else//this keyword doesn't exist in the database so when we call the stored proc get the id so it can be sent to the api
+                                else
+                                    //this keyword doesn't exist in the database so when we call the stored proc get the id so it can be sent to the api
                                     addNewKiops.Add(negativeKeyword);
                             }
                         }
@@ -1105,8 +1094,8 @@ namespace Semplest.Core.Models.Repositories
                     }
 
                     List<int> deletedKeywords = new List<int>();
-                    var op = new System.Data.Objects.ObjectParameter("NegativeKeywordID", typeof(int));
-                    var op2 = new System.Data.Objects.ObjectParameter("Exists", typeof(int));
+                    var op = new System.Data.Objects.ObjectParameter("NegativeKeywordID", typeof (int));
+                    var op2 = new System.Data.Objects.ObjectParameter("Exists", typeof (int));
                     foreach (string kw in model.AdModelProp.NegativeKeywords)
                     {
                         //keywords that need to be deleted
@@ -1118,12 +1107,16 @@ namespace Semplest.Core.Models.Repositories
 
                         if (!string.IsNullOrEmpty(op.Value.ToString()))
                         {
-                            var kop = new KeywordIdRemoveOppositePair { keywordId = int.Parse(op.Value.ToString()), removeOpposite = bool.Parse(op2.Value.ToString()) };
+                            var kop = new KeywordIdRemoveOppositePair
+                                          {
+                                              keywordId = int.Parse(op.Value.ToString()),
+                                              removeOpposite = bool.Parse(op2.Value.ToString())
+                                          };
                             addKiops.Add(kop);
                         }
                     }
                     foreach (int dk in addDeletedKiops)
-                        promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk).IsDeleted=true;
+                        promo.PromotionKeywordAssociations.Single(kw => kw.KeywordFK == dk).IsDeleted = true;
                     dbcontext.SaveChanges();
                     var sw = new ServiceClientWrapper();
                     var adEngines = new List<string>();
@@ -1136,13 +1129,12 @@ namespace Semplest.Core.Models.Repositories
                     if (deletedKeywords.Any())
                         sw.DeleteKeywords(promo.PromotionPK, deletedKeywords, adEngines);
                 }
-                model.AllKeywords.Clear();
-                model.AllKeywords.AddRange(
-                    promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
-                        key =>
-                        new CampaignSetupModel.KeywordsModel { Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK }));
+
+                akw = promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
+                    key =>
+                    new CampaignSetupModel.KeywordsModel {Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK});
             }
-            return model.AllKeywords;
+            return new ReturnState(false, false, string.Empty, akw);
         }
 
         public string GetStateNameFromCode(int stateCode)
@@ -1155,33 +1147,6 @@ namespace Semplest.Core.Models.Repositories
                     stateName = state.StateAbbr;
             }
             return stateName;
-        }
-
-        public bool IsPromotionLaunched(int promoId)
-        {
-            using (var db = new SemplestModel.Semplest())
-            {
-                var promo = db.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
-                return promo != null && promo.IsLaunched;
-            }
-        }
-
-        public bool IsPromotionCompleted(int promoId)
-        {
-            using (var db = new SemplestModel.Semplest())
-            {
-                var promo = db.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
-                return promo != null && promo.IsCompleted;
-            }
-        }
-
-        public bool IsPromotionLaunchedAndCompleted(int promoId)
-        {
-            using (var db = new SemplestModel.Semplest())
-            {
-                var promo = db.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
-                return promo != null && (promo.IsCompleted && promo.IsLaunched);
-            }
         }
 
         public void SetKeywordsDeleted(List<int> keywordIds, int promoId)
@@ -1238,10 +1203,7 @@ namespace Semplest.Core.Models.Repositories
                     where (pgs.CustomerFK == custFk && pgs.ProductGroupName == prodGroup && pms.PromotionName == promotionName && !pms.IsDeleted)
                     select pms;
 
-                if (queryProdGrp.Any())
-                    return true;
-                else
-                    return false;
+                return queryProdGrp.Any();
             }
         }
     }

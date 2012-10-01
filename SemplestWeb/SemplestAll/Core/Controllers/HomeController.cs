@@ -108,50 +108,6 @@ namespace SemplestWebApp.Controllers
 
         [AuthorizeRole]
         [HttpPost]
-        [ActionName("SearchKeywords")]
-        [AcceptSubmitType(Name = "Command", Type = "GetCategories")]
-        public ActionResult GetCategories(SearchKeywordsModel model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    var scw = new ServiceClientWrapper();
-                    var addcopies = new[] { model.AdCopy };
-                    List<string> categories = scw.GetCategories(null, model.Product, model.Description, addcopies,
-                                                                model.LandingPage);
-                    if (categories != null && categories.Count > 0)
-                    {
-                        int i = 0;
-                        foreach (string cate in categories)
-                        {
-                            var cm = new SearchKeywordsModel.CategoriesModel { Id = i, Name = cate };
-                            i++;
-                            model.AllCategories.Add(cm);
-                        }
-                    }
-                    else
-                    {
-                        CreateDummyModel(model);
-                    }
-
-                    // save this some how while getting the keywords this is becoming null
-                    Session.Add("AllCategories", model.AllCategories);
-                }
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                string err = ex.Message + "\\r\\n" + ex.StackTrace;
-                //CreateDummyModel(model);
-                //ViewBag.AllCategories = model.AllCategories;
-                //Session.Add("AllCategories", model.AllCategories);
-                return View(model);
-            }
-        }
-
-        [AuthorizeRole]
-        [HttpPost]
         public ActionResult AddProductGroupName(FormCollection fc)
         {
             try

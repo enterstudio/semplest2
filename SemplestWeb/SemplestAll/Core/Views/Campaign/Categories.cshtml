@@ -44,6 +44,9 @@
     </div>
 </div>
 <script type="text/javascript">
+    if('@(Model==null)' == 'True') {
+        OnSuccess('@ViewData["TechnicalDifficulties"]');
+    }
     $('#backCat').click(function () {
         var nextItem = tabStrip.select().prev();
         if (nextItem.length)

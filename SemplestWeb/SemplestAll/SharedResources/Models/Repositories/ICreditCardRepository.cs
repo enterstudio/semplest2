@@ -1,10 +1,11 @@
 ﻿using Semplest.SharedResources.Services;
 using SemplestModel;
+using SharedResources.Helpers;
 
 namespace SharedResources.Models.Repositories
 {
     public interface ICreditCardRepository
     {
-        bool ChargeCreditCard(CustomerObject co, Promotion promo, int payTypeFk, decimal budget);
+        ReturnState ChargeCreditCard(CustomerObject co, Promotion promo, int payTypeFk, decimal budget);
     }
 }

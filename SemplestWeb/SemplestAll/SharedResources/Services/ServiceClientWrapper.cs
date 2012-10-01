@@ -27,7 +27,6 @@ namespace Semplest.SharedResources.Services
         public List<string> GetCategories(string companyName, string searchTerm, string description, string[] adds,
                                           string url)
         {
-            string returnData = string.Empty;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
@@ -38,20 +37,16 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("description", description);
                 jsonHash.Add("url", url);
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
-                returnData = runMethod(_baseURLTest, Serviceoffered, "getCategories", jsonstr);
-
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                var dict = RunMethod(_baseURLTest, Serviceoffered, "getCategories", jsonstr);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
-
                 return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
             }
-            catch
+            catch(Exception ex)
             {
-                if (string.IsNullOrEmpty(returnData))
-                    throw;
-                throw new Exception(returnData);
+                Helpers.ExceptionHelper.LogException(ex);
             }
+            return null;
         }
 
 
@@ -60,7 +55,6 @@ namespace Semplest.SharedResources.Services
                                                       string searchTerm, string description, string[] adds, string url,
                                                       GeoTargetObject[] gt)
         {
-            string returnData = string.Empty;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
@@ -77,33 +71,22 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("description", description);
                 jsonHash.Add("url", url);
                 Int32[] nGrams = new[] {300, 300, 100};
-                //nGrams = new Int32[] { 1,2,3 };
                 string jsonNgrams = JsonConvert.SerializeObject(nGrams);
                 jsonHash.Add("nGrams", jsonNgrams);
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
-
-                //string returnData = string.Empty;
-                returnData = runMethod(_baseURLTest, Serviceoffered, "getKeywords", jsonstr);
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                var dict = RunMethod(_baseURLTest, Serviceoffered, "getKeywords", jsonstr);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
                 var listoflist = JsonConvert.DeserializeObject<KeywordProbabilityObject[]>(jsonstrlist);
-
                 foreach (var kpolis in listoflist)
-                {
                     kpolis.keyword = kpolis.keyword.Trim();
-                }
-
-
                 return listoflist;
             }
-            catch
+            catch(Exception ex)
             {
-                if (string.IsNullOrEmpty(returnData))
-                    throw;
-                else
-                    throw new Exception(returnData);
+                Helpers.ExceptionHelper.LogException(ex);
             }
+            return null;
         }
 
         #region AdEngine
@@ -222,8 +205,8 @@ namespace Semplest.SharedResources.Services
         }
 
         public bool AddNegativeKeywords(int promotionID,
-                                             List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs,
-                                             List<String> adEngines)
+                                        List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs,
+                                        List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("promotionID", promotionID.ToString());
@@ -231,13 +214,13 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("keywordIdRemoveOppositePairs", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-                return runBooleanMethod(Adengineservice, "AddNegativeKeywords",
-                                        JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(Adengineservice, "AddNegativeKeywords",
+                                    JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool DeleteNegativeKeywords(int promotionID,
-                                            List<int> keywordIds,
-                                            List<String> adEngines)
+                                           List<int> keywordIds,
+                                           List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("promotionID", promotionID.ToString());
@@ -245,8 +228,8 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("keywordIds", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-                return runBooleanMethod(Adengineservice, "DeleteNegativeKeywords",
-                                        JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(Adengineservice, "DeleteNegativeKeywords",
+                                    JsonConvert.SerializeObject(jsonHash));
         }
 
 
@@ -265,7 +248,6 @@ namespace Semplest.SharedResources.Services
 
         public GoogleViolation[] ValidateGoogleAd(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
         {
-            String returnData = string.Empty;
             try
             {
                 Dictionary<String, String> jsonHash = new Dictionary<String, String>();
@@ -273,9 +255,8 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("displayURL", displayURL);
                 String adsStr = JsonConvert.SerializeObject(ads, Formatting.Indented);
                 jsonHash.Add("ads", adsStr);
-                returnData = runMethod(_baseURLTest, Adengineservice, "validateGoogleAd",
+                var dict = RunMethod(_baseURLTest, Adengineservice, "validateGoogleAd",
                                        JsonConvert.SerializeObject(jsonHash));
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
                 var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
@@ -283,43 +264,40 @@ namespace Semplest.SharedResources.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(returnData + ex.ToString());
+                Helpers.ExceptionHelper.LogException(ex);
             }
+            return null;
         }
 
         public GoogleViolation[] ValidateGoogleRefreshSiteLinks(List<GoogleSiteLink> sl)
         {
-            String returnData = string.Empty;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
                 String slStr = JsonConvert.SerializeObject(sl, Formatting.Indented);
                 jsonHash.Add("siteLinks", slStr);
-                returnData = runMethod(_baseURLTest, Adengineservice, "validateGoogleRefreshSiteLinks",
-                                       JsonConvert.SerializeObject(jsonHash));
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-                List<string> lis = dict.Values.ToList();
-                string jsonstrlist = lis[0];
+                var dict = RunMethod(_baseURLTest, Adengineservice, "validateGoogleRefreshSiteLinks", JsonConvert.SerializeObject(jsonHash));
+                var lis = dict.Values.ToList();
+                var jsonstrlist = lis[0];
                 var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
                 return listoflist;
             }
             catch (Exception ex)
             {
-                throw new Exception(returnData + ex.ToString());
+                Helpers.ExceptionHelper.LogException(ex);
             }
+            return null;
         }
 
-        public GoogleViolation[] ValidateGoogleGeoTargets(List<GeoTargetObject> gto )
+        public GoogleViolation[] ValidateGoogleGeoTargets(List<GeoTargetObject> gto)
         {
-            String returnData = string.Empty;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
                 String gtoStr = JsonConvert.SerializeObject(gto, Formatting.Indented);
                 jsonHash.Add("geoTargets", gtoStr);
-                returnData = runMethod(_baseURLTest, Adengineservice, "validateGoogleGeoTargets",
+                var dict = RunMethod(_baseURLTest, Adengineservice, "validateGoogleGeoTargets",
                                        JsonConvert.SerializeObject(jsonHash));
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
                 var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
@@ -327,31 +305,29 @@ namespace Semplest.SharedResources.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(returnData + ex.ToString());
+                Helpers.ExceptionHelper.LogException(ex);
             }
+            return null;
         }
 
         public GoogleViolation[] ValidateGoogleNegativeKeywords(List<string> negativeKeywords)
         {
-            String returnData = string.Empty;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
                 String negativeKeywordsStr = JsonConvert.SerializeObject(negativeKeywords, Formatting.Indented);
                 jsonHash.Add("negativeKeywords", negativeKeywordsStr);
-                returnData = runMethod(_baseURLTest, Adengineservice, "validateGoogleNegativeKeywords",
-                                       JsonConvert.SerializeObject(jsonHash));
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                var dict = RunMethod(_baseURLTest, Adengineservice, "validateGoogleNegativeKeywords", JsonConvert.SerializeObject(jsonHash));
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
                 var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
-
                 return listoflist;
             }
             catch (Exception ex)
             {
-                throw new Exception(returnData + ex.ToString());
+                Helpers.ExceptionHelper.LogException(ex);
             }
+            return null;
         }
 
         #endregion
@@ -371,9 +347,8 @@ namespace Semplest.SharedResources.Services
             {
                 var jsonHash = new Dictionary<string, string>();
                 jsonHash.Add("ecryptedToken", token);
-                string returnData = runMethod(_baseURLTest, Adengineservice, "validateAccountActivation",
+                var dict = RunMethod(_baseURLTest, Adengineservice, "validateAccountActivation",
                                               JsonConvert.SerializeObject(jsonHash));
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
                 var listoflist = JsonConvert.DeserializeObject<string[]>(jsonstrlist);
@@ -397,8 +372,7 @@ namespace Semplest.SharedResources.Services
                 string returnData = string.Empty;
                 try
                 {
-                    returnData = runMethod(_baseURLTest, serviceRequested, methodRequested, jsonStr);
-                    var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                    var dict = RunMethod(_baseURLTest, serviceRequested, methodRequested, jsonStr);
                     List<string> lis = dict.Values.ToList();
                     retVal = bool.Parse(lis[0]);
                 }
@@ -425,168 +399,64 @@ namespace Semplest.SharedResources.Services
             return retVal;
         }
 
-
-       private void RunBooleanMethodAsync(object data)
-        {
-            ThreadData param = (ThreadData) data;
-
-            string returnData = string.Empty;
-            try
-            {
-                returnData = runMethod(_baseURLTest, param.ServiceRequested, param.MethodRequested, param.JsonStr);
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-                List<string> lis = dict.Values.ToList();
-                string jsonstrlist = lis[0];
-                //this should be the case but we are always going to return true so this line has been commented out
-                if (!bool.Parse(lis[0]))
-                    throw new Exception("Json Call returned a false");
-            }
-            catch (Exception ex)
-            {
-                System.Text.StringBuilder stemp = new System.Text.StringBuilder();
-                stemp.Append("Json Passed:");
-                stemp.Append(param.JsonStr);
-                stemp.Append(Environment.NewLine);
-                stemp.Append("Service Requested:");
-                stemp.Append(param.ServiceRequested);
-                stemp.Append(Environment.NewLine);
-                stemp.Append("Method Requested:");
-                stemp.Append(param.MethodRequested);
-                stemp.Append(Environment.NewLine);
-                stemp.Append("Json Returned:");
-                stemp.Append(returnData);
-                stemp.Append(Environment.NewLine);
-                stemp.Append(ex.ToString());
-                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(new Exception(stemp.ToString()));
-            }
-
-        }
-
-        private class ThreadData
-        {
-            public string ServiceRequested { get; set; }
-            public string MethodRequested { get; set; }
-            public string JsonStr { get; set; }
-
-            public ThreadData(string serviceRequested, string methodRequested, string jsonStr)
-            {
-                ServiceRequested = serviceRequested;
-                MethodRequested = methodRequested;
-                JsonStr = jsonStr;
-            }
-        }
-
         public GatewayReturnObject CreateProfile(CustomerObject customerObject)
         {
-            string returnData;
-            GatewayReturnObject ReturnGatewayReturnObject = new GatewayReturnObject();
             try
             {
                 var jsonHash = new Dictionary<string, string>();
-
-
-                string jsonAdds = JsonConvert.SerializeObject(customerObject, Formatting.None);
+                var jsonAdds = JsonConvert.SerializeObject(customerObject, Formatting.None);
                 jsonHash.Add("customerObject", jsonAdds);
-
-                string jsonstr = JsonConvert.SerializeObject(jsonHash, Formatting.None);
-                try
-                {
-
-                    returnData = runMethod(_baseURLTest,
-                                           Chaseorbitalservice,
-                                           "CreateProfile", jsonstr);
-                }
-                catch (Exception ex)
-                {
-                    string errmsg = ex.Message;
-                    throw;
-                }
-
-
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-                List<string> lis = dict.Values.ToList();
-
-
-
-                var objval =
-                    JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0].ToString()));
-
-                ReturnGatewayReturnObject.isGood = Convert.ToBoolean(objval["isGood"]);
-                ReturnGatewayReturnObject.isError = Convert.ToBoolean(objval["isError"]);
-                ReturnGatewayReturnObject.isApproved = Convert.ToBoolean(objval["isApproved"]);
-                ReturnGatewayReturnObject.isDeclined = Convert.ToBoolean(objval["isDeclined"]);
-                ReturnGatewayReturnObject.Status = objval["Status"];
-                ReturnGatewayReturnObject.Message = objval["Message"];
-                ReturnGatewayReturnObject.CustomerRefNum = objval["CustomerRefNum"];
-
-
+                var jsonstr = JsonConvert.SerializeObject(jsonHash, Formatting.None);
+                var dict = RunMethod(_baseURLTest, Chaseorbitalservice, "CreateProfile", jsonstr);
+                var objval = JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0]));
+                return new GatewayReturnObject
+                           {
+                               isGood = Convert.ToBoolean(objval["isGood"]),
+                               isError = Convert.ToBoolean(objval["isError"]),
+                               isApproved = Convert.ToBoolean(objval["isApproved"]),
+                               isDeclined = Convert.ToBoolean(objval["isDeclined"]),
+                               Status = objval["Status"],
+                               Message = objval["Message"],
+                               CustomerRefNum = objval["CustomerRefNum"]
+                           };
             }
-            catch
+            catch (Exception ex)
             {
-                if (ReturnGatewayReturnObject == null)
-                    throw;
-                else
-                    throw new Exception();
+                Helpers.ExceptionHelper.LogException(ex);
             }
-            return ReturnGatewayReturnObject;
+            return null;
         }
-
-        //
-
-        // 
 
         public GatewayReturnObject AuthorizeAndCapture(string customerProfileRefNumber, double amount)
         {
-            string returnData;
-            GatewayReturnObject ReturnGatewayReturnObject = new GatewayReturnObject();
             try
             {
                 var jsonHash = new Dictionary<string, string>();
                 jsonHash.Add("customerProfileRefNumber", customerProfileRefNumber);
                 jsonHash.Add("Amount", amount.ToString());
                 string jsonstr = JsonConvert.SerializeObject(jsonHash, Formatting.None);
-                try
-                {
-
-                    returnData = runMethod(_baseURLTest, Chaseorbitalservice,
-                                           "AuthorizeAndCapture", jsonstr);
-                }
-                catch (Exception ex)
-                {
-                    string errmsg = ex.Message;
-                    throw;
-                }
-
-
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-                List<string> lis = dict.Values.ToList();
-
-                var objval =
-                    JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0].ToString()));
-
-                ReturnGatewayReturnObject.isGood = Convert.ToBoolean(objval["isGood"]);
-                ReturnGatewayReturnObject.isError = Convert.ToBoolean(objval["isError"]);
-                ReturnGatewayReturnObject.isApproved = Convert.ToBoolean(objval["isApproved"]);
-                ReturnGatewayReturnObject.isDeclined = Convert.ToBoolean(objval["isDeclined"]);
-                ReturnGatewayReturnObject.ResponseCode = objval["ResponseCode"];
-                ReturnGatewayReturnObject.Status = objval["Status"];
-                ReturnGatewayReturnObject.Message = objval["Message"];
-                ReturnGatewayReturnObject.TxRefNum = objval["TxRefNum"];
-                ReturnGatewayReturnObject.AuthCode = objval["AuthCode"];
-                ReturnGatewayReturnObject.amountRedeemedNoDecimal = objval["amountRedeemedNoDecimal"];
-                ReturnGatewayReturnObject.amountRequestedNoDecimal = objval["amountRequestedNoDecimal"];
-
-
-
+                    var dict = RunMethod(_baseURLTest, Chaseorbitalservice, "AuthorizeAndCapture", jsonstr);
+                var objval = JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0]));
+                return new GatewayReturnObject
+                                                    {
+                                                        isGood = Convert.ToBoolean(objval["isGood"]),
+                                                        isError = Convert.ToBoolean(objval["isError"]),
+                                                        isApproved = Convert.ToBoolean(objval["isApproved"]),
+                                                        isDeclined = Convert.ToBoolean(objval["isDeclined"]),
+                                                        ResponseCode = objval["ResponseCode"],
+                                                        Status = objval["Status"],
+                                                        Message = objval["Message"],
+                                                        TxRefNum = objval["TxRefNum"],
+                                                        AuthCode = objval["AuthCode"],
+                                                        amountRedeemedNoDecimal = objval["amountRedeemedNoDecimal"],
+                                                        amountRequestedNoDecimal = objval["amountRequestedNoDecimal"]
+                                                    };
             }
-            catch
+            catch(Exception ex)
             {
-                if (ReturnGatewayReturnObject == null)
-                    throw;
-                else
-                    throw new Exception();
+                Helpers.ExceptionHelper.LogException(ex);
             }
-            return ReturnGatewayReturnObject;
+            return null;
         }
 
         //
@@ -604,19 +474,18 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("msgTxt", msgTxt);
                 jsonHash.Add("msgType", "text/html; charset=utf-8;"); //"text/plain
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
-                string returnData = runMethod(_baseURLTest, Mailserviceoffered, "SendEmail", jsonstr);
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                var dict = RunMethod(_baseURLTest, Mailserviceoffered, "SendEmail", jsonstr);
                 string boolResult = dict.Values.First();
                 return Convert.ToBoolean(boolResult);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex, false);
             }
             return false;
         }
 
-        public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr)
+        public Dictionary<string, string> RunMethod(String baseURL, String serviceName, String methodName, String jsonStr)
         {
             string returnData = string.Empty;
             try
@@ -635,7 +504,11 @@ namespace Semplest.SharedResources.Services
                     throw new Exception("Service Timeout");
                 if (returnData.ToLower().Contains("no service for"))
                     throw new Exception("Service not available");
-                return returnData;
+
+                var resultMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                if (resultMap.ContainsKey("errorID"))
+                    throw new Exception(returnData);
+                return resultMap;
             }
             catch (Exception ex)
             {
@@ -651,10 +524,7 @@ namespace Semplest.SharedResources.Services
                     stemp.Append("Method Requested:");
                     stemp.Append(methodName);
                     stemp.Append(Environment.NewLine);
-                    stemp.Append("Json Returned:");
-                    stemp.Append(returnData);
-                    stemp.Append(Environment.NewLine);
-                    throw new Exception(ex.Message);
+                    throw new Exception(stemp.ToString());
                 }
             }
         }

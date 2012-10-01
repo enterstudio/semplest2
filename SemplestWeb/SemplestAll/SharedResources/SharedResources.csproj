@@ -105,6 +105,7 @@
     <Compile Include="Helpers\GeneratePassword.cs" />
     <Compile Include="Helpers\HttpsHelper.cs" />
     <Compile Include="Helpers\LabelHelper.cs" />
+    <Compile Include="Helpers\ReturnState.cs" />
     <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Models\ProfileModel.cs" />
