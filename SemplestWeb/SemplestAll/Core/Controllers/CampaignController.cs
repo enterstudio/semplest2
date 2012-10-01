@@ -197,7 +197,7 @@ namespace Semplest.Core.Controllers
             catch (Exception ex)
             {
                 ExceptionHelper.LogException(ex);
-                return Json(ex.Message.Contains("Not enough data provided") ? "Invalid words/phrases, URL or ADs<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories." : ex.ToString());
+                return Json(ConfigurationManager.AppSettings["TechnicalDifficulties"]);
             }
         }
 
