@@ -164,7 +164,7 @@ namespace Semplest.Core.Controllers
                 model.AdModelProp.NegativeKeywordsText = (string)Session["NegativeKeywordsText"];
 
                 if (!model.CategoryIds.Any())
-                    return Json("Atleast one Category needs to be selected");
+                    return Json("At least one category needs to be selected");
 
 
                 // get selected categories
