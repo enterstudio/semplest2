@@ -31,12 +31,11 @@ namespace Semplest.Core.Controllers
         {
             var dbContext = new SemplestModel.Semplest();
             var cred = ((Credential) (Session[SEMplestConstants.SESSION_USERID]));
-
             var child = new HomeModelChild();
             IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
             ViewBag.Title = cCred.First().User.FirstName + " " + cCred.First().User.LastName + " - " +
                             cCred.First().User.Customer.Name;
-            //child.ProductGroups = cCred.First().User.Customer.ProductGroups;
+            child.CustomerPromotions = dbContext.GetCustomerPromotionStatus(cCred.Single().User.CustomerFK).OrderBy(q => q.PromotionStatus).ThenBy(q => q.PromotionName).ToList();
             return View(child);
         }
 
