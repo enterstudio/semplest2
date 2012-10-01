@@ -30,7 +30,7 @@ BEGIN TRY
 		p.CycleStartDate,
 		p.RemainingBudgetInCycle,p.StartBudgetInCycle,
 		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate, aep.AdvertisingEngineCampaignPK, aep.AdvertisingEngineAdGroupID , 
-		aea.AdvertisingEngineAccountPK,aea.AdvertisingEngineAccountNumber, ae.AdvertisingEngine, p.IsAutobid, p.AutoBidMaxCPC, p.CycleEndDate
+		aea.AdvertisingEngineAccountPK,aea.AdvertisingEngineAccountNumber, ae.AdvertisingEngine, p.IsAutobid, p.AutoBidMaxCPC, p.CycleEndDate, P.CreditCardProfileFK
 
 		from Promotion p 
 		inner join BudgetCycle bc on bc.BudgetCyclePK = p.BudgetCycleFK
