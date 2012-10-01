@@ -259,10 +259,18 @@ public class SemplestDB extends BaseDB
 		return creditCardProfiles.get(0);
 	}
 	
-	public static List<CreditCardProfile> getCreditCardProfiles(final Integer promotionId)
+	public static CreditCardProfile getCreditCardProfiles(final Integer creditCardProfilePK) throws Exception
 	{
-		final List<CreditCardProfile> creditCardProfiles = jdbcTemplate.query("select CreditCardProfilePK, CustomerRefNum, AuthCode, TxRefNum, PromotionFK, CustomerFK from CreditCardProfile where PromotionFK = ?", CREDIT_CARD_PROFILE_ROW_MAPPER, promotionId);
-		return creditCardProfiles;
+		final List<CreditCardProfile> creditCardProfiles = jdbcTemplate.query("select CreditCardProfilePK, CustomerRefNum, CustomerFK from CreditCardProfile where CreditCardProfilePK = ?", CREDIT_CARD_PROFILE_ROW_MAPPER, creditCardProfilePK);
+		if (creditCardProfiles == null || creditCardProfiles.isEmpty() || creditCardProfiles.size() > 1)
+		{
+			throw new Exception("Did not find any CreditCardProfiles for CreditCardProfilePK [" + creditCardProfilePK + "]");
+		}
+		if (creditCardProfiles.size() > 1)
+		{
+			throw new Exception("Found " + creditCardProfiles.size() + " CreditCardProfiles for CreditCardProfilePK [" + creditCardProfilePK + "], but expecting exactly 1");
+		}
+		return creditCardProfiles.get(0);
 	}
 	
 	public static void updateJobLastSuccessfulRunTime(final JobName jobName) throws Exception

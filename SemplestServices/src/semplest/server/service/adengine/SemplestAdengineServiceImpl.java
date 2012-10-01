@@ -287,17 +287,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return gson.toJson(true);
 	}
 	
-	public void setupRecurringBilling(final Integer promotionId, final java.util.Date asOfDate) throws Exception
+	public void setupRecurringBilling(final Integer promotionId, final Integer creditCardProfileFk, final java.util.Date asOfDate) throws Exception
 	{
-		logger.info("Will try to Setup Recurring Billing for PromotionID [" + promotionId + "], AsOfDate [" + asOfDate + "]");
-		final List<CreditCardProfile> creditCardProfiles = SemplestDB.getCreditCardProfiles(promotionId);
-		final Integer numCreditCardProfiles = creditCardProfiles.size();
-		logger.info("Found " + numCreditCardProfiles + " CreditCardProfiles:\n" + SemplestUtils.getEasilyReadableString(creditCardProfiles));
-		if (numCreditCardProfiles != 1)
-		{
-			throw new Exception("Expect to find 1 Credit Card Profile for PromotionID [" + promotionId + "], but found " + numCreditCardProfiles);
-		}
-		final CreditCardProfile creditCardProfile = creditCardProfiles.get(0);
+		logger.info("Will try to Setup Recurring Billing for PromotionID [" + promotionId + "], CreditCardProfileFK [" + creditCardProfileFk + "], AsOfDate [" + asOfDate + "]");
+		final CreditCardProfile creditCardProfile = SemplestDB.getCreditCardProfiles(creditCardProfileFk);
 		final String creditCardProfileRefNum = creditCardProfile.getCustomerRefNum();
 		final PromotionBudget budget = SemplestDB.getLatestPromotionBudgetForPromotion(promotionId);
 		
@@ -329,9 +322,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * GeoTargets - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 6. Set Negative Keywords -
 			 * AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 7. Set Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE // 8. Service
 			 * call - semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
-			 */
-
-			setupRecurringBilling(PromotionID, new java.util.Date());
+			 */	
 						
 			/*
 			TODO: put this back when the GUI initiates the status to PENDING
@@ -345,6 +336,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(PromotionID);
 			final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+			final Integer creditCardProfileFk = promotionData.getCreditCardProfileFK();
+			setupRecurringBilling(PromotionID, creditCardProfileFk, new java.util.Date());
+			
 			final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
 			final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
 			final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines, startBudgetInCycle);

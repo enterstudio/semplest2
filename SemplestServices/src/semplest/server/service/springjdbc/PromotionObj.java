@@ -38,7 +38,16 @@ public class PromotionObj
 	private String AdvertisingEngineAccountNumber;
 	private Boolean IsAutobid;
 	private Double AutoBidMaxCPC;
+	private Integer CreditCardProfileFK;
 		
+	public Integer getCreditCardProfileFK()
+	{
+		return CreditCardProfileFK;
+	}
+	public void setCreditCardProfileFK(Integer creditCardProfileFK)
+	{
+		CreditCardProfileFK = creditCardProfileFK;
+	}
 	public Date getCycleEndDate()
 	{
 		return CycleEndDate;
@@ -244,6 +253,22 @@ public class PromotionObj
 		AdvertisingEngineAccountNumber = advertisingEngineAccountNumber;
 	}
 	
+	public Boolean getIsAutobid()
+	{
+		return IsAutobid;
+	}
+	public void setIsAutobid(Boolean isAutobid)
+	{
+		IsAutobid = isAutobid;
+	}
+	public Double getAutoBidMaxCPC()
+	{
+		return AutoBidMaxCPC;
+	}
+	public void setAutoBidMaxCPC(Double autoBidMaxCPC)
+	{
+		AutoBidMaxCPC = autoBidMaxCPC;
+	}
 	@Override
 	public int hashCode()
 	{
@@ -254,12 +279,15 @@ public class PromotionObj
 		result = prime * result + ((AdvertisingEngineAccountPK == null) ? 0 : AdvertisingEngineAccountPK.hashCode());
 		result = prime * result + ((AdvertisingEngineAdGroupID == null) ? 0 : AdvertisingEngineAdGroupID.hashCode());
 		result = prime * result + ((AdvertisingEngineCampaignPK == null) ? 0 : AdvertisingEngineCampaignPK.hashCode());
+		result = prime * result + ((AutoBidMaxCPC == null) ? 0 : AutoBidMaxCPC.hashCode());
 		result = prime * result + ((BudgetCycle == null) ? 0 : BudgetCycle.hashCode());
 		result = prime * result + ((CreatedDate == null) ? 0 : CreatedDate.hashCode());
+		result = prime * result + ((CreditCardProfileFK == null) ? 0 : CreditCardProfileFK.hashCode());
 		result = prime * result + ((CycleEndDate == null) ? 0 : CycleEndDate.hashCode());
 		result = prime * result + ((CycleStartDate == null) ? 0 : CycleStartDate.hashCode());
 		result = prime * result + ((DisplayURL == null) ? 0 : DisplayURL.hashCode());
 		result = prime * result + ((EditedDate == null) ? 0 : EditedDate.hashCode());
+		result = prime * result + ((IsAutobid == null) ? 0 : IsAutobid.hashCode());
 		result = prime * result + ((LandingPageURL == null) ? 0 : LandingPageURL.hashCode());
 		result = prime * result + ((ProductGroupFK == null) ? 0 : ProductGroupFK.hashCode());
 		result = prime * result + ((PromotionBudgetAmount == null) ? 0 : PromotionBudgetAmount.hashCode());
@@ -275,7 +303,6 @@ public class PromotionObj
 		result = prime * result + ((isPaused == null) ? 0 : isPaused.hashCode());
 		return result;
 	}
-	
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -321,6 +348,13 @@ public class PromotionObj
 		}
 		else if (!AdvertisingEngineCampaignPK.equals(other.AdvertisingEngineCampaignPK))
 			return false;
+		if (AutoBidMaxCPC == null)
+		{
+			if (other.AutoBidMaxCPC != null)
+				return false;
+		}
+		else if (!AutoBidMaxCPC.equals(other.AutoBidMaxCPC))
+			return false;
 		if (BudgetCycle == null)
 		{
 			if (other.BudgetCycle != null)
@@ -334,6 +368,13 @@ public class PromotionObj
 				return false;
 		}
 		else if (!CreatedDate.equals(other.CreatedDate))
+			return false;
+		if (CreditCardProfileFK == null)
+		{
+			if (other.CreditCardProfileFK != null)
+				return false;
+		}
+		else if (!CreditCardProfileFK.equals(other.CreditCardProfileFK))
 			return false;
 		if (CycleEndDate == null)
 		{
@@ -362,6 +403,13 @@ public class PromotionObj
 				return false;
 		}
 		else if (!EditedDate.equals(other.EditedDate))
+			return false;
+		if (IsAutobid == null)
+		{
+			if (other.IsAutobid != null)
+				return false;
+		}
+		else if (!IsAutobid.equals(other.IsAutobid))
 			return false;
 		if (LandingPageURL == null)
 		{
@@ -456,30 +504,14 @@ public class PromotionObj
 			return false;
 		return true;
 	}
-	
 	@Override
 	public String toString()
 	{
 		return "PromotionObj [PromotionPK=" + PromotionPK + ", ProductGroupFK=" + ProductGroupFK + ", PromotionName=" + PromotionName + ", PromotionDescription=" + PromotionDescription + ", LandingPageURL=" + LandingPageURL + ", DisplayURL=" + DisplayURL + ", PromotionBudgetAmount="
 				+ PromotionBudgetAmount + ", PromotionStartDate=" + PromotionStartDate + ", PromotionEndDate=" + PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", CycleStartDate=" + CycleStartDate + ", CycleEndDate=" + CycleEndDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle
 				+ ", StartBudgetInCycle=" + StartBudgetInCycle + ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused + ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK=" + AdvertisingEngineCampaignPK
-				+ ", AdvertisingEngineAdGroupID=" + AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + ", AdvertisingEngine=" + AdvertisingEngine + ", AdvertisingEngineAccountNumber=" + AdvertisingEngineAccountNumber + "]";
-	}
-	public Boolean getIsAutobid()
-	{
-		return IsAutobid;
-	}
-	public void setIsAutobid(Boolean isAutobid)
-	{
-		IsAutobid = isAutobid;
-	}
-	public Double getAutoBidMaxCPC()
-	{
-		return AutoBidMaxCPC;
-	}
-	public void setAutoBidMaxCPC(Double autoBidMaxCPC)
-	{
-		AutoBidMaxCPC = autoBidMaxCPC;
+				+ ", AdvertisingEngineAdGroupID=" + AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + ", AdvertisingEngine=" + AdvertisingEngine + ", AdvertisingEngineAccountNumber=" + AdvertisingEngineAccountNumber + ", IsAutobid=" + IsAutobid + ", AutoBidMaxCPC="
+				+ AutoBidMaxCPC + ", CreditCardProfileFK=" + CreditCardProfileFK + "]";
 	}
 			
 }
