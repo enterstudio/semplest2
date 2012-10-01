@@ -17,7 +17,7 @@ public class testBerkeleyDB {
 		try{
 			//read properties file and get DB settings
 			Properties properties = new Properties();
-			FileInputStream in = new FileInputStream("bin/system.properties");
+			FileInputStream in = new FileInputStream("c:\\BerkeleyDB\\crawler.properties");
 			properties.load(in);
 			in.close();	
 			String dbDir = properties.getProperty("berkeleyDb.directory");

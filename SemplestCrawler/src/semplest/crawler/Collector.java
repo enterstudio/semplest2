@@ -11,6 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import semplest.dmoz.tree.UrlDataObject;
 
@@ -23,15 +24,14 @@ public class Collector {
   
   // - Interfaces --------
   public interface Computer {
-    public Map<String,String> compute( List<UrlDataObject> urlData );
+    public Map<String,String> compute( List<Queue<UrlDataObject>> urlData );
   }
   public interface Msgs extends Serializable {}
   
   // - Messages --------
   public static class Work implements Msgs {
-    public final String id;
-    public final List<UrlDataObject> urlData;
-    public Work( String i, List<UrlDataObject> u ){ id = i; urlData = u; }
+    public final List<Queue<UrlDataObject>> urlData;
+    public Work( List<Queue<UrlDataObject>> u ){ urlData = u; }
   }
   public static class Answer implements Msgs {
     public final Map<String,String> result;
@@ -85,7 +85,8 @@ public class Collector {
       else if (msg instanceof Answer ){
         results.add( (Answer) msg );
         resultsReturned++;        
-        getSender().tell(new Collector.Wakeup());
+        Work w = workQ.poll();
+        if( w != null ) getSender().tell( w );
       }
       else if (msg instanceof Todo ){
         getSender().tell( new Todo( workQ.size()));

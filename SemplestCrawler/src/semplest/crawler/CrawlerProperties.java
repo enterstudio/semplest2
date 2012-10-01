@@ -3,9 +3,8 @@ package semplest.crawler;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-public class CrawlerProperties {
-	final public static String PROPSFILE = "system.properties";
-
+public class CrawlerProperties 
+{	
 	public static Properties properties;
 	
 	public static String BerkeleyDbDirectory;
@@ -16,7 +15,9 @@ public class CrawlerProperties {
 	static
 	{
 		try
-		{
+		{	
+			//String PROPSFILE = "/semplest/Crawler/crawler.properties";
+			String PROPSFILE = "c:\\BerkeleyDB\\crawler.properties";
 			properties = new Properties();
 			properties.load(new FileInputStream(PROPSFILE));
 			

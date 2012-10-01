@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import semplest.dmoz.tree.UrlDataObject;
 
@@ -48,12 +49,17 @@ public class Worker {
     public void askForWork(){
       try 
       {
-        Thread.sleep( 50 );
+        Thread.sleep( 10000 );
       } 
       catch (Exception e)
       {
     	  e.printStackTrace(); 
       }
+      
+      
+      
+      
+      
       getSelf().tell( new Collector.Wakeup() );
     }
 
@@ -63,7 +69,7 @@ public class Worker {
         working = true;
         System.out.println("Got Work !");
         Collector.Work w = (Collector.Work)msg;
-        collector.tell( new Collector.Answer( computor.compute( w.urlData ) ) );
+        collector.tell( new Collector.Answer( computor.compute( w.urlData ) ), getSelf() );
         working = false;
       }
       else if( msg instanceof Collector.Wakeup )
@@ -108,29 +114,37 @@ public class Worker {
   {
 	String ip = "172.18.11.213";
     if( args.length > 0 ) ip = args[0];
-    int workers = 500;
+    int workers = 3;
     if( args.length > 1 ) workers = Integer.parseInt( args[1]);   
     
 	  final SimpleLogger logger = new SimpleLogger(CrawlerProperties.WorkerLogFile);	  
 	  try{
 		    Collector.Computer c = new Collector.Computer(){
-		      public Map<String,String> compute( List<UrlDataObject> urlData) {
+		      public Map<String,String> compute( List<Queue<UrlDataObject>> urlData) {
 		    	  Map<String,String> resMap = new HashMap<String,String>();
-		        for( UrlDataObject url : urlData){
-		          try {
-		        	  //get raw html data from url
-		            String res = crawlUtils.htmlText( url.getUrl() );
-		            resMap.put(url.getUrlDataPK().toString(), res);
-		            if(res.length() == 0){
-		            	logger.message(url.getUrl());
-		            }
-		          } 
-		          catch( Exception e)
-		          { 
-		        	  e.printStackTrace();
-		        	  logger.error(e.getMessage());
-		          }
-		        }
+		    	  RoundRobin work = new RoundRobin(urlData);
+		    	  while(!work.isEmpty()){
+		    		  UrlDataObject url = work.getNextWork();
+		    		  try {
+		    			  if(url == null){
+		    				  Thread.sleep(200);
+		    			  }
+		    			  else{
+		    				  //get raw html data from url
+				            String res = crawlUtils.htmlText( url.getUrl() );
+				            resMap.put(url.getUrlDataPK().toString(), res);
+				            if(res.length() == 0){
+				            	logger.message(url.getUrl());
+				            }
+		    			  }			        	 
+			          } 
+			          catch( Exception e)
+			          { 
+			        	  e.printStackTrace();
+			        	  logger.error(e.getMessage());
+			          }
+		    	  }
+		       
 		        return resMap;
 		      }
 		    };

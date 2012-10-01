@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Queue;
 
 import org.apache.log4j.Logger;
 
@@ -106,9 +107,9 @@ public class Run
 
   // - Interface ------------------------------------------------------------
   // send all the required work to the COllector
-  public void add( Map<String,List<UrlDataObject>> work) {
-    for( Map.Entry<String,List<UrlDataObject>> w: work.entrySet() )
-      cactor.tell( new Collector.Work( w.getKey(), w.getValue()));
+  public void add( List<List<Queue<UrlDataObject>>> work) {
+    for( List<Queue<UrlDataObject>> w: work )
+      cactor.tell( new Collector.Work( w));
   }
   public Map<String,String> results(){ 
     Map<String,String> ret = new HashMap<String,String>();
@@ -121,7 +122,7 @@ public class Run
 
   public static void main( String[] args )
   {    	  		
-	  String treeName = "top";
+	  String treeName = "top/business/financial_services/insurance";
 	  if( args.length > 0 ) {
 		  treeName = args[0];
 	  }
@@ -138,7 +139,7 @@ public class Run
 			System.out.println("Starting master and loading work. Please wait...");
 			
 			//Generate work. group urls by domain.
-			Map<String,List<UrlDataObject>> work = SemplestTreeDB.getUrlsByDomain(treeName);
+			List<List<Queue<UrlDataObject>>> work = crawlUtils.generateWork(treeName, 3, 20);
 			Status.TotalWorkSize = work.size();
 			
 			System.out.println("Work loaded. Master is ready to go.");
@@ -155,7 +156,7 @@ public class Run
 			    //Store results to BerkeleyDB
 			    BerkeleyDB_Static.add(dbID, res);
 			  }
-			  Thread.sleep( 5000 );
+			  Thread.sleep( 30000 );
 			}
 			logger.info("Crawler finished at " + new Date() + ". Total amount of work: " + Status.TotalWorkSize + ". Work finished by crawler: " + Status.NumOfResultsCollected);
 		}
