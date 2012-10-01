@@ -99,7 +99,7 @@ public class Run {
   // send all the required work to the COllector
   public void add( Map<String,String> work) {
     for( Map.Entry<String,String> w: work.entrySet() )
-      cactor.tell( new Collector.Work( w.getKey(), w.getValue()));
+      cactor.tell( new Collector.Work( w.getKey(), w.getValue()) );
   }
   // Get whatever results are available
   public Map<String,String> results(){ 
