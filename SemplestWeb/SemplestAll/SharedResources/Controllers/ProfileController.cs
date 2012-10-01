@@ -126,7 +126,7 @@ namespace Semplest.SharedResources.Controllers
                             saveCred.SecurityAnswer = pm.SecurityAnswer;
                             saveCred.SecurityQuestion = pm.SecurityQuestion;
                             AesEncyrption a = AesEncyrption.getInstance();
-                            var encryptedPassword = a.EncryptString(pm.Password1);
+                            var encryptedPassword = a.EncryptString(pm.Password2);
                             saveCred.Password = encryptedPassword;
                             saveCred.User.IsRegistered = true;
                             int i = dbContext.SaveChanges();
