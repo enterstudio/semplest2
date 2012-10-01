@@ -485,7 +485,7 @@ public class BidObject
 		
 		int daysInThePast = 30;
 		List<ReportObject> reportObjListYesterday = getReportDataFromSE(promotionID, searchEngine, daysInThePast);
-		
+		logger.info("Found " + reportObjListYesterday.size() + " Report Objects List Yesterday");
 		
 		/* ******************************************************************************************* */
 		// 4. Get pause list with keywords with impressions above a threshold but CTR below a threshold
@@ -600,62 +600,80 @@ public class BidObject
 		return avgPosition;
 	}
 
-	private void pauseKeywordsInDatabase(Integer promotionID, AdEngine searchEngine, Map<Long, Boolean> pauseMap, Map<Long, BidElement> kwIDBidElementMap) throws Exception {
-		if( pauseMap!=null && pauseMap.size()>0){
-			ArrayList<BidElement> pauseDataToDatabase = new ArrayList<BidElement>();
-			for(long kwID : pauseMap.keySet()){
+	private void pauseKeywordsInDatabase(Integer promotionID, AdEngine searchEngine, Map<Long, Boolean> pauseMap, Map<Long, BidElement> kwIDBidElementMap) throws Exception 
+	{
+		if( pauseMap!=null && pauseMap.size()>0)
+		{
+			logger.info("Will try to Pause Keywords In Database for PromotionID [" + promotionID + "], SearchEngine [" + searchEngine + "], " + pauseMap.size() + " Pause Map items, " + kwIDBidElementMap.size() + " Keyword Bid Elements");
+			List<BidElement> pauseDataToDatabase = new ArrayList<BidElement>();
+			for(long kwID : pauseMap.keySet())
+			{
 				BidElement b = kwIDBidElementMap.get(kwID);
 				b.setIsActive(false);
 				pauseDataToDatabase.add(b);
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"  + " Pausing keyword in database: "+b.getKeyword());
 			}
-			try {
+			try 
+			{
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write " +pauseDataToDatabase.size() + "  bid data to the database...");
 				SemplestDB.storeBidObjects(promotionID, searchEngine,pauseDataToDatabase);
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ pauseDataToDatabase.size() + " keywords.");
-			} catch (Exception e) {
+			} 
+			catch (Exception e) 
+			{
 				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to store bid data to the database. "+ e.getMessage(), e);
 				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to store bid data to the database. "+ e.getMessage(), e);
 			}
-		} else {
+		} 
+		else 
+		{
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No keywords to pause at this time in the database.");
 		}
-
-		
 	}
 
 	private void pauseKeywordsViaAPI(Integer promotionID, AdEngine searchEngine, Map<Long, Boolean> pauseMap) throws Exception {
 		
-		if( pauseMap!=null && pauseMap.size()>0){
-			if (searchEngine == AdEngine.Google){
+		if( pauseMap!=null && pauseMap.size()>0)
+		{
+			if (searchEngine == AdEngine.Google)
+			{
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
-
-				try {
+				try 
+				{
 					clientGoogle.updateKeywordStatus(googleAccountID, campaignID, adGroupID, pauseMap);
-				} catch (Exception e) {
-
+				} 
+				catch (Exception e) 
+				{
 					// e.printStackTrace();
 					logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
 					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
 				} // try-catch
-			} else if(searchEngine == AdEngine.MSN){
-				try{
+			} 
+			else if(searchEngine == AdEngine.MSN)
+			{
+				try
+				{
 					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
 					msnClient.updateKeywordStatus(msnAccountID, adGroupID, pauseMap);
-				} catch(Exception e){
+				} 
+				catch(Exception e)
+				{
 					logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
 					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
 				}
 			}
-		} else {
+		} 
+		else 
+		{
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No keywords to pause at this time via API.");
 		}
 		
 	}
 
 	private Map<Long, Boolean> getPauseMap(Integer promotionID, AdEngine searchEngine, List<ReportObject> reportObjListYesterday,
-			double ctrThreshold, int imprThreshold, Map<Long,BidElement> kwIDBidElementMap) {
-		
+			double ctrThreshold, int imprThreshold, Map<Long,BidElement> kwIDBidElementMap) 
+	{		
+		logger.info("Will try to get Pause Map for PromotionID [" + promotionID + "], SearchEngine [" + searchEngine + "], CtrThreshold [" + ctrThreshold + "], ImprThreshold [" + imprThreshold + "], " + reportObjListYesterday.size() + " Report Objects List Yesterday, " + kwIDBidElementMap.size() + " Keyword Bid Elements");
 		Map<Long, Boolean> pauseMap = new HashMap<Long,Boolean>();
 		
 		Map<Long, Integer> impressionMap = new HashMap<Long, Integer>();
