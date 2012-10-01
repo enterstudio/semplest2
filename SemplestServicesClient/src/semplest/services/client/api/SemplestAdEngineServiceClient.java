@@ -37,6 +37,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
 	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
+	//private static String BASEURLTEST = "http://10.80.130.64:9898/semplest";
 	//private static String BASEURLTEST = "http://172.18.9.26:9898/semplest";
 	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";
 	//private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
@@ -163,14 +164,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 */
 		
 		
-		
+		/*
 		 // scheduleAddPromotionToAdEngine 			
 		 final Integer customerID_scheduleAddPromotionToAdEngine = 7; 
 		 final Integer productGroupID_scheduleAddPromotionToAdEngine = 5; 
 		 final Integer promotionID_scheduleAddPromotionToAdEngine = 5; 
 		 final List<AdEngine> adEngines_scheduleAddPromotionToAdEngine = Arrays.asList(AdEngine.Google);
 		 client.AddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngine, productGroupID_scheduleAddPromotionToAdEngine, promotionID_scheduleAddPromotionToAdEngine, adEngines_scheduleAddPromotionToAdEngine);
-		
+		*/
 		
 		//client.validateGoogleNegativeKeywords(Arrays.asList("hooker"));
 		
@@ -243,12 +244,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 * keywordIdRemoveOppositePairs_AddNegativeKeywords.add(pair2_scheduleAddNegativeKeywords); final List<String> adEngines_AddNegativeKeywords =
 		 * Arrays.asList(AdEngine.Google.name()); client.AddNegativeKeywords(promotionID_AddNegativeKeywords,
 		 * keywordIdRemoveOppositePairs_AddNegativeKeywords, adEngines_AddNegativeKeywords);
-		 * 
-		 * // ExecuteBidProcess final Integer promotionID_ExecuteBidProcess = 62; final ArrayList<String> adEngines_ExecuteBidProcess = new
-		 * ArrayList<String>(Arrays.asList(AdEngine.Google.name())); client.ExecuteBidProcess(promotionID_ExecuteBidProcess,
-		 * adEngines_ExecuteBidProcess);
-		 * 
-		 * // scheduleUnpausePromotion final Integer customerID_scheduleDeleteNegativeKeywords = 12; final Integer
+		 */ 
+		 
+		 // ExecuteBidProcess 
+		 final Integer promotionID_ExecuteBidProcess = 1; 
+		 final List<AdEngine> adEngines_ExecuteBidProcess = Arrays.asList(AdEngine.MSN, AdEngine.Google); 
+		 client.ExecuteBidProcess(promotionID_ExecuteBidProcess, adEngines_ExecuteBidProcess);
+		  
+		 /* // scheduleUnpausePromotion final Integer customerID_scheduleDeleteNegativeKeywords = 12; final Integer
 		 * promotionID_scheduleDeleteNegativeKeywords = 62; final List<Integer> keywordIds_scheduleDeleteNegativeKeywords = Arrays.asList(12241,
 		 * 12242); final List<String> adEngines_scheduleDeleteNegativeKeywords = Arrays.asList(AdEngine.Google.name());
 		 * client.scheduleDeleteNegativeKeywords(customerID_scheduleDeleteNegativeKeywords, promotionID_scheduleDeleteNegativeKeywords,
