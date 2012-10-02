@@ -30,8 +30,9 @@ public class Collector {
   
   // - Messages --------
   public static class Work implements Msgs {
+	  public final int id;
     public final List<Queue<UrlDataObject>> urlData;
-    public Work( List<Queue<UrlDataObject>> u ){ urlData = u; }
+    public Work( int i, List<Queue<UrlDataObject>> u ){ id = i; urlData = u; }
   }
   public static class Answer implements Msgs {
     public final Map<String,String> result;
@@ -68,21 +69,23 @@ public class Collector {
     // Message processing
     public void onReceive( Object msg){
       if( msg instanceof Ready ){
-        System.out.printf("C: %s ready, (todo/done): %d,%d\n", ((Ready)msg).id, 
-            workQ.size(), results.size());
+        System.out.println("C: " + ((Ready)msg).id + " Ready");
         Work w = workQ.poll();
-        if( w != null ) getSender().tell( w );
+        if( w != null ) {
+        	System.out.println("C: Sending work " + w.id + " to " + ((Ready)msg).id );
+        	getSender().tell( w );
+        }
       }
       else if ( msg instanceof Result ){
         getSender().tell( results.toArray( new Answer[]{} ));        
         results.clear();
-        System.out.printf("C: Result:: (todo/done): %d,%d\n", 
-            workQ.size(), results.size());        
+        System.out.println("C: Collecting results");        
       }
       else if ( msg instanceof Work ){
         workQ.add( (Work) msg );
       }
       else if (msg instanceof Answer ){
+    	System.out.println("C: Getting answer from worker " + ((Ready)msg).id);
         results.add( (Answer) msg );
         resultsReturned++;        
         getSender().tell( new Collector.Wakeup() );

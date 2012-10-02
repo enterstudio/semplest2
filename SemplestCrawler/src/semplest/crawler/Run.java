@@ -114,9 +114,11 @@ public class Run
 
   // - Interface ------------------------------------------------------------
   // send all the required work to the COllector
-  public void add( List<List<Queue<UrlDataObject>>> work) {
-    for( List<Queue<UrlDataObject>> w: work )
-      cactor.tell( new Collector.Work( w));
+  public void add( List<List<Queue<UrlDataObject>>> work) {    
+	for(int i = 0; i < work.size(); i++){
+		List<Queue<UrlDataObject>> w = work.get(i);
+		cactor.tell( new Collector.Work( i,w));
+	}      
   }
   public Map<String,String> results(){ 
     Map<String,String> ret = new HashMap<String,String>();

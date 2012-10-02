@@ -64,9 +64,9 @@ public class Worker {
 	    // Actor Message Processing
 	    public void onReceive( Object msg){
 	      if( msg instanceof Collector.Work ){
-	        working = true;
-	        System.out.println("Got Work !");
+	        working = true;	       
 	        Collector.Work w = (Collector.Work)msg;
+	        System.out.println("Got Work! id:" + w.id);
 	        collector.tell( new Collector.Answer( computor.compute(w.urlData)), getSelf() );
 	        workInQueue--;
 	        working = false;	        
