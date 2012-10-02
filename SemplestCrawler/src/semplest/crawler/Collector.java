@@ -85,8 +85,7 @@ public class Collector {
       else if (msg instanceof Answer ){
         results.add( (Answer) msg );
         resultsReturned++;        
-        Work w = workQ.poll();
-        if( w != null ) getSender().tell( w );
+        getSender().tell( new Collector.Wakeup() );
       }
       else if (msg instanceof Todo ){
         getSender().tell( new Todo( workQ.size()));

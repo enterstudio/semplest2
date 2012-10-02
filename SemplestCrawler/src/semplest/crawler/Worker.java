@@ -32,7 +32,9 @@ public class Worker {
 	
   // - The Actor ------------------------------------------------
   public static class WActor extends UntypedActor  {
-	  boolean working = false;
+	  
+		boolean working = false;
+		int workInQueue = 0;
 	    ActorRef collector;
 	    Collector.Computer computor;
 	    String id;
@@ -49,12 +51,11 @@ public class Worker {
 	    }
 	
 	    // Actor Ctr
-	    public WActor( ActorRef cltr, Collector.Computer c){
+	    public WActor( ActorRef cltr, Collector.Computer c, int index){
 	      collector = cltr;
 	      computor  = c;
 	      try {
-	        id = java.net.InetAddress.getLocalHost().getHostName() + ":" +
-	          Thread.currentThread().getId();
+	        id = java.net.InetAddress.getLocalHost().getHostName() + ":" + index;
 	      } catch (Exception e){ 
 	    	  logger.error(e.getMessage());                    // logging
 	      }       
@@ -66,14 +67,15 @@ public class Worker {
 	        working = true;
 	        System.out.println("Got Work !");
 	        Collector.Work w = (Collector.Work)msg;
-	        collector.tell( new Collector.Answer( computor.compute(w.urlData)),
-	            getSelf() );
-	        working = false;
+	        collector.tell( new Collector.Answer( computor.compute(w.urlData)), getSelf() );
+	        workInQueue--;
+	        working = false;	        
 	      }
 	      else if( msg instanceof Collector.Wakeup ){
-	        if( ! working ){
+	        if( ! working && workInQueue == 0){	        	
 	          collector.tell( new Collector.Ready( id ), getSelf() );
 	          System.out.println(id + " :: Sending Ready Message");
+	          workInQueue++;
 	        }
 	      }
 	    }
@@ -97,12 +99,14 @@ public class Worker {
         ConfigFactory.load( conf ));
     final ActorRef collector= system.actorFor( remoteAddr );
     
-    for( int i=0; i< new Integer( workers); i++)
+    for(int i=0; i< new Integer( workers); i++){
+    	final int index = i;
       system.actorOf(new Props( new UntypedActorFactory(){
         public UntypedActor create(){
-          return new WActor( collector, c ); 
+          return new WActor( collector, c, index); 
         }
       }));
+    }
 
   }
   
