@@ -235,7 +235,8 @@ public class TextUtils
 			java.net.URLConnection conn = (new java.net.URL(url)).openConnection();
 			conn.setConnectTimeout(CONNECT_TIMEOUT);
 			conn.setReadTimeout(READ_TIMEOUT);
-			conn.setRequestProperty("User-Agent", "Mozilla");
+			conn.setRequestProperty("User-Agent","Mozilla/5.0 ( compatible ) ");
+			conn.setRequestProperty("Accept","*/*");
 			java.io.InputStream is = conn.getInputStream();
 		}
 		catch (Exception e)
@@ -253,7 +254,8 @@ public class TextUtils
 		// Get the links
 
 		URLConnection conn = (new java.net.URL(url)).openConnection();
-		conn.setRequestProperty("User-Agent", "Mozilla");
+		conn.setRequestProperty("User-Agent","Mozilla/5.0 ( compatible ) ");
+		conn.setRequestProperty("Accept","*/*");
 
 		LinkBean sb = new LinkBean();
 		sb.setURL(url);
