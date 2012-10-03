@@ -35,8 +35,9 @@ public class Collector {
     public Work( int i, List<Queue<UrlDataObject>> u ){ id = i; urlData = u; }
   }
   public static class Answer implements Msgs {
+	  public final int id;
     public final Map<String,String> result;
-    public Answer( Map<String,String> r ){ result = r; }
+    public Answer( int i, Map<String,String> r ){ id = i; result = r; }
   }
   public static class Ready implements Msgs {
     public final String id;
@@ -85,7 +86,7 @@ public class Collector {
         workQ.add( (Work) msg );
       }
       else if (msg instanceof Answer ){
-    	System.out.println("C: Getting answer from worker " + ((Ready)msg).id);
+    	System.out.println("C: Getting answer of work " + ((Answer)msg).id);
         results.add( (Answer) msg );
         resultsReturned++;        
         getSender().tell( new Collector.Wakeup() );

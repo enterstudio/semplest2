@@ -67,7 +67,7 @@ public class Worker {
 	        working = true;	       
 	        Collector.Work w = (Collector.Work)msg;
 	        System.out.println("Got Work! id:" + w.id);
-	        collector.tell( new Collector.Answer( computor.compute(w.urlData)), getSelf() );
+	        collector.tell( new Collector.Answer( w.id, computor.compute(w.urlData)), getSelf() );
 	        workInQueue--;
 	        working = false;	        
 	      }
@@ -89,7 +89,7 @@ public class Worker {
     Config conf = ConfigFactory.parseString(
         "akka {" +
         "  actor  { provider = \"akka.remote.RemoteActorRefProvider\" } \n " +
-        "  remote { netty { port = 2553 } } \n" +
+        "  remote { netty { port = 0 } } \n" +
         " loglevel = \"ERROR\" \n stdout-loglevel = \"ERROR\" \n" +
         " remote.netty.message-frame-size = " + messageFrameSize + " \n" +
         "} "
