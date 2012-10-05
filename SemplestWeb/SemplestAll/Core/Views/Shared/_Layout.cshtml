@@ -62,8 +62,17 @@
     <div id="wrapper">
         <div id="header">
             <div class="floatWrap">
-                <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
-                <ul class="kendo-nav">
+                                        @{
+                                            if ((bool) Session[Semplest.SharedResources.SEMplestConstants.SESSION_ISKEYWORDBIDDING])
+                                            {
+                                                <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
+                                            }
+                                            else
+                                            {
+                                                <img src="@Url.Content("~/Content/Metro/SmartWords_Logo.png")"/>
+                                            }
+                                        }
+                                            <ul class="kendo-nav">
                     <li>@Html.ActionLink("About Us", "About", "Home")</li>
                     <li><span>|</span></li>
                     <li>@Html.ActionLink("FAQs", "FAQ", "Home")</li>

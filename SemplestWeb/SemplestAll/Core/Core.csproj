@@ -230,6 +230,7 @@
     <Content Include="Content\Metro\semplest_logo.png" />
     <Content Include="Content\Metro\slider-h.gif" />
     <Content Include="Content\Metro\slider-v.gif" />
+    <Content Include="Content\Metro\SmartWords_Logo.png" />
     <Content Include="Content\Metro\sprite.png" />
     <Content Include="Content\Metro\wait.gif" />
     <Content Include="Content\report.png" />
