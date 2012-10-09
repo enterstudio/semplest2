@@ -30,6 +30,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import semplest.server.encryption.AESBouncyCastle;
+import semplest.server.keyword.Domain;
+import semplest.server.keyword.UrlData;
 import semplest.server.protocol.ApplyPromotionBudgetRequest;
 import semplest.server.protocol.CrawlFeedback;
 import semplest.server.protocol.Credential;
@@ -137,7 +139,9 @@ public class SemplestDB extends BaseDB
 	public static final RowMapper<Job> JOB_ROW_MAPPER;	
 	public static final RowMapper<PromotionBudget> PROMOTION_BUDGET_ROW_MAPPER;
 	public static final RowMapper<Transaction> TRANSACTIONS_ROW_MAPPER;
-	public static final RowMapper<CreditCardProfile> CREDIT_CARD_PROFILE_ROW_MAPPER;	
+	public static final RowMapper<CreditCardProfile> CREDIT_CARD_PROFILE_ROW_MAPPER;
+	public static final RowMapper<Domain> DOMAIN_ROW_MAPPER;
+	public static final RowMapper<UrlData> URL_DATA_ROW_MAPPER;
 	
 	static
 	{
@@ -240,6 +244,52 @@ public class SemplestDB extends BaseDB
 				return creditCardProfile;
 			}	
 		}; 
+		
+		DOMAIN_ROW_MAPPER = new RowMapper<Domain>()
+		{
+			@Override
+			public Domain mapRow(final ResultSet rs, final int index) throws SQLException
+			{
+				final Integer pk = rs.getInt("DomainPK");
+				final String domain = rs.getString("Domain");
+				final Domain d = new Domain(pk, domain);
+				return d;
+			}	
+		}; 
+		
+		URL_DATA_ROW_MAPPER = new RowMapper<UrlData>()
+		{
+			@Override
+			public UrlData mapRow(final ResultSet rs, final int index) throws SQLException
+			{
+				final Integer pk = rs.getInt("UrlDataPK");
+				final String url = rs.getString("URL");
+				final String urlDescription = rs.getString("URLDescription");
+				final Integer domainFk = rs.getInt("DomainFK");
+				final UrlData urlData = new UrlData(pk, url, urlDescription, domainFk);
+				return urlData;
+			}	
+		}; 
+	}
+	
+	public static List<UrlData> getUrlDatas() throws Exception
+	{
+		final List<UrlData> urlDatas = jdbcTemplate.query("select UrlDataPK, URL, URLDescription, DomainFK from Keywords.dbo.SemplestURLData", URL_DATA_ROW_MAPPER);
+		if (urlDatas == null || urlDatas.isEmpty())
+		{
+			throw new Exception("Did not find any URL Datas");
+		}
+		return urlDatas;
+	}
+	
+	public static List<Domain> getDomains() throws Exception
+	{
+		final List<Domain> domains = jdbcTemplate.query("select DomainPK, Domain from Keywords.dbo.Domain", DOMAIN_ROW_MAPPER);
+		if (domains == null || domains.isEmpty())
+		{
+			throw new Exception("Did not find any Domains");
+		}
+		return domains;
 	}
 	
 	public static CreditCardProfile getCreditCardProfile(final String profileRefNum) throws Exception
@@ -268,6 +318,15 @@ public class SemplestDB extends BaseDB
 			throw new Exception("Found " + creditCardProfiles.size() + " CreditCardProfiles for CreditCardProfilePK [" + creditCardProfilePK + "], but expecting exactly 1");
 		}
 		return creditCardProfiles.get(0);
+	}
+	
+	public static void saveCrawlContent(final Integer urlDataPk, final String crawlContent) throws Exception
+	{
+		final int rowCount = jdbcTemplate.update("insert into Keywords.dbo.SemplestURLDataCrawl (UrlDataFK, CrawlData) values (?, ?)", urlDataPk, crawlContent);
+		if (rowCount != 1)
+		{
+			throw new Exception("Rowcount gotten from database when trying to insert a row into SemplestURLDataCrawl for UrlDataFK [" + urlDataPk + "] is " + rowCount + ", but should be 1");
+		}
 	}
 	
 	public static void updateJobLastSuccessfulRunTime(final JobName jobName) throws Exception
