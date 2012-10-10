@@ -171,7 +171,7 @@ public class CrawlRequestListener implements ExceptionListener, Runnable
 					catch (JMSException e) 
 					{
 						final String errMsg = "Problem extracting List<Domain> from this JMS ObjectMessage [" + message + "]";
-						log.error(errMsg, e);
+						log.error(errMsg, e); 
 					}
 				} 
 				else  
