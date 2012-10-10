@@ -41,8 +41,8 @@ public class PGPDecryptFile
 	{
 		String pubKeyFilename = "KeyFiles\\semplestPublicKey.asc";
 		String privateKeyFilename = "KeyFiles\\semplestPrivateKey.asc"; 
-		String filename = "C:\\temp\\ClosedBatchSummaryRpt_211416_09182012_095030_150474_resp.csv.ASC"; 
-		String outfile = "C:\\temp\\output\\keywordTestDecrypt.txt";
+		String filename = "C:/ClosedBatchSummaryRpt_211416_10092012_094825_163896_resp.csv.ASC"; 
+		String outfile = "C:ClosedBatchSummaryRpt_211416_10092012_094825_163896_resp.csv";
 		String someFile = "C:\\temp\\SomeDoc.txt";
 		String someFileOutput = "C:\\temp\\SomeDocOutput.txt";
 				
@@ -54,8 +54,8 @@ public class PGPDecryptFile
 			final File someFileOutputFile = new File(someFileOutput);
 			pgpEncrypt.encryptFile(someFileFile, someFileOutputFile, false);
 			*/
-		  PGPDecryptFile PGPdecrypt = new PGPDecryptFile(privateKeyFilename, -8483756796133403433L, "SEMplest2012");
-			PGPdecrypt.decrypt(new File(someFileOutput), new File(outfile));
+		  PGPDecryptFile PGPdecrypt = new PGPDecryptFile(privateKeyFilename,5670318062634057776L , "SEMplest2012"); //-8483756796133403433L
+			PGPdecrypt.decrypt(new File(filename), new File(outfile));
 		}
 		catch (NoSuchProviderException e)
 		{
