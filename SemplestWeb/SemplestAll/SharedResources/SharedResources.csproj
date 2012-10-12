@@ -109,7 +109,9 @@
     <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Models\ProfileModel.cs" />
+    <Compile Include="Models\Repositories\BillTypeRepository.cs" />
     <Compile Include="Models\Repositories\CreditCardRepository.cs" />
+    <Compile Include="Models\Repositories\IBillTypeRepository.cs" />
     <Compile Include="Models\Repositories\ICreditCardRepository.cs" />
     <Compile Include="Models\Repositories\ITransactionRepository.cs" />
     <Compile Include="Models\Repositories\TransactionRepository.cs" />
