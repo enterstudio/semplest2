@@ -14,6 +14,7 @@ using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using System.Configuration;
 using Semplest.SharedResources.Services;
+using SharedResources.Helpers;
 using SharedResources.Models.Repositories;
 
 namespace Semplest.Core.Controllers
@@ -31,7 +32,7 @@ namespace Semplest.Core.Controllers
             _campaignRepository = iCampaignRepository;
         }
 
-        public ActionResult CampaignSetup(CampaignSetupModel cs, string command)
+        public ActionResult CampaignSetup(CampaignSetupModel cs)
         {
             Session["SiteLinks"] = null;
             Session["NegativeKeywords"] = null;
@@ -237,25 +238,30 @@ namespace Semplest.Core.Controllers
                 var cr = new CreditCardRepository(dbContext);
                 var sr = new StateRepository(dbContext);
                 var pr = new PromotionRepository(dbContext);
+                var bt = new BillTypeRepository(dbContext);
                 var promo = pr.GetPromoitionFromCampaign(GetCustomerId(), model.ProductGroup.ProductGroupName,
                                                          model.ProductGroup.ProductPromotionName);
-                var retVal = cr.ChargeCreditCard(new CustomerObject
-                                                     {
-                                                         Address1 = model.BillingLaunch.Address,
-                                                         City = model.BillingLaunch.City,
-                                                         Email = model.BillingLaunch.Email,
-                                                         StateAbbr =
-                                                             sr.GetStateNameFromCode(
-                                                                 int.Parse(model.BillingLaunch.StateCodeFK)),
-                                                         ExpireDateMMYY =
-                                                             model.BillingLaunch.ExpiryMonth +
-                                                             model.BillingLaunch.ExpiryYear,
-                                                         FirstName = model.BillingLaunch.FirstName,
-                                                         LastName = model.BillingLaunch.LastName,
-                                                         Phone = model.BillingLaunch.Phone,
-                                                         ZipCode = model.BillingLaunch.Zip,
-                                                         creditCardNumber = model.BillingLaunch.CardNumber
-                                                     }, promo, model.BillType, model.ProductGroup.Budget);
+                var retVal = new ReturnState(false,false,"Not a credit card customer", null);
+                if (model.BillType == bt.GetBillTypeCode("Credit Card"))
+                {
+                    retVal = cr.ChargeCreditCard(new CustomerObject
+                                                         {
+                                                             Address1 = model.BillingLaunch.Address,
+                                                             City = model.BillingLaunch.City,
+                                                             Email = model.BillingLaunch.Email,
+                                                             StateAbbr =
+                                                                 sr.GetStateNameFromCode(
+                                                                     int.Parse(model.BillingLaunch.StateCodeFK)),
+                                                             ExpireDateMMYY =
+                                                                 model.BillingLaunch.ExpiryMonth +
+                                                                 model.BillingLaunch.ExpiryYear,
+                                                             FirstName = model.BillingLaunch.FirstName,
+                                                             LastName = model.BillingLaunch.LastName,
+                                                             Phone = model.BillingLaunch.Phone,
+                                                             ZipCode = model.BillingLaunch.Zip,
+                                                             creditCardNumber = model.BillingLaunch.CardNumber
+                                                         }, promo, model.BillType, model.ProductGroup.Budget);
+                }
                 try
                 {
                     if (!retVal.IsException && !retVal.IsValidationError)
