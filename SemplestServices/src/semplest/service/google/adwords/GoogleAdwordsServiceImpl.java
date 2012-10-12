@@ -268,15 +268,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				object.wait();
 			}
+			/*
 			String accountID = "7825080804";// "54104"; //
 			Long campaignID = 93755662L;
 			Long adgroupID = 3407235519L;// 3066603844L; //
-			/*String landingPageURL = "http://www.semplest.com";
-			String displayURL = landingPageURL;
-			String headline = "hello";
-			String description1 = "This is a test";
-			String description2 = "description2 ";
-			*/
 			final String email = "adwords@semplest.com";
 			//final String password = "7ylZJTlhuCG4loTC6Qllrw==";
 			//final String password = "ic0system";

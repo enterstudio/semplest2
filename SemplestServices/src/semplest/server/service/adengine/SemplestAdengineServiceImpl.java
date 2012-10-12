@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -142,7 +143,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * }
 			 */
 
-			BasicConfigurator.configure();
+			PropertyConfigurator.configure("properties/log4j_server.properties");
+			BasicConfigurator.configure();	
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
@@ -172,7 +174,32 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// Schedule for next day at the same time
 
 			//adEng.ExecuteBidProcess(339, Arrays.asList(AdEngine.Google));
-			adEng.AddPromotionToAdEngine(16, 241, 339, Arrays.asList(AdEngine.Google));
+			//adEng.AddPromotionToAdEngine(16, 241, 339, Arrays.asList(AdEngine.Google));
+			
+			
+			final Integer customerID_AddPromotionToAdEngine = 10; 
+			final Integer productGroupID_AddPromotionToAdEngine = 17; 
+			final Integer promotionID_AddPromotionToAdEngine = 17; 
+			final List<AdEngine> adEngines_AddPromotionToAdEngine = Arrays.asList(AdEngine.MSN, AdEngine.Google);
+			adEng.AddPromotionToAdEngine(customerID_AddPromotionToAdEngine, productGroupID_AddPromotionToAdEngine, promotionID_AddPromotionToAdEngine, adEngines_AddPromotionToAdEngine);
+			
+			
+			/*
+			final List<GoogleAddAdRequest> ads = new ArrayList<GoogleAddAdRequest>();
+			ads.add(new GoogleAddAdRequest(35, "The Computer You Want", "Brands You Want For As Low As $10", "A Week. No Money Down. No Credit."));
+			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+		  final List<GoogleViolation> res = new ArrayList<GoogleViolation>();	
+			for (GoogleAddAdRequest oneAd : ads)
+			{
+				//List<GoogleViolation> ret = google.validateAd("9639210510", 4264681936L, "http://dev.emporium.com/subcategories/get_products/computers_printers", "dev.emporium.com", oneAd.getHeadline(), oneAd.getDescription1(), oneAd.getDescription2());
+				final List<GoogleAddAdRequest> addAdTextRequests = new ArrayList<GoogleAddAdRequest>();
+				addAdTextRequests.add(new GoogleAddAdRequest(30, "The Computer You Want", "Brands You Want For As Low As $10", "A Week. No Money Down. No Credit."));
+				final GoogleAddAdsRequest request = new GoogleAddAdsRequest("9639210510", 4264681936L, "dev.emporium.com", "http://dev.emporium.com/subcategories/get_products/computers_printers", addAdTextRequests);
+				google.addTextAds(request);
+				//res.addAll(ret);
+			}*/
+			
+			//final List<GoogleViolation> violations = adEng.validateGoogleAd("http://dev.emporium.com/subcategories/get_products/computers_printers", "dev.emporium.com/subcategories/get_products/computers_printers", ads);
 
 			/*
 			 * Date now = new Date(); cal.setTime(now); // get yesterday cal.add(Calendar.DAY_OF_MONTH, -1); Date yesterday = cal.getTime();
@@ -223,7 +250,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// adEng.AddPromotionToAdEngine(74, 171, 183, adEngList);
 			// adEng.AddPromotionToAdEngine(95,182, 197, adEngList);
 			// adEng.AddPromotionToAdEngine(26,51, 60, adEngList);
-			
+			/*
 			final String ecryptedToken = "qLQ/XrTfdolSNKb8WB9Y9Q==";
 			System.out.println("Will try to validate Account Activation Token [" + ecryptedToken + "]");
 			final String semplestEncryptionKey = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
@@ -233,7 +260,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			//final RegistrationLinkDecryptedInfo decryptedInfo = SemplestUtils.getDecryptedInfo(aes, ecryptedToken);
 			//System.out.println(decryptedInfo);
 			System.out.println(aes.decrypt(ecryptedToken));
-
+*/
 		}
 		catch (Exception e)
 		{
@@ -257,7 +284,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			object.wait();
 		}
-		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
+		//ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
+		ESBWebServerURL = "http://23.22.63.111:9898/semplest";
 		AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
 		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
@@ -336,13 +364,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				throw new Exception("This promotion already has statuses from before, so it's not the first time this promotion is being added.  This shouldn't happen.\n" + SemplestUtils.getEasilyReadableString(promotionStatuses));
 			}
 			*/					
-			SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);			
+			SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);						
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(PromotionID);
 			final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+			
+			/*
 			final Integer creditCardProfileFk = promotionData.getCreditCardProfileFK();
 			setupRecurringBilling(PromotionID, creditCardProfileFk, new java.util.Date());
-			
+			*/
 			final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
 			final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
 			final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines, startBudgetInCycle);

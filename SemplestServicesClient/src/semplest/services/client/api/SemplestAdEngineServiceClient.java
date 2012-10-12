@@ -165,20 +165,17 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 */
 		
 		
-		/*
 		 // scheduleAddPromotionToAdEngine 			
-		 final Integer customerID_scheduleAddPromotionToAdEngine = 7; 
-		 final Integer productGroupID_scheduleAddPromotionToAdEngine = 5; 
-		 final Integer promotionID_scheduleAddPromotionToAdEngine = 5; 
-		 final List<AdEngine> adEngines_scheduleAddPromotionToAdEngine = Arrays.asList(AdEngine.Google);
+		 final Integer customerID_scheduleAddPromotionToAdEngine = 10; 
+		 final Integer productGroupID_scheduleAddPromotionToAdEngine = 16; 
+		 final Integer promotionID_scheduleAddPromotionToAdEngine = 16; 
+		 final List<AdEngine> adEngines_scheduleAddPromotionToAdEngine = Arrays.asList(AdEngine.MSN, AdEngine.Google);
 		 client.AddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngine, productGroupID_scheduleAddPromotionToAdEngine, promotionID_scheduleAddPromotionToAdEngine, adEngines_scheduleAddPromotionToAdEngine);
-		*/
+		
 		
 		//client.validateGoogleNegativeKeywords(Arrays.asList("hooker"));
 		
-		
-		
-		 /* 
+		/* 
 		 * // AddPromotionToAdEngine final Integer customerID_AddPromotionToAdEngine = 12; final Integer productGroupID_AddPromotionToAdEngine = 76;
 		 * final Integer promotionID_AddPromotionToAdEngine = 62; final ArrayList<String> adEngines_AddPromotionToAdEngine = new
 		 * ArrayList<String>(Arrays.asList(AdEngine.Google.name())); client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngine,
@@ -248,10 +245,11 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 */ 
 		 
 		 // ExecuteBidProcess 
+		/*
 		 final Integer promotionID_ExecuteBidProcess = 1; 
 		 final List<AdEngine> adEngines_ExecuteBidProcess = Arrays.asList(AdEngine.MSN, AdEngine.Google); 
 		 client.ExecuteBidProcess(promotionID_ExecuteBidProcess, adEngines_ExecuteBidProcess);
-		  
+		  */
 		 /* // scheduleUnpausePromotion final Integer customerID_scheduleDeleteNegativeKeywords = 12; final Integer
 		 * promotionID_scheduleDeleteNegativeKeywords = 62; final List<Integer> keywordIds_scheduleDeleteNegativeKeywords = Arrays.asList(12241,
 		 * 12242); final List<String> adEngines_scheduleDeleteNegativeKeywords = Arrays.asList(AdEngine.Google.name());

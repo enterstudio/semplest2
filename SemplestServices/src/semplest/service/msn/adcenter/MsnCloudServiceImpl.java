@@ -116,6 +116,7 @@ import com.microsoft.adcenter.api.customermanagement.Entities.PersonName;
 import com.microsoft.adcenter.api.customermanagement.Entities.SecretQuestion;
 import com.microsoft.adcenter.api.customermanagement.Entities.TimeZoneType;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
+import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.*;
 
 public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
@@ -435,6 +436,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (RemoteException e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -491,6 +496,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (RemoteException e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -529,6 +538,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -601,6 +614,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (RemoteException e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -644,6 +661,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -709,6 +730,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			}
 			return dataListResult;
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new Exception("Problem doing " + operationDescription, e);
@@ -742,6 +767,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -802,6 +831,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -972,6 +1005,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (RemoteException e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1015,6 +1052,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1064,6 +1105,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (RemoteException e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1103,6 +1148,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1129,6 +1178,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1175,6 +1228,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1208,6 +1265,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1247,6 +1308,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1283,6 +1348,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1327,6 +1396,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1355,6 +1428,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1402,6 +1479,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1444,6 +1525,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1508,6 +1593,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1558,6 +1647,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1605,6 +1698,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1639,6 +1736,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1679,6 +1780,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1716,6 +1821,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1750,6 +1859,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1791,6 +1904,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1865,6 +1982,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -1900,6 +2021,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -1945,6 +2070,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2016,8 +2145,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
-		catch (Exception e)
-		
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (Exception e)		
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
 		}
@@ -2057,6 +2189,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2139,6 +2275,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2172,6 +2312,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2211,6 +2355,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2244,6 +2392,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2317,6 +2469,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2371,6 +2527,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2441,6 +2601,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2479,6 +2643,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2540,6 +2708,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2567,6 +2739,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2636,6 +2812,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2725,6 +2905,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2791,6 +2975,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2827,6 +3015,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2851,6 +3043,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -2890,6 +3086,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -2925,6 +3125,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -3027,6 +3231,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -3158,6 +3366,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -3357,6 +3569,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -3551,6 +3767,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -3662,6 +3882,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -3733,6 +3957,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -4025,6 +4253,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -4129,6 +4361,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
@@ -4395,7 +4631,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			String namespace = adCenterCredentials.getAdIntelligenceNamespace();
 			AdIntelligenceServiceLocator adIntelligenceServiceLocator = new AdIntelligenceServiceLocator();
 			adIntelligenceServiceLocator.setBasicHttpBinding_IAdIntelligenceServiceEndpointAddress(adCenterCredentials.getAdIntelligenceUrl());
-
 			IAdIntelligenceService adIntelligenceService = adIntelligenceServiceLocator.getBasicHttpBinding_IAdIntelligenceService();
 			BasicHttpBinding_IAdIntelligenceServiceStub stub = (BasicHttpBinding_IAdIntelligenceServiceStub) adIntelligenceService;
 			stub.setTimeout(timeoutMillis);
@@ -4501,6 +4736,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
 		catch (Exception e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription, e);
@@ -4591,6 +4830,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
 		{
 			throw new MsnCloudException("Problem doing " + operationDescription + ": " + e.dumpToString(), e);
 		}
