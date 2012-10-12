@@ -170,7 +170,9 @@
                             @Html.DropDownListFor(s => Model.BillingLaunch.ExpiryMonth, Model.BillingLaunch.ExpiryMonths, Model.BillingLaunch.ExpiryMonth, new { @id = "creditcardMonth" })
                         @Html.DropDownListFor(s => Model.BillingLaunch.ExpiryYear, Model.BillingLaunch.ExpiryYears, Model.BillingLaunch.ExpiryYear, new { @id = "creditcardYear" })
                     </li>
-            <li>
+
+        }
+                    <li>
                 <div>
                     <input type="checkbox" id="agreecheckbox" /><label style="margin-left: 5px; color: grey;">I
                                                                     have read the
@@ -183,7 +185,6 @@
                         I will be billed the amount above on a monthly basis</label>
                 </div>
             </li>
-        }
         <li>
             <div style="text-align: center">
                 <button class="k-button" id="editadproduct" type="button" style="margin-top: 7px">
