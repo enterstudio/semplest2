@@ -39,12 +39,13 @@ public class PGPDecryptFile
 	 */
 	public static void main(String[] args)
 	{
-		String pubKeyFilename = "KeyFiles\\semplestPublicKey.asc";
-		String privateKeyFilename = "KeyFiles\\semplestPrivateKey.asc"; 
-		String filename = "C:/ClosedBatchSummaryRpt_211416_10092012_094825_163896_resp.csv.ASC"; 
-		String outfile = "C:ClosedBatchSummaryRpt_211416_10092012_094825_163896_resp.csv";
-		String someFile = "C:\\temp\\SomeDoc.txt";
-		String someFileOutput = "C:\\temp\\SomeDocOutput.txt";
+		String pubKeyFilename = "KeyFiles/SemplestPublicKey.bpg";
+		String privateKeyFilename = "KeyFiles/SemplestPrivateKey.bpg"; 
+		String filename = "c:/keyword.txt.pgp"; //"C:/ClosedBatchDetailRpt_211416_10092012_094731_163846_resp.csv.ASC"; 
+		String outfile = "c:/keyword.txt"; //"C:/ClosedBatchDetailRpt_211416_10092012_094731_163846_resp.csv";
+		
+		//String someFile = "C:\\temp\\SomeDoc.txt";
+		//String someFileOutput = "C:\\temp\\SomeDocOutput.txt";
 				
 		try
 		{			
@@ -189,10 +190,10 @@ public class PGPDecryptFile
 			NoSuchProviderException, IOException
 	{
 		FileInputStream input = new FileInputStream(new File(privateKeyFile));
-		PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input));
+		//PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input));
 		
 		
-		/* PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection( in ); 
+		PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection( PGPUtil.getDecoderStream(input) ); 
 		 
 		 
 		    Iterator<PGPSecretKeyRing> ringIt = pgpSec.getKeyRings(); 
@@ -202,8 +203,8 @@ public class PGPDecryptFile
 		      PGPSecretKeyRing keyRing = ringIt.next(); 
 		      pgpSecKey = keyRing.getSecretKey();
 		    } 
-		*/
-		PGPSecretKey pgpSecKey = pgpSec.getSecretKey(keyID);
+		
+		//PGPSecretKey pgpSecKey = pgpSec.getSecretKey(keyID);
 
 		if (pgpSecKey == null)
 		{

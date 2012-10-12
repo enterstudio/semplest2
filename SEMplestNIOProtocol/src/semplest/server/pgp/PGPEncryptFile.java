@@ -43,11 +43,11 @@ public class PGPEncryptFile
 	public static void main(String[] args)
 	{
 		
-		String pubKeyFilename = "PGPFiles/semplestPublicKey.asc"; 
+		String pubKeyFilename = "PGPFiles/SemplestPublicKey.bpg"; //"PGPFiles/semplestPublicKey.asc"; 
 		String inputFileName = "C:/keyword.txt";
 		try
 		{
-			PGPEncryptFile encrypt = new PGPEncryptFile(pubKeyFilename,-8483756796133403433L, true, true); //
+			PGPEncryptFile encrypt = new PGPEncryptFile(pubKeyFilename,-4094496432543514134L, true, true); //-8483756796133403433
 			logger.info(encrypt.publicKey.getCreationTime().toString());
 			File input = new File(inputFileName);
 			if (input.exists())
