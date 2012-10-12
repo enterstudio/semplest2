@@ -1,6 +1,12 @@
 package semplest.server.protocol.msn;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.GoalError;
+import org.w3c.dom.Element;
+
+import semplest.util.SemplestUtils;
 
 import com.microsoft.adapi.AdApiError;
 import com.microsoft.adapi.AdApiFaultDetail;
@@ -25,8 +31,30 @@ public class MsnCloudException extends Exception {
 		super(string + " because AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()) + " goal errors: " + toString(e.getGoalErrors()), e);
 	}
 	
-	public MsnCloudException(String string, ApiFault e) {
-		super(string + " because AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()), e);
+	public static String getApiFaultString(ApiFault e)
+	{		
+		final String faultActor = e.getFaultActor();
+		final String faultReason = e.getFaultReason();
+		final String faultRole = e.getFaultRole();
+		final String faultString = e.getFaultString();
+		final Element[] faultDetails = e.getFaultDetails();
+		final String faultDetailsString;
+		if (faultDetails != null)
+		{
+			final List<Element> faultDetailsList = Arrays.asList(faultDetails);
+			faultDetailsString = SemplestUtils.getEasilyReadableString(faultDetailsList);
+		}
+		else
+		{
+			faultDetailsString = "";
+		}		
+		final String apiFaultString = "Fault Actor [" + faultActor + "], Fault Reason [" + faultReason + "], Fault Role [" + faultRole + "], Fault String [" + faultString + "], Fault Details [" + faultDetailsString + "]";
+		return apiFaultString;
+	}
+	
+	public MsnCloudException(String string, ApiFault e) 
+	{
+		super(string + " because AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()) + "\nOther Details:\n" + getApiFaultString(e), e);				
 	}
 	
 	public MsnCloudException(String string, ApiFaultDetail e) {

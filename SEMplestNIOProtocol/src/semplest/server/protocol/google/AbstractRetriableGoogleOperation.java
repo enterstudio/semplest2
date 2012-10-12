@@ -1,6 +1,7 @@
 package semplest.server.protocol.google;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -83,6 +84,11 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOp
 		}
 		else
 		{
+			final List<GoogleViolation> validations = SemplestUtils.getGoogleViolations_v201109(e);
+			if (validations != null && !validations.isEmpty())
+			{
+				logger.info("Encountered Validation Problems:\n" + SemplestUtils.getEasilyReadableString(validations));
+			}
 			logger.info("Encountered ApiException.  Will try again (if not yet hit the limit of [" + maxRetries + "] times ).");
 		}
 	}

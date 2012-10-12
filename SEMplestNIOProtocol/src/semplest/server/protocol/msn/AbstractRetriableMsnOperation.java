@@ -15,6 +15,7 @@ import semplest.server.protocol.google.MsnEditorialApiFaultDetail;
 import semplest.util.SemplestUtils;
 
 import com.microsoft.adapi.AdApiFaultDetail;
+import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.EditorialApiFaultDetail;
 import com.microsoft.adcenter.v8.EditorialError;
 
@@ -42,6 +43,13 @@ public abstract class AbstractRetriableMsnOperation<T> implements RetriableOpera
 			catch (AdApiFaultDetail e)
 			{
 				throw new RemoteException(e.dumpToString(), e);
+			}
+			catch (ApiFault e)
+			{
+				
+				final MsnCloudException msnCloudException = new MsnCloudException("Problem performing MSN operation: " + e.dumpToString(), e);
+				logger.error("Problem performing MSN operation.  Will retry if not yet reached retry limit", msnCloudException);
+				Thread.sleep(1 * SemplestUtils.SECOND);
 			}
 			catch (EditorialApiFaultDetail e)
 			{
