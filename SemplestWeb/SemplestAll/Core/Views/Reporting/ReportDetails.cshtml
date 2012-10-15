@@ -30,7 +30,6 @@
                     fields: {
                         AdvertisingEngineBidDataPK: { type: "number" },
                         KeyWord: { type: "string" },
-                        IsActive: { type: "string" },
                         NumberImpressions: { type: "number" },
                         NumberClick: { type: "number" },
                         AveragePosition: { type: "number" },
@@ -49,15 +48,11 @@
                  title: "Promotion",
                  width: 200
              },
-                        {
-                            field: "IsActive",
-                            title: "Status",
-                            width: 90
-                        },
+
                         {
                             field: "AmountSpent",
                             title: "Amount Spent", format: "{0:N2}",
-                            width: 125,
+                            width: 100,
                             template: '<div style="text-align:right;">#= kendo.toString(AmountSpent, "n2") #</div>'
                         },
                 {
@@ -82,12 +77,13 @@
                     field: "CPC",
                     title: "CPC",
                     format: "{0:N2}",
-                    width: 90,
+                    width: 50,
                     template: '<div style="text-align:right; font-weight:bold;">#= kendo.toString(CPC, "n2") #</div>'
                 },
                 {
                     title: "Avg.Pos",
                     field: "AveragePosition",
+                    width: 50,
                     template: '<div style="text-align:center;">#= kendo.toString(AveragePosition, "n0") #</div>'
                 }
             ]
@@ -110,12 +106,12 @@
                     alert(e);
                 }
             },
+            sort: { field: "NumberClick", dir: "desc" },
             schema: {
                 model: {
                     fields: {
                         AdvertisingEngineBidDataPK: { type: "number" },
                         KeyWord: { type: "string" },
-                        IsActive: { type: "string" },
                         NumberImpressions: { type: "number" },
                         NumberClick: { type: "number" },
                         AveragePosition: { type: "number" },
@@ -129,22 +125,17 @@
         filterable: false,
         sortable: true,
         columns: [
-                      {
-                          field: "KeyWord",
-                          title: "KeyWords",
-                          width: 200
-                      },
-                        {
-                            field: "IsActive",
-                            title: "Status",
-                            width: 90
-                        },
-                        {
-                            field: "AmountSpent",
-                            title: "Amount Spent", format: "{0:N2}",
-                            width: 125,
-                            template: '<div style="text-align:right;">#= kendo.toString(AmountSpent, "n2") #</div>'
-                        },
+                {
+                    field: "KeyWord",
+                    title: "KeyWords",
+                    width: 200
+                },
+                {
+                    field: "AmountSpent",
+                    title: "Amount Spent", format: "{0:N2}",
+                    width: 100,
+                    template: '<div style="text-align:right;">#= kendo.toString(AmountSpent, "n2") #</div>'
+                },
                 {
                     field: "NumberImpressions",
                     title: "IMPs",
@@ -167,14 +158,20 @@
                     field: "CPC",
                     title: "CPC",
                     format: "{0:N2}",
-                    width: 90,
+                    width: 50,
                     template: '<div style="text-align:right; font-weight:bold;">#= kendo.toString(CPC, "n2") #</div>'
                 },
                 {
                     title: "Avg.Pos",
                     field: "AveragePosition",
+                    width: 50,
                     template: '<div style="text-align:center;">#= kendo.toString(AveragePosition, "n0") #</div>'
                 }
             ]
     });
 </script>
+<style>
+    .k-header .k-link{
+        text-align: justify;
+    }
+</style>

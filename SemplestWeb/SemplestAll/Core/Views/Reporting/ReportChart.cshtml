@@ -192,7 +192,8 @@
                         <td colspan="2">
                             @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
                             {
-                                @Html.CheckBox(item.AdvertisingEnginePK.ToString(CultureInfo.InvariantCulture), true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
+                                var adId = item.AdvertisingEnginePK.ToString(CultureInfo.InvariantCulture);
+                                @Html.CheckBox(adId, Model.EngineFks.Split(',').Contains(adId), new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
                                 <img src='@Url.Content("~/Content/" + item.LogoURL)' style="vertical-align: middle;" />
                             }
                         </td>

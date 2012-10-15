@@ -337,7 +337,23 @@ namespace Semplest.Core.Models.Repositories
         {
             var model = new CampaignSetupModel();
             var dbcontext = new SemplestModel.Semplest();
-            var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
+            var promo = dbcontext.Promotions.Select(p => new
+                                                             {
+                                                                 p.PromotionPK, p.IsAutobid, p.AutoBidMaxCPC,
+                                                                 p.PromotionName, p.PromotionBudgetAmount, p.PromotionStartDate, p.PromotionEndDate,
+                                                                 p.PromotionDescription,
+                                                                 p.IsCompleted,
+                                                                 p.IsLaunched,
+                                                                 p.LandingPageURL,
+                                                                 p.DisplayURL,
+                                                                 p.ProductGroup,
+                                                                 p.PromotionAdEngineSelecteds,
+                                                                 p.GeoTargetings,
+                                                                 p.PromotionAds,
+                                                                 p.PromotionKeywordAssociations,
+                                                                 p.SiteLinks
+                                                             }).Single(p => p.PromotionPK == promoId);
+            
             //only let the user see their promo
             int customerFk =
                 ((Credential)

@@ -22,8 +22,8 @@ namespace Semplest.Core.Models
     {
         public ReportIndexModel()
         {
-            StartDate = DateTime.Now;
-            EndDate = DateTime.Now.AddDays(2);
+            StartDate = DateTime.Now.AddDays(-8);
+            EndDate = DateTime.Now;
         }
         public IEnumerable<SemplestModel.ProductGroup> ProductGroups;
         public IEnumerable<SemplestModel.AdvertisingEngine> AdvertisingEngines;

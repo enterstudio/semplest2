@@ -72,7 +72,7 @@ namespace Semplest.Core.Controllers
                 NumberImpressions = v.Sum(t => t.NumberImpressions),
                 KeyWord = v.Key.Keyword,
                 NumberClick = v.Sum(t => t.NumberClick),
-                SearchCTR = v.Sum(t => t.NumberClick / t.NumberImpressions),
+                SearchCTR = Enumerable.Sum(v, t => t.NumberClick) / Enumerable.Sum(v, t => t.NumberImpressions),
                 CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
                 AveragePosition = v.Average(t => t.AveragePosition),
             }).ToList();
@@ -92,7 +92,7 @@ namespace Semplest.Core.Controllers
                 NumberImpressions = v.Sum(t => t.NumberImpressions),
                 KeyWord = v.FirstOrDefault().PromotionName,
                 NumberClick = v.Sum(t => t.NumberClick),
-                SearchCTR = v.Sum(t => t.NumberClick / t.NumberImpressions),
+                SearchCTR = Enumerable.Sum(v, t => t.NumberClick) / Enumerable.Sum(v, t => t.NumberImpressions),
                 CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
                 AveragePosition = v.Average(t => t.AveragePosition),
             }).ToList();
