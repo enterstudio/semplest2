@@ -284,8 +284,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			object.wait();
 		}
-		//ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
-		ESBWebServerURL = "http://23.22.63.111:9898/semplest";
+		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
+		//ESBWebServerURL = "http://23.22.63.111:9898/semplest";
 		AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
 		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
