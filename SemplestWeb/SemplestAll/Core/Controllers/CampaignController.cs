@@ -41,6 +41,7 @@ namespace Semplest.Core.Controllers
             Session["AllCategories"] = null;
             ViewBag.IsLaunched = false;
             ViewBag.IsCompleted = false;
+            ViewBag.IsPending = false;
             ViewBag.IsLaunchedAndCompleted = false;
             cs.AdModelProp.IsNew = true;
             var dbContext = new SemplestModel.Semplest();
@@ -79,6 +80,7 @@ namespace Semplest.Core.Controllers
             //campaignSetupModel.IsCompleted = true;
             ViewBag.IsLaunched = campaignSetupModel.IsLaunched;
             ViewBag.IsCompleted = campaignSetupModel.IsCompleted;
+            ViewBag.IsPending = campaignSetupModel.IsPending;
             ViewBag.IsLaunchedAndCompleted = campaignSetupModel.IsLaunched && campaignSetupModel.IsCompleted;
             ViewBag.IsNew = false;
             Session["CampaignSetupModel"] = campaignSetupModel;

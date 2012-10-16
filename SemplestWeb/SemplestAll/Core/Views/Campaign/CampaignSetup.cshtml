@@ -64,6 +64,7 @@
             <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
             <input type="hidden" id="IsLaunched" value="@Model.IsLaunched"/>
             <input type="hidden" id="IsCompleted" value="@Model.IsCompleted"/>
+            <input type="hidden" id="IsPending" value="@ViewBag.IsPending"/>
             <input type="hidden" id="HasSiteLinks" value="@Model.SiteLinks.Any()"/>
             <input type="hidden" id="HasKeywords" value="@Model.AllKeywords.Any()"/>
             <input type="hidden" id="HasNegativeKeywords" value="@Model.AdModelProp.NegativeKeywords.Any()"/>
@@ -130,6 +131,9 @@
             $('#ProductGroup_EndDate').attr("readonly", true);
             $('input[name*="ProductGroup.AdEnginesList"]').attr("readonly", true);
         }
+        if ($('#IsPending').val() == 'True')
+            $('.configuration :input').attr('disabled', true);
+        
     });
 
 

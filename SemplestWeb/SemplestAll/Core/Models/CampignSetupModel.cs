@@ -67,6 +67,7 @@ namespace Semplest.Core.Models
 
         public bool IsLaunched { get; set; }
         public bool IsCompleted { get; set; }
+        public bool IsPending { get; set; }
 
 
         //added by tudor

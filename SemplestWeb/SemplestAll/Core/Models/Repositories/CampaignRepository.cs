@@ -359,6 +359,7 @@ namespace Semplest.Core.Models.Repositories
                 ((Credential)
                  (System.Web.HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).
                     User.CustomerFK.Value;
+            
             if (promo != null && promo.ProductGroup.CustomerFK != customerFk)
                 promo = null;
             // populate model from promotions
@@ -425,6 +426,8 @@ namespace Semplest.Core.Models.Repositories
                 // set islaunched
                 model.IsLaunched = promo.IsLaunched;
                 model.IsCompleted = promo.IsCompleted;
+                model.IsPending = dbcontext.GetCustomerPromotionStatus(customerFk).Any(q => q.PromotionPK == promo.PromotionPK && q.typePromo == "Launched" && q.PromotionStatus == "Pending");
+                
                 if (!preview)
                 {
                     model.AllKeywords.AddRange(

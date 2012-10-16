@@ -129,6 +129,8 @@
         $(function () {
             listFilter($("#headerF"), $("#list"));
         });
+        if ($('#IsPending').val() == 'True')
+            $('.configuration :input').attr('disabled', true);
     } (jQuery));
 
 </script>
