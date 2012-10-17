@@ -181,6 +181,41 @@ public final class SemplestUtils
 		ALL_COMMON_WORDS.addAll(SITES_STOP_WORDS);
 	}
 	
+	public static int getInt(final String s, final int defaultValue)
+	{
+		if (s == null || s.trim().isEmpty())
+		{
+			return defaultValue;
+		}
+		else
+		{
+			final String strippedLeadingCapOs = stripLeadingChars(s.trim(), 'O');
+			final String strippedLeadingCapOsAndSmallOs = stripLeadingChars(strippedLeadingCapOs, 'o');
+			final Integer i = new Integer(strippedLeadingCapOsAndSmallOs);
+			return i.intValue();
+		}
+	}
+	
+	public static String stripLeadingChars(final String s, final char c)
+	{
+		return s.replaceFirst("^" + c + "+(?!$)", "");
+	}
+	
+	public static double getDouble(final String s, final double defaultValue)
+	{
+		if (s == null || s.trim().isEmpty())
+		{
+			return defaultValue;
+		}
+		else
+		{
+			final String strippedLeadingCapOs = stripLeadingChars(s.trim(), 'O');
+			final String strippedLeadingCapOsAndSmallOs = stripLeadingChars(strippedLeadingCapOs, 'o');
+			final Double d = new Double(strippedLeadingCapOsAndSmallOs);
+			return d.doubleValue();
+		}
+	}
+	
 	public static <T> List<T> getSublist(final List<T> list, final Double percent)
 	{		
 		if (list == null || list.isEmpty())
