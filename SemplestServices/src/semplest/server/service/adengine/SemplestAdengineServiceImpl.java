@@ -176,28 +176,42 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			//adEng.ExecuteBidProcess(339, Arrays.asList(AdEngine.Google));
 			//adEng.AddPromotionToAdEngine(16, 241, 339, Arrays.asList(AdEngine.Google));
 			
-			
+			/*
 			final Integer customerID_AddPromotionToAdEngine = 10; 
 			final Integer productGroupID_AddPromotionToAdEngine = 17; 
 			final Integer promotionID_AddPromotionToAdEngine = 17; 
 			final List<AdEngine> adEngines_AddPromotionToAdEngine = Arrays.asList(AdEngine.MSN, AdEngine.Google);
 			adEng.AddPromotionToAdEngine(customerID_AddPromotionToAdEngine, productGroupID_AddPromotionToAdEngine, promotionID_AddPromotionToAdEngine, adEngines_AddPromotionToAdEngine);
+			*/
 			
 			
-			/*
 			final List<GoogleAddAdRequest> ads = new ArrayList<GoogleAddAdRequest>();
 			ads.add(new GoogleAddAdRequest(35, "The Computer You Want", "Brands You Want For As Low As $10", "A Week. No Money Down. No Credit."));
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 		  final List<GoogleViolation> res = new ArrayList<GoogleViolation>();	
 			for (GoogleAddAdRequest oneAd : ads)
 			{
-				//List<GoogleViolation> ret = google.validateAd("9639210510", 4264681936L, "http://dev.emporium.com/subcategories/get_products/computers_printers", "dev.emporium.com", oneAd.getHeadline(), oneAd.getDescription1(), oneAd.getDescription2());
-				final List<GoogleAddAdRequest> addAdTextRequests = new ArrayList<GoogleAddAdRequest>();
+				//final List<GoogleViolation> ret = google.validateAd("2387614989", 4766339711L, "http://dev.emporium.com/subcategories/get_products/computers_printers", "dev.emporium.com", oneAd.getHeadline(), oneAd.getDescription1(), oneAd.getDescription2());
+				final Map<GeoTargetObject, GeoTargetType> geoTargetVsTypeMap = new HashMap<GeoTargetObject, GeoTargetType>();
+				final GeoTargetObject geoTarget = new GeoTargetObject();
+				geoTarget.setAddress("195 Broadway");
+				geoTarget.setCity("New York");
+				geoTarget.setLatitude(40.71061);
+				geoTarget.setLongitude(-74.0093);
+				geoTarget.setRadius(5.0);
+				geoTarget.setState("NY");
+				geoTarget.setZip("10007");
+				geoTargetVsTypeMap.put(geoTarget, GeoTargetType.GEO_POINT);
+				final List<GoogleViolation> geoTargetViolations = google.validateUpdateGeoTargets("2397832336"/*"2387614989"*/, 110235910L /*88453391L*/, geoTargetVsTypeMap);
+				/*
+				 final List<GoogleAddAdRequest> addAdTextRequests = new ArrayList<GoogleAddAdRequest>();
+				 
 				addAdTextRequests.add(new GoogleAddAdRequest(30, "The Computer You Want", "Brands You Want For As Low As $10", "A Week. No Money Down. No Credit."));
 				final GoogleAddAdsRequest request = new GoogleAddAdsRequest("9639210510", 4264681936L, "dev.emporium.com", "http://dev.emporium.com/subcategories/get_products/computers_printers", addAdTextRequests);
 				google.addTextAds(request);
-				//res.addAll(ret);
-			}*/
+				*/
+				
+			}
 			
 			//final List<GoogleViolation> violations = adEng.validateGoogleAd("http://dev.emporium.com/subcategories/get_products/computers_printers", "dev.emporium.com/subcategories/get_products/computers_printers", ads);
 
