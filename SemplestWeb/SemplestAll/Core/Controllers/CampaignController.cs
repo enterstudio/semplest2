@@ -225,7 +225,7 @@ namespace Semplest.Core.Controllers
             catch (Exception ex)
             {
                 ExceptionHelper.LogException(ex);
-                return Json(ExceptionHelper.GetErrorMessage(ex));
+                return Json(ConfigurationManager.AppSettings["TechnicalDifficulties"]);
             }
         }
 
