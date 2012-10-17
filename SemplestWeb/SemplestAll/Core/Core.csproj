@@ -242,7 +242,6 @@
     <Content Include="Content\ui.dynatree.css" />
     <Content Include="Content\vline.gif" />
     <Content Include="Content\WhatAreSiteLinks.png" />
-    <Content Include="Dynamic Expressions.html" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\AdditionalLinks.js" />
     <Content Include="Scripts\billingLaunch.js" />
