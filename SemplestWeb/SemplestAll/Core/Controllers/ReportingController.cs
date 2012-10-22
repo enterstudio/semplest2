@@ -65,7 +65,8 @@ namespace Semplest.Core.Controllers
             var cred = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID]));
             var promotionFks = Array.ConvertAll(promotionFk.Split(','), int.Parse);
             var adFks = Array.ConvertAll(advertisingEngineFk.Split(','), int.Parse);
-            var grp = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && t.UserPK == cred.UsersFK && adFks.Contains(t.AdvertisingEngineFK) && t.TransactionDate >= startDate && t.TransactionDate <= endDate).OrderBy(t => t.Keyword).GroupBy(t => new { t.Keyword, t.PromotionName });
+            endDate = endDate.Value.AddDays(1);
+            var grp = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && t.UserPK == cred.UsersFK && adFks.Contains(t.AdvertisingEngineFK) && t.TransactionDate >= startDate && t.TransactionDate < endDate).OrderBy(t => t.Keyword).GroupBy(t => new { t.Keyword, t.PromotionName });
             var reports = grp.Select(v => new vwPromotionChartModel
             {
                 AmountSpent = v.Sum(t => t.NumberClick * t.AverageCPC),
@@ -85,7 +86,8 @@ namespace Semplest.Core.Controllers
             var cred = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID]));
             var promotionFks = Array.ConvertAll(promotionFk.Split(','), int.Parse);
             var adFks = Array.ConvertAll(advertisingEngineFk.Split(','), int.Parse);
-            var grp = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && t.UserPK == cred.UsersFK && adFks.Contains(t.AdvertisingEngineFK) && t.TransactionDate >= startDate && t.TransactionDate <= endDate).OrderBy(t => t.Keyword).GroupBy(t => new { t.PromotionName });
+            endDate = endDate.Value.AddDays(1);
+            var grp = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && t.UserPK == cred.UsersFK && adFks.Contains(t.AdvertisingEngineFK) && t.TransactionDate >= startDate && t.TransactionDate < endDate).OrderBy(t => t.Keyword).GroupBy(t => new { t.PromotionName });
             var reports = grp.Select(v => new vwPromotionChartModel
             {
                 AmountSpent = v.Sum(t => t.NumberClick * t.AverageCPC),

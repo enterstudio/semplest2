@@ -75,7 +75,7 @@
 
             if (startDate) {
                 startDate = new Date(startDate);
-                startDate.setDate(startDate.getDate() + 1);
+                startDate.setDate(startDate.getDate());
                 end.min(startDate);
             }
         }
@@ -84,7 +84,7 @@
 
             if (endDate) {
                 endDate = new Date(endDate);
-                endDate.setDate(endDate.getDate() - 1);
+                endDate.setDate(endDate.getDate());
                 start.max(endDate);
             }
         }
