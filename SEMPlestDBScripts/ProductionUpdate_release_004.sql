@@ -104,3 +104,82 @@ BEGIN CATCH
 	RAISERROR (@ErrMessage, @ErrorSeverity, @ErrorState);
 END CATCH;
 GO
+
+---
+--- DROP FOREIGN KEY: CreditCardProfile.REL_Promotion_CreditCardProfile_1
+---
+ALTER TABLE dbo.CreditCardProfile DROP CONSTRAINT REL_Promotion_CreditCardProfile_1
+GO
+---
+--- DROP FOREIGN KEY: Transactions.REL_Customer_Transactions_4
+---
+ALTER TABLE dbo.Transactions DROP CONSTRAINT REL_Customer_Transactions_4
+GO
+---
+--- DROP FOREIGN KEY: Transactions.REL_PayType_Transactions_3
+---
+ALTER TABLE dbo.Transactions DROP CONSTRAINT REL_PayType_Transactions_3
+GO
+---
+--- DROP COLUMN: CreditCardProfile.AuthCode
+---
+ALTER TABLE dbo.CreditCardProfile DROP COLUMN AuthCode
+GO
+
+---
+--- DROP COLUMN: CreditCardProfile.PromotionFK
+---
+ALTER TABLE dbo.CreditCardProfile DROP COLUMN PromotionFK
+GO
+
+---
+--- DROP COLUMN: CreditCardProfile.TxRefNum
+---
+ALTER TABLE dbo.CreditCardProfile DROP COLUMN TxRefNum
+GO
+
+---
+--- DROP COLUMN: Transactions.CustomerFK
+---
+ALTER TABLE dbo.Transactions DROP COLUMN CustomerFK
+GO
+
+---
+--- DROP COLUMN: Transactions.PayTypeFK
+---
+ALTER TABLE dbo.Transactions DROP COLUMN PayTypeFK
+GO
+
+---
+--- DROP COLUMN: Transactions.TransactionTypeFK
+---
+ALTER TABLE dbo.Transactions DROP COLUMN TransactionTypeFK
+GO
+
+---
+--- CREATE COLUMN: CreditCardProfileFK
+---
+ALTER TABLE dbo.Promotion ADD CreditCardProfileFK int
+GO
+---
+--- CREATE COLUMN: AuthCode
+---
+ALTER TABLE dbo.Transactions ADD AuthCode varchar(6)
+GO
+---
+--- CREATE COLUMN: TxRefNum
+---
+ALTER TABLE dbo.Transactions ADD TxRefNum varchar(40)
+GO
+--
+-- RE-CREATE FOREIGN KEY: CreditCardProfile.REL_Customer_CreditCardProfile_2
+--
+ALTER TABLE dbo.CreditCardProfile DROP CONSTRAINT REL_Customer_CreditCardProfile_2
+GO
+---
+--- CREATE FOREIGN KEY CONSTRAINT: REL_Customer_CreditCardProfile_1
+---
+ALTER TABLE dbo.CreditCardProfile ADD 
+	CONSTRAINT REL_Customer_CreditCardProfile_1 FOREIGN KEY (CustomerFK)
+		REFERENCES dbo.Customer(CustomerPK)
+GO
