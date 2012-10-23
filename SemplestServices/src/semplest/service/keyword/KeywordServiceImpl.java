@@ -195,7 +195,7 @@ public class KeywordServiceImpl implements KeywordService
 		final String operationDescription = "Get Keywords for [" + request + "]";
 		logger.info("Will try to " + operationDescription);
 		
-		// TODO: change this 
+		// TODO: change this once requirements for keyword generation are provided 
 		return null;
 	}
 
