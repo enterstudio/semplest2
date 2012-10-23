@@ -1,6 +1,5 @@
 package semplest.server.protocol.adengine;
 
-import java.util.List;
 import java.util.Set;
 
 public class GetCategoriesRequest
